@@ -112,6 +112,7 @@ The P1 leakage test suite is:
 
 It currently checks the dataset-level eligibility boundaries and split constraints.
 
+Forecast windows are restricted so that training windows do not extend into validation, and validation windows do not extend into test.
 P3 must additionally enforce the complete query-time retrieval eligibility rule in the actual retrieval implementation, including the project requirements for split eligibility, future-data exclusion, and same-episode exclusion.
 
 ## 8. Validation Performed
