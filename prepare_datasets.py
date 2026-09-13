@@ -440,6 +440,12 @@ for i in range(INPUT_DAYS, len(df) - FORECAST_DAYS + 1):
 
     query_split = get_split(query_date)
 
+    if query_split == "train" and forecast_end > TRAIN_END:
+        continue
+
+    if query_split == "val" and forecast_end > VAL_END:
+        continue
+
     # --------------------------------------------------------
     # Retrieval candidate boundary.
     #
