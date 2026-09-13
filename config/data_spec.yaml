@@ -1,0 +1,32 @@
+project: Retrieval-Augmented Heatwave Forecasting
+
+data_source:
+  provider: Open-Meteo
+  dataset: ERA5
+  start_date: "1980-01-01"
+  end_date: "present"
+
+region:
+  name: Delhi_NCR
+  center_name: Safdarjung
+  center_latitude: 28.58
+  center_longitude: 77.20
+
+spatial_target:
+  grid_size: "3x3"
+  number_of_cells: 9
+  description: "Area average of 9 distinct ERA5 grid cells centered on Safdarjung"
+
+temporal:
+  frequency: daily
+  input_days: 14
+  forecast_days: 5
+
+target:
+  variable: t_max
+  unit: celsius
+
+splits:
+  train: "1980-2015"
+  validation: "2016-2018"
+  test: "2019-present"

@@ -1,0 +1,34 @@
+{
+  "source": "Open-Meteo Historical Weather API",
+  "dataset": "ERA5",
+  "region": "Delhi_NCR",
+  "spatial_cells": 9,
+  "aggregation": "Arithmetic mean across 9 ERA5 grid cells",
+  "frequency": "daily",
+  "start_date": "1980-01-01",
+  "end_date": "2026-09-06",
+  "rows": 17051,
+  "columns": [
+    "date",
+    "t_max",
+    "t_min",
+    "shortwave_radiation_sum",
+    "t_mean",
+    "relative_humidity_mean",
+    "wind_speed_mean",
+    "surface_pressure_mean",
+    "doy_sin",
+    "doy_cos",
+    "years_since_1980"
+  ],
+  "quality_checks": {
+    "duplicate_dates": 0,
+    "missing_dates": 0,
+    "tmax_less_than_tmin": 0,
+    "rh_below_zero": 0,
+    "rh_above_100": 0,
+    "negative_wind": 0,
+    "non_positive_pressure": 0,
+    "negative_shortwave": 0
+  }
+}
