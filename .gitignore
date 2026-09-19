@@ -41,3 +41,6 @@ data/raw/
 build/
 dist/
 *.egg-info/
+
+# Models
+models/baseline_lstm/*/checkpoint.pt

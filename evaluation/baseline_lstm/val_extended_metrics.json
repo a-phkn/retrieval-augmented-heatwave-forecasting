@@ -1,0 +1,101 @@
+{
+  "split": "val",
+  "note": "test split intentionally not evaluated here -- reserved for Step 6",
+  "1_global_accuracy": {
+    "lstm": {
+      "mae": {
+        "mean": 1.659480881690979,
+        "std": 0.02544660701889649
+      },
+      "rmse": {
+        "mean": 2.2227052211761475,
+        "std": 0.034710197370798924
+      }
+    },
+    "persistence": {
+      "mae": 1.9500833749771118,
+      "rmse": 2.6150801181793213
+    },
+    "climatology": {
+      "mae": 1.8340022563934326,
+      "rmse": 2.3443422317504883
+    }
+  },
+  "2_stratified_rmse": {
+    "lstm": {
+      "normal": {
+        "rmse_mean": 2.284678602218628,
+        "rmse_std": 0.04859667484869157,
+        "n": 4575
+      },
+      "unusual": {
+        "rmse_mean": 1.9187198638916017,
+        "rmse_std": 0.05861140280430195,
+        "n": 731
+      },
+      "extreme": {
+        "rmse_mean": 1.5992480039596557,
+        "rmse_std": 0.12813215446552392,
+        "n": 154
+      }
+    },
+    "persistence": {
+      "normal": {
+        "rmse": 2.6138734817504883,
+        "n": 4575
+      },
+      "unusual": {
+        "rmse": 2.7052762508392334,
+        "n": 731
+      },
+      "extreme": {
+        "rmse": 2.1790544986724854,
+        "n": 154
+      }
+    },
+    "climatology": {
+      "normal": {
+        "rmse": 1.940375566482544,
+        "n": 4575
+      },
+      "unusual": {
+        "rmse": 3.4863035678863525,
+        "n": 731
+      },
+      "extreme": {
+        "rmse": 5.031005859375,
+        "n": 154
+      }
+    }
+  },
+  "3_detection": {
+    "lstm": {
+      "precision": 0.3490838958534233,
+      "recall": 0.27424242424242423,
+      "f2": 0.2865284153870508,
+      "n_actual_hot": 1320,
+      "n_total": 27300
+    },
+    "persistence": {
+      "precision": 0.2222222222222222,
+      "recall": 0.22727272727272727,
+      "f2": 0.22624434389140274,
+      "n_actual_hot": 264,
+      "n_total": 5460
+    },
+    "climatology": {
+      "precision": null,
+      "recall": 0.0,
+      "f2": null,
+      "n_actual_hot": 264,
+      "n_total": 5460,
+      "note": "Recall is mechanically 0: climatology always predicts its own mean, which can never exceed mean+1.5sigma by construction."
+    }
+  },
+  "4_bias_diagnostic": {
+    "mean_bias_on_hot_days": -1.5567790269851685,
+    "mean_bias_on_normal_days": 0.4973435699939728,
+    "n_hot": 1320,
+    "n_normal": 25980
+  }
+}
