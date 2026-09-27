@@ -7,7 +7,7 @@ Accumulated ML knowledge — models tried, hyperparameters, seeds, and actual
 - **Persistence baseline** (`training/baselines.py`)
 - **Climatology baseline** (`training/baselines.py`, reuses P1's `clim_mean_t_max` column)
 - **LSTM baseline** (`models/lstm.py` + `training/train_lstm.py`) — trained, 5 seeds, all converged.
-  **Uses weighted MSE loss (hot_weight=10), not plain MSE** — see "Why
+  **Uses weighted MSE loss (hot_weight=15), not plain MSE** — see "Why
   weighted loss" below for how this was decided.
 
 ## Baselines
@@ -24,12 +24,12 @@ Accumulated ML knowledge — models tried, hyperparameters, seeds, and actual
 - Up to 100 epochs, early stopping patience 10 on val loss.
 - **Loss: weighted MSE on z-normalized target** —
   `loss = mean(weight * (pred-target)^2)`, `weight = 1 + 9*hot_mask`
-  (`hot_weight=10`), where `hot_mask` flags forecast-day-instances that are
+  (`hot_weight=15`), where `hot_mask` flags forecast-day-instances that are
   actually "hot" per the project's own train-only-climatology + 1.5σ
   definition. This replaced plain MSE (see rationale below).
 - 5 seeds; report de-normalized MAE/RMSE, mean ± std across seeds.
 - **IMPORTANT for Step 5:** the future retrieval-augmented model must use
-  this same weighted loss (hot_weight=10) to keep the "same training
+  this same weighted loss (hot_weight=15) to keep the "same training
   procedure, retrieval on/off only" comparison valid. See
   `context/decisions.md`.
 
@@ -71,7 +71,7 @@ exactly where it matters most) — but the user reasonably asked whether this
 could be fixed rather than just documented, which led to the weighted-loss
 change below.
 
-### Current canonical LSTM baseline (weighted MSE, hot_weight=10)
+### Current canonical LSTM baseline (weighted MSE, hot_weight=15)
 
 `evaluation/baseline_lstm/val_metrics.json` +
 `evaluation/baseline_lstm/val_extended_metrics.json`, run 2026-09-17.
@@ -120,7 +120,7 @@ superseding the plain-MSE version, which was retired (not kept as a parallel
 model).
 
 **Still not fixed:** bias on hot days is smaller but still negative
-(−1.555°C) — there's headroom left. `hot_weight=10` was a deliberate,
+(−1.555°C) — there's headroom left. `hot_weight=15` was a deliberate,
 moderate first guess (true inverse-frequency weighting would be ~21.7x), not
 tuned/swept.
 
@@ -248,5 +248,77 @@ weighted regression head, since neither piece alone was fully correct.
   weighted/focal losses (not just the classification head) might get
   detection gains without the extreme-stratum regression regression the
   pure-unweighted version showed. Nobody has tried this yet.
-- Is `hot_weight=10` well-tuned? Not swept — a quick sweep (e.g. 5/10/15/20)
-  before committing further would be cheap.
+- ~~Is `hot_weight=15` well-tuned? Not swept~~ — **RESOLVED 2026-09-22**: swept
+  {5,10,15,20,25}, extreme RMSE improves monotonically with weight but so
+  does global MAE degradation — 15 chosen as the trade-off point. Full
+  table in `decisions.md`. Note: this section (lines above referencing
+  `hot_weight=15` in the "Current canonical" writeup) still describes the
+  OLD hot_weight=10 numbers in detail — see `decisions.md`'s 2026-09-22
+  entry for the current 15 numbers (extreme RMSE 1.459, recall 0.313); not
+  rewriting the historical writeup above since it's an accurate record of
+  what was true when hot_weight=10 was canonical.
+
+## P3: Retrieval system (Step 4)
+
+**Representation** (`retrieval/features.py`): 17-dim hand-engineered vector
+per 14-day input window — anomaly level/trend/variability/peak (5 dims),
+hot-day counts within window (2 dims), raw T_max level+trend (2 dims),
+humidity level+trend (2 dims), wind level (1), pressure level+trend (2),
+radiation level (1), season at window-end (2 dims: doy_sin/cos).
+`years_since_1980` deliberately excluded to keep recency separate from
+similarity (needed for Step 7's non-stationarity ablation later — see
+`retrieval/features.py`'s docstring). z-score fit on TRAIN windows only,
+then L2-normalized so FAISS `IndexFlatIP`'s inner product equals cosine
+similarity.
+
+**Note:** this feature list is my own reasonable instantiation of the
+roadmap's loose spec ("~15-20 dim vector: mean/slope/std of T_max,
+end-of-window anomaly, days-above-threshold, humidity trend, etc.") — I did
+not have the original roadmap file re-loaded this session to check for an
+exact prescribed list. If `Retrieval_Augmented_Forecasting_Roadmap_
+Updated.md` specifies exact features, reconcile against it.
+
+**Index**: FAISS `IndexFlatIP`, exact search, 17,025 windows (all splits —
+eligibility filtering happens at query time on one shared index, not via
+separate per-split indices).
+
+**Query-time eligibility** (`retrieval/query.py`'s `eligibility_mask`),
+THREE independent rules, all required (see the function's docstring for why
+none subsumes another):
+1. No future data — candidate ≤ query's `candidate_latest_start` (query_date − 19 days)
+2. Split eligibility — train→train only, val→train only, test→train+val only, never same-split
+3. No same episode — candidate can't share the query's own `target_episode_id`
+
+**Deduplication** (`dedup_max_per_episode`), TWO rules together:
+1. Max 2 per formally-qualifying episode (roadmap spec)
+2. Min 10 days between any two selected candidates (added after manual
+   inspection found rule 1 alone left 96.5% of windows — those without an
+   episode ID — completely unprotected from near-duplicate retrieval; see
+   `decisions.md`)
+
+**Validation — automated** (`tests/test_retrieval_eligibility.py`, run against
+~110 sampled query dates across all 3 splits plus a heatwave-specific
+sample): 6/6 tests pass — no future-data leakage, no split violations, no
+same-episode retrieval, episode cap respected, temporal spacing respected,
+no self-retrieval. Full suite (`tests/test_no_leakage.py` +
+`tests/test_retrieval_eligibility.py`) = 9/9 passing.
+
+**Validation — manual inspection** (roadmap's own Step 4 requirement):
+query 2022-04-11 (test split, part of episode 93, the March-April 2022
+Delhi heatwave) retrieved: 2010-04-03, 2006-02-26, 2017-04-05, 2010-04-22,
+2004-03-28 — similarities 0.98→0.93, all pre-monsoon/late-winter dates
+(mostly season-matched, one slightly early). A val-split heatwave query
+(2016-01-04, itself a winter warm-anomaly episode) correctly retrieved only
+train-split analogues, all season-matched Dec/Jan dates (1992, 2006, 1994,
+2013, 1988) — confirms rule 2 (split eligibility) works as intended.
+
+**Known limitations, not blocking, worth revisiting:**
+- `min_days_apart=10` is a first reasonable guess, not tuned/swept.
+- Feature list not verified against the roadmap's original exact spec (if any).
+- See `decisions.md` for the "heatwave episodes skew winter, not summer" finding.
+
+## 2026-09-22 — canonical updated to hot_weight=20 (was 15)
+See `decisions.md` for the marginal-trade-off analysis that motivated this.
+Current numbers: MAE=1.775, global RMSE=2.401, extreme RMSE=1.285,
+recall=0.339, precision=0.268, F2=0.322. Full detail in
+`evaluation/baseline_lstm/val_extended_metrics.json`.

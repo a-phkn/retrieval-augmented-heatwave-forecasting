@@ -4,12 +4,12 @@
   "1_global_accuracy": {
     "lstm": {
       "mae": {
-        "mean": 1.659480881690979,
-        "std": 0.02544660701889649
+        "mean": 1.7750434875488281,
+        "std": 0.06729684946185834
       },
       "rmse": {
-        "mean": 2.2227052211761475,
-        "std": 0.034710197370798924
+        "mean": 2.401232671737671,
+        "std": 0.08093630667451719
       }
     },
     "persistence": {
@@ -24,18 +24,18 @@
   "2_stratified_rmse": {
     "lstm": {
       "normal": {
-        "rmse_mean": 2.284678602218628,
-        "rmse_std": 0.04859667484869157,
+        "rmse_mean": 2.523807334899902,
+        "rmse_std": 0.10124865264228566,
         "n": 4575
       },
       "unusual": {
-        "rmse_mean": 1.9187198638916017,
-        "rmse_std": 0.05861140280430195,
+        "rmse_mean": 1.68184814453125,
+        "rmse_std": 0.07260938436536117,
         "n": 731
       },
       "extreme": {
-        "rmse_mean": 1.5992480039596557,
-        "rmse_std": 0.12813215446552392,
+        "rmse_mean": 1.2853538990020752,
+        "rmse_std": 0.15799896757053045,
         "n": 154
       }
     },
@@ -70,9 +70,9 @@
   },
   "3_detection": {
     "lstm": {
-      "precision": 0.3490838958534233,
-      "recall": 0.27424242424242423,
-      "f2": 0.2865284153870508,
+      "precision": 0.26814637072585484,
+      "recall": 0.3386363636363636,
+      "f2": 0.3217216064488268,
       "n_actual_hot": 1320,
       "n_total": 27300
     },
@@ -86,15 +86,15 @@
     "climatology": {
       "precision": null,
       "recall": 0.0,
-      "f2": null,
+      "f2":null,
       "n_actual_hot": 264,
       "n_total": 5460,
       "note": "Recall is mechanically 0: climatology always predicts its own mean, which can never exceed mean+1.5sigma by construction."
     }
   },
   "4_bias_diagnostic": {
-    "mean_bias_on_hot_days": -1.5567790269851685,
-    "mean_bias_on_normal_days": 0.4973435699939728,
+    "mean_bias_on_hot_days": -1.192683458328247,
+    "mean_bias_on_normal_days": 0.8837951421737671,
     "n_hot": 1320,
     "n_normal": 25980
   }

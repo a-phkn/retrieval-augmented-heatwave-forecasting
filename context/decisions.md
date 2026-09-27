@@ -252,3 +252,132 @@ eventually retrieval-augmented model architecture) first; P3 (retrieval
 system itself: statistical feature vectors, FAISS index, query-time
 eligibility filter, dedup) is deferred to a later session. This means Step 5
 (joint integration) cannot start until a future session picks up P3.
+
+---
+
+## 2026-09-19 — P3 retrieval system: two findings worth flagging
+
+**1. Naive episode-based dedup was insufficient — fixed with temporal-adjacency dedup.**
+Manual inspection (roadmap's own Step 4 validation requirement) surfaced a
+real gap: only 590/17,025 windows (3.5%) have a `target_episode_id` at all,
+so the roadmap's literal "max-2-per-episode" rule left 96.5% of candidates
+completely unprotected from duplication. A real query's top-5 came back as
+5 consecutive days from the same non-qualifying 2010 warm spell (shifted
+1-4 days each) — near-identical vectors since consecutive windows share 13
+of 14 input days. Fixed by adding a `min_days_apart=10` general temporal
+spacing rule alongside (not instead of) the episode cap — see
+`retrieval/query.py`'s `dedup_max_per_episode`. Verified via
+`tests/test_retrieval_eligibility.py::test_dedup_respects_temporal_spacing`.
+
+**2. "Heatwave" episodes are NOT concentrated in summer — 37% occur in
+Jan-Mar, more than the classic Apr-Jun pre-monsoon season (23%).** Because
+the definition is a *relative* anomaly (1.5σ over that calendar day's own
+±7-day climatology), and winter's day-to-day variability appears tighter
+than summer's, the same fixed sigma threshold is easier to cross in winter.
+This is a pre-existing property of Step 2's definition (not something P3
+introduced), only now surfaced by inspecting retrieval results directly.
+**Practical implication:** "heatwave" in this pipeline's technical sense
+means "anomalously warm for the time of year, year-round," not
+specifically "dangerous summer heat" — worth reconciling with the paper's
+framing/title before writing methods/results sections. Not fixed or
+changed — flagged for the user's decision, doesn't block P3.
+
+**Decision:** proceed with P3 as specified; both findings logged rather
+than silently worked around. See `ml_notes.md` for the retrieval system's
+full spec and validation results.
+
+---
+
+## 2026-09-22 — hot_weight swept, canonical updated to 15
+
+**Sweep results (val, 5 seeds each):** hot_weight ∈ {5,10,15,20,25} —
+extreme-stratum RMSE improves monotonically (1.932→1.145) as hot_weight
+increases; global MAE degrades monotonically (1.583→1.842) in the same
+direction. No free peak — a real trade-off curve, not a bug.
+
+**Decision:** canonical changed from hot_weight=10 to **hot_weight=15**.
+Extreme RMSE improves meaningfully (1.598→1.459, ~9%) for a moderate global
+MAE cost (1.660→1.724, +3.9%) — better trade-off point than 20/25, which
+push global MAE too far for the credibility-floor role it needs to play.
+Checkpoints promoted directly from the sweep (no retraining needed,
+`models/hw_sweep/hw_15/` → `models/baseline_lstm/`). `training/train_lstm.py`'s
+`HOT_WEIGHT` constant updated to 15.0 to match.
+
+**Full sweep table saved:** `evaluation/hw_sweep/sweep_results.json`.
+
+**Consequence:** Step 5's retrieval-augmented model must use hot_weight=15
+(not 10) to preserve the "same training procedure" comparison — updating
+the note in `ml_notes.md`/`progress.md` accordingly.
+
+---
+
+## 2026-09-22 — Step 5 will default to Colab, not local
+
+**Issue:** user's laptop is ~5 years old; even baseline LSTM training
+(100-160s/5 seeds) may be more strain than in the dev sandbox this was
+built in.
+
+**Decision:** Step 5 (attention-fusion retrieval-augmented model) will be
+built Colab-first — code structured to run there without modification,
+with clear notebook/run instructions in `context/RUN_COMMANDS.md`. Local
+CPU remains an option for quick single-epoch smoke-tests only, not full
+training runs.
+
+---
+
+## 2026-09-22 — canonical changed again: hot_weight 15 -> 20
+
+**Issue:** user pointed out the 15->20 marginal trade-off wasn't properly
+checked before picking 15 -- correct catch.
+
+**Marginal analysis (per +5 step):**
+| Step | dMAE | dExtremeRMSE | Efficiency (gain/cost) |
+|---|---|---|---|
+| 10->15 | +0.064 | -0.139 | 2.17 |
+| 15->20 | +0.051 | -0.174 | **3.39** |
+
+15->20 is a strictly better marginal trade than 10->15 (smaller MAE cost,
+bigger extreme-RMSE gain) -- if 10->15 was justified, 15->20 was more so.
+Original choice of 15 was a "moderate middle ground" heuristic, not derived
+from this marginal comparison -- acknowledged as a weaker justification.
+
+**Caveat:** extreme-stratum RMSE has real seed noise here (std ~0.13-0.17
+at these points, n=154 extreme samples / 5 seeds) -- the 15->20 gap (0.174)
+is ~1-1.3 std, a real but not rock-solid signal. Bootstrap CI machinery
+exists (used for canonical-vs-dual-head) but was not run for this specific
+comparison -- offered to the user, not requested, may be worth doing before
+this number goes in a paper.
+
+**Decision:** canonical changed to hot_weight=20. Checkpoints promoted from
+`models/hw_sweep/hw_20/` (no retraining in the sandbox; user opted to
+retrain locally rather than receive checkpoint files this time).
+`training/train_lstm.py`'s `HOT_WEIGHT` updated to 20.0.
+
+**New canonical numbers (val):** MAE=1.775, global RMSE=2.401,
+extreme RMSE=1.285, recall=0.339, precision=0.268, F2=0.322,
+bias on hot days=-1.193C, bias on normal days=+0.884C.
+
+**Consequence:** Step 5 must use hot_weight=20 (not 15) for the
+retrieval-augmented model's training procedure to match.
+
+---
+
+## 2026-09-22 — bootstrap CI: hw=15 vs hw=20 extreme RMSE gap is NOT statistically significant
+
+**Result:** mean diff (hw15-hw20 extreme RMSE) = +0.172 (favors hw20),
+95% CI = [-0.075, +0.595], **includes zero**. n=67 unique extreme-stratum
+windows, 2000 bootstrap resamples (window-level resampling + seed
+resampling across the 5 trained seeds per value). Saved to
+`evaluation/hw_sweep/bootstrap_ci_15_vs_20.json`.
+
+**Interpretation:** the point estimate still favors hw20, but with only 67
+extreme windows the gap is not distinguishable from noise at 95%
+confidence. Neither hw15 nor hw20 is "provably correct" over the other at
+this sample size.
+
+**Decision:** keep hw20 as canonical (no evidence to revert to 15 either).
+**For any future writeup:** report this honestly as "extreme-stratum RMSE
+improved with hot_weight up to ~15-20; further distinctions beyond that
+were not statistically significant at this sample size" rather than
+claiming hw20 as a confirmed optimum. Do not oversell precision this
+hyperparameter search doesn't actually have.

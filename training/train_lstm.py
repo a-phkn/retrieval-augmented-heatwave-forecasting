@@ -53,7 +53,7 @@ BATCH_SIZE = 64
 MAX_EPOCHS = 100
 PATIENCE = 10
 LR = 1e-3
-HOT_WEIGHT = 10.0
+HOT_WEIGHT = 20.0
 
 
 def set_seed(seed: int) -> None:

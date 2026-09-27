@@ -49,12 +49,19 @@ Open-Meteo API (ERA5) → raw monthly JSON (9 grid cells)
 
 ## Retrieval components
 - Representation: hand-engineered statistical feature vector per 14-day window
-  (~15–20 dims: mean/slope/std of T_max, end-of-window anomaly,
-  days-above-threshold-so-far, humidity trend, etc.) — NOT YET IMPLEMENTED
-- Index: FAISS `IndexFlatIP` (exact cosine similarity) — NOT YET IMPLEMENTED
+  (17 dims: anomaly level/trend/variability/peak, hot-day counts, raw T_max
+  level/trend, humidity level/trend, wind, pressure level/trend, radiation,
+  season) — **IMPLEMENTED**, `retrieval/features.py`
+- Index: FAISS `IndexFlatIP` (exact cosine similarity) — **IMPLEMENTED**,
+  `retrieval/build_index.py`, 17,025 windows indexed
 - Query-time eligibility filter (split rule + no-future-data + no-same-episode)
-  — NOT YET IMPLEMENTED (explicitly deferred by P1 to P3)
-- K=5 core, swept over {1,3,5,10,20} — NOT YET IMPLEMENTED
+  — **IMPLEMENTED**, `retrieval/query.py`'s `eligibility_mask`
+- Deduplication (max-2-per-episode + min-10-days-apart) — **IMPLEMENTED**,
+  the temporal-spacing rule was added beyond the roadmap's literal spec
+  after manual inspection found a gap (see `decisions.md`)
+- K=5 default in `query_analogues`; the {1,3,5,10,20} sweep is Step 7, not
+  yet run — that's an ablation on top of Step 5's integrated model, not
+  something Step 4's retrieval interface itself needs to pre-decide
 
 ## Forecasting components
 Input: 14-day window, 13 features (see `data.md`). Output: 5-day T_max,
@@ -85,9 +92,12 @@ not yet started), Google Colab (heavier compute if needed).
   beats persistence on all three severity strata (see `ml_notes.md`). May
   reopen later to add more baseline model comparisons (e.g. gradient-boosted
   trees). The retrieval-augmented half of P2 (attention-fusion model) is
-  still not started — blocked on P3.
-- P3 (retrieval system): **NOT STARTED** (deliberately deferred per user
-  instruction).
+  still not started — ready to begin now that P3 exists.
+- P3 (retrieval system): **COMPLETE.** `retrieval/query.py`'s
+  `query_analogues(query_date, k)` is the interface Step 5 will call.
+  9/9 tests passing (dataset-level + retrieval-eligibility). Two findings
+  flagged during validation, not blocking: a dedup gap (found + fixed) and
+  "heatwave" episodes skewing winter rather than summer — see `decisions.md`.
 - P4 (dashboard/integration): **NOT STARTED**.
 
 ## Major constraints

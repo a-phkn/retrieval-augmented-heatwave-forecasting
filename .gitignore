@@ -42,5 +42,21 @@ build/
 dist/
 *.egg-info/
 
-# Models
+# Reproducible model checkpoints (deterministic given fixed seeds)
 models/baseline_lstm/*/checkpoint.pt
+models/retrieval_augmented/*/checkpoint.pt
+models/hw_sweep/
+
+# Reproducible retrieval artifacts (regenerate via build_index.py / precompute_analogues.py)
+retrieval/faiss_index.bin
+retrieval/candidates.parquet
+retrieval/analogues_top20.parquet
+
+# Local Colab transport artifacts, never part of the repo
+colab_bundle/
+colab_training_bundle.zip
+retrieval_augmented_results.zip
+context.zip
+
+# Unexplained-origin folder, not produced by any code in this project
+runs/

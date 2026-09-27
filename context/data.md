@@ -74,3 +74,27 @@ years_since_1980, clim_mean_t_max, clim_std_t_max, t_max_anomaly`
 
 Target: next 5 days of `t_max` (raw °C for reporting; z-normalized for the
 training loss).
+
+## `retrieval/candidates.parquet`
+One row per window in `forecast_windows.parquet` (all splits, 17,025 rows) —
+the retrieval system's candidate pool metadata.
+- **Columns:** `query_date`, `split`, `target_episode_id`, `target_is_heatwave`,
+  `candidate_latest_start` (carried over from `forecast_windows.parquet`),
+  `faiss_row` (row index into `faiss_index.bin`, stable join key),
+  `feat_<name>` × 17 (the L2-normalized feature vector actually indexed —
+  stored here too for inspection/debugging, not just in the FAISS binary).
+- **Important finding:** only 590/17,025 rows (3.5%) have a non-null
+  `target_episode_id` — most windows aren't part of any formally-qualifying
+  episode. This is why retrieval's dedup needed a second rule beyond the
+  roadmap's literal episode-cap spec — see `decisions.md`.
+
+## `retrieval/faiss_index.bin`
+FAISS `IndexFlatIP`, 17,025 × 17-dim, exact (non-approximate) search.
+Vectors are L2-normalized so inner product = cosine similarity. Built by
+`retrieval/build_index.py`. Row order matches `candidates.parquet`'s
+`faiss_row` column.
+
+## `retrieval/feature_normalization_stats.json`
+z-score mean/std for the 17 retrieval features, fit on TRAIN-split windows
+only (same methodology as `evaluation/normalization_stats.json` for the
+LSTM's own features — separate file because it's a different feature space).

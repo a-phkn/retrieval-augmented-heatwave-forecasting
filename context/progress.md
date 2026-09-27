@@ -3,54 +3,47 @@
 Short, frequently-updated. See `build_plan.md` for full milestone detail.
 
 ## Done
-- P1 data pipeline fully verified (not just read — executed): weather_daily
-  parquet, event catalogue, chronological split, forecast windows, leakage
-  tests (3/3 passing).
-- Investigated and resolved (no code change) the 2019-zero-episodes question
-  — see `decisions.md`.
-- `context/` folder created and populated from verified facts.
-- **P2 / Step 3 (baseline forecaster) CLOSED for now:**
-  - `training/data.py`, `training/baselines.py`, `models/lstm.py`,
-    `training/train_lstm.py` — canonical weighted-MSE LSTM, 5 seeds, all
-    converged, checkpoints saved.
-  - `training/evaluate_lstm.py` + `training/visualize_results.py` —
-    narrowed to exactly 4 metrics after the "which metric matters"
-    decision: global MAE/RMSE, stratified RMSE (headline), detection
-    precision/recall/F2, bias diagnostic. Both files handed to the user
-    directly.
-  - `training/data.py`'s `build_split_target_stratum` — normal/unusual/
-    extreme stratification, per the roadmap's own Section 4 definition.
-  - **Headline result:** canonical LSTM beats persistence on ALL THREE
-    strata, including extreme (RMSE 1.599 vs. persistence's 2.179, ~27%
-    better). Climatology collapses on extreme (RMSE 5.031) despite a
-    competitive global MAE — good illustrative panel.
-  - **Explored and explicitly rejected:** a dual-head (focal-loss) model
-    that hit a 75-80% recall target but was *worse* than canonical on
-    extreme-stratum RMSE (bootstrap CI excludes zero) — canonical remains
-    the baseline. Full reasoning in `decisions.md`/`ml_notes.md`.
-  - `requirements.txt` added (pandas, pyarrow, pytest, torch).
-- User may add further baseline model comparisons (e.g. gradient-boosted
-  trees, plain feedforward net) in a later session — P2 is closed but not
-  permanently sealed.
+- P1 data pipeline fully verified.
+- P2 (baseline forecaster) closed — canonical weighted-MSE LSTM beats
+  persistence on all 3 severity strata; stratified RMSE established as the
+  headline metric.
+- **P3 (retrieval system) COMPLETE:**
+  - `retrieval/features.py` — 17-dim statistical feature vector per window
+  - `retrieval/build_index.py` — FAISS index over all 17,025 windows
+  - `retrieval/query.py` — `query_analogues(query_date, k)`, 3-rule
+    eligibility filter + 2-rule dedup (episode cap + temporal spacing)
+  - `tests/test_retrieval_eligibility.py` — 6/6 passing
+  - Manual inspection: plausible, season-matched, diverse analogues for
+    real heatwave query dates
+  - Two findings flagged (not blocking): dedup gap found+fixed;
+    "heatwave" episodes skew winter, not summer — see `decisions.md`
 
 ## Next
-- P3 (retrieval system) — ready to start whenever the user is.
-- When P3 starts: Step 4 (retrieval system) is independent of Step 3's
-  output beyond needing the same `forecast_windows.parquet`/
-  `all_daily.parquet` P1 artifacts already verified. Step 5 (joint
-  integration) will need the LSTM baseline's encoder design from
-  `models/lstm.py` as the starting point for the attention-fusion
-  architecture, and MUST use the same weighted-loss objective
-  (hot_weight=10) as the canonical baseline to keep the "same training
-  procedure, retrieval on/off only" comparison valid.
+- P3 is complete — Step 5 (joint integration: attention-fusion model using
+  `retrieval/query.py`'s `query_analogues` interface) is next.
+- Step 5 MUST use the same weighted-loss objective (hot_weight=10) as the
+  canonical baseline to keep the "same training procedure, retrieval
+  on/off only" comparison valid.
 - The bar RAG needs to clear: extreme-stratum RMSE of 1.599 (canonical
   LSTM, val split) — not a recall percentage.
+- Two things flagged during P3 that don't block Step 5 but are worth a
+  decision at some point: (1) `min_days_apart=10` untuned, (2) "heatwave"
+  episodes skew winter/early-spring rather than summer — see
+  `decisions.md`.
 
 ## Blocked / waiting on user
-- Nothing currently blocking Step 3.
-- Step 5 (joint integration) blocked on P3, which is deferred by choice, not
-  by a technical blocker.
+- Nothing currently blocking. Step 5 is ready to start.
 
 ## Last verified state
-- Repo commit at session start: `c5d4cc0423260509ef33c31107c3784fc356aa55`.
-- `pytest tests/test_no_leakage.py` → 3 passed, 0 failed (run this session).
+- `pytest tests/` → 9 passed, 0 failed (3 in `test_no_leakage.py`, 6 in
+  `test_retrieval_eligibility.py`), run this session.
+- `retrieval/candidates.parquet` + `retrieval/faiss_index.bin` built over
+  17,025 windows, verified via manual inspection + automated tests.
+
+## 2026-09-22 update
+- Canonical LSTM changed again: hot_weight 15 -> 20, after user correctly
+  flagged the 15->20 marginal trade-off was better than 10->15 (see
+  decisions.md for the full marginal analysis). Current canonical numbers:
+  extreme RMSE=1.285, MAE=1.775, recall=0.339.
+- Bootstrap CI on the 15-vs-20 extreme-RMSE gap not yet run -- offered, not
+  requested. Worth doing before this number is treated as final.

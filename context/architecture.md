@@ -115,3 +115,41 @@ that carry state between runs, saved to `models/` and `evaluation/`.
   generated way or as a separate `test_retrieval_eligibility.py`).
 - No `retrieval/`, `models/`, `training/`, `evaluation/` dirs exist yet in git
   history before this session — anything under them is new, unreviewed code.
+
+## P3 additions: retrieval/
+
+```
+retrieval/
+├── __init__.py
+├── features.py                  # 17-dim statistical feature vector per 14-day window
+├── build_index.py                # computes features for all windows, builds FAISS index
+├── candidates.parquet             # one row per window (all splits), metadata + normalized feature vector
+├── faiss_index.bin                # FAISS IndexFlatIP, 17,025 vectors, cosine similarity via L2-normalized inner product
+├── feature_normalization_stats.json  # z-score stats, fit on TRAIN windows only
+└── query.py                       # query_analogues(query_date, k) -- the retrieval interface Step 5 will use
+```
+
+`tests/test_retrieval_eligibility.py` (separate from the generated
+`tests/test_no_leakage.py`) validates `query.py`'s actual behavior:
+no-future-data, split-eligibility, no-same-episode, episode-cap dedup,
+temporal-spacing dedup, no-self-retrieval.
+
+## Key interface for Step 5
+
+`retrieval.query.query_analogues(query_date, k=5, max_per_episode=2)` →
+DataFrame with columns `query_date, split, target_episode_id,
+target_is_heatwave, similarity`, sorted by similarity descending, already
+eligibility-filtered and deduplicated. Step 5's attention-fusion model
+should call this per training/eval query and join the returned
+`query_date`s back against `datasets/all_daily.parquet` /
+`datasets/forecast_windows.parquet` to get the actual feature/target values
+of each analogue -- `query_analogues` itself only returns metadata + rank,
+not the analogue's raw data (keeps the retrieval module decoupled from
+training's tensor-building logic).
+
+Run `python -m retrieval.build_index` once before ever calling
+`query_analogues` -- it needs `retrieval/faiss_index.bin` and
+`retrieval/candidates.parquet` to exist. Re-run it only if
+`datasets/forecast_windows.parquet` or `datasets/all_daily.parquet` change
+(e.g. after a Step 8 conditional data fix) -- otherwise the index is stale
+relative to the data.
