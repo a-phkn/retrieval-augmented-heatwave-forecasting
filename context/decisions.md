@@ -414,14 +414,18 @@ known high-side approximation that ignores actual radiation and wind. Consequenc
 WBGT (+0.28 to +0.53 °C/decade) and Heat Index trend upwards. So the non-stationarity
 hypothesis is framed on humid heat, with Tmax as the negative control.
 
-**Seeds (recommendation, pending team agreement):** with 5 seeds, training randomness alone
+**Seeds — DECIDED 2026-10-04 (team agreed):** with 5 seeds, training randomness alone
 sets an extreme-stratum detection floor of ~0.26 °C (`evaluation_v2/mde.md`). Use 10 seeds
-for every decision run (LSTM: ~2 min per 5 seeds), or evaluate the seed-ensemble mean as
-the model.
+for every decision run (LSTM: ~2 min per 5 seeds). The 5/10-seed ensemble-mean forecast is
+reported as an extra, not as the primary model.
 
-**Damped persistence as the reference floor (proposal, pending team agreement):**
+**Damped persistence as the reference floor — DECIDED 2026-10-04 (team agreed):**
 damped anomaly persistence (5 train-fitted coefficients) beats both v1 neural models
-overall on val. Proposed rule: every v2 model must be no worse than damped persistence on
+overall on val. Rule: every v2 model must be not significantly worse than damped persistence on
 all-days RMSE (paired cluster test), in addition to the extreme-stratum headline and the
 forecast-conditioned stratum; report RMSE by lead day. A2r (anomaly target) becomes a
 required control, not an option.
+
+Practical consequences of the two decisions: every decision-feeding run uses seeds 0-9;
+every results table includes damped persistence and an RMSE-by-lead breakdown; a model
+that wins on extreme days but fails the floor is reported as a trade-off, not a win.
