@@ -39,7 +39,7 @@ Short, frequently-updated. See `build_plan.md` for full milestone detail.
    changed).
 
 ## Last verified state (2026-10-04)
-- `pytest` → 104 passed (leakage 3, retrieval eligibility 6, manifest 12, stats 46, predict_v1 8, hourly features 16, downloader v2 13).
+- `pytest` → 145 passed (leakage 3, retrieval eligibility 6, manifest 12, stats 46, predict_v1 8, hourly features 16, downloader v2 13, labels v2 13, folds 19, trainer 9).
 - `retrieval/candidates.parquet` + `retrieval/faiss_index.bin` rebuilt in the
   new venv; `feature_normalization_stats.json` reproduced byte-identically.
 - v1 frozen: `data/MANIFEST.json` (30 files incl. A1 checkpoints + raw-data fingerprint), window index
@@ -49,6 +49,31 @@ Short, frequently-updated. See `build_plan.md` for full milestone detail.
 - `evaluation/stats.py`: paired cluster-jackknife t-test (primary) + Diebold-Mariano
   (secondary), calibrated on simulated overlapping-window data (3.5-6.4% false
   positives at nominal 5%). Replaces the window-level bootstrap.
+
+## Week 2 status (2026-10-04): v2 data, labels, folds and trainer built
+- `datasets_v2/` (daily + per-cell; no climatology/labels stored, as they are fold-specific).
+- `pipeline/labels_v2.py`, with an acceptance test on pre-2019 events only: 1998, 2002,
+  2010 and 2015 (to be confirmed against IMD records).
+- `pipeline/climatology.py` reproduces v1 climatology exactly; the shared episode code
+  reproduces v1's 102-episode catalogue exactly.
+- `training/folds.py` builds 4 rolling folds. On the primary fold with v1 settings it
+  reproduces v1's training arrays bit-for-bit.
+- `training/train_unified.py` with `configs/` is in place. Configured as A1, it reproduces
+  the frozen A1 weights bit-for-bit (5/5 seeds, 8 threads; a test checks seed 0 exactly).
+- Review fixes (critical reviewer, 2026-10-04):
+  - **v2 runs early-stop on the last 2 training years** (`early_stop: inner_2y`), not on
+    the validation block they are scored on. v1/A1_repro keep `val_block` only to
+    reproduce v1.
+  - Registry rows carry skill vs climatology and persistence on the same target. Raw RMSE
+    of Tmax and WBGT runs is not comparable.
+  - Threads are pinned in configs (8). Rows record the code hash and a git-dirty flag.
+  - No test reads 2019+ rows.
+  - A full perturbation-leakage test covers all folds.
+- Sanity run (1 seed, f4, not a result): A1′ RMSE 2.18 (skill vs climatology +0.07); A2r
+  WBGT RMSE 1.52 (+0.26).
+- The v2 download is running on the user's own terminal (not needed until Week 3–4).
+- Next: run A1′, A2, A2r (10 seeds × 4 folds), compare against damped persistence, then the
+  hot_weight re-sweep and the WBGT percentile label.
 
 ## Week 1 results (2026-10-04): what the premise checks found
 Reports: `evaluation_v2/g0_val_comparison.md`, `premise_report.md`, `mde.md`.

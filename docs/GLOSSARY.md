@@ -13,7 +13,7 @@ attributed to that one change.
 | **v1 / v2** | v1 = the project as originally built (Tmax target, original heatwave labels, original data); frozen and tagged `v1-frozen` / `v1-frozen-ra`. v2 = the new version (WBGT target, new labels, extra variables). |
 | **A0** | Reference forecasts with no learning or minimal fitting: persistence, climatology, damped persistence. |
 | **A1** | The original baseline LSTM (predicts Tmax, weighted loss with hot_weight = 20). Frozen in `models/frozen/lstm_tmax_v1/`. |
-| **A1′** | The same LSTM recipe retrained with the **new heatwave labels** (only the labels change). |
+| **A1′** | The same LSTM recipe retrained with the **new heatwave labels** on the rolling folds (also uses the new early-stopping rule, so it differs from A1 in labels, early stopping and 2 fewer fitting years). |
 | **A2** | The same LSTM recipe retrained to predict **WBGT** instead of Tmax. The control for all v2 models. |
 | **A2r** | A2 predicting the **anomaly** (departure from the seasonal normal) instead of the raw value. |
 | **RA-v1 (R0)** | The original retrieval-augmented LSTM (LSTM + attention over 5 retrieved past analogues). Frozen in `models/frozen/ra_lstm_v1/`. |

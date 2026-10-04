@@ -115,3 +115,21 @@ Rules for this list:
 - Wet-bulb temperature ≠ WBGT ≠ Heat Index. Record exactly which quantity each threshold uses.
 - If a document is only an image/scan and you can't read the text reliably, mark the quote as `"UNVERIFIED – scanned document"`.
 - Don't include any action you can't trace to a document, even if it seems sensible.
+
+---
+
+## Part C — Verify historical Delhi heatwave dates (used as label acceptance tests)
+
+The forecasting model's heatwave labels are checked against these Delhi / north-India
+heatwaves. They were chosen from memory and need confirming against IMD records (e.g. IMD
+annual climate summaries, heat-wave reports, press releases) or peer-reviewed papers:
+
+| Period to verify | What to confirm |
+|---|---|
+| ~24 May – 1 Jun 1998 | Heatwave over Delhi / north India; dates and peak Tmax at Safdarjung |
+| ~10 – 20 May 2002 | Heatwave over Delhi; dates and peak Tmax |
+| ~10 – 20 Apr 2010 | Exceptionally hot April in Delhi; IMD heat-wave days |
+| ~22 – 26 May 2015 | Heatwave over Delhi (the 2015 Indian heatwave); Delhi dates and peak Tmax |
+
+For each: the official source (title, URL, page), IMD-declared heat-wave dates for Delhi if
+given, and peak Tmax. If a period is NOT supported by an official source, say so.

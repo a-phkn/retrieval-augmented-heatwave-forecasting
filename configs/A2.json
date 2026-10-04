@@ -1,0 +1,29 @@
+{
+  "run_id": "A2",
+  "parent": "A1prime",
+  "description": "A2 = A1' predicting the BoM WBGT approximation instead of Tmax (target and its own history channels swap; labels stay Tmax-based v2).",
+  "target": "wbgt_bom_max",
+  "labels": "v2",
+  "anomaly_target": false,
+  "hot_weight": 20,
+  "early_stop": "inner_2y",
+  "seeds": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9
+  ],
+  "folds": [
+    "f1",
+    "f2",
+    "f3",
+    "f4"
+  ],
+  "threads": 8
+}

@@ -24,10 +24,10 @@ pip install torch --index-url https://download.pytorch.org/whl/cpu
 ```bash
 .venv\Scripts\python.exe -m pytest -q
 ```
-Expects 104 passed (as of 2026-10-04): 3 `test_no_leakage.py`, 6
+Expects 145 passed (as of 2026-10-04): 3 `test_no_leakage.py`, 6
 `test_retrieval_eligibility.py` (needs `retrieval/faiss_index.bin`; build it
 first with `python -m retrieval.build_index`, see Step 4), 12 `test_manifest.py`
-(frozen v1 files unchanged), 46 `test_stats.py`, 8 `test_predict_v1.py`, 16 `test_hourly_features.py` and 13 `test_download_era5_v2.py`. To verify the freeze alone:
+(frozen v1 files unchanged), 46 `test_stats.py`, 8 `test_predict_v1.py`, 16 `test_hourly_features.py` , 13 `test_download_era5_v2.py`, 13 `test_labels_v2.py`, 19 `test_folds.py` and 9 `test_train_unified.py`. To verify the freeze alone:
 `.venv\Scripts\python.exe -m scripts.make_manifest --check`.
 
 ## Step 1-2 — data pipeline (P1, already run, re-run only if raw data changes)
@@ -104,3 +104,15 @@ any file that reads (rather than produces) these artifacts.
 .venv\Scripts\python.exe -m pipeline.download_era5_v2 --dry-run   # then without --dry-run to download (resumable)
 ```
 Run the baselines before `compare_v1` so the G0 table includes them.
+
+## Week 2 (plan v5) — v2 dataset, rolling folds, unified LSTM trainer
+
+```bash
+.venv\Scripts\python.exe -m pipeline.build_datasets_v2                        # -> datasets_v2/ (needs data/raw/era5_monthly)
+.venv\Scripts\python.exe -m training.train_unified --config configs\A1prime.json   # 10 seeds x 4 folds
+.venv\Scripts\python.exe -m training.train_unified --config configs\A2.json
+.venv\Scripts\python.exe -m training.train_unified --config configs\A2r.json
+```
+Options: `--folds f4 --seeds 0 1` for a quick subset; `--threads N` (default: half the cores).
+Outputs: `predictions_v2/<run_id>/<fold>.parquet`, a row per fold in `registry/runs.csv`,
+gitignored checkpoints in `models/v2/`. `configs/A1_repro.json` reproduces frozen A1 exactly.

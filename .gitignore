@@ -60,3 +60,5 @@ context.zip
 
 # Unexplained-origin folder, not produced by any code in this project
 runs/
+# v2 per-fold training checkpoints (regenerable via training/train_unified.py)
+models/v2/

@@ -1,0 +1,21 @@
+{
+  "run_id": "A1_repro",
+  "parent": "A1",
+  "description": "Reproduction check: the unified trainer configured as v1 A1 (Tmax target, v1 labels, primary fold) must reproduce the frozen A1 predictions.",
+  "target": "t_max",
+  "labels": "v1",
+  "anomaly_target": false,
+  "hot_weight": 20,
+  "early_stop": "val_block",
+  "seeds": [
+    0,
+    1,
+    2,
+    3,
+    4
+  ],
+  "folds": [
+    "f4"
+  ],
+  "threads": 8
+}

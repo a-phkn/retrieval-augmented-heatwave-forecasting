@@ -15,6 +15,7 @@ already been made.
 - `ml_notes.md` — accumulated ML knowledge: models tried, hyperparameters, seeds, actual results.
 - `decisions.md` — architectural/ML decision log, including flagged issues and how they were resolved.
 - `environment.md` — how to reproduce the dev environment locally and on Colab.
+- **Start here:** `../docs/PROJECT_GUIDE.md` (plain-language guide to the whole project, kept current).
 - Also see `../docs/GLOSSARY.md` (every short form: A1, A2, G0, MDE, AnEn, ...),
   `../docs/PLAN_REVIEW_v5.md` (current plan) and `../docs/REPRODUCIBILITY_LOG.md`.
 

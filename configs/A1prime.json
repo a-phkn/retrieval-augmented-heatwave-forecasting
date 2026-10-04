@@ -1,0 +1,29 @@
+{
+  "run_id": "A1prime",
+  "parent": "A1",
+  "description": "A1' = Tmax target with labels v2 (season-gated Tmax rule), the parent of the A1'->A2->A2r chain. Versus v1 A1 it changes THREE things: labels, early stopping (inner_2y instead of val_block) and 2 fewer fitting years; a clean A1 vs A1' contrast would need an A1_inner config (v1 labels, inner_2y, 4 folds).",
+  "target": "t_max",
+  "labels": "v2",
+  "anomaly_target": false,
+  "hot_weight": 20,
+  "early_stop": "inner_2y",
+  "seeds": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9
+  ],
+  "folds": [
+    "f1",
+    "f2",
+    "f3",
+    "f4"
+  ],
+  "threads": 8
+}
