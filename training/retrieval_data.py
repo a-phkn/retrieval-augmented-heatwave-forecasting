@@ -49,10 +49,11 @@ def _load_daily_arrays():
 def _window_for(query_date: pd.Timestamp, feature_array, target_array, date_to_idx):
     """Returns (X: (14,13), y: (5,)) for the window whose OWN query_date is
     `query_date` -- works identically for a real query or an analogue,
-    since both are just rows of forecast_windows.parquet with the same
-    query_date -> [query_date-14, query_date-1] input / [query_date,
-    query_date+4] target relationship (verified against
-    datasets/forecast_windows.parquet directly)."""
+    since both are just rows of the frozen window index
+    (splits/window_index_v1.parquet, identical to datasets/forecast_windows.parquet)
+    with the same query_date -> [query_date-14, query_date-1] input /
+    [query_date, query_date+4] target relationship (verified against the
+    window file directly)."""
     idx = date_to_idx[query_date]
     X = feature_array[idx - INPUT_DAYS: idx]
     y = target_array[idx: idx + FORECAST_DAYS]

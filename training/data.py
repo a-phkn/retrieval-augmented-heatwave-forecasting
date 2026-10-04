@@ -1,6 +1,7 @@
 """
 Builds (X, y) arrays for the baseline/retrieval-augmented forecasters from
-the already-prepared datasets/forecast_windows.parquet + datasets/all_daily.parquet.
+the frozen window index splits/window_index_v1.parquet (a byte-identical copy
+of datasets/forecast_windows.parquet) + datasets/all_daily.parquet.
 
 Do NOT re-derive windowing or split logic here — this file only reshapes
 what P1's pipeline already produced. See context/data.md and
