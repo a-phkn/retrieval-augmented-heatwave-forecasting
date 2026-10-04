@@ -82,18 +82,44 @@ FROZEN_FILES = [
     "archive_v1/evaluation/retrieval_augmented/val_metrics.json",
     "archive_v1/evaluation/sanity_baselines.json",
     "archive_v1/predictions/retrieval_augmented/val_predictions.parquet",
+    # run A1: canonical weighted-MSE LSTM (hot_weight=20), retrained 2026-10-04 with the
+    # unchanged training/train_lstm.py; reproduces the archived evaluation to 1e-7
+    # (docs/REPRODUCIBILITY_LOG.md)
+    "models/frozen/lstm_tmax_v1/seed_0/checkpoint.pt",
+    "models/frozen/lstm_tmax_v1/seed_1/checkpoint.pt",
+    "models/frozen/lstm_tmax_v1/seed_2/checkpoint.pt",
+    "models/frozen/lstm_tmax_v1/seed_3/checkpoint.pt",
+    "models/frozen/lstm_tmax_v1/seed_4/checkpoint.pt",
 ]
+
+# Raw inputs: gitignored (275 MB), so fingerprinted as a whole folder and only
+# checked where present (skipped on Colab bundles / fresh clones).
+RAW_DIR = "data/raw/era5_monthly"
 
 # v1 artefacts that matter but are NOT fingerprinted, and why.
 NOT_FROZEN = {
-    "models/baseline_lstm/seed_*/checkpoint.pt": "gitignored and missing locally; requested from "
-    "teammates (context/progress.md). Added to the manifest once restored or retrained.",
-    "models/retrieval_augmented/seed_*/checkpoint.pt": "gitignored and missing locally; requested from teammates.",
+    "models/baseline_lstm/seed_*/checkpoint.pt": "gitignored working copy; the frozen A1 copy is "
+    "models/frozen/lstm_tmax_v1/ (fingerprinted above).",
+    "models/retrieval_augmented/seed_*/checkpoint.pt": "gitignored; original Colab checkpoints were not "
+    "recoverable. RA-v1 is to be retrained with per-seed predictions + analogue provenance (plan v5, Week 1).",
     "retrieval/faiss_index.bin, retrieval/candidates.parquet": "gitignored; regenerate with "
     "`python -m retrieval.build_index` (deterministic from the frozen datasets).",
     "retrieval/analogues_top20.parquet": "gitignored; regenerate with `python -m retrieval.precompute_analogues`.",
-    "data/raw/era5_monthly/": "gitignored raw API downloads; requested from teammates.",
+    "data/raw/era5_monthly/": "gitignored (275 MB); folder fingerprint in raw_inputs, verified when present.",
 }
+
+
+def raw_folder_fingerprint(rel_dir: str = RAW_DIR) -> dict:
+    """Aggregate SHA-256 over every file in the raw folder (sorted relative path +
+    file hash), plus the file count. Raw API files are not in git, so bytes are
+    hashed as-is."""
+    root = REPO_ROOT / rel_dir
+    files = sorted(p for p in root.rglob("*") if p.is_file())
+    h = hashlib.sha256()
+    for p in files:
+        h.update(p.relative_to(root).as_posix().encode("utf-8"))
+        h.update(hashlib.sha256(p.read_bytes()).hexdigest().encode("ascii"))
+    return {"path": rel_dir, "n_files": len(files), "aggregate_sha256": h.hexdigest()}
 
 TEXT_SUFFIXES = {".json", ".yaml", ".yml", ".csv", ".md", ".txt"}
 DATE_COLUMNS = ("date", "query_date", "episode_start")
@@ -202,6 +228,7 @@ def build_manifest() -> dict:
         "git": git_provenance(),
         "hashing_environment": hashing_environment(),
         "files": [describe(p) for p in FROZEN_FILES],
+        "raw_inputs": raw_folder_fingerprint() if (REPO_ROOT / RAW_DIR).exists() else None,
         "not_frozen": NOT_FROZEN,
     }
 
@@ -226,6 +253,13 @@ def verify_manifest(manifest: dict) -> tuple[list[str], list[str]]:
             notes.append(f"BYTES CHANGED    {entry['path']} (content identical; re-written by a different library version)")
         else:
             problems.append(f"CONTENT CHANGED  {entry['path']}")
+
+    raw = manifest.get("raw_inputs")
+    if raw:
+        if not (REPO_ROOT / raw["path"]).exists():
+            notes.append(f"RAW NOT PRESENT  {raw['path']} (skipped; gitignored, expected on Colab/fresh clones)")
+        elif raw_folder_fingerprint(raw["path"]) != raw:
+            problems.append(f"RAW CHANGED      {raw['path']} (files added, removed or modified)")
     return problems, notes
 
 

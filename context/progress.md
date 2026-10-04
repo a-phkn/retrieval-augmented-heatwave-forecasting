@@ -26,22 +26,21 @@ Short, frequently-updated. See `build_plan.md` for full milestone detail.
   `archive_v1/`; frozen window index `splits/window_index_v1.parquet`; data
   checksum manifest; `evaluation/stats.py` (cluster-jackknife t-test + Diebold-Mariano).
 
-## Blocked / waiting on teammates (asked 2026-10-04)
-These gitignored v1 artifacts are missing locally. Restoring them beats retraining
-(retraining in the new venv won't reproduce the metrics bit-for-bit):
-1. `data/raw/era5_monthly/`: raw hourly JSON, 9 cells. Avoids a 2–3 day re-download.
-2. `models/baseline_lstm/seed_0..4/checkpoint.pt`: canonical hw=20 LSTM (run A1).
-3. `models/retrieval_augmented/seed_0..4/checkpoint.pt`: RA-v1 from Colab.
-
-If restored: run `training.evaluate_lstm` and compare to `archive_v1/evaluation/`.
-If they match (~4 decimals), freeze to `models/frozen/lstm_tmax_v1/`. If unavailable,
-retrain A1 and record the differences.
+## Missing v1 artefacts: resolved 2026-10-04 (details in `docs/REPRODUCIBILITY_LOG.md`)
+1. `data/raw/era5_monthly/`: RESTORED (original download, 9 cells × 561 months).
+   Re-processing reproduces `weather_daily.parquet` exactly.
+2. `models/baseline_lstm/` (A1): no teammate had it, so it was RETRAINED locally with the
+   unchanged script. It reproduces the archived evaluation to 1e-7. Frozen at
+   `models/frozen/lstm_tmax_v1/` (committed).
+3. `models/retrieval_augmented/` (RA-v1): NOT recoverable. Retrain it with per-seed
+   predictions + analogue provenance (plan v5 Week 1; needs a change to
+   `train_retrieval_lstm.py`, which awaits user approval).
 
 ## Last verified state (2026-10-04)
-- `pytest` → 66 passed (leakage 3, retrieval eligibility 6, manifest 11, stats 46).
+- `pytest` → 67 passed (leakage 3, retrieval eligibility 6, manifest 12, stats 46).
 - `retrieval/candidates.parquet` + `retrieval/faiss_index.bin` rebuilt in the
   new venv; `feature_normalization_stats.json` reproduced byte-identically.
-- v1 frozen: `data/MANIFEST.json` (25 files), window index
+- v1 frozen: `data/MANIFEST.json` (30 files incl. A1 checkpoints + raw-data fingerprint), window index
   `splits/window_index_v1.parquet` (all training code reads it via
   `training.data._load_windows`), `prepare_datasets.py` refuses to overwrite
   frozen data without `--force`.

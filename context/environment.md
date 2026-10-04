@@ -13,7 +13,7 @@ py -3.13 -m venv .venv
 .venv\Scripts\python.exe -m pip install --upgrade pip
 .venv\Scripts\python.exe -m pip install -r requirements.txt
 .venv\Scripts\python.exe -m retrieval.build_index   # gitignored index needed by 6 tests
-.venv\Scripts\python.exe -m pytest -q               # expect 66 passed (see RUN_COMMANDS.md)
+.venv\Scripts\python.exe -m pytest -q               # expect 67 passed (see RUN_COMMANDS.md)
 ```
 Call the venv interpreter directly (`.venv\Scripts\python.exe ...`) or activate it
 first (`.venv\Scripts\Activate.ps1`). Never run `pip install` without one of these.
@@ -44,12 +44,15 @@ bundle pattern in `Step5_Colab_Minimal.ipynb` and `pip install` only missing pac
 
 ## Data provenance
 Raw ERA5 is pulled via Open-Meteo by `download_era5.py`. Raw JSON (`data/raw/`) is
-gitignored and is **not currently present locally**; it must be re-downloaded (Week 1).
+gitignored (275 MB) and was restored locally on 2026-10-04 from the original download
+(verified: it reproduces `weather_daily.parquet` exactly; folder fingerprint in
+`data/MANIFEST.json`). `data/raw/legacy_full_range/` holds older single-request
+downloads for cells 1–6 and is not used by any code.
 The current downloader uses `date.today()`, so the end date drifts on re-download;
 the v2 downloader fixes `END_DATE = 2026-09-06` (see `docs/PLAN_REVIEW_v5.md`).
 
 ## Verified state (2026-10-04)
-- venv created; `pytest` → 66 passed (after freeze + stats work; 9 before).
+- venv created; `pytest` → 67 passed (after freeze + stats work; 9 before).
 - `retrieval.build_index` rebuilt the index; `feature_normalization_stats.json`
   reproduced byte-identically (no git diff).
 

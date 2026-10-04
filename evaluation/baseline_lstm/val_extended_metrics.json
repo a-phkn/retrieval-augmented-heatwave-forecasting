@@ -4,12 +4,12 @@
   "1_global_accuracy": {
     "lstm": {
       "mae": {
-        "mean": 1.7750434875488281,
-        "std": 0.06729684946185834
+        "mean": 1.775043535232544,
+        "std": 0.06729684655728543
       },
       "rmse": {
-        "mean": 2.401232671737671,
-        "std": 0.08093630667451719
+        "mean": 2.4012327194213867,
+        "std": 0.08093638104297372
       }
     },
     "persistence": {
@@ -24,18 +24,18 @@
   "2_stratified_rmse": {
     "lstm": {
       "normal": {
-        "rmse_mean": 2.523807334899902,
-        "rmse_std": 0.10124865264228566,
+        "rmse_mean": 2.5238073825836183,
+        "rmse_std": 0.10124868989794568,
         "n": 4575
       },
       "unusual": {
-        "rmse_mean": 1.68184814453125,
-        "rmse_std": 0.07260938436536117,
+        "rmse_mean": 1.6818480730056762,
+        "rmse_std": 0.07260936212961455,
         "n": 731
       },
       "extreme": {
-        "rmse_mean": 1.2853538990020752,
-        "rmse_std": 0.15799896757053045,
+        "rmse_mean": 1.2853538751602174,
+        "rmse_std": 0.15799886050439485,
         "n": 154
       }
     },
@@ -86,15 +86,15 @@
     "climatology": {
       "precision": null,
       "recall": 0.0,
-      "f2":null,
+      "f2": null,
       "n_actual_hot": 264,
       "n_total": 5460,
       "note": "Recall is mechanically 0: climatology always predicts its own mean, which can never exceed mean+1.5sigma by construction."
     }
   },
   "4_bias_diagnostic": {
-    "mean_bias_on_hot_days": -1.192683458328247,
-    "mean_bias_on_normal_days": 0.8837951421737671,
+    "mean_bias_on_hot_days": -1.1926833391189575,
+    "mean_bias_on_normal_days": 0.8837952017784119,
     "n_hot": 1320,
     "n_normal": 25980
   }

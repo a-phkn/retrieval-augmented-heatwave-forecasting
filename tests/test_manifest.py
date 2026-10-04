@@ -31,6 +31,23 @@ def test_manifest_matches_files():
     assert not problems, "Frozen v1 files changed:\n" + "\n".join(problems)
 
 
+def test_raw_fingerprint_detects_changes(tmp_path, monkeypatch):
+    import scripts.make_manifest as mm
+
+    raw = tmp_path / "raw" / "cell_1"
+    raw.mkdir(parents=True)
+    (raw / "1980-01.json").write_text('{"a": 1}')
+    monkeypatch.setattr(mm, "REPO_ROOT", tmp_path)
+    before = mm.raw_folder_fingerprint("raw")
+    assert before["n_files"] == 1
+    (raw / "1980-01.json").write_text('{"a": 2}')
+    assert mm.raw_folder_fingerprint("raw") != before
+    problems, _ = mm.verify_manifest({"files": [], "raw_inputs": before})
+    assert problems and problems[0].startswith("RAW CHANGED")
+    problems, notes = mm.verify_manifest({"files": [], "raw_inputs": {**before, "path": "missing"}})
+    assert not problems and notes[0].startswith("RAW NOT PRESENT")
+
+
 def test_manifest_covers_frozen_list():
     listed = {e["path"] for e in load_manifest()["files"]}
     assert listed == set(FROZEN_FILES)

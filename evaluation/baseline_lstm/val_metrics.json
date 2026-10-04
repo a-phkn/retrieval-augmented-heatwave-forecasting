@@ -1,52 +1,52 @@
 {
   "hot_weight": 20.0,
   "loss": "weighted_mse",
-  "val_mae_mean": 1.77492253780365,
-  "val_mae_std": 0.06742837540318851,
-  "val_rmse_mean": 2.400990295410156,
-  "val_rmse_std": 0.08117792927709686,
+  "val_mae_mean": 1.775043535232544,
+  "val_mae_std": 0.06729684655728543,
+  "val_rmse_mean": 2.4012327194213867,
+  "val_rmse_std": 0.08093638104297372,
   "n_seeds": 5,
-  "total_train_time_seconds": 222.56895565986633,
+  "total_train_time_seconds": 111.62102913856506,
   "per_seed": [
     {
       "seed": 0,
       "epochs_trained": 18,
-      "best_val_loss_weighted_norm": 0.18869097530841827,
-      "val_mae": 1.7325190305709839,
+      "best_val_loss_weighted_norm": 0.18869099020957947,
+      "val_mae": 1.7325191497802734,
       "val_rmse": 2.348281145095825,
-      "train_time_seconds": 46.774203300476074
+      "train_time_seconds": 28.4188494682312
     },
     {
       "seed": 1,
       "epochs_trained": 17,
-      "best_val_loss_weighted_norm": 0.1833297312259674,
-      "val_mae": 1.7014487981796265,
-      "val_rmse": 2.3197367191314697,
-      "train_time_seconds": 55.889787673950195
+      "best_val_loss_weighted_norm": 0.18295301496982574,
+      "val_mae": 1.7020536661148071,
+      "val_rmse": 2.320948600769043,
+      "train_time_seconds": 24.4820773601532
     },
     {
       "seed": 2,
       "epochs_trained": 13,
-      "best_val_loss_weighted_norm": 0.18204912543296814,
+      "best_val_loss_weighted_norm": 0.18204911053180695,
       "val_mae": 1.8899157047271729,
       "val_rmse": 2.5274627208709717,
-      "train_time_seconds": 42.832870960235596
+      "train_time_seconds": 19.304977655410767
     },
     {
       "seed": 3,
       "epochs_trained": 14,
-      "best_val_loss_weighted_norm": 0.18611814081668854,
+      "best_val_loss_weighted_norm": 0.18611815571784973,
       "val_mae": 1.809369444847107,
       "val_rmse": 2.466158390045166,
-      "train_time_seconds": 35.035656690597534
+      "train_time_seconds": 18.98938536643982
     },
     {
       "seed": 4,
       "epochs_trained": 15,
       "best_val_loss_weighted_norm": 0.17649927735328674,
       "val_mae": 1.7413597106933594,
-      "val_rmse": 2.3433125019073486,
-      "train_time_seconds": 41.84434390068054
+      "val_rmse": 2.3433127403259277,
+      "train_time_seconds": 20.36968731880188
     }
   ]
 }
