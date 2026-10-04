@@ -90,6 +90,14 @@ FROZEN_FILES = [
     "models/frozen/lstm_tmax_v1/seed_2/checkpoint.pt",
     "models/frozen/lstm_tmax_v1/seed_3/checkpoint.pt",
     "models/frozen/lstm_tmax_v1/seed_4/checkpoint.pt",
+    # run RA-v1 (R0): retrieval-augmented LSTM, retrained 2026-10-04 on local CPU with the
+    # unchanged training/train_retrieval_lstm.py (original Colab-GPU checkpoints lost);
+    # aggregates within one seed-SD of the archived run (docs/REPRODUCIBILITY_LOG.md)
+    "models/frozen/ra_lstm_v1/seed_0/checkpoint.pt",
+    "models/frozen/ra_lstm_v1/seed_1/checkpoint.pt",
+    "models/frozen/ra_lstm_v1/seed_2/checkpoint.pt",
+    "models/frozen/ra_lstm_v1/seed_3/checkpoint.pt",
+    "models/frozen/ra_lstm_v1/seed_4/checkpoint.pt",
 ]
 
 # Raw inputs: gitignored (275 MB), so fingerprinted as a whole folder and only
@@ -100,8 +108,10 @@ RAW_DIR = "data/raw/era5_monthly"
 NOT_FROZEN = {
     "models/baseline_lstm/seed_*/checkpoint.pt": "gitignored working copy; the frozen A1 copy is "
     "models/frozen/lstm_tmax_v1/ (fingerprinted above).",
-    "models/retrieval_augmented/seed_*/checkpoint.pt": "gitignored; original Colab checkpoints were not "
-    "recoverable. RA-v1 is to be retrained with per-seed predictions + analogue provenance (plan v5, Week 1).",
+    "models/retrieval_augmented/seed_*/checkpoint.pt": "gitignored working copy; the frozen RA-v1 copy is "
+    "models/frozen/ra_lstm_v1/ (fingerprinted above).",
+    "predictions_v1/, evaluation_v2/": "derived outputs; regenerate deterministically from the frozen "
+    "checkpoints with `python -m evaluation.predict_v1` then `python -m evaluation.compare_v1`.",
     "retrieval/faiss_index.bin, retrieval/candidates.parquet": "gitignored; regenerate with "
     "`python -m retrieval.build_index` (deterministic from the frozen datasets).",
     "retrieval/analogues_top20.parquet": "gitignored; regenerate with `python -m retrieval.precompute_analogues`.",

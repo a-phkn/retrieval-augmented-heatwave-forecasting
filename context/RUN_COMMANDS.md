@@ -24,10 +24,10 @@ pip install torch --index-url https://download.pytorch.org/whl/cpu
 ```bash
 .venv\Scripts\python.exe -m pytest -q
 ```
-Expects 67 passed (as of 2026-10-04): 3 `test_no_leakage.py`, 6
+Expects 75 passed (as of 2026-10-04): 3 `test_no_leakage.py`, 6
 `test_retrieval_eligibility.py` (needs `retrieval/faiss_index.bin`; build it
 first with `python -m retrieval.build_index`, see Step 4), 12 `test_manifest.py`
-(frozen v1 files unchanged) and 46 `test_stats.py`. To verify the freeze alone:
+(frozen v1 files unchanged), 46 `test_stats.py` and 8 `test_predict_v1.py`. To verify the freeze alone:
 `.venv\Scripts\python.exe -m scripts.make_manifest --check`.
 
 ## Step 1-2 — data pipeline (P1, already run, re-run only if raw data changes)
@@ -85,3 +85,13 @@ This doesn't retrain or rebuild the index — it just confirms the existing
 checkpoints, evaluation outputs, and retrieval index all still work
 together. Use this after pulling changes from a teammate, or after editing
 any file that reads (rather than produces) these artifacts.
+
+## Week 1 (plan v5) — predictions and the G0 comparison
+
+```bash
+.venv\Scripts\python.exe -m retrieval.precompute_analogues   # gitignored analogue table (~30 s)
+.venv\Scripts\python.exe -m evaluation.predict_v1            # per-seed val predictions -> predictions_v1/val/
+.venv\Scripts\python.exe -m evaluation.compare_v1            # G0 table -> evaluation_v2/g0_val_comparison.md
+.venv\Scripts\python.exe -m scripts.make_manifest --check    # frozen v1 files unchanged
+```
+`predict_v1` reads only the frozen checkpoints in `models/frozen/` and refuses the test split.

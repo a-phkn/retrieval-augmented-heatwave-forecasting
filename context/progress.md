@@ -32,12 +32,14 @@ Short, frequently-updated. See `build_plan.md` for full milestone detail.
 2. `models/baseline_lstm/` (A1): no teammate had it, so it was RETRAINED locally with the
    unchanged script. It reproduces the archived evaluation to 1e-7. Frozen at
    `models/frozen/lstm_tmax_v1/` (committed).
-3. `models/retrieval_augmented/` (RA-v1): NOT recoverable. Retrain it with per-seed
-   predictions + analogue provenance (plan v5 Week 1; needs a change to
-   `train_retrieval_lstm.py`, which awaits user approval).
+3. `models/retrieval_augmented/` (RA-v1): the originals weren't recoverable, so it was
+   RETRAINED locally on CPU with the unchanged script. Aggregates are within one seed-SD
+   of the archived Colab run. Frozen at `models/frozen/ra_lstm_v1/`. Per-seed predictions
+   + analogue provenance come from the new `evaluation/predict_v1.py` (no training code
+   changed).
 
 ## Last verified state (2026-10-04)
-- `pytest` → 67 passed (leakage 3, retrieval eligibility 6, manifest 12, stats 46).
+- `pytest` → 75 passed (leakage 3, retrieval eligibility 6, manifest 12, stats 46, predict_v1 8).
 - `retrieval/candidates.parquet` + `retrieval/faiss_index.bin` rebuilt in the
   new venv; `feature_normalization_stats.json` reproduced byte-identically.
 - v1 frozen: `data/MANIFEST.json` (30 files incl. A1 checkpoints + raw-data fingerprint), window index
@@ -47,6 +49,26 @@ Short, frequently-updated. See `build_plan.md` for full milestone detail.
 - `evaluation/stats.py`: paired cluster-jackknife t-test (primary) + Diebold-Mariano
   (secondary), calibrated on simulated overlapping-window data (3.5-6.4% false
   positives at nominal 5%). Replaces the window-level bootstrap.
+
+## G0 result (2026-10-04): `evaluation_v2/g0_val_comparison.md`
+- **Retrieval vs no retrieval (RA-v1 vs A1), val, 5 seeds each:**
+  - all days +0.018 °C [−0.11, +0.15], p=0.76;
+  - extreme days −0.085 °C [−0.58, +0.41], p=0.66, child better in 4/5 clusters.
+  - **Inconclusive.** This is the expected starting point (plan v5): don't tune RA-v1 further;
+    the retrieval ladder (R1+) starts from here.
+- **A1 vs climatology:** worse on normal days (+0.58 °C, 0/9 clusters), better on unusual
+  and extreme days, no difference overall (p=0.58). This motivates the anomaly-target
+  control A2r.
+- RA attention is nearly uniform (mean max weight ≈ 0.21): RA-v1 effectively averages
+  its 5 analogues' outcomes.
+
+## Known limitation found 2026-10-04 (RA-v1 model)
+- `models/retrieval_lstm.py`: for a query with ZERO eligible analogues, the model spreads
+  attention uniformly over zero-padded slots, i.e. fake normalised "0" outcomes. This
+  affects 163/13,131 train windows and no val windows.
+  - RA-v1 is kept as originally built (frozen reference).
+  - The fix (zero context vector for empty retrieval) goes into the new v2 retrieval
+    model, not into v1 code.
 
 ## Known limitation found 2026-10-04
 - `archive_v1/predictions/retrieval_augmented/val_predictions.parquet` holds ONLY

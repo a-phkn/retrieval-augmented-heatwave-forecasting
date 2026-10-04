@@ -13,7 +13,7 @@ py -3.13 -m venv .venv
 .venv\Scripts\python.exe -m pip install --upgrade pip
 .venv\Scripts\python.exe -m pip install -r requirements.txt
 .venv\Scripts\python.exe -m retrieval.build_index   # gitignored index needed by 6 tests
-.venv\Scripts\python.exe -m pytest -q               # expect 67 passed (see RUN_COMMANDS.md)
+.venv\Scripts\python.exe -m pytest -q               # expect 75 passed (see RUN_COMMANDS.md)
 ```
 Call the venv interpreter directly (`.venv\Scripts\python.exe ...`) or activate it
 first (`.venv\Scripts\Activate.ps1`). Never run `pip install` without one of these.
@@ -52,7 +52,7 @@ The current downloader uses `date.today()`, so the end date drifts on re-downloa
 the v2 downloader fixes `END_DATE = 2026-09-06` (see `docs/PLAN_REVIEW_v5.md`).
 
 ## Verified state (2026-10-04)
-- venv created; `pytest` → 67 passed (after freeze + stats work; 9 before).
+- venv created; `pytest` → 75 passed (after freeze + stats work; 9 before).
 - `retrieval.build_index` rebuilt the index; `feature_normalization_stats.json`
   reproduced byte-identically (no git diff).
 

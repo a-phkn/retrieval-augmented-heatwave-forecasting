@@ -49,7 +49,42 @@ torch 2.14.1 (CPU), numpy 2.5.3, pandas 3.0.6 (exact set in `requirements.lock.t
 - **Frozen as A1:** `models/frozen/lstm_tmax_v1/seed_0..4/checkpoint.pt` (1.1 MB,
   committed, fingerprinted in `data/MANIFEST.json`).
 
-### Still not reproduced
-- **RA-v1 (retrieval-augmented LSTM):** the original Colab checkpoints weren't recoverable,
-  and the archived `val_predictions.parquet` holds seed 4 only. To be retrained with
-  per-seed predictions and analogue provenance (plan v5, Week 1).
+### 3. Run RA-v1: retrieval-augmented LSTM (`training/train_retrieval_lstm.py`, unchanged)
+- **Why:** the original checkpoints, trained on a Colab GPU, weren't recoverable, and the
+  archived `val_predictions.parquet` holds seed 4 only.
+- **Steps:**
+  1. Rebuilt the gitignored retrieval artefacts with `python -m retrieval.build_index`
+     (`feature_normalization_stats.json` came out byte-identical) and
+     `python -m retrieval.precompute_analogues` (301,461 query–analogue pairs; its
+     built-in check against `retrieval.query` passed).
+  2. Ran `python -m training.train_retrieval_lstm` on the **local CPU** (8 threads):
+     5 seeds in 352 s.
+- **Not bit-identical, as expected:** GPU and CPU floating-point arithmetic differ, so early
+  stopping lands on different epochs (e.g. seed 0: 17 → 15 epochs). Every aggregate stayed
+  within one seed-SD:
+
+| Metric (val) | Archived (Colab GPU) | Retrained (CPU) |
+|---|---|---|
+| Global RMSE | 2.442 ± 0.067 | 2.420 ± 0.037 |
+| Global MAE | 1.830 ± 0.048 | 1.809 ± 0.030 |
+| Extreme RMSE | 1.231 ± 0.116 | 1.201 ± 0.095 |
+| Unusual RMSE | 1.677 ± 0.094 | 1.713 ± 0.084 |
+| Normal RMSE | 2.571 ± 0.086 | 2.543 ± 0.051 |
+| Recall / precision / F2 | 0.404 / 0.245 / 0.358 | 0.401 / 0.252 / 0.358 |
+
+- **Frozen as RA-v1:** `models/frozen/ra_lstm_v1/seed_0..4/checkpoint.pt` (1.3 MB,
+  committed, fingerprinted).
+- **Overwritten tracked files** (originals kept in `archive_v1/`):
+  `evaluation/retrieval_augmented/*.json` and
+  `predictions/retrieval_augmented/val_predictions.parquet`. The latter is again a single
+  seed (the script's last-seed limitation), so use `predictions_v1/val/ra_v1.parquet`
+  for all 5 seeds.
+
+### 4. Per-seed predictions (`evaluation/predict_v1.py`, new; no training code changed)
+- Generated from the frozen checkpoints into `predictions_v1/val/`.
+- They reproduce `evaluate_lstm` / `evaluate_retrieval_lstm` / the baselines to ≤1e-6:
+  - A1 RMSE 2.401233, normal/unusual/extreme 2.523807/1.681848/1.285354;
+  - RA 2.419582;
+  - persistence 2.61508, climatology 2.344342.
+- **Lead alignment:** lead 1 equals `forecast_start` and lead 5 equals `forecast_end` for
+  every val window.

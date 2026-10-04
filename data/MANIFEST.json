@@ -1,9 +1,9 @@
 {
   "description": "Fingerprints of the frozen v1 reference (plan v5). Text files hashed with CRLF->LF normalisation; parquet files also carry a content hash.",
-  "created_utc": "2026-10-04T14:41:31+00:00",
+  "created_utc": "2026-10-04T15:24:22+00:00",
   "git": {
     "freeze_tag": "v1-frozen",
-    "parent_commit": "5ddfe01f645b1c3c59162dbbd550a939033f8c5c",
+    "parent_commit": "3316b9d70db7c38dd77bd3bedbe839516f13f94e",
     "worktree_dirty": true
   },
   "hashing_environment": {
@@ -312,6 +312,26 @@
     {
       "path": "models/frozen/lstm_tmax_v1/seed_4/checkpoint.pt",
       "sha256": "8512d9985fb49c828fc0cebd29d82a86ef7273ccb794656e05c455b1f02a72e5"
+    },
+    {
+      "path": "models/frozen/ra_lstm_v1/seed_0/checkpoint.pt",
+      "sha256": "bef00064dfcf8f5af39cfd59bab9192282723c50f3439a11fdf1961116c3d6ab"
+    },
+    {
+      "path": "models/frozen/ra_lstm_v1/seed_1/checkpoint.pt",
+      "sha256": "633e7cb22c7b03eb1c20629bb3642e79ec4f9ab0d3165d7654c16bdac1ee5398"
+    },
+    {
+      "path": "models/frozen/ra_lstm_v1/seed_2/checkpoint.pt",
+      "sha256": "a0748e8317199199f609d6bdc0076175a956091f4ee3928c39e474eafe9c5a1a"
+    },
+    {
+      "path": "models/frozen/ra_lstm_v1/seed_3/checkpoint.pt",
+      "sha256": "4f0f45925f9dd0876cfae3724d2196a7b094485deee7bb5ee5a26bbc24e5b0cb"
+    },
+    {
+      "path": "models/frozen/ra_lstm_v1/seed_4/checkpoint.pt",
+      "sha256": "5f02117f69e57512435bab2df887bf5159a8a6d345b9ea5221b14276b147bb36"
     }
   ],
   "raw_inputs": {
@@ -321,7 +341,8 @@
   },
   "not_frozen": {
     "models/baseline_lstm/seed_*/checkpoint.pt": "gitignored working copy; the frozen A1 copy is models/frozen/lstm_tmax_v1/ (fingerprinted above).",
-    "models/retrieval_augmented/seed_*/checkpoint.pt": "gitignored; original Colab checkpoints were not recoverable. RA-v1 is to be retrained with per-seed predictions + analogue provenance (plan v5, Week 1).",
+    "models/retrieval_augmented/seed_*/checkpoint.pt": "gitignored working copy; the frozen RA-v1 copy is models/frozen/ra_lstm_v1/ (fingerprinted above).",
+    "predictions_v1/, evaluation_v2/": "derived outputs; regenerate deterministically from the frozen checkpoints with `python -m evaluation.predict_v1` then `python -m evaluation.compare_v1`.",
     "retrieval/faiss_index.bin, retrieval/candidates.parquet": "gitignored; regenerate with `python -m retrieval.build_index` (deterministic from the frozen datasets).",
     "retrieval/analogues_top20.parquet": "gitignored; regenerate with `python -m retrieval.precompute_analogues`.",
     "data/raw/era5_monthly/": "gitignored (275 MB); folder fingerprint in raw_inputs, verified when present."

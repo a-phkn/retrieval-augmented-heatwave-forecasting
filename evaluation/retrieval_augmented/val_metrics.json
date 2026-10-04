@@ -1,47 +1,47 @@
 {
   "hot_weight": 20.0,
   "k": 5,
-  "device": "cuda",
-  "val_mae_mean": 1.830113124847412,
-  "val_mae_std": 0.04808266716087847,
-  "val_rmse_mean": 2.441667604446411,
-  "val_rmse_std": 0.06654663294783358,
+  "device": "cpu",
+  "val_mae_mean": 1.8091880798339843,
+  "val_mae_std": 0.029606919899351457,
+  "val_rmse_mean": 2.419581651687622,
+  "val_rmse_std": 0.03720182047343904,
   "n_seeds_so_far": 5,
   "per_seed": [
     {
       "seed": 0,
-      "epochs": 17,
-      "val_mae": 1.7507473230361938,
-      "val_rmse": 2.3389203548431396,
-      "train_time_seconds": 33.72904324531555
+      "epochs": 15,
+      "val_mae": 1.8435713052749634,
+      "val_rmse": 2.4781649112701416,
+      "train_time_seconds": 78.0391628742218
     },
     {
       "seed": 1,
-      "epochs": 17,
-      "val_mae": 1.8256726264953613,
-      "val_rmse": 2.4465219974517822,
-      "train_time_seconds": 26.361642360687256
+      "epochs": 16,
+      "val_mae": 1.755724310874939,
+      "val_rmse": 2.363478183746338,
+      "train_time_seconds": 79.31834411621094
     },
     {
       "seed": 2,
-      "epochs": 16,
-      "val_mae": 1.8968793153762817,
-      "val_rmse": 2.5486557483673096,
-      "train_time_seconds": 24.635975122451782
+      "epochs": 14,
+      "val_mae": 1.8090509176254272,
+      "val_rmse": 2.4065020084381104,
+      "train_time_seconds": 66.27736186981201
     },
     {
       "seed": 3,
-      "epochs": 15,
-      "val_mae": 1.8207703828811646,
-      "val_rmse": 2.4431979656219482,
-      "train_time_seconds": 23.576960563659668
+      "epochs": 13,
+      "val_mae": 1.8276735544204712,
+      "val_rmse": 2.432399034500122,
+      "train_time_seconds": 61.98466110229492
     },
     {
       "seed": 4,
-      "epochs": 16,
-      "val_mae": 1.856495976448059,
-      "val_rmse": 2.431041955947876,
-      "train_time_seconds": 25.26955556869507
+      "epochs": 14,
+      "val_mae": 1.809920310974121,
+      "val_rmse": 2.4173641204833984,
+      "train_time_seconds": 66.45889592170715
     }
   ]
 }
