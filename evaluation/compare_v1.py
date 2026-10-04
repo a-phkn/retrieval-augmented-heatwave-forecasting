@@ -38,7 +38,19 @@ PAIRS = [
     ("climatology", "lstm_a1"),
     ("lstm_a1", "ra_v1"),  # H2: does retrieval help?
     ("climatology", "ra_v1"),
+    # Damped anomaly persistence (evaluation/damped_persistence_v1.py): the strongest
+    # simple reference -- every model must be judged against it, not only climatology.
+    ("climatology", "damped_persistence"),
+    ("damped_persistence", "anen"),
+    ("damped_persistence", "lstm_a1"),
+    ("damped_persistence", "ra_v1"),
+    # Analogue-ensemble premise checks (evaluation/anen_v1.py):
+    ("climatology", "anen"),  # the honest "do retrieved analogues help?" control
+    ("anen_random", "anen"),  # mostly measures the noise penalty of random draws (see notes)
+    ("anen", "lstm_a1"),
+    ("anen", "ra_v1"),  # does neural fusion add anything over averaging the same analogues?
 ]
+MODELS_BY_LEAD = ["persistence", "climatology", "damped_persistence", "anen", "lstm_a1", "ra_v1"]
 
 
 def load(model: str) -> pd.DataFrame | None:
@@ -125,9 +137,25 @@ def main() -> None:
             f"{r['n_clusters']}{fragile} | {r['clusters_child_better']}/{r['n_clusters']} | "
             f"{r['n_seeds_parent']}/{r['n_seeds_child']} | {dm} |"
         )
+    lines += ["", "## RMSE by lead day (deg C; neural models: mean over 5 seeds)", "",
+              "| Model | " + " | ".join(f"Lead {i}" for i in range(1, 6)) + " | All |",
+              "|---|" + "---|" * 6]
+    for name in MODELS_BY_LEAD:
+        df = models.get(name) if name in models else load(name)
+        if df is None:
+            continue
+        by = df.assign(se=df["error"] ** 2).groupby(["seed", "lead"])["se"].mean().pipe(np.sqrt).groupby("lead").mean()
+        overall = df.assign(se=df["error"] ** 2).groupby("seed")["se"].mean().pipe(np.sqrt).mean()
+        lines.append(f"| {name} | " + " | ".join(f"{v:.3f}" for v in by.to_numpy()) + f" | {overall:.3f} |")
     lines += [
         "",
         "Notes:",
+        "- Reference floors: every model is judged against damped anomaly persistence "
+        "(yesterday's standardised anomaly times a per-lead factor fitted on train), the strongest "
+        "simple baseline here, not only against climatology and plain persistence.",
+        "- `anen_random -> anen` mostly measures the noise penalty of averaging 5 random past windows "
+        "(climatology plus noise; a season-matched random control scores the same). The honest test of "
+        "whether retrieved analogues help is `climatology -> anen`.",
         "- delta = child - parent (negative = child better). 95% CI and p: cluster-jackknife t-test "
         "(`evaluation/stats.py`) with G year x season clusters and G-1 df. DM = Diebold-Mariano on "
         "seed-averaged per-window MSE (secondary; 'all' only). If they disagree, the cluster test is the headline.",

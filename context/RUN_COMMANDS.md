@@ -24,10 +24,10 @@ pip install torch --index-url https://download.pytorch.org/whl/cpu
 ```bash
 .venv\Scripts\python.exe -m pytest -q
 ```
-Expects 75 passed (as of 2026-10-04): 3 `test_no_leakage.py`, 6
+Expects 104 passed (as of 2026-10-04): 3 `test_no_leakage.py`, 6
 `test_retrieval_eligibility.py` (needs `retrieval/faiss_index.bin`; build it
 first with `python -m retrieval.build_index`, see Step 4), 12 `test_manifest.py`
-(frozen v1 files unchanged), 46 `test_stats.py` and 8 `test_predict_v1.py`. To verify the freeze alone:
+(frozen v1 files unchanged), 46 `test_stats.py`, 8 `test_predict_v1.py`, 16 `test_hourly_features.py` and 13 `test_download_era5_v2.py`. To verify the freeze alone:
 `.venv\Scripts\python.exe -m scripts.make_manifest --check`.
 
 ## Step 1-2 — data pipeline (P1, already run, re-run only if raw data changes)
@@ -95,3 +95,12 @@ any file that reads (rather than produces) these artifacts.
 .venv\Scripts\python.exe -m scripts.make_manifest --check    # frozen v1 files unchanged
 ```
 `predict_v1` reads only the frozen checkpoints in `models/frozen/` and refuses the test split.
+
+```bash
+.venv\Scripts\python.exe -m evaluation.damped_persistence_v1   # strongest simple baseline -> predictions_v1/val/
+.venv\Scripts\python.exe -m evaluation.anen_v1                 # analogue-ensemble baselines -> predictions_v1/val/
+.venv\Scripts\python.exe -m evaluation.premise_checks          # trends + retention -> evaluation_v2/premise_report.md
+.venv\Scripts\python.exe -m evaluation.mde_simulation          # power / MDE -> evaluation_v2/mde.md (~2 min)
+.venv\Scripts\python.exe -m pipeline.download_era5_v2 --dry-run   # then without --dry-run to download (resumable)
+```
+Run the baselines before `compare_v1` so the G0 table includes them.

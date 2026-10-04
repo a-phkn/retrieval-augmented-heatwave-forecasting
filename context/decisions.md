@@ -381,3 +381,47 @@ improved with hot_weight up to ~15-20; further distinctions beyond that
 were not statistically significant at this sample size" rather than
 claiming hw20 as a confirmed optimum. Do not oversell precision this
 hyperparameter search doesn't actually have.
+
+---
+
+## 2026-10-04 — Plan v5 adopted; v1 frozen; Week-1 decisions
+
+**Plan:** `docs/PLAN_REVIEW_v5.md` replaces Execution Plan v4 for a 2-person, 8-week scope.
+Its recorded decisions: regional upstream DSTGNN + physics-structured WBGT head;
+label rule (Tmax ≥ 40 °C and anomaly ≥ 3 °C, IMD 4.5 °C as severe); headline metric =
+extreme-stratum RMSE with an absolute climatology skill floor and a forecast-conditioned
+stratum; Phase 6 health-only unless citable energy sources are found.
+
+**Statistics:** paired comparisons use `evaluation/stats.paired_cluster_test`, a
+cluster-jackknife t-test with year × season clusters. It replaces the window-level
+bootstrap, which was too narrow: the old method falsely called "RA beats persistence"
+significant. Diebold-Mariano is a secondary check only.
+
+**RA-v1 zero-analogue padding:** `models/retrieval_lstm.py` spreads attention over
+zero-padded slots when a query has no eligible analogue (163/13,131 train windows, no val).
+Decision (user-approved): keep RA-v1 exactly as built (frozen reference) and fix this in
+the v2 retrieval model (empty retrieval → zero context), not by editing v1 code.
+
+**WBGT target (BoM approximation):** hourly-derived BoM WBGT exceeds air temperature in
+cool humid weather and reaches ~40 °C in the monsoon (22.8% of days ≥ 35 °C). It is a
+known high-side approximation that ignores actual radiation and wind. Consequences:
+- No absolute WBGT thresholds (ISO 7243 etc.) are applied to it. Labels are percentile-based.
+- Official alert tiers stay Tmax-based (Delhi HAP / IMD).
+- Tier-B (Liljegren) validation moves up from "cut" to "recommended".
+- The paper names the target "BoM-approximated WBGT".
+
+**Premise check (train years only):** seasonal Tmax shows no significant trend, while
+WBGT (+0.28 to +0.53 °C/decade) and Heat Index trend upwards. So the non-stationarity
+hypothesis is framed on humid heat, with Tmax as the negative control.
+
+**Seeds (recommendation, pending team agreement):** with 5 seeds, training randomness alone
+sets an extreme-stratum detection floor of ~0.26 °C (`evaluation_v2/mde.md`). Use 10 seeds
+for every decision run (LSTM: ~2 min per 5 seeds), or evaluate the seed-ensemble mean as
+the model.
+
+**Damped persistence as the reference floor (proposal, pending team agreement):**
+damped anomaly persistence (5 train-fitted coefficients) beats both v1 neural models
+overall on val. Proposed rule: every v2 model must be no worse than damped persistence on
+all-days RMSE (paired cluster test), in addition to the extreme-stratum headline and the
+forecast-conditioned stratum; report RMSE by lead day. A2r (anomaly target) becomes a
+required control, not an option.

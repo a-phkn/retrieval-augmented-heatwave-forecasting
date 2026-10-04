@@ -39,7 +39,7 @@ Short, frequently-updated. See `build_plan.md` for full milestone detail.
    changed).
 
 ## Last verified state (2026-10-04)
-- `pytest` → 75 passed (leakage 3, retrieval eligibility 6, manifest 12, stats 46, predict_v1 8).
+- `pytest` → 104 passed (leakage 3, retrieval eligibility 6, manifest 12, stats 46, predict_v1 8, hourly features 16, downloader v2 13).
 - `retrieval/candidates.parquet` + `retrieval/faiss_index.bin` rebuilt in the
   new venv; `feature_normalization_stats.json` reproduced byte-identically.
 - v1 frozen: `data/MANIFEST.json` (30 files incl. A1 checkpoints + raw-data fingerprint), window index
@@ -49,6 +49,34 @@ Short, frequently-updated. See `build_plan.md` for full milestone detail.
 - `evaluation/stats.py`: paired cluster-jackknife t-test (primary) + Diebold-Mariano
   (secondary), calibrated on simulated overlapping-window data (3.5-6.4% false
   positives at nominal 5%). Replaces the window-level bootstrap.
+
+## Week 1 results (2026-10-04): what the premise checks found
+Reports: `evaluation_v2/g0_val_comparison.md`, `premise_report.md`, `mde.md`.
+- **Damped anomaly persistence is the strongest model on val.** It uses 5 coefficients fitted
+  on train and scores RMSE 2.134, against climatology 2.344, A1 LSTM 2.401 and RA-v1 2.420.
+  - Both neural models lose to it overall (+0.27 / +0.29 °C, p ≤ 0.003) and are worse than
+    climatology from lead 3 onwards.
+  - They win only on observed unusual and extreme days (the hot_weight=20 warm bias; the
+    forecaster's dilemma).
+  - => Credibility floor proposal: no worse than damped persistence overall; A2r
+    (anomaly target) is essential.
+- **Analogue ensemble (no training):** ≈ climatology overall (p = 0.76) and better on extreme
+  days; its skill sits in leads 1–2. Retrieved analogues beat random past windows, but that
+  mostly measures the noise of random draws; the honest control is climatology.
+- **Trends (train years only):** no detectable Tmax trend. Humid heat rises: BoM index
+  +0.38, wet-bulb Tw +0.35, Heat Index +0.47 °C/decade (all CIs exclude 0).
+  Caveat: ERA5 humidity homogeneity is unverified (a step around 2000–01); check against
+  station data.
+- **BoM "WBGT" is a T–humidity index:** ~6 °C above a shade WBGT in July. It is renamed
+  `wbgt_bom_*` and gets no absolute thresholds; validate against Liljegren once the v2
+  download (radiation) exists.
+- **Retention:** similarity barely ranks analogues within the top 20 (mean ρ +0.034, CI
+  [+0.004, +0.064]); the similarity range there is narrow (0.94 → 0.84).
+- **MDE (80% power):** all days 5–6% (≈0.12–0.14 °C) with 24–36 clusters; extreme days
+  25–35% (0.32–0.45 °C) with 10–20 clusters. The seed-noise floor is 0.22–0.26 °C on extreme
+  days with 5 seeds => use 10 seeds for decision runs.
+- **Downloader v2** (`pipeline/download_era5_v2.py`) is ready, verified against the live API
+  and tested offline. The full run hasn't started yet (about 1.1 days of free API quota).
 
 ## G0 result (2026-10-04): `evaluation_v2/g0_val_comparison.md`
 - **Retrieval vs no retrieval (RA-v1 vs A1), val, 5 seeds each:**
