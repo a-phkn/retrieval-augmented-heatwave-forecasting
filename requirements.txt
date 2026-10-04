@@ -1,5 +1,30 @@
-pandas
-pyarrow
-pytest
-torch
-faiss-cpu
+# Direct dependencies of this project, pinned to the versions verified locally.
+# Python 3.13 (Windows). Install into the project venv, never globally:
+#
+#   py -3.13 -m venv .venv
+#   .venv\Scripts\python.exe -m pip install -r requirements.txt
+#
+# Exact transitive versions are recorded in requirements.lock.txt.
+#
+# Colab note: do NOT `pip install -r requirements.txt` on Colab -- Colab ships
+# its own CUDA torch. Notebooks install only what is missing (e.g. faiss-cpu).
+
+# Data
+numpy==2.5.3
+pandas==3.0.6
+pyarrow==25.0.1
+requests==2.34.2          # download_era5.py (Open-Meteo API)
+
+# Modelling (PyPI torch wheels on Windows are CPU-only)
+torch==2.14.1
+faiss-cpu==1.15.1         # retrieval index
+
+# Statistics (evaluation/stats.py, stationarity checks)
+scipy==1.18.1
+statsmodels==0.15.0
+
+# Plots
+matplotlib==3.11.2
+
+# Tests
+pytest==9.1.1
