@@ -10,7 +10,7 @@ actually run and verified the thing.
 | 1 | P1 | Raw data acquisition + cleaning | **COMPLETED** (verified: ran code, checked schema/gaps) |
 | 2 | P1 | Heatwave labels, chronological split, leakage rule + tests | **COMPLETED** (verified: `pytest tests/test_no_leakage.py` → 3/3 pass) |
 | 3 | P2 | Baseline forecaster (persistence, climatology, LSTM, 5 seeds) | **CLOSED for now** (verified: extended evaluation done, stratified RMSE headline result established; user may reopen to add more baseline model comparisons later) |
-| 4 | P3 | Retrieval system (statistical features, FAISS, eligibility filter, dedup) | **COMPLETED** (verified: 9/9 tests pass including new `test_retrieval_eligibility.py`; manual inspection of real heatwave queries looks plausible after fixing a dedup gap — see `ml_notes.md`/`decisions.md`) |
+| 4 | P3 | Retrieval system (statistical features, FAISS, eligibility filter, dedup) | **COMPLETED** (verified at P3, 2026-09-19: 9/9 tests pass including new `test_retrieval_eligibility.py`; manual inspection of real heatwave queries looks plausible after fixing a dedup gap — see `ml_notes.md`/`decisions.md`) |
 | 5 | P2↔P3 | Joint integration (attention-fusion model) | NOT STARTED — ready to begin, retrieval interface exists (`retrieval/query.py`'s `query_analogues`) |
 | 6 | P3 | Core result: stratified metrics + bootstrap CI | NOT STARTED (blocked on Step 5) |
 | 7 | P2+P3 | Ablations (K-sweep, window length, representation, DB scope) | NOT STARTED (blocked on Step 6) |

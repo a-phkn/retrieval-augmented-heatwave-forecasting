@@ -1,0 +1,9 @@
+{
+  "comparison": "hw15_minus_hw20_extreme_rmse",
+  "mean_diff": 0.17194107604026795,
+  "ci_low": -0.07519056797027587,
+  "ci_high": 0.5953604519367217,
+  "excludes_zero": false,
+  "n_boot": 2000,
+  "n_extreme_windows": 67
+}

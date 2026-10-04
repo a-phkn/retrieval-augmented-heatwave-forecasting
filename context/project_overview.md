@@ -95,7 +95,7 @@ not yet started), Google Colab (heavier compute if needed).
   still not started — ready to begin now that P3 exists.
 - P3 (retrieval system): **COMPLETE.** `retrieval/query.py`'s
   `query_analogues(query_date, k)` is the interface Step 5 will call.
-  9/9 tests passing (dataset-level + retrieval-eligibility). Two findings
+  9/9 tests passing at P3 (2026-09-19) (dataset-level + retrieval-eligibility). Two findings
   flagged during validation, not blocking: a dedup gap (found + fixed) and
   "heatwave" episodes skewing winter rather than summer — see `decisions.md`.
 - P4 (dashboard/integration): **NOT STARTED**.

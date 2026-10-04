@@ -28,7 +28,7 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 
-from training.data import FEATURE_COLUMNS, FORECAST_DAYS, INPUT_DAYS, TARGET_COLUMN
+from training.data import FEATURE_COLUMNS, FORECAST_DAYS, INPUT_DAYS, TARGET_COLUMN, _load_windows
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
 DATASETS_DIR = REPO_ROOT / "datasets"
@@ -63,7 +63,7 @@ def build_split_arrays_with_analogues(split: str, k: int = 5) -> dict:
     """Main entry point. Returns a dict with X, y, X_analogues, y_analogues,
     analogue_mask, query_dates -- everything needed to train/evaluate the
     retrieval-augmented model for one split."""
-    windows = pd.read_parquet(DATASETS_DIR / "forecast_windows.parquet")
+    windows = _load_windows()
     split_windows = windows.loc[windows["split"] == split].reset_index(drop=True)
 
     analogues = pd.read_parquet(RETRIEVAL_DIR / "analogues_top20.parquet")

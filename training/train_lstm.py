@@ -17,16 +17,15 @@ used everywhere else in the pipeline, e.g. event_catalogue.parquet). Plain
 MSE is dominated by the ~95% of normal days, so the MSE-optimal function
 shrinks extreme predictions toward the mean. Upweighting hot-day targets
 forces the optimizer to treat underpredicting them as costly.
-HOT_WEIGHT=10 is a deliberate, moderate first choice (true inverse-frequency
-weighting would be ~21.7x) -- NOT swept/tuned. A sweep (5/10/15/20) is a
-legitimate next step if further gains are wanted; see context/ml_notes.md's
-open questions.
+HOT_WEIGHT=20 was selected by a sweep over {5,10,15,20,25} (2026-09-22; true
+inverse-frequency weighting would be ~21.7x). The 15-vs-20 extreme-RMSE gap was
+NOT statistically significant -- see context/decisions.md and
+evaluation/hw_sweep/.
 
-IMPORTANT: this is now the single canonical baseline used everywhere,
-including as Step 5's future "retrieval off" reference. If/when the
-retrieval-augmented model is built, it must use this SAME weighted loss
-(hot_weight=10) for the "same training procedure, retrieval on/off only"
-comparison to remain valid -- see context/decisions.md.
+IMPORTANT: this is the single canonical baseline (run A1 in plan v5) and the
+"retrieval off" reference. The retrieval-augmented model uses this SAME
+weighted loss (hot_weight=20) so the comparison differs only in retrieval
+on/off -- see context/decisions.md.
 """
 from __future__ import annotations
 

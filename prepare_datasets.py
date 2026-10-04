@@ -1,8 +1,26 @@
 import json
+import sys
 from pathlib import Path
 
 import numpy as np
 import pandas as pd
+
+
+# ============================================================
+# Freeze guard (plan v5)
+# ============================================================
+# This script overwrites the frozen v1 datasets/, events/ and
+# tests/test_no_leakage.py. Once data/MANIFEST.json exists, refuse to run
+# unless --force is given. v2 data will be built by a separate pipeline/
+# into datasets_v2/ (plan v5, Week 2). The manifest path is anchored on this
+# file, so the guard also works when the script is launched from elsewhere.
+
+if (Path(__file__).resolve().parent / "data" / "MANIFEST.json").exists() and "--force" not in sys.argv:
+    sys.exit(
+        "Refusing to run: v1 datasets are frozen (data/MANIFEST.json exists).\n"
+        "Re-running would overwrite datasets/, events/ and tests/test_no_leakage.py.\n"
+        "Use `python prepare_datasets.py --force` only for a deliberate, documented rebuild."
+    )
 
 
 # ============================================================

@@ -26,6 +26,10 @@ import pandas as pd
 REPO_ROOT = Path(__file__).resolve().parents[1]
 DATASETS_DIR = REPO_ROOT / "datasets"
 EVAL_DIR = REPO_ROOT / "evaluation"
+# Frozen window index (plan v5): the ONLY source of windows for every model.
+# Byte-identical copy of datasets/forecast_windows.parquet, guarded by
+# tests/test_manifest.py. Read it through _load_windows(), never directly.
+WINDOW_INDEX_PATH = REPO_ROOT / "splits" / "window_index_v1.parquet"
 
 FEATURE_COLUMNS = [
     "t_max",
@@ -81,7 +85,7 @@ def _load_daily() -> pd.DataFrame:
 
 
 def _load_windows() -> pd.DataFrame:
-    return pd.read_parquet(DATASETS_DIR / "forecast_windows.parquet")
+    return pd.read_parquet(WINDOW_INDEX_PATH)
 
 
 def fit_normalization_stats(daily: pd.DataFrame, windows: pd.DataFrame) -> NormalizationStats:

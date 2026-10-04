@@ -22,11 +22,13 @@ pip install torch --index-url https://download.pytorch.org/whl/cpu
 ## Step 0 — sanity check the data pipeline
 
 ```bash
-python -m pytest tests/ -v
+.venv\Scripts\python.exe -m pytest -q
 ```
-Expects 9 passed (3 in `test_no_leakage.py`, 6 in
-`test_retrieval_eligibility.py` — the latter only exists/passes once
-`retrieval/faiss_index.bin` has been built, see Step 4 below).
+Expects 66 passed (as of 2026-10-04): 3 `test_no_leakage.py`, 6
+`test_retrieval_eligibility.py` (needs `retrieval/faiss_index.bin`; build it
+first with `python -m retrieval.build_index`, see Step 4), 11 `test_manifest.py`
+(frozen v1 files unchanged) and 46 `test_stats.py`. To verify the freeze alone:
+`.venv\Scripts\python.exe -m scripts.make_manifest --check`.
 
 ## Step 1-2 — data pipeline (P1, already run, re-run only if raw data changes)
 

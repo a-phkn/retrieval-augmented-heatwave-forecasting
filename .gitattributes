@@ -1,0 +1,11 @@
+# Normalise line endings for text files in the repository (LF in git),
+# independent of each clone's core.autocrlf setting.
+* text=auto
+
+# Binary artefacts: never apply line-ending conversion or text diffs.
+*.parquet binary
+*.pt      binary
+*.bin     binary
+*.png     binary
+*.pdf     binary
+*.zip     binary

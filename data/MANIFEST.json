@@ -1,0 +1,304 @@
+{
+  "description": "Fingerprints of the frozen v1 reference (plan v5). Text files hashed with CRLF->LF normalisation; parquet files also carry a content hash.",
+  "created_utc": "2026-10-04T12:06:56+00:00",
+  "git": {
+    "freeze_tag": "v1-frozen",
+    "parent_commit": "1057c4bd8f15e05fa6f58d949b2c6a5ce723536e",
+    "worktree_dirty": true
+  },
+  "hashing_environment": {
+    "python": "3.13.2",
+    "numpy": "2.5.3",
+    "pandas": "3.0.6",
+    "pyarrow": "25.0.1"
+  },
+  "files": [
+    {
+      "path": "config/data_spec.yaml",
+      "sha256": "1f13c52d528ac726462be70d406df70e3c44580795d6654bcf11de84b4c43ea5"
+    },
+    {
+      "path": "data/processed/weather_daily.parquet",
+      "sha256": "5f642d66855ebb12d02bc32a9e7ba5f5476253542d0587a24282b94329373284",
+      "content_sha256": "f144733d4c5af04ab1bca472e3cf2eda8ddcfe37abac50b96da95b37cf25403b",
+      "rows": 17051,
+      "columns": [
+        "date",
+        "t_max",
+        "t_min",
+        "shortwave_radiation_sum",
+        "t_mean",
+        "relative_humidity_mean",
+        "wind_speed_mean",
+        "surface_pressure_mean",
+        "doy_sin",
+        "doy_cos",
+        "years_since_1980"
+      ],
+      "date_column": "date",
+      "date_min": "1980-01-01",
+      "date_max": "2026-09-06"
+    },
+    {
+      "path": "data/processing_log.json",
+      "sha256": "63aa2130f3a8b7fee899ff51348aab5ec9120d56cea8ae3848f8a1e0a748fefa"
+    },
+    {
+      "path": "datasets/all_daily.parquet",
+      "sha256": "6f5ae9148e8057c1fa4921b5e53ab912b3430aa9479dd811d13ec12419e108f3",
+      "content_sha256": "679e1209e0501935b6c24d4aef124cb592b1d652663ede11aa5b79a8c319a9e4",
+      "rows": 17051,
+      "columns": [
+        "date",
+        "t_max",
+        "t_min",
+        "shortwave_radiation_sum",
+        "t_mean",
+        "relative_humidity_mean",
+        "wind_speed_mean",
+        "surface_pressure_mean",
+        "doy_sin",
+        "doy_cos",
+        "years_since_1980",
+        "clim_mean_t_max",
+        "clim_std_t_max",
+        "t_max_anomaly",
+        "split",
+        "hot_day",
+        "heatwave_episode_id"
+      ],
+      "date_column": "date",
+      "date_min": "1980-01-01",
+      "date_max": "2026-09-06"
+    },
+    {
+      "path": "datasets/forecast_windows.parquet",
+      "sha256": "d123591a35c9cda6384f347e24ca6e7eb3865bfeaf02c390166f68d9944dca0c",
+      "content_sha256": "41551383d5b932b52a648179390c0695390c211352e30e874eda56308e031849",
+      "rows": 17025,
+      "columns": [
+        "query_date",
+        "input_start",
+        "input_end",
+        "forecast_start",
+        "forecast_end",
+        "split",
+        "target_episode_id",
+        "target_is_heatwave",
+        "candidate_latest_start"
+      ],
+      "date_column": "query_date",
+      "date_min": "1980-01-15",
+      "date_max": "2026-09-02"
+    },
+    {
+      "path": "datasets/train.parquet",
+      "sha256": "4291cd3385173e14e7320f764083b0854996271022255f954127f9c614607f20",
+      "content_sha256": "df895242d3d096c611cf7e6c706b4849118a1e3b117cee691d4bfd690b0fd297",
+      "rows": 13149,
+      "columns": [
+        "date",
+        "t_max",
+        "t_min",
+        "shortwave_radiation_sum",
+        "t_mean",
+        "relative_humidity_mean",
+        "wind_speed_mean",
+        "surface_pressure_mean",
+        "doy_sin",
+        "doy_cos",
+        "years_since_1980",
+        "clim_mean_t_max",
+        "clim_std_t_max",
+        "t_max_anomaly",
+        "split",
+        "hot_day",
+        "heatwave_episode_id"
+      ],
+      "date_column": "date",
+      "date_min": "1980-01-01",
+      "date_max": "2015-12-31"
+    },
+    {
+      "path": "datasets/val.parquet",
+      "sha256": "0279b2bce3905fb96dc50a1578074cef858f87a7d50cb6cbb5febc40f2cc2482",
+      "content_sha256": "38fa2864f95bb122d6731c87539784a5646e66b7c7dfb83221cabb534ed41fc9",
+      "rows": 1096,
+      "columns": [
+        "date",
+        "t_max",
+        "t_min",
+        "shortwave_radiation_sum",
+        "t_mean",
+        "relative_humidity_mean",
+        "wind_speed_mean",
+        "surface_pressure_mean",
+        "doy_sin",
+        "doy_cos",
+        "years_since_1980",
+        "clim_mean_t_max",
+        "clim_std_t_max",
+        "t_max_anomaly",
+        "split",
+        "hot_day",
+        "heatwave_episode_id"
+      ],
+      "date_column": "date",
+      "date_min": "2016-01-01",
+      "date_max": "2018-12-31"
+    },
+    {
+      "path": "datasets/test.parquet",
+      "sha256": "48583eea62e408ee821c6f8a238948829038fbf25dc5e625a4fc3a36c047d943",
+      "content_sha256": "70325a887a44dc71010f2f094c63704faf1cf95bfc70203b8f84e4e8c9a9ee60",
+      "rows": 2806,
+      "columns": [
+        "date",
+        "t_max",
+        "t_min",
+        "shortwave_radiation_sum",
+        "t_mean",
+        "relative_humidity_mean",
+        "wind_speed_mean",
+        "surface_pressure_mean",
+        "doy_sin",
+        "doy_cos",
+        "years_since_1980",
+        "clim_mean_t_max",
+        "clim_std_t_max",
+        "t_max_anomaly",
+        "split",
+        "hot_day",
+        "heatwave_episode_id"
+      ],
+      "date_column": "date",
+      "date_min": "2019-01-01",
+      "date_max": "2026-09-06"
+    },
+    {
+      "path": "events/event_catalogue.parquet",
+      "sha256": "8b54420f912d757a6dd8a717e8759b0e32b912c0a3d39d6bc7bf4cd0e1f5089f",
+      "content_sha256": "0c064b280f65ad53d1d3d8e1dd09d117b29affc72e9871f06cebcf3dd51ad751",
+      "rows": 102,
+      "columns": [
+        "episode_id",
+        "episode_start",
+        "episode_end",
+        "duration_days"
+      ],
+      "date_column": "episode_start",
+      "date_min": "1982-07-04",
+      "date_max": "2026-03-04"
+    },
+    {
+      "path": "splits/window_index_v1.parquet",
+      "sha256": "d123591a35c9cda6384f347e24ca6e7eb3865bfeaf02c390166f68d9944dca0c",
+      "content_sha256": "41551383d5b932b52a648179390c0695390c211352e30e874eda56308e031849",
+      "rows": 17025,
+      "columns": [
+        "query_date",
+        "input_start",
+        "input_end",
+        "forecast_start",
+        "forecast_end",
+        "split",
+        "target_episode_id",
+        "target_is_heatwave",
+        "candidate_latest_start"
+      ],
+      "date_column": "query_date",
+      "date_min": "1980-01-15",
+      "date_max": "2026-09-02"
+    },
+    {
+      "path": "evaluation/normalization_stats.json",
+      "sha256": "9a9b824ef1d7328b48db0b4d56c0893fecd6fe7cdedc3d92e8a56bb15eda5071"
+    },
+    {
+      "path": "retrieval/feature_normalization_stats.json",
+      "sha256": "e811c7afd0fce9fc256a8bcbbcfe940bc7252ec695cbe071ab944d2bf2d39e7e"
+    },
+    {
+      "path": "archive_v1/evaluation/baseline_lstm/val_extended_metrics.json",
+      "sha256": "b8a28a419a15898783c07771649701d51adccb0692ed38de0e22b7aba33fb77b"
+    },
+    {
+      "path": "archive_v1/evaluation/baseline_lstm/val_metrics.json",
+      "sha256": "6d5fc97211f6542487034e68d6f6f8ff3004691e0f5abacc9d3324d2de7ec5c4"
+    },
+    {
+      "path": "archive_v1/evaluation/figures/01_global_accuracy.png",
+      "sha256": "9a39a3bc04dc78d47888fc36557d5f7824ff9ea50685d7bde300a5193754b61b"
+    },
+    {
+      "path": "archive_v1/evaluation/figures/02_stratified_rmse.png",
+      "sha256": "b1cfcf383d3413d1b3475e0422ce3f95c09923b23f1cbb21400de23a5815e0a2"
+    },
+    {
+      "path": "archive_v1/evaluation/figures/03_detection.png",
+      "sha256": "1cea37b4f80a1c29b9d840db2246925a9ab78e06879a86f45465991b2ea357c8"
+    },
+    {
+      "path": "archive_v1/evaluation/figures/04_bias_diagnostic.png",
+      "sha256": "4dc705219fb4f0baa59c917b141180bacfebd636242814a2438ee8ba5af7ee9d"
+    },
+    {
+      "path": "archive_v1/evaluation/hw_sweep/bootstrap_ci_15_vs_20.json",
+      "sha256": "0e472fe6748db4c15b0f2b96969d650c060a52939ab37d555ad3b39d93bdb298"
+    },
+    {
+      "path": "archive_v1/evaluation/hw_sweep/sweep_results.json",
+      "sha256": "fb6252d669b323d13c3db67c64c8ab08bc78654832911e6f5e3d6d8959c54133"
+    },
+    {
+      "path": "archive_v1/evaluation/normalization_stats.json",
+      "sha256": "9a9b824ef1d7328b48db0b4d56c0893fecd6fe7cdedc3d92e8a56bb15eda5071"
+    },
+    {
+      "path": "archive_v1/evaluation/retrieval_augmented/val_extended_metrics.json",
+      "sha256": "cd02ec0e1cd0ce0a540a6ff4879e39b19d72d75873d39f5202284874459492e3"
+    },
+    {
+      "path": "archive_v1/evaluation/retrieval_augmented/val_metrics.json",
+      "sha256": "ec4db404816b0f14c3e73a800380110259b9c7afdee04582717019d0b9f53e38"
+    },
+    {
+      "path": "archive_v1/evaluation/sanity_baselines.json",
+      "sha256": "2622bca944bfcdd55e966edc3f09467fea7cf2c6436a4485fb710be3135a62bf"
+    },
+    {
+      "path": "archive_v1/predictions/retrieval_augmented/val_predictions.parquet",
+      "sha256": "7cf69a0a043a1545236cd73953fa11ea909e7b432551b54834bae96f172bc85f",
+      "content_sha256": "51bcfd36910dcda55b59d2019bd4025cb958f703419d60397f93decddbed3a80",
+      "rows": 1092,
+      "columns": [
+        "query_date",
+        "pred_day1",
+        "pred_day2",
+        "pred_day3",
+        "pred_day4",
+        "pred_day5",
+        "actual_day1",
+        "actual_day2",
+        "actual_day3",
+        "actual_day4",
+        "actual_day5",
+        "attn_rank1",
+        "attn_rank2",
+        "attn_rank3",
+        "attn_rank4",
+        "attn_rank5"
+      ],
+      "date_column": "query_date",
+      "date_min": "2016-01-01",
+      "date_max": "2018-12-27"
+    }
+  ],
+  "not_frozen": {
+    "models/baseline_lstm/seed_*/checkpoint.pt": "gitignored and missing locally; requested from teammates (context/progress.md). Added to the manifest once restored or retrained.",
+    "models/retrieval_augmented/seed_*/checkpoint.pt": "gitignored and missing locally; requested from teammates.",
+    "retrieval/faiss_index.bin, retrieval/candidates.parquet": "gitignored; regenerate with `python -m retrieval.build_index` (deterministic from the frozen datasets).",
+    "retrieval/analogues_top20.parquet": "gitignored; regenerate with `python -m retrieval.precompute_analogues`.",
+    "data/raw/era5_monthly/": "gitignored raw API downloads; requested from teammates."
+  }
+}
