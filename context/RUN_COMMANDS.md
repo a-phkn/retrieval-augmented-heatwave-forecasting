@@ -30,6 +30,12 @@ first with `python -m retrieval.build_index`, see Step 4), 12 `test_manifest.py`
 (frozen v1 files unchanged), 46 `test_stats.py`, 8 `test_predict_v1.py`, 16 `test_hourly_features.py` , 13 `test_download_era5_v2.py`, 13 `test_labels_v2.py`, 19 `test_folds.py` and 9 `test_train_unified.py`. To verify the freeze alone:
 `.venv\Scripts\python.exe -m scripts.make_manifest --check`.
 
+On a fresh clone (no raw ERA5 folder, no retrieval index), the raw-data test skips and
+the retrieval files must be rebuilt first (`python -m retrieval.build_index` then
+`python -m retrieval.precompute_analogues`): 144 passed, 1 skipped.
+GitHub CI (`.github/workflows/ci.yml`) does exactly this on every push, plus gitleaks
+and pip-audit.
+
 ## Step 1-2 — data pipeline (P1, already run, re-run only if raw data changes)
 
 ```bash

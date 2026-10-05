@@ -50,6 +50,16 @@ Short, frequently-updated. See `build_plan.md` for full milestone detail.
   (secondary), calibrated on simulated overlapping-window data (3.5-6.4% false
   positives at nominal 5%). Replaces the window-level bootstrap.
 
+## CI added (2026-10-05): `.github/workflows/ci.yml`
+- Windows job: pinned lockfile env, rebuild retrieval index, pytest, manifest check.
+  Verified on a fresh local clone: 144 passed, 1 skipped (raw-data test), Manifest OK.
+- Security job: gitleaks over full history (local run: 15 commits, no leaks) and
+  pip-audit on both requirement files (no known vulnerabilities).
+- The workflow passes actionlint. Actions are SHA-pinned; gitleaks is checksum-verified.
+- A rebuilt analogue table differs from the local one only in float rounding of the
+  similarity scores (≤ 2.4e-7) and in 1 analogue at rank 20 (a float tie), so it has no
+  effect on the top-5 retrieval used by RA-v1.
+
 ## Week 2 status (2026-10-04): v2 data, labels, folds and trainer built
 - `datasets_v2/` (daily + per-cell; no climatology/labels stored, as they are fold-specific).
 - `pipeline/labels_v2.py`, with an acceptance test on pre-2019 events only: 1998, 2002,

@@ -6,7 +6,7 @@
 > log at the end. Short forms are explained in [`GLOSSARY.md`](GLOSSARY.md); the full
 > plan is in [`PLAN_REVIEW_v5.md`](PLAN_REVIEW_v5.md).
 >
-> **Last updated:** 2026-10-04 (end of Week 2)
+> **Last updated:** 2026-10-05 (end of Week 2, CI added)
 
 ---
 
@@ -378,6 +378,14 @@ The best step is then attached to the final model.
 6. **Every run is logged** in `registry/runs.csv`: config, data and code fingerprints, git
    commit, seeds, threads, and skill against climatology and persistence on the same
    target.
+7. **Automatic checks on every push (CI)** (`.github/workflows/ci.yml`). GitHub runs:
+   - the full test suite and the frozen-v1 check, on Windows with the exact pinned
+     package versions;
+   - a scan of the whole git history for leaked secrets (gitleaks);
+   - a check of the pinned packages for known vulnerabilities (pip-audit).
+
+   A red ✗ next to a commit on GitHub means something broke: fix it before training on
+   that commit. CI only reads the repo; it never changes code, data or models.
 
 ---
 
@@ -396,6 +404,7 @@ The best step is then attached to the final model.
 | `tests/` | 145 automated checks (`.venv\Scripts\python.exe -m pytest -q`) |
 | `context/` | Running notes: progress, decisions, run commands |
 | `docs/` | This guide, the glossary, the plan, the reproducibility log |
+| `.github/workflows/` | CI: automatic tests and security checks on every push |
 
 Setup and commands: `context/environment.md` and `context/RUN_COMMANDS.md`. Always use
 the project's virtual environment (`.venv`); nothing is installed globally.
@@ -416,3 +425,4 @@ the project's virtual environment (`.venv`); nothing is installed globally.
 | Date | Change |
 |---|---|
 | 2026-10-04 | First version: v1 results, Week-1 findings, v2 data/labels/folds/trainer (Week 2). |
+| 2026-10-05 | Added CI (tests, frozen-v1 check, secret scan, dependency audit), ground rule 7. |
