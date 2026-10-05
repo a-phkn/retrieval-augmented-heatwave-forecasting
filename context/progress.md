@@ -39,7 +39,7 @@ Short, frequently-updated. See `build_plan.md` for full milestone detail.
    changed).
 
 ## Last verified state (2026-10-04)
-- `pytest` → 145 passed (leakage 3, retrieval eligibility 6, manifest 12, stats 46, predict_v1 8, hourly features 16, downloader v2 13, labels v2 13, folds 19, trainer 9).
+- `pytest` → 156 passed (leakage 3, retrieval eligibility 6, manifest 12, stats 46, predict_v1 8, hourly features 16, downloader v2 13, upstream downloader 11, labels v2 13, folds 19, trainer 9).
 - `retrieval/candidates.parquet` + `retrieval/faiss_index.bin` rebuilt in the
   new venv; `feature_normalization_stats.json` reproduced byte-identically.
 - v1 frozen: `data/MANIFEST.json` (30 files incl. A1 checkpoints + raw-data fingerprint), window index
@@ -49,6 +49,23 @@ Short, frequently-updated. See `build_plan.md` for full milestone detail.
 - `evaluation/stats.py`: paired cluster-jackknife t-test (primary) + Diebold-Mariano
   (secondary), calibrated on simulated overlapping-window data (3.5-6.4% false
   positives at nominal 5%). Replaces the window-level bootstrap.
+
+## Week 3 data (2026-10-05)
+- **v2 download verified:**
+  - 5,049/5,049 files, correct coordinates, IST, 409,224 hours per cell, no duplicates;
+  - physical checks pass (no night radiation, dew point ≤ T, valid ranges, monsoon dew-point peak);
+  - wind speed identical to v1 on all 3.68M hours, so there were no ERA5 revisions.
+- **`data/raw/legacy_full_range/`** was made on 2026-10-04 during the raw-data reorganisation. It holds old single-request cell_1..6 files from the user's upload. It is unused and gitignored; whether to keep it is the user's call.
+- **Upstream downloader** `pipeline/download_era5_upstream.py`:
+  - 27 daily nodes, 10 variables (names probed against the live API);
+  - 11 offline tests;
+  - one real node-year (n26e072, 2026) downloaded and validated;
+  - the user runs the rest (~3.3 days of quota).
+- **Cowork Phase-6 sources reviewed:** 135 actions and 46 thresholds.
+  - All 136 text-layer quotes were confirmed on the cited page from a fresh pdftotext extraction.
+  - The 45 image-based quotes were spot-checked on 2 page images.
+  - Issues went back to Cowork (Part C since done, see the Week 2 status below): 123/135 actions have no alert tier; two conflicting colour systems; 4- vs 5-day lead time; no Indian WBGT limit; energy is PARTIAL; medical-guidance conflicts.
+  - Copyrighted non-government PDFs (ISO sample, Springer) must not be committed.
 
 ## CI added (2026-10-05): `.github/workflows/ci.yml`
 - Windows job: pinned lockfile env, rebuild retrieval index, pytest, manifest check.
@@ -63,7 +80,9 @@ Short, frequently-updated. See `build_plan.md` for full milestone detail.
 ## Week 2 status (2026-10-04): v2 data, labels, folds and trainer built
 - `datasets_v2/` (daily + per-cell; no climatology/labels stored, as they are fold-specific).
 - `pipeline/labels_v2.py`, with an acceptance test on pre-2019 events only: 1998, 2002,
-  2010 and 2015 (to be confirmed against IMD records).
+  2010 and 2015. Sourced 2026-10-05 (Part C): 1998 and 2010 are IMD sub-division/regional
+  spells, 2015 is the IMD summary plus station data, and 2002 is station-only. None is an
+  IMD Delhi declaration. Windows were updated to the sources; the labels flag all four.
 - `pipeline/climatology.py` reproduces v1 climatology exactly; the shared episode code
   reproduces v1's 102-episode catalogue exactly.
 - `training/folds.py` builds 4 rolling folds. On the primary fold with v1 settings it

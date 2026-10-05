@@ -24,15 +24,15 @@ pip install torch --index-url https://download.pytorch.org/whl/cpu
 ```bash
 .venv\Scripts\python.exe -m pytest -q
 ```
-Expects 145 passed (as of 2026-10-04): 3 `test_no_leakage.py`, 6
+Expects 156 passed (as of 2026-10-05): 3 `test_no_leakage.py`, 6
 `test_retrieval_eligibility.py` (needs `retrieval/faiss_index.bin`; build it
 first with `python -m retrieval.build_index`, see Step 4), 12 `test_manifest.py`
-(frozen v1 files unchanged), 46 `test_stats.py`, 8 `test_predict_v1.py`, 16 `test_hourly_features.py` , 13 `test_download_era5_v2.py`, 13 `test_labels_v2.py`, 19 `test_folds.py` and 9 `test_train_unified.py`. To verify the freeze alone:
+(frozen v1 files unchanged), 46 `test_stats.py`, 8 `test_predict_v1.py`, 16 `test_hourly_features.py` , 13 `test_download_era5_v2.py`, 11 `test_download_era5_upstream.py`, 13 `test_labels_v2.py`, 19 `test_folds.py` and 9 `test_train_unified.py`. To verify the freeze alone:
 `.venv\Scripts\python.exe -m scripts.make_manifest --check`.
 
 On a fresh clone (no raw ERA5 folder, no retrieval index), the raw-data test skips and
 the retrieval files must be rebuilt first (`python -m retrieval.build_index` then
-`python -m retrieval.precompute_analogues`): 144 passed, 1 skipped.
+`python -m retrieval.precompute_analogues`): 155 passed, 1 skipped.
 GitHub CI (`.github/workflows/ci.yml`) does exactly this on every push, plus gitleaks
 and pip-audit.
 
@@ -122,3 +122,13 @@ Run the baselines before `compare_v1` so the G0 table includes them.
 Options: `--folds f4 --seeds 0 1` for a quick subset; `--threads N` (default: half the cores).
 Outputs: `predictions_v2/<run_id>/<fold>.parquet`, a row per fold in `registry/runs.csv`,
 gitignored checkpoints in `models/v2/`. `configs/A1_repro.json` reproduces frozen A1 exactly.
+
+## Week 3 (plan v5) — upstream (NW India / Pakistan) download for the regional DSTGNN
+
+```bash
+.venv\Scripts\python.exe -m pipeline.download_era5_upstream --dry-run   # ~1,269 requests, ~33k counted calls (~3.3 days of free quota)
+.venv\Scripts\python.exe -m pipeline.download_era5_upstream             # resumable; Ctrl+C safe; stops itself when the daily quota runs out
+.venv\Scripts\python.exe -m pipeline.download_era5_upstream --verify    # expect 1269/1269 when done
+```
+27 daily nodes (2-degree lattice 24-32 N x 68-78 E, minus 3 points above 1,000 m), 10 daily
+variables, Delhi local time, 1980-01-01 .. 2026-09-06 -> `data/raw/era5_upstream/<node>/<year>.json`.

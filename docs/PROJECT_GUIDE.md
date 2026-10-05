@@ -43,7 +43,8 @@ on heatwave days. The project then grows in two directions:
 | Area | **9 grid cells** on a 0.25° grid over Delhi (28.25–28.75 °N, 77.00–77.50 °E). Each cell is about 25 km wide. |
 | Time | Hourly, **1980-01-01 to 2026-09-06**, local time (IST). 17,051 days. |
 | v1 variables (already downloaded) | Hourly temperature, relative humidity, wind speed and surface pressure. Daily values (max/min/mean T, mean RH, ...) are computed from these. |
-| v2 variables (download in progress) | Dew point, wind direction, solar radiation (total, direct, diffuse), cloud cover and soil moisture. See §8.2 for why. |
+| v2 variables (downloaded and verified, 2026-10-05) | Dew point, wind direction, solar radiation (total, direct, diffuse), cloud cover and soil moisture. See §8.2 for why. |
+| Upstream points (download ready to run) | **Daily** values at 27 points on a 2° grid over north-west India and Pakistan (24–32 °N, 68–78 °E; 3 mountain points above 1,000 m dropped): max/min/mean temperature, dew point, humidity, wind speed and direction, sunshine, soil moisture, pressure. These are the nodes of the regional graph model (§9). Script: `pipeline/download_era5_upstream.py`. |
 | Daily table | `datasets/all_daily.parquet` (v1) and `datasets_v2/all_daily_v2.parquet` (v2, adds heat-stress measures). Values are the **average over the 9 cells**. |
 
 **Training examples ("windows").** Each example has:
@@ -277,8 +278,19 @@ a historical reference.
   ≥ 2 days.
 - **Labels are always defined from Tmax,** even when the model predicts WBGT, because
   official warnings are Tmax-based.
-- **Acceptance test:** the labels must flag known pre-2019 heatwaves (May–Jun 1998, May
-  2002, Apr 2010, May 2015). The dates are being checked against IMD records.
+- **Acceptance test:** the labels must flag 4 documented pre-2019 heatwaves, each with at
+  least 2 "extreme" days. The windows come from the sources, never from the labels:
+
+  | Event | Window | Evidence |
+  |---|---|---|
+  | 1998 | 22 May – 3 Jun | IMD sub-division spell (Haryana, Chandigarh & Delhi), Pai et al. 2004 |
+  | 2002 | 10 – 20 May | Safdarjung station only (≥ 40 °C every day, peak 46.0 °C) |
+  | 2010 | 8 – 20 Apr | IMD north-west India heat wave (IMD monograph) |
+  | 2015 | 22 – 26 May | IMD 2015 summary (severe heat, second half of May) + Safdarjung station |
+
+  IMD records heatwaves by region, not by city, so **none of these is an IMD-declared Delhi
+  heatwave**. Say "checked against IMD regional/sub-division spells and Safdarjung station
+  records", never "validated against IMD for Delhi". Details: `sources/PHASE6_PART_C_RESULT.md`.
 
 ### 8.4 Rolling folds, `training/folds.py`
 
@@ -413,8 +425,10 @@ the project's virtual environment (`.venv`); nothing is installed globally.
 
 ## 12. Open items
 
-- v2 download (radiation etc.) running; then build Liljegren WBGT and check BoM against it.
-- Confirm the 4 acceptance heatwave dates against IMD records (research brief Part C).
+- v2 download complete and verified; next, build Liljegren WBGT and check BoM against it.
+- Upstream download: run `pipeline/download_era5_upstream.py` (about 3–4 days of free API quota), then the G-D0 check (does upstream heat lead Delhi?).
+- ~~Confirm the 4 acceptance heatwave dates~~ Done (2026-10-05): 3 have IMD regional or
+  sub-division support and 1 (2002) is station-only; none is an IMD Delhi declaration (§8.3).
 - Find official advisory sources (research brief Parts A–B, `docs/PHASE6_SOURCE_RESEARCH_BRIEF.md`).
 - Station humidity cross-check for the humid-heat trend.
 
@@ -426,3 +440,5 @@ the project's virtual environment (`.venv`); nothing is installed globally.
 |---|---|
 | 2026-10-04 | First version: v1 results, Week-1 findings, v2 data/labels/folds/trainer (Week 2). |
 | 2026-10-05 | Added CI (tests, frozen-v1 check, secret scan, dependency audit), ground rule 7. |
+| 2026-10-05 | v2 download verified; upstream downloader (27 NW India / Pakistan points) added. |
+| 2026-10-05 | Acceptance heatwaves sourced (Part C): windows updated, evidence level stated per event. |

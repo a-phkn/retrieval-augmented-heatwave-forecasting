@@ -98,13 +98,27 @@ def test_rejects_non_contiguous_dates():
 
 # ---------------------------------------------------------------- acceptance (pre-2019 only)
 
-# Widely reported Delhi / north-India heatwaves before 2019 (to be confirmed against IMD
-# records; see docs/PHASE6_SOURCE_RESEARCH_BRIEF.md). Each window must overlap a v2 episode.
+# Documented pre-2019 heatwaves (research: sources/PHASE6_PART_C_RESULT.md, checked
+# 2026-10-05). IMD does not declare heatwaves per city, so none of these is an
+# IMD-declared DELHI event: each is an IMD regional/sub-division spell or Safdarjung
+# station evidence (GHCN-Daily IN022021900 = NEW DELHI/SAFDARJUN, WMO 42182).
+# Do not describe this test as "validated against IMD for Delhi".
+# Windows are fixed by the sources, never tuned to the labels. Each must contain >= 2
+# extreme v2 days.
 KNOWN_EVENTS = [
-    ("1998-05-24", "1998-06-01"),  # late May - early June 1998
-    ("2002-05-10", "2002-05-20"),  # May 2002
-    ("2010-04-10", "2010-04-20"),  # April 2010
-    ("2015-05-22", "2015-05-26"),  # late May 2015
+    # IMD sub-division 13 (Haryana, Chandigarh & Delhi) spell 22 May - 3 Jun 1998:
+    # Pai et al. 2004, MAUSAM 55(2), Table 4. Safdarjung peak 46.5 C on 28 May.
+    ("1998-05-22", "1998-06-03"),
+    # Station evidence only (IMD's north-west India spell was 1-8 May, when Delhi peaked at
+    # 43.0 C): Safdarjung >= 40 C on all of 10-20 May 2002, peak 46.0 C on 18 May.
+    ("2002-05-10", "2002-05-20"),
+    # IMD north-west India heat wave 8-20 Apr 2010: IMD monograph "Heat and Cold Waves in
+    # India", Table 4.2. Safdarjung peak 42.9 C on 16 Apr (3 days missing).
+    ("2010-04-08", "2010-04-20"),
+    # IMD Annual Climate Summary 2015: severe heat wave over north/north-west India in the
+    # second fortnight of May; New Delhi AP annual max 45.5 C on 25 May. Window from
+    # Safdarjung (>= 43.6 C on all of 22-26 May, peak 45.5 C on 25-26 May).
+    ("2015-05-22", "2015-05-26"),
 ]
 
 
