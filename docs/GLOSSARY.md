@@ -71,7 +71,10 @@ attributed to that one change.
 |---|---|
 | **Tmax** | Daily maximum air temperature. |
 | **WBGT** | Wet-Bulb Globe Temperature: heat-stress index combining temperature, humidity, sun and wind. |
-| **BoM WBGT approximation (Tier-A)** | Formula from Australia's Bureau of Meteorology using only temperature and humidity; a temperature–humidity index that runs about 6 deg C above a shade WBGT in Delhi's humid season. Columns `wbgt_bom_*`. |
+| **BoM WBGT approximation (Tier-A)** | Formula from Australia's Bureau of Meteorology using only temperature and humidity; a temperature–humidity index (no sun or wind). Against the physical WBGT it reads 2–3 °C too high in Jun–Sep and about right otherwise (an earlier '~6 °C' figure compared it with a shade WBGT). Columns `wbgt_bom_*`. |
+| **Liljegren WBGT (physical WBGT)** | The validated physical outdoor WBGT: 0.7 × natural wet-bulb + 0.2 × black-globe + 0.1 × air temperature, from heat-balance equations using sun and wind (Liljegren et al. 2008). Ported from Liljegren's Argonne C code; adapted to reanalysis following Kong & Huber (2022) and checked against their PyWBGT. Columns `wbgt_lj_*` (`datasets_v2/wbgt_liljegren_daily.parquet`). |
+| **Natural wet-bulb (Tnwb) / black-globe (Tg) temperature** | The two physical components of WBGT: the temperature of a wet wick exposed to sun and wind, and of a black sphere in the sun. |
+| **WBGT heatwave label** | Humid-heat label: day in 15 Mar – 30 Sep with daily max BoM WBGT ≥ its 97.5th in-season percentile (training years); percentile chosen by the ≥ 25-episode rule (`configs/wbgt_label.json`). |
 | **Liljegren WBGT (Tier-B)** | Physics-based WBGT that uses radiation and wind (needs the v2 download). |
 | **Tw** | Wet-bulb temperature (Stull 2011 formula): lowest temperature reachable by evaporative cooling; a clean humid-heat measure. |
 | **HI** | Heat Index ("feels-like" temperature, US National Weather Service formula). |

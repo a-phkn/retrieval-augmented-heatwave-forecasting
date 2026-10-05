@@ -1,0 +1,30 @@
+{
+  "run_id": "A1prime_hw5",
+  "parent": "A1prime",
+  "description": "Improvement candidate: hot_weight 5 (A1prime uses 20).",
+  "target": "t_max",
+  "labels": "v2",
+  "anomaly_target": false,
+  "target_form": "raw",
+  "hot_weight": 5,
+  "early_stop": "inner_2y",
+  "seeds": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9
+  ],
+  "folds": [
+    "f1",
+    "f2",
+    "f3",
+    "f4"
+  ],
+  "threads": 8
+}

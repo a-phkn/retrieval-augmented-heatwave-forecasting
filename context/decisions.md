@@ -429,3 +429,34 @@ required control, not an option.
 Practical consequences of the two decisions: every decision-feeding run uses seeds 0-9;
 every results table includes damped persistence and an RMSE-by-lead breakdown; a model
 that wins on extreme days but fails the floor is reported as a trade-off, not a win.
+
+**WBGT target = physical (Liljegren) WBGT; WBGT models use the WBGT label: DECIDED 2026-10-05 (user)**
+- New WBGT runs forecast `wbgt_lj_max` (physical WBGT, `pipeline/wbgt_liljegren.py`), not the BoM index.
+- Their hot-day loss weight and their "extreme" stratum use the **WBGT label**: physical WBGT, Mar 15–Sep 30,
+  95th in-season percentile (training years), chosen by the ≥ 25-episode rule (`configs/wbgt_label.json`).
+- Tmax models keep the Tmax label. WBGT models are also reported on the Tmax label, so cross-target
+  comparisons stay visible.
+- Conditions:
+  1. Phase-6 official alert tiers stay Tmax-based (IMD-style). Humid heat is a separate, clearly labelled
+     heat-stress note, never an official heatwave declaration.
+  2. The final model must output both Tmax and WBGT (the physics head, 2a, does this by design).
+- Limitation: no officially documented humid-heat events exist to check the WBGT label against (Cowork asked).
+- One-change chain: A1′ (Tmax, Tmax label) → A2L_t (physical WBGT target, Tmax label) → A2L (WBGT label)
+  → A2Lr (anomaly target). BoM runs A2/A2r stay as historical results.
+
+**Improvement candidates: PRE-REGISTERED 2026-10-05, before any of these runs**
+Goal: bring the controls above the damped-persistence floor. The candidate list is fixed in advance and each
+candidate changes one thing:
+1. Tmax anomaly target: A1prime_r.
+2. Damped-persistence residual (the model learns a correction to damped persistence): A1prime_dp, A2L_dp.
+3. hot_weight ∈ {1, 5, 10} (20 already run) for A1′, A2L and A2Lr.
+
+The 10-seed ensemble mean is reported as an extra only (decision 2026-10-04 stands); the primary score is the
+mean of per-seed RMSEs.
+
+Control choice (G2), applied after all runs, separately for the Tmax and the WBGT families:
+- Among variants **not significantly worse than damped persistence on all days** (paired cluster test,
+  2007-2018 pooled), choose the one with the lowest all-days RMSE.
+- If two are within 0.02 °C, take the simpler one: fewer changes from the parent.
+- If none passes, report the family as failing the floor and keep the variant closest to it.
+- Extreme-day and forecast-conditioned results are reported for every variant but do not drive the choice.

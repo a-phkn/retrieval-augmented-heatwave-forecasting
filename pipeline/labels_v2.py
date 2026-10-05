@@ -17,8 +17,16 @@ Stratum per day (for evaluation): 'extreme' = hot day inside an episode, 'unusua
     but not in an episode, 'normal' otherwise (as in v1, a non-hot gap day inside an
     episode is not 'extreme'). Off-season days are always 'normal' for v2.
 
-A WBGT-based label (percentile of the season's BoM index, chosen by the pre-registered
-'>= 25 episodes in the pooled rolling folds' rule) is added once the folds exist.
+WBGT label (decision 2026-10-05; label_frame_wbgt):
+    Hot WBGT day: inside the WBGT season Mar 15 - Sep 30 (longer than the Tmax season
+    because humid heat peaks in the Jul-Sep monsoon) AND daily max WBGT >= the P-th
+    percentile of in-season daily max WBGT over the fold's TRAINING years.
+    P is the highest of WBGT_PERCENTILES that gives >= 25 episodes pooled over the four
+    validation blocks, each labelled with its own fold's threshold (the same pre-registered
+    minimum-sample rule as for Tmax; evaluation/select_wbgt_label.py). Primary variable
+    (decision 2026-10-05): the physical Liljegren WBGT (95th percentile, 29 episodes); the BoM
+    index is reported as a sensitivity check.
+    Episodes and strata use the same convention as the Tmax label.
 """
 from __future__ import annotations
 
@@ -84,4 +92,35 @@ def label_frame(dates, t_max, anomaly) -> pd.DataFrame:
     # As in v1: only actually-hot days count as extreme (gap days inside an episode do not).
     stratum = np.where(hot & (ids > 0), "extreme", np.where(hot, "unusual", "normal"))
     return pd.DataFrame({"hot_v2": hot, "severe_v2": severe, "episode_id_v2": ids, "stratum_v2": stratum},
+                        index=pd.DatetimeIndex(pd.to_datetime(dates), name="date"))
+
+
+# ---------------------------------------------------------------- WBGT label
+
+WBGT_SEASON_START_MD, WBGT_SEASON_END_MD = 315, 930  # Mar 15 .. Sep 30 inclusive
+WBGT_PERCENTILES = (99.0, 98.0, 97.5, 95.0, 92.5, 90.0)  # highest first (pre-registered)
+MIN_POOLED_EPISODES = 25
+
+
+def in_wbgt_season(dates) -> np.ndarray:
+    d = pd.DatetimeIndex(pd.to_datetime(dates))
+    md = d.month * 100 + d.day
+    return np.asarray((md >= WBGT_SEASON_START_MD) & (md <= WBGT_SEASON_END_MD))
+
+
+def wbgt_threshold(dates, values, train_mask, percentile: float) -> float:
+    """P-th percentile of in-season daily values over the training dates only."""
+    values = np.asarray(values, dtype=np.float64)
+    sel = in_wbgt_season(dates) & np.asarray(train_mask, dtype=bool)
+    if not sel.any():
+        raise ValueError("no in-season training days")
+    return float(np.percentile(values[sel], percentile))
+
+
+def label_frame_wbgt(dates, values, threshold: float) -> pd.DataFrame:
+    """Per-day WBGT labels: hot_wbgt, episode_id_wbgt (0 = none), stratum_wbgt."""
+    hot = in_wbgt_season(dates) & (np.asarray(values, dtype=np.float64) >= threshold)
+    ids, _ = episodes(dates, hot)
+    stratum = np.where(hot & (ids > 0), "extreme", np.where(hot, "unusual", "normal"))
+    return pd.DataFrame({"hot_wbgt": hot, "episode_id_wbgt": ids, "stratum_wbgt": stratum},
                         index=pd.DatetimeIndex(pd.to_datetime(dates), name="date"))

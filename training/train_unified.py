@@ -20,6 +20,7 @@ Early stopping ("early_stop" key):
 Config keys (configs/*.json):
     run_id, parent, description, target ("t_max" | "wbgt_bom_max"), labels ("v1" | "v2"),
     anomaly_target (bool), hot_weight, early_stop, seeds (list), folds (list of "f1".."f4"),
+    target_form (optional: "raw" | "anomaly" | "dp_residual"; default from anomaly_target),
     threads (optional int; results are bit-reproducible only at the same thread count).
 
 Registry RMSE values of different targets (Tmax vs WBGT) are NOT comparable. Compare runs
@@ -59,7 +60,8 @@ from torch.utils.data import DataLoader, TensorDataset
 from evaluation.predict_v1 import long_frame
 from models.lstm import LSTMForecaster
 from training.folds import (
-    DAILY_V2_PATH, FOLDS, LABEL_VERSIONS, TARGETS, FoldData, SplitArrays, build_fold, inner_split,
+    DAILY_V2_PATH, FOLDS, LABEL_VERSIONS, LILJEGREN_DAILY_PATH, TARGET_FORMS, TARGETS, WBGT_LABEL_CONFIG,
+    FoldData, SplitArrays, build_fold, inner_split,
 )
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
@@ -79,7 +81,7 @@ EARLY_STOP = ("inner_2y", "val_block")
 BATCH_SIZE, MAX_EPOCHS, PATIENCE, LR = 64, 100, 10, 1e-3
 REQUIRED_KEYS = {"run_id", "parent", "target", "labels", "anomaly_target", "hot_weight", "early_stop", "seeds", "folds"}
 REGISTRY_FIELDS = [
-    "timestamp_utc", "run_id", "parent", "fold", "target", "labels", "anomaly_target", "hot_weight",
+    "timestamp_utc", "run_id", "parent", "fold", "target", "labels", "anomaly_target", "target_form", "hot_weight",
     "early_stop", "seeds", "config_sha256", "data_sha256", "code_sha256", "git_commit", "git_dirty",
     "device", "torch_threads", "torch_version", "n_fit_windows", "n_stop_windows", "n_val_windows",
     "val_rmse_all", "val_rmse_extreme", "clim_rmse_all", "clim_rmse_extreme",
@@ -101,6 +103,10 @@ def load_config(path: Path) -> dict:
         raise ValueError(f"early_stop must be one of {EARLY_STOP}")
     if "threads" in cfg and not (isinstance(cfg["threads"], int) and cfg["threads"] > 0):
         raise ValueError("threads must be a positive integer")
+    form = cfg.get("target_form", "anomaly" if cfg["anomaly_target"] else "raw")
+    if form not in TARGET_FORMS or (cfg["anomaly_target"] and form != "anomaly"):
+        raise ValueError(f"target_form must be one of {TARGET_FORMS} and agree with anomaly_target")
+    cfg["target_form"] = form
     return cfg
 
 
@@ -201,7 +207,18 @@ def fit_and_stop_sets(data: FoldData, early_stop: str) -> tuple[SplitArrays, Spl
 
 
 def _append_registry(row: dict) -> None:
+    """Append one row. If the file was written with an older column set, it is rewritten
+    with the union of columns first (old rows get blanks), so columns never misalign."""
     REGISTRY.parent.mkdir(parents=True, exist_ok=True)
+    if REGISTRY.exists():
+        with open(REGISTRY, newline="", encoding="utf-8") as f:
+            header = next(csv.reader(f), [])
+        if header != REGISTRY_FIELDS:
+            old = pd.read_csv(REGISTRY, dtype=str, keep_default_na=False)
+            extra = [c for c in old.columns if c not in REGISTRY_FIELDS]
+            if extra:
+                raise ValueError(f"registry has unknown columns {extra}; refusing to drop them")
+            old.reindex(columns=REGISTRY_FIELDS, fill_value="").to_csv(REGISTRY, index=False)
     new = not REGISTRY.exists()
     with open(REGISTRY, "a", newline="", encoding="utf-8") as f:
         w = csv.DictWriter(f, fieldnames=REGISTRY_FIELDS)
@@ -230,12 +247,15 @@ def run(cfg: dict, folds: list[str] | None = None, seeds: list[int] | None = Non
 def _run(cfg: dict, folds: list[str], seeds: list[int], out_dir: Path, model_dir: Path,
          write_registry: bool) -> dict[str, pd.DataFrame]:
     cfg_hash = hashlib.sha256(json.dumps(cfg, sort_keys=True).encode()).hexdigest()
-    data_hash = hashlib.sha256((_sha256_file(DAILY_V2_PATH) + _sha256_file(WINDOW_INDEX)).encode()).hexdigest()
+    data_files = [DAILY_V2_PATH, WINDOW_INDEX] + ([LILJEGREN_DAILY_PATH] if LILJEGREN_DAILY_PATH.exists() else [])
+    if cfg["labels"] == "wbgt":
+        data_files.append(WBGT_LABEL_CONFIG)
+    data_hash = hashlib.sha256("".join(_sha256_file(p) for p in data_files).encode()).hexdigest()
     code_hash, commit, dirty = _code_sha256(), _git("rev-parse", "HEAD"), _git_dirty()
     results = {}
     for fold in folds:
         t0 = time.time()
-        data = build_fold(fold, cfg["target"], cfg["labels"], cfg["anomaly_target"])
+        data = build_fold(fold, cfg["target"], cfg["labels"], target_form=cfg["target_form"])
         fit, stop = fit_and_stop_sets(data, cfg["early_stop"])
         frames = []
         for seed in seeds:
@@ -266,7 +286,8 @@ def _run(cfg: dict, folds: list[str], seeds: list[int], out_dir: Path, model_dir
             _append_registry({
                 "timestamp_utc": datetime.now(timezone.utc).isoformat(timespec="seconds"),
                 "run_id": cfg["run_id"], "parent": cfg["parent"], "fold": fold, "target": cfg["target"],
-                "labels": cfg["labels"], "anomaly_target": cfg["anomaly_target"], "hot_weight": cfg["hot_weight"],
+                "labels": cfg["labels"], "anomaly_target": cfg["anomaly_target"], "target_form": cfg["target_form"],
+                "hot_weight": cfg["hot_weight"],
                 "early_stop": cfg["early_stop"], "seeds": " ".join(map(str, seeds)), "config_sha256": cfg_hash,
                 "data_sha256": data_hash, "code_sha256": code_hash, "git_commit": commit, "git_dirty": dirty,
                 "device": "cpu", "torch_threads": torch.get_num_threads(), "torch_version": torch.__version__,

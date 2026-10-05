@@ -39,7 +39,7 @@ Short, frequently-updated. See `build_plan.md` for full milestone detail.
    changed).
 
 ## Last verified state (2026-10-04)
-- `pytest` → 156 passed (leakage 3, retrieval eligibility 6, manifest 12, stats 46, predict_v1 8, hourly features 16, downloader v2 13, upstream downloader 11, labels v2 13, folds 19, trainer 9).
+- `pytest` → 195 passed (leakage 3, retrieval eligibility 6, manifest 12, stats 46, predict_v1 8, hourly features 16, downloader v2 13, upstream downloader 11, compare v2 12, wbgt liljegren 11, wbgt label 5, labels v2 13, folds 27, trainer 12).
 - `retrieval/candidates.parquet` + `retrieval/faiss_index.bin` rebuilt in the
   new venv; `feature_normalization_stats.json` reproduced byte-identically.
 - v1 frozen: `data/MANIFEST.json` (30 files incl. A1 checkpoints + raw-data fingerprint), window index
@@ -49,6 +49,29 @@ Short, frequently-updated. See `build_plan.md` for full milestone detail.
 - `evaluation/stats.py`: paired cluster-jackknife t-test (primary) + Diebold-Mariano
   (secondary), calibrated on simulated overlapping-window data (3.5-6.4% false
   positives at nominal 5%). Replaces the window-level bootstrap.
+
+## Week 3 results (2026-10-05)
+- **G2** (`evaluation_v2/week3_controls.md`): out-of-fold 2007-2018, 10 seeds. Delta vs damped persistence on all days:
+  A1′ +0.107 (fails the floor), A2 −0.043 (n.s.), A2r −0.056 (p=0.024). All beat climatology and are much better on extremes.
+  The 10-seed ensemble gives A2 −0.074, A2r −0.077 (both significant) and A1′ +0.070.
+  A1′ over-forecasts heatwaves (~1,200 forecast hot days/seed vs ~730 observed; +1.66 °C bias on them).
+  The control choice is held until the improvement candidates have run: ensemble, hot_weight sweep, Tmax anomaly target, damped-persistence residual.
+- **Liljegren WBGT** (`pipeline/wbgt_liljegren.py`, `pipeline/build_wbgt_liljegren.py`):
+  - Liljegren/Argonne C ported (option B); Kong & Huber (2022) methodology; checked against PyWBGT
+    (max diff 0.007 °C on 3,000 real hours) and against the original iteration (within 0.02 K).
+  - BoM is +2–3 °C in Jun–Sep; corr 0.74 Apr–Sep.
+  - Heat-season trend: physical WBGT +0.32 °C/decade [0.16, 0.48], BoM +0.375, Tmax +0.14 (n.s.).
+- **WBGT label:** season Mar 15–Sep 30, 97.5th percentile of BoM (≈37.7), 28 pooled episodes
+  (`configs/wbgt_label.json`). Physical-WBGT sensitivity: 95th pct, 29 episodes.
+  Tmax heatwaves fall in Apr–Jun and BoM-WBGT heatwaves in Jun–Aug; only 27 days overlap.
+- **Decided 2026-10-05:** the WBGT models forecast the physical WBGT with the WBGT label
+  (95th pct, 29 episodes); see `decisions.md`.
+- **Pre-registered improvement queue** (`configs/week3_queue.txt`): 15 runs started 23:49.
+  The queue is resumable (it skips runs with all 4 folds done); the background job cap is 2 h,
+  so relaunch the same loop if it is cut off.
+- **Cowork Part D requested** (brief): humid-heat events before 2019, IMD humid-heat criteria,
+  IMD lead time, report housekeeping.
+- **Open:** advisory tier mapping (user, later).
 
 ## Week 3 data (2026-10-05)
 - **v2 download verified:**
@@ -121,7 +144,7 @@ Reports: `evaluation_v2/g0_val_comparison.md`, `premise_report.md`, `mde.md`.
   +0.38, wet-bulb Tw +0.35, Heat Index +0.47 °C/decade (all CIs exclude 0).
   Caveat: ERA5 humidity homogeneity is unverified (a step around 2000–01); check against
   station data.
-- **BoM "WBGT" is a T–humidity index:** ~6 °C above a shade WBGT in July. It is renamed
+- **BoM "WBGT" is a T–humidity index:** ~6 °C above a shade WBGT in July (superseded 2026-10-05: vs the physical Liljegren WBGT it is +2–3 °C in Jun–Sep, ≈0 otherwise). It is renamed
   `wbgt_bom_*` and gets no absolute thresholds; validate against Liljegren once the v2
   download (radiation) exists.
 - **Retention:** similarity barely ranks analogues within the top 20 (mean ρ +0.034, CI

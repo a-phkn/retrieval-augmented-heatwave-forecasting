@@ -6,7 +6,7 @@
 > log at the end. Short forms are explained in [`GLOSSARY.md`](GLOSSARY.md); the full
 > plan is in [`PLAN_REVIEW_v5.md`](PLAN_REVIEW_v5.md).
 >
-> **Last updated:** 2026-10-05 (end of Week 2, CI added)
+> **Last updated:** 2026-10-05 (Week 3: G2 results, physical WBGT, WBGT label)
 
 ---
 
@@ -228,8 +228,10 @@ independent. Full table: `evaluation_v2/g0_val_comparison.md`.
   "control". Caveat: ERA5 humidity may have a data artefact around 2000–01, so we still
   need to cross-check against weather-station data.
 - **The BoM WBGT formula is an index, not a true WBGT.** It uses only temperature and
-  humidity, and reads about 6 °C higher than a shade WBGT in July. So we never apply
-  official absolute WBGT thresholds to it.
+  humidity. Against the physical outdoor WBGT (built in Week 3, §8.2) it reads **2–3 °C
+  too high in the humid monsoon months (Jun–Sep)** and about right otherwise. (An earlier
+  rough estimate of "~6 °C" compared it with a *shade* WBGT; corrected 2026-10-05.) So we
+  never apply official absolute WBGT thresholds to it.
 - **Retrieval ranking is weak:** within the top 20 analogues, the more similar ones are
   barely better than the less similar ones.
 - **Seeds matter:** different random seeds of the same model differ by about 0.2 °C on
@@ -254,7 +256,34 @@ There are two ways to compute WBGT, and they need different data:
 | Version | Needs | Data source | Status |
 |---|---|---|---|
 | **BoM approximation** (`wbgt_bom_max`) | Temperature + humidity only | **v1 raw files** (already have them) | ✅ Built in Week 2. This is the target of A2/A2r. |
-| **Liljegren (physical) WBGT** | Temperature, humidity, **solar radiation**, **wind**, pressure | **v2 download** (radiation, dew point, ...) | ⏳ After the v2 download finishes (Weeks 3–4). Used to **check and calibrate** the BoM index, and possibly as the final target. |
+| **Liljegren (physical) WBGT** (`wbgt_lj_max`) | Temperature, humidity, **solar radiation**, **wind**, pressure | **v2 download** (radiation) + v1 files | ✅ Built in Week 3 (`pipeline/wbgt_liljegren.py`, `datasets_v2/wbgt_liljegren_daily.parquet`) |
+
+**How the physical WBGT is computed, and who we credit:**
+- **WBGT = 0.7 × natural wet-bulb + 0.2 × black-globe + 0.1 × air temperature.** The wet-bulb
+  and globe temperatures come from heat-balance equations for a wet wick and a black globe
+  in sun and wind (Liljegren et al. 2008).
+- **Code:** ported from **Liljegren's original C program** (Argonne National Laboratory,
+  open-source licence; the notice is kept in the file).
+- **Method for reanalysis data:** follows **Kong & Huber (2022), *Earth's Future***, and their
+  reference implementation **PyWBGT**. We use their approach for:
+  - hourly-mean radiation (average sun angle over the sunlit part of each hour);
+  - the direct-sunlight fraction taken from the reanalysis;
+  - converting 10 m wind to 2 m;
+  - solving the equations with a bracketed root finder.
+
+  We did not copy their code (it is licensed CC BY-NC-SA). We used it as an independent
+  reference to check ours.
+- **Checks** (`tests/test_wbgt_liljegren.py`):
+  - matches Liljegren's original algorithm within its own 0.02 K tolerance;
+  - matches Kong & Huber's implementation to within **0.007 °C** on 3,000 real Delhi hours;
+  - correct sun positions at the solstices;
+  - basic physics: more sun → higher WBGT, more wind in sun → lower WBGT.
+
+**What it showed (1980–2018):**
+- The BoM index is 2–3 °C too high in Jun–Sep and about right in other months.
+- It tracks the physical WBGT only partly (correlation 0.74, Apr–Sep).
+- The **humid-heat trend holds with physical WBGT: +0.32 °C/decade** [+0.16, +0.48], while
+  Tmax shows no detectable trend.
 
 The v2 download also brings **wind direction** (for the upstream/graph model) and **soil
 moisture** (dry soil amplifies heatwaves), which are physics inputs for later models.
@@ -291,6 +320,20 @@ a historical reference.
   IMD records heatwaves by region, not by city, so **none of these is an IMD-declared Delhi
   heatwave**. Say "checked against IMD regional/sub-division spells and Safdarjung station
   records", never "validated against IMD for Delhi". Details: `sources/PHASE6_PART_C_RESULT.md`.
+
+**WBGT heatwave label** (humid heat):
+- **Rule:** a day in **15 Mar – 30 Sep** whose daily max WBGT is at or above a percentile of
+  in-season values from the fold's training years.
+- **Why a longer season:** humid heat peaks in the Jul–Sep monsoon.
+- **Choosing the percentile:** the highest of 99 / 98 / 97.5 / 95 / 92.5 / 90 that gives
+  ≥ 25 episodes, the same rule as for Tmax. Result: **97.5th percentile of the BoM index (≈ 37.7)
+  → 28 episodes** (`configs/wbgt_label.json`, `evaluation/select_wbgt_label.py`).
+- **Key finding: dry and humid heatwaves are mostly different events.** Tmax heatwaves fall in
+  Apr–Jun; BoM-WBGT heatwaves in Jun–Aug. Only 27 days are hot under both (1980–2018). A
+  Tmax-only warning system would miss most humid heatwaves.
+- **Sensitivity:** with the *physical* WBGT the rule picks the 95th percentile (≈ 36.2 °C,
+  29 episodes), whose heatwaves spread over May–Sep (sun and humidity). Its days overlap the
+  BoM-label days only partly (54 shared).
 
 ### 8.4 Rolling folds, `training/folds.py`
 
@@ -329,8 +372,53 @@ use the same early-stopping rule.
 - Configured as A1, the new trainer reproduces the frozen A1 **bit-for-bit**, so the new
   machinery is proven not to change results by itself.
 - **A2r is expected to fix the warm bias.** By predicting the departure from normal, the
-  model falls back to the normal when it has no signal. First 1-seed check on f4 (not a
-  result yet): A2r beat WBGT climatology by 26%.
+  model falls back to the normal when it has no signal.
+
+**Week 3 results** (gate G2; out-of-fold 2007–2018, 10 seeds, `evaluation_v2/week3_controls.md`).
+RMSE in °C; Δ is model minus baseline, so negative = model better.
+
+| Model | All days | Δ vs climatology | Δ vs damped persistence | Extreme days | Δ vs damped persistence |
+|---|---|---|---|---|---|
+| A1′ (Tmax) | 2.29 | −0.30 ✅ | **+0.11 ❌** | 1.58 | −1.51 ✅ |
+| A2 (WBGT) | 1.55 | −0.32 ✅ | −0.04 (n.s.) | 1.28 | −0.47 ✅ |
+| A2r (WBGT anomaly) | 1.54 | −0.33 ✅ | **−0.06 ✅** (p = 0.02) | 1.34 | −0.41 ✅ |
+
+- **Averaging the 10 seeds** (an ensemble) improves all three: A2 −0.074 and A2r −0.077 vs damped
+  persistence (both significant); A1′ +0.070 (still worse).
+- **A1′ over-forecasts heatwaves** (the forecaster's dilemma). It forecasts a heatwave on about
+  1,200 forecast-days per seed, against about 730 real ones, with a +1.7 °C bias on those days.
+- **Next:** try to bring A1′ (and the others) above the floor with a pre-set candidate list:
+  - seed ensemble;
+  - `hot_weight` re-sweep;
+  - Tmax anomaly target;
+  - learning a correction on top of damped persistence.
+
+  The control model is chosen after these runs.
+
+**Decision 2026-10-05: the WBGT models now forecast the *physical* WBGT and use the WBGT label.**
+- The new chain, still one change per step:
+
+  | Run | Change from parent |
+  |---|---|
+  | A1′ | — |
+  | A2L_t | target → physical WBGT (still the Tmax label) |
+  | A2L | label → WBGT label |
+  | A2Lr | target → anomaly |
+
+  The BoM-index runs A2/A2r stay as historical results.
+- WBGT models are also scored on the Tmax label, so the two kinds of heat stay comparable.
+- **Two conditions:**
+  - Official alert tiers stay Tmax-based. Humid heat is a separate, clearly labelled heat-stress
+    note, never an official "heatwave" declaration.
+  - The final model must output both Tmax and WBGT (the physics head does this).
+- **Pre-registered improvement runs** (15 runs, running now):
+  - Tmax anomaly target (A1prime_r);
+  - learning a correction to damped persistence (A1prime_dp, A2L_dp);
+  - `hot_weight` 1 / 5 / 10 for A1′, A2L and A2Lr.
+- **How the control is chosen** (rule fixed *before* the runs, `context/decisions.md`): among runs
+  not significantly worse than damped persistence, take the lowest all-days error; near-ties go to
+  the simpler run.
+- The 10-seed average stays a reported extra, as decided on 2026-10-04.
 
 ---
 
@@ -364,6 +452,65 @@ physics-guided LSTM.
   correction for analogues from an older, cooler climate.
 
 The best step is then attached to the final model.
+
+### 9.1 How RAG helps the DSTGNN, and how we prove it (design; results pending)
+
+**What each part contributes:**
+
+| Part | What it sees | What it contributes |
+|---|---|---|
+| **DSTGNN** (graph model) | The last 14 days of weather at Delhi and 27 upstream points (Rajasthan, Thar, Punjab, Pakistan) | **What is happening now, and where heat is coming from.** Graph edges follow the wind, so it can see hot air 1–3 days before it reaches Delhi. |
+| **RAG** (analogue retrieval) | Every past 14-day period since 1980 (training years only) | **What happened the last times things looked like this:** the most similar past situations and their *real* next 5 days. |
+
+**Why combine them:** neural networks learn from averages, so they under-forecast rare
+extremes, which is exactly where they've seen few examples. RAG supplies evidence ("the 5 most
+similar past situations went on to 44–46 °C"), and the DSTGNN decides how much to trust it
+(attention), given what it sees upstream.
+
+**How they connect (model "G-R\*"):**
+1. The DSTGNN encodes the current regional situation.
+2. The retriever returns K similar past situations. It only searches the past, never the same
+   heatwave, and never validation or test years.
+3. Attention combines their real outcomes with the DSTGNN's encoding.
+4. The output head forecasts the 5 days.
+
+**How we know RAG is really helping:** "lower error with RAG" is not enough. Each
+alternative explanation gets its own control:
+
+| Alternative explanation | How we rule it out |
+|---|---|
+| "It's just a bigger model" | **Random-retrieval control (R0-rand):** the identical model fed *random* past days. Real retrieval must beat random retrieval, which proves the gain comes from the analogues' *information*, not the extra machinery. **This is the key test.** |
+| "Luck with seeds or years" | **10 seeds × 4 rolling folds** (12 validation years) and the cluster-jackknife test. "Helps" means the 95% confidence interval excludes zero. |
+| "It only looks good on heatwave days by forecasting hot all the time" | It must **not get worse over all days** (the damped-persistence floor), and it is also scored on the days it *forecasts* a heatwave (forecaster's dilemma). |
+
+**Two designs that make the case:**
+- **2×2 experiment:** {plain LSTM, DSTGNN} × {without RAG, with RAG}. It shows whether RAG helps
+  either backbone, and whether the graph and RAG provide *different* or *overlapping* information.
+  If the upstream graph already sees the heatwave coming, RAG's gain may shrink on the DSTGNN, and
+  that is a finding too.
+- **Mechanism evidence:**
+  - attention should concentrate on useful analogues, not spread evenly;
+  - gains should be larger when the analogues' futures resemble what really happened;
+  - a Tmax-vs-WBGT contrast tests whether old analogues go stale as humid heat rises.
+
+**Fairness rules:**
+- "With RAG" and "without RAG" differ only in retrieval: same data, folds, seeds and training recipe.
+- Pre-registered as primary hypothesis **H-A**, and checked once on the locked 2019+ test years.
+- Every result is reported, including a null result.
+
+**Where we stand (2026-10-05):**
+- The analogues carry information: averaging them alone beats climatology on hot days, mostly
+  at leads 1–2.
+- The first RAG model (RA-v1) did **not** clearly beat the plain LSTM: −0.09 °C on extreme
+  days, 95% range −0.58 to +0.41.
+- Its attention was nearly uniform. The retrieval ladder (R1–R4) is meant to fix that.
+
+**One-line answer:** we compare the identical DSTGNN with real retrieval, with no retrieval
+and with random retrieval, over 10 seeds and 12 validation years with confidence intervals.
+RAG counts as helping only if real retrieval beats both.
+
+*To be added when G-R\* is built:* exactly which spatio-temporal parts of the graph model RAG
+helps (see the change log).
 
 **Advisory (Phase 6):**
 - forecast → rule engine → risk tier (GREEN / YELLOW / ORANGE / RED) → LLM writes the
@@ -425,7 +572,9 @@ the project's virtual environment (`.venv`); nothing is installed globally.
 
 ## 12. Open items
 
-- v2 download complete and verified; next, build Liljegren WBGT and check BoM against it.
+- v2 download complete and verified; Liljegren WBGT built and checked (§8.2).
+- Decide whether the WBGT models should forecast the *physical* WBGT instead of the BoM index.
+- Advisory: map the 123 actions with no alert level onto the colour tiers (team decision pending).
 - Upstream download: run `pipeline/download_era5_upstream.py` (about 3–4 days of free API quota), then the G-D0 check (does upstream heat lead Delhi?).
 - ~~Confirm the 4 acceptance heatwave dates~~ Done (2026-10-05): 3 have IMD regional or
   sub-division support and 1 (2002) is station-only; none is an IMD Delhi declaration (§8.3).
@@ -442,3 +591,6 @@ the project's virtual environment (`.venv`); nothing is installed globally.
 | 2026-10-05 | Added CI (tests, frozen-v1 check, secret scan, dependency audit), ground rule 7. |
 | 2026-10-05 | v2 download verified; upstream downloader (27 NW India / Pakistan points) added. |
 | 2026-10-05 | Acceptance heatwaves sourced (Part C): windows updated, evidence level stated per event. |
+| 2026-10-05 | §9.1: how RAG helps the DSTGNN and how we prove it (design, controls, current status). |
+| 2026-10-05 | WBGT models switched to physical WBGT + WBGT label (with conditions); 15 pre-registered improvement runs started. |
+| 2026-10-05 | Physical (Liljegren) WBGT built, crediting Liljegren/Argonne and Kong & Huber; BoM claim corrected (2–3 °C, not 6); WBGT label (97.5th pct); Week-3 G2 results. |

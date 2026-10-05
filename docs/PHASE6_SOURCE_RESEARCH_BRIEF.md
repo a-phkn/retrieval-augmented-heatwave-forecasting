@@ -133,3 +133,54 @@ annual climate summaries, heat-wave reports, press releases) or peer-reviewed pa
 
 For each: the official source (title, URL, page), IMD-declared heat-wave dates for Delhi if
 given, and peak Tmax. If a period is NOT supported by an official source, say so.
+
+---
+
+## Part D — Humid heat in Delhi, IMD's humid-heat wording, and the warning lead time
+
+Context: the forecasting team found that Delhi's **humid heatwaves** (high wet-bulb / WBGT, mostly
+June–August, monsoon) are largely **different events** from its **dry heatwaves** (high Tmax,
+April–June). The model now forecasts a physical WBGT, and the advisory will add a clearly labelled
+"humid heat stress" note alongside the official (Tmax-based) heatwave tiers. We need sources for the
+three items below. Same rules as Parts A–C: official or peer-reviewed sources only, exact quotes,
+page numbers, and "not found" is a valid answer.
+
+### D1. Documented humid-heat events in Delhi, 1980–2018 (to check our humid-heat label)
+Find episodes when Delhi had dangerous **hot-and-humid** conditions (not just high Tmax), from
+official or peer-reviewed sources. Examples of what counts:
+- IMD bulletins, press releases or annual climate summaries that mention "hot and humid", "warm and
+  humid" or "sultry" conditions over Delhi, with dates;
+- peer-reviewed studies of heat-related deaths or hospital admissions in Delhi during the monsoon
+  (e.g. monsoon breaks), with dates;
+- Delhi government or NDMA reports of humid-heat health impacts.
+
+**Only events before 1 January 2019** (later years are a locked test period). Do **not** start from
+any list of dates we give you: search independently, so the check stays unbiased.
+
+For each event, give: dates, the source (title, publisher, year, URL, page), the exact quote, and the
+evidence level (IMD statement / peer-reviewed / government report / station data only). If none are
+found, say so and list where you looked.
+
+### D2. Does IMD define or warn about humid heat?
+- Does IMD (or NDMA) have any **official criterion, index or warning category for hot-and-humid
+  conditions**: heat index, apparent temperature, wet-bulb, or "warm and humid" warnings?
+  Quote the definition and thresholds if they exist, with document and page.
+- If IMD issues an operational **heat index** product (some reports mention an experimental
+  product from around 2024), find the official description: what it measures, its thresholds, and its
+  colour categories.
+- We need this to word the advisory's humid-heat note so it is consistent with, and never seems to
+  contradict, IMD.
+
+### D3. Current IMD heat-wave warning lead time
+Your report found a conflict: the IMD FAQ says the 1600 hrs bulletin gives a **five-day** warning,
+while NCDC 2025 and NDMA 2019 say **four days**. Find IMD's **current** official statement of how many
+days ahead its heat-wave warnings (and district-level colour-coded warnings) are issued. Quote it with
+the document, its date and the page.
+
+### D4. Housekeeping in the existing report (only if quick)
+- Section 1 still says "89 entries" / "37 entries"; the final totals are 135 actions / 46 thresholds.
+- Section 4 conflict 10 calls the AC 24 °C rule "unverified", but the BEE notice was added later.
+Please update these so the report is internally consistent.
+
+Return: a short markdown file `sources/PHASE6_PART_D_RESULT.md` with D1–D4, plus any new PDFs in
+`sources/pdfs/` and quotes added to the JSON files in the same verified format as before.

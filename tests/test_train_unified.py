@@ -107,3 +107,37 @@ def test_reference_rmse_on_a_toy_split():
     assert ref["clim_rmse_all"] == pytest.approx(1.0) and ref["clim_rmse_extreme"] == pytest.approx(1.0)
     assert ref["persist_rmse_all"] == pytest.approx(np.sqrt(np.mean(np.arange(5.0) ** 2)))
     assert ref["persist_rmse_extreme"] == pytest.approx(0.0)
+
+
+def test_registry_rewrites_an_old_header_instead_of_misaligning(tmp_path, monkeypatch):
+    reg = tmp_path / "runs.csv"
+    monkeypatch.setattr(tu, "REGISTRY", reg)
+    old_fields = [f for f in tu.REGISTRY_FIELDS if f != "target_form"]
+    pd.DataFrame([{f: f"old_{f}" for f in old_fields}]).to_csv(reg, index=False)
+    row = {f: f"new_{f}" for f in tu.REGISTRY_FIELDS}
+    tu._append_registry(row)
+    df = pd.read_csv(reg, dtype=str, keep_default_na=False)
+    assert list(df.columns) == tu.REGISTRY_FIELDS
+    assert df.loc[0, "run_id"] == "old_run_id" and df.loc[0, "target_form"] == ""
+    assert df.loc[1, "target_form"] == "new_target_form" and df.loc[1, "val_rmse_all"] == "new_val_rmse_all"
+
+
+def test_config_target_form_defaults_and_validation(tmp_path):
+    cfg = json.loads((REPO_ROOT / "configs/A2r.json").read_text())
+    assert tu.load_config(REPO_ROOT / "configs/A2r.json")["target_form"] == "anomaly"
+    cfg["target_form"] = "dp_residual"  # contradicts anomaly_target = true
+    bad = tmp_path / "c.json"
+    bad.write_text(json.dumps(cfg))
+    with pytest.raises(ValueError, match="target_form"):
+        tu.load_config(bad)
+
+
+def test_every_shipped_run_config_follows_the_decision_rules():
+    """All v2 run configs: valid, 10 seeds (decision 2026-10-04), 4 folds, inner early stop."""
+    paths = [p for p in sorted((REPO_ROOT / "configs").glob("*.json")) if p.stem not in ("A1_repro", "wbgt_label")]
+    assert len(paths) >= 18
+    for p in paths:
+        cfg = tu.load_config(p)
+        assert cfg["run_id"] == p.stem, p
+        assert cfg["seeds"] == list(range(10)) and cfg["folds"] == ["f1", "f2", "f3", "f4"], p
+        assert cfg["early_stop"] == "inner_2y" and cfg["threads"] == 8, p

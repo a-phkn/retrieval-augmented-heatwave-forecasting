@@ -55,12 +55,16 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 
+import json
+
 from pipeline.climatology import apply_climatology, doy_climatology
-from pipeline.labels_v2 import episodes, label_frame
+from pipeline.labels_v2 import episodes, label_frame, label_frame_wbgt, wbgt_threshold
 from training.data import _load_windows
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
 DAILY_V2_PATH = REPO_ROOT / "datasets_v2" / "all_daily_v2.parquet"
+LILJEGREN_DAILY_PATH = REPO_ROOT / "datasets_v2" / "wbgt_liljegren_daily.parquet"
+WBGT_LABEL_CONFIG = REPO_ROOT / "configs" / "wbgt_label.json"
 TEST_START = pd.Timestamp("2019-01-01")
 FOLDS = {
     "f1": (pd.Timestamp("2007-01-01"), pd.Timestamp("2009-12-31")),
@@ -73,8 +77,9 @@ BASE_FEATURES = [
     "t_max", "t_min", "t_mean", "relative_humidity_mean", "wind_speed_mean",
     "surface_pressure_mean", "shortwave_radiation_sum", "doy_sin", "doy_cos", "years_since_1980",
 ]
-TARGETS = ("t_max", "wbgt_bom_max")
-LABEL_VERSIONS = ("v1", "v2")
+TARGETS = ("t_max", "wbgt_bom_max", "wbgt_lj_max")
+LABEL_VERSIONS = ("v1", "v2", "wbgt")  # wbgt: physical-WBGT label (decision 2026-10-05)
+TARGET_FORMS = ("raw", "anomaly", "dp_residual")
 INPUT_DAYS, FORECAST_DAYS = 14, 5
 
 
@@ -88,6 +93,7 @@ class SplitArrays:
     stratum: np.ndarray  # (N, 5) 'normal' / 'unusual' / 'extreme'
     query_dates: pd.Series
     persist: np.ndarray = field(default=None)  # (N,) target on the last input day (persistence reference)
+    damped: np.ndarray = field(default=None)  # (N, 5) damped-persistence forecast of the target
 
     def subset(self, mask: np.ndarray) -> "SplitArrays":
         """Rows of this split where mask is True."""
@@ -97,6 +103,7 @@ class SplitArrays:
             hot=self.hot[mask], stratum=self.stratum[mask],
             query_dates=self.query_dates[mask].reset_index(drop=True),
             persist=None if self.persist is None else self.persist[mask],
+            damped=None if self.damped is None else self.damped[mask],
         )
 
 
@@ -114,12 +121,18 @@ class FoldData:
     train: SplitArrays
     val: SplitArrays
     train_end: pd.Timestamp = field(default=None)
+    target_form: str = "raw"  # raw | anomaly (target - climatology) | dp_residual (target - damped persistence)
+    phi: np.ndarray = field(default=None)  # damped-persistence factors, fitted on train windows
 
     def to_raw(self, y_norm: np.ndarray, split: str) -> np.ndarray:
         """Normalised model output -> raw target (deg C) for the given split. Kept in the
         output's precision (float32 for model outputs), like training.data.denormalize_y."""
         y = y_norm * self.y_std + self.y_mean
-        return y + getattr(self, split).clim_target if self.anomaly_target else y
+        if self.target_form == "anomaly":
+            return y + getattr(self, split).clim_target
+        if self.target_form == "dp_residual":
+            return y + getattr(self, split).damped
+        return y
 
 
 def fold_bounds(fold: str) -> tuple[pd.Timestamp, pd.Timestamp, pd.Timestamp]:
@@ -152,8 +165,42 @@ def inner_split(train: SplitArrays, train_end: pd.Timestamp, years: int = 2) -> 
 
 def _load_daily_pre_test() -> pd.DataFrame:
     # The test period is never loaded into a fold: rows from 2019 on are filtered at read time.
-    daily = pd.read_parquet(DAILY_V2_PATH, filters=[("date", "<", TEST_START)]).set_index("date").sort_index()
+    filt = [("date", "<", TEST_START)]
+    daily = pd.read_parquet(DAILY_V2_PATH, filters=filt).set_index("date").sort_index()
+    if LILJEGREN_DAILY_PATH.exists():  # physical WBGT (pipeline/build_wbgt_liljegren.py)
+        lj = pd.read_parquet(LILJEGREN_DAILY_PATH, filters=filt, columns=["date", "wbgt_lj_max"]).set_index("date")
+        daily = daily.join(lj, how="left")
     return daily[daily.index < TEST_START]
+
+
+def wbgt_label_setting() -> tuple[str, float]:
+    """(variable, percentile) of the WBGT label, from configs/wbgt_label.json."""
+    cfg = json.loads(WBGT_LABEL_CONFIG.read_text(encoding="utf-8"))
+    return cfg["primary_variable"], float(cfg["chosen_percentile"])
+
+
+def _clim_cols(target: str) -> tuple[str, str]:
+    return ("clim_mean_t_max", "clim_std_t_max") if target == "t_max" else (f"clim_mean_{target}", f"clim_std_{target}")
+
+
+def fit_phi(d: pd.DataFrame, target: str, train_windows: pd.DataFrame) -> np.ndarray:
+    """Damped-persistence factors phi_L (L = 1..5): least-squares slope through the origin of
+    the standardised target anomaly at lead L on that of the last input day, over TRAIN
+    windows only (as evaluation/damped_persistence_v1.py, for any target)."""
+    mean_col, std_col = _clim_cols(target)
+    z = ((d[target] - d[mean_col]) / d[std_col]).to_numpy()
+    q = d.index.get_indexer(pd.DatetimeIndex(train_windows["query_date"]))
+    z_last, z_tgt = z[q - 1], z[q[:, None] + np.arange(FORECAST_DAYS)[None, :]]
+    return (z_last[:, None] * z_tgt).sum(axis=0) / np.sum(z_last**2)
+
+
+def damped_forecast(d: pd.DataFrame, target: str, query_dates, phi: np.ndarray) -> np.ndarray:
+    """(N, 5) damped-persistence forecasts: clim_mean + clim_std * phi_L * z(last input day)."""
+    mean_col, std_col = _clim_cols(target)
+    z = ((d[target] - d[mean_col]) / d[std_col]).to_numpy()
+    q = d.index.get_indexer(pd.DatetimeIndex(query_dates))
+    pos = q[:, None] + np.arange(FORECAST_DAYS)[None, :]
+    return d[mean_col].to_numpy()[pos] + d[std_col].to_numpy()[pos] * (phi[None, :] * z[q - 1][:, None])
 
 
 def _v1_labels(dates, t_max, mean, std) -> tuple[np.ndarray, np.ndarray]:
@@ -194,14 +241,19 @@ def fold_daily(fold: str, target: str, labels: str) -> tuple[pd.DataFrame, list[
 
     if labels == "v1":
         d["hot"], d["stratum"] = _v1_labels(d.index, d["t_max"].to_numpy(), t_mean, t_std)
-    else:
+    elif labels == "v2":
         lab = label_frame(d.index, d["t_max"], d["t_max_anomaly"])
         d["hot"], d["stratum"] = lab["hot_v2"].to_numpy(), lab["stratum_v2"].to_numpy()
+    else:  # wbgt: percentile threshold from THIS fold's training years
+        var, pct = wbgt_label_setting()
+        thr = wbgt_threshold(d.index, d[var], train_mask, pct)
+        lab = label_frame_wbgt(d.index, d[var], thr)
+        d["hot"], d["stratum"] = lab["hot_wbgt"].to_numpy(), lab["stratum_wbgt"].to_numpy()
     return d, BASE_FEATURES + target_channels
 
 
 def _split_arrays(d: pd.DataFrame, windows: pd.DataFrame, features: list[str], target: str,
-                  anomaly_target: bool, f_mean, f_std, y_mean, y_std) -> SplitArrays:
+                  target_form: str, f_mean, f_std, y_mean, y_std, phi) -> SplitArrays:
     pos = d.index.get_indexer(pd.DatetimeIndex(windows["query_date"]))
     if (pos < INPUT_DAYS).any() or (pos < 0).any():
         raise ValueError("window query dates missing from the daily table")
@@ -214,7 +266,13 @@ def _split_arrays(d: pd.DataFrame, windows: pd.DataFrame, features: list[str], t
     y_raw = d[target].to_numpy(dtype=np.float32)[out_idx]
     clim_col = "clim_mean_t_max" if target == "t_max" else f"clim_mean_{target}"
     clim_target = d[clim_col].to_numpy(dtype=np.float64)[out_idx]
-    y_model = (y_raw - clim_target).astype(np.float32) if anomaly_target else y_raw
+    damped = damped_forecast(d, target, windows["query_date"], phi)
+    if target_form == "anomaly":
+        y_model = (y_raw - clim_target).astype(np.float32)
+    elif target_form == "dp_residual":
+        y_model = (y_raw - damped).astype(np.float32)
+    else:
+        y_model = y_raw
     return SplitArrays(
         X=X,
         y=((y_model - y_mean) / y_std).astype(np.float32),
@@ -224,28 +282,48 @@ def _split_arrays(d: pd.DataFrame, windows: pd.DataFrame, features: list[str], t
         stratum=d["stratum"].to_numpy()[out_idx],
         query_dates=windows["query_date"].reset_index(drop=True),
         persist=d[target].to_numpy(dtype=np.float64)[pos - 1],
+        damped=damped,
     )
 
 
-def build_fold(fold: str, target: str = "t_max", labels: str = "v1", anomaly_target: bool = False) -> FoldData:
+def build_fold(fold: str, target: str = "t_max", labels: str = "v1", anomaly_target: bool = False,
+               target_form: str | None = None) -> FoldData:
     """All arrays for one fold; normalisation fitted on the fold's training-year daily rows
-    (the v1 convention: every training day, not only window days)."""
+    (the v1 convention: every training day, not only window days).
+
+    target_form: "raw", "anomaly" (target - climatology; same as anomaly_target=True) or
+    "dp_residual" (target - damped persistence: the model learns a correction to the
+    damped-persistence forecast; its scaling is fitted on the training windows' residuals)."""
+    target_form = target_form or ("anomaly" if anomaly_target else "raw")
+    if target_form not in TARGET_FORMS:
+        raise ValueError(f"target_form must be one of {TARGET_FORMS}")
     d, features = fold_daily(fold, target, labels)
+    if d[target].isna().any():
+        raise ValueError(f"target {target} has missing values (is its dataset built?)")
     train_end, _, _ = fold_bounds(fold)
     train_rows = d[d.index <= train_end]
     f_mean = train_rows[features].to_numpy(dtype=np.float64).mean(axis=0)
     f_std = train_rows[features].to_numpy(dtype=np.float64).std(axis=0)
     f_std[f_std == 0] = 1.0
+    train_w, val_w = fold_windows(fold)
+    phi = fit_phi(d, target, train_w)
     clim_col = "clim_mean_t_max" if target == "t_max" else f"clim_mean_{target}"
-    y_series = train_rows[target] - train_rows[clim_col] if anomaly_target else train_rows[target]
+    if target_form == "dp_residual":
+        y_series = pd.Series((d[target].to_numpy()[d.index.get_indexer(pd.DatetimeIndex(train_w["query_date"]))[:, None]
+                                                   + np.arange(FORECAST_DAYS)[None, :]]
+                              - damped_forecast(d, target, train_w["query_date"], phi)).ravel())
+    elif target_form == "anomaly":
+        y_series = train_rows[target] - train_rows[clim_col]
+    else:
+        y_series = train_rows[target]
     y_mean, y_std = float(y_series.mean()), float(y_series.std(ddof=0)) or 1.0
     # v1 stored float32 stats; match that so the primary fold reproduces v1 bit-for-bit.
     f_mean, f_std = f_mean.astype(np.float32), f_std.astype(np.float32)
 
-    train_w, val_w = fold_windows(fold)
-    args = (features, target, anomaly_target, f_mean, f_std, y_mean, y_std)
+    args = (features, target, target_form, f_mean, f_std, y_mean, y_std, phi)
     return FoldData(
-        fold=fold, target=target, labels=labels, anomaly_target=anomaly_target,
+        fold=fold, target=target, labels=labels, anomaly_target=(target_form == "anomaly"),
         feature_columns=features, feature_mean=f_mean, feature_std=f_std, y_mean=y_mean, y_std=y_std,
         train=_split_arrays(d, train_w, *args), val=_split_arrays(d, val_w, *args), train_end=train_end,
+        target_form=target_form, phi=phi,
     )

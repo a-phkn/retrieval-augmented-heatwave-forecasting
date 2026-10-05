@@ -24,15 +24,15 @@ pip install torch --index-url https://download.pytorch.org/whl/cpu
 ```bash
 .venv\Scripts\python.exe -m pytest -q
 ```
-Expects 156 passed (as of 2026-10-05): 3 `test_no_leakage.py`, 6
+Expects 195 passed (as of 2026-10-05): 3 `test_no_leakage.py`, 6
 `test_retrieval_eligibility.py` (needs `retrieval/faiss_index.bin`; build it
 first with `python -m retrieval.build_index`, see Step 4), 12 `test_manifest.py`
-(frozen v1 files unchanged), 46 `test_stats.py`, 8 `test_predict_v1.py`, 16 `test_hourly_features.py` , 13 `test_download_era5_v2.py`, 11 `test_download_era5_upstream.py`, 13 `test_labels_v2.py`, 19 `test_folds.py` and 9 `test_train_unified.py`. To verify the freeze alone:
+(frozen v1 files unchanged), 46 `test_stats.py`, 8 `test_predict_v1.py`, 16 `test_hourly_features.py` , 13 `test_download_era5_v2.py`, 11 `test_download_era5_upstream.py`, 12 `test_compare_v2.py`, 11 `test_wbgt_liljegren.py`, 5 `test_wbgt_label.py`, 13 `test_labels_v2.py`, 27 `test_folds.py` and 12 `test_train_unified.py`. To verify the freeze alone:
 `.venv\Scripts\python.exe -m scripts.make_manifest --check`.
 
 On a fresh clone (no raw ERA5 folder, no retrieval index), the raw-data test skips and
 the retrieval files must be rebuilt first (`python -m retrieval.build_index` then
-`python -m retrieval.precompute_analogues`): 155 passed, 1 skipped.
+`python -m retrieval.precompute_analogues`): 194 passed, 1 skipped.
 GitHub CI (`.github/workflows/ci.yml`) does exactly this on every push, plus gitleaks
 and pip-audit.
 
@@ -132,3 +132,21 @@ gitignored checkpoints in `models/v2/`. `configs/A1_repro.json` reproduces froze
 ```
 27 daily nodes (2-degree lattice 24-32 N x 68-78 E, minus 3 points above 1,000 m), 10 daily
 variables, Delhi local time, 1980-01-01 .. 2026-09-06 -> `data/raw/era5_upstream/<node>/<year>.json`.
+
+## Week 3 — control comparison (gate G2), after the A1prime / A2 / A2r training runs
+
+```bash
+.venv\Scripts\python.exe -m evaluation.compare_v2   # -> predictions_v2/baselines_*/, evaluation_v2/week3_controls.md
+```
+Rebuilds persistence, climatology and damped persistence per fold and per target (train
+years only), pools the 4 folds (2007-2018) and runs paired cluster tests; Tmax and WBGT runs
+are only compared within their own target.
+
+## Week 3 — physical WBGT and the WBGT heatwave label
+
+```bash
+.venv\Scripts\python.exe -m pipeline.build_wbgt_liljegren     # ~1.5 min -> datasets_v2/wbgt_liljegren_daily.parquet (+ per_cell)
+.venv\Scripts\python.exe -m evaluation.select_wbgt_label      # pre-registered percentile rule -> configs/wbgt_label.json
+```
+`build_wbgt_liljegren` needs both data/raw/era5_monthly (v1) and data/raw/era5_v2 (radiation).
+

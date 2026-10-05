@@ -1,0 +1,422 @@
+{
+  "rule": "highest percentile in [99.0, 98.0, 97.5, 95.0, 92.5, 90.0] with >= 25 pooled validation episodes",
+  "season": "Mar 15 - Sep 30",
+  "primary_variable": "wbgt_lj_max",
+  "wbgt_lj_max": {
+    "chosen_percentile": 95.0,
+    "thresholds_by_fold": {
+      "f1": 36.153,
+      "f2": 36.201,
+      "f3": 36.213,
+      "f4": 36.207
+    },
+    "pooled_by_percentile": {
+      "99.0": {
+        "episodes": 4,
+        "hot_days": 37
+      },
+      "98.0": {
+        "episodes": 9,
+        "hot_days": 67
+      },
+      "97.5": {
+        "episodes": 12,
+        "hot_days": 80
+      },
+      "95.0": {
+        "episodes": 29,
+        "hot_days": 150
+      },
+      "92.5": {
+        "episodes": 53,
+        "hot_days": 220
+      },
+      "90.0": {
+        "episodes": 63,
+        "hot_days": 273
+      }
+    },
+    "by_fold": [
+      {
+        "percentile": 99.0,
+        "fold": "f1",
+        "threshold": 37.993,
+        "episodes": 1,
+        "hot_days": 11
+      },
+      {
+        "percentile": 99.0,
+        "fold": "f2",
+        "threshold": 38.065,
+        "episodes": 1,
+        "hot_days": 4
+      },
+      {
+        "percentile": 99.0,
+        "fold": "f3",
+        "threshold": 38.053,
+        "episodes": 2,
+        "hot_days": 13
+      },
+      {
+        "percentile": 99.0,
+        "fold": "f4",
+        "threshold": 38.086,
+        "episodes": 0,
+        "hot_days": 9
+      },
+      {
+        "percentile": 98.0,
+        "fold": "f1",
+        "threshold": 37.224,
+        "episodes": 4,
+        "hot_days": 23
+      },
+      {
+        "percentile": 98.0,
+        "fold": "f2",
+        "threshold": 37.339,
+        "episodes": 2,
+        "hot_days": 11
+      },
+      {
+        "percentile": 98.0,
+        "fold": "f3",
+        "threshold": 37.334,
+        "episodes": 3,
+        "hot_days": 18
+      },
+      {
+        "percentile": 98.0,
+        "fold": "f4",
+        "threshold": 37.396,
+        "episodes": 0,
+        "hot_days": 15
+      },
+      {
+        "percentile": 97.5,
+        "fold": "f1",
+        "threshold": 37.022,
+        "episodes": 5,
+        "hot_days": 27
+      },
+      {
+        "percentile": 97.5,
+        "fold": "f2",
+        "threshold": 37.126,
+        "episodes": 2,
+        "hot_days": 12
+      },
+      {
+        "percentile": 97.5,
+        "fold": "f3",
+        "threshold": 37.102,
+        "episodes": 4,
+        "hot_days": 20
+      },
+      {
+        "percentile": 97.5,
+        "fold": "f4",
+        "threshold": 37.137,
+        "episodes": 1,
+        "hot_days": 21
+      },
+      {
+        "percentile": 95.0,
+        "fold": "f1",
+        "threshold": 36.153,
+        "episodes": 7,
+        "hot_days": 42
+      },
+      {
+        "percentile": 95.0,
+        "fold": "f2",
+        "threshold": 36.201,
+        "episodes": 6,
+        "hot_days": 33
+      },
+      {
+        "percentile": 95.0,
+        "fold": "f3",
+        "threshold": 36.213,
+        "episodes": 6,
+        "hot_days": 28
+      },
+      {
+        "percentile": 95.0,
+        "fold": "f4",
+        "threshold": 36.207,
+        "episodes": 10,
+        "hot_days": 47
+      },
+      {
+        "percentile": 92.5,
+        "fold": "f1",
+        "threshold": 35.537,
+        "episodes": 17,
+        "hot_days": 58
+      },
+      {
+        "percentile": 92.5,
+        "fold": "f2",
+        "threshold": 35.587,
+        "episodes": 11,
+        "hot_days": 48
+      },
+      {
+        "percentile": 92.5,
+        "fold": "f3",
+        "threshold": 35.594,
+        "episodes": 10,
+        "hot_days": 43
+      },
+      {
+        "percentile": 92.5,
+        "fold": "f4",
+        "threshold": 35.59,
+        "episodes": 15,
+        "hot_days": 71
+      },
+      {
+        "percentile": 90.0,
+        "fold": "f1",
+        "threshold": 35.136,
+        "episodes": 17,
+        "hot_days": 67
+      },
+      {
+        "percentile": 90.0,
+        "fold": "f2",
+        "threshold": 35.149,
+        "episodes": 12,
+        "hot_days": 60
+      },
+      {
+        "percentile": 90.0,
+        "fold": "f3",
+        "threshold": 35.149,
+        "episodes": 12,
+        "hot_days": 59
+      },
+      {
+        "percentile": 90.0,
+        "fold": "f4",
+        "threshold": 35.148,
+        "episodes": 22,
+        "hot_days": 87
+      }
+    ]
+  },
+  "wbgt_bom_max": {
+    "chosen_percentile": 97.5,
+    "thresholds_by_fold": {
+      "f1": 37.658,
+      "f2": 37.702,
+      "f3": 37.745,
+      "f4": 37.746
+    },
+    "pooled_by_percentile": {
+      "99.0": {
+        "episodes": 14,
+        "hot_days": 52
+      },
+      "98.0": {
+        "episodes": 23,
+        "hot_days": 89
+      },
+      "97.5": {
+        "episodes": 28,
+        "hot_days": 111
+      },
+      "95.0": {
+        "episodes": 44,
+        "hot_days": 200
+      },
+      "92.5": {
+        "episodes": 71,
+        "hot_days": 295
+      },
+      "90.0": {
+        "episodes": 87,
+        "hot_days": 389
+      }
+    },
+    "by_fold": [
+      {
+        "percentile": 99.0,
+        "fold": "f1",
+        "threshold": 38.14,
+        "episodes": 3,
+        "hot_days": 14
+      },
+      {
+        "percentile": 99.0,
+        "fold": "f2",
+        "threshold": 38.188,
+        "episodes": 2,
+        "hot_days": 6
+      },
+      {
+        "percentile": 99.0,
+        "fold": "f3",
+        "threshold": 38.188,
+        "episodes": 2,
+        "hot_days": 8
+      },
+      {
+        "percentile": 99.0,
+        "fold": "f4",
+        "threshold": 38.221,
+        "episodes": 7,
+        "hot_days": 24
+      },
+      {
+        "percentile": 98.0,
+        "fold": "f1",
+        "threshold": 37.802,
+        "episodes": 3,
+        "hot_days": 20
+      },
+      {
+        "percentile": 98.0,
+        "fold": "f2",
+        "threshold": 37.842,
+        "episodes": 5,
+        "hot_days": 16
+      },
+      {
+        "percentile": 98.0,
+        "fold": "f3",
+        "threshold": 37.849,
+        "episodes": 3,
+        "hot_days": 11
+      },
+      {
+        "percentile": 98.0,
+        "fold": "f4",
+        "threshold": 37.844,
+        "episodes": 12,
+        "hot_days": 42
+      },
+      {
+        "percentile": 97.5,
+        "fold": "f1",
+        "threshold": 37.658,
+        "episodes": 6,
+        "hot_days": 27
+      },
+      {
+        "percentile": 97.5,
+        "fold": "f2",
+        "threshold": 37.702,
+        "episodes": 5,
+        "hot_days": 23
+      },
+      {
+        "percentile": 97.5,
+        "fold": "f3",
+        "threshold": 37.745,
+        "episodes": 5,
+        "hot_days": 16
+      },
+      {
+        "percentile": 97.5,
+        "fold": "f4",
+        "threshold": 37.746,
+        "episodes": 12,
+        "hot_days": 45
+      },
+      {
+        "percentile": 95.0,
+        "fold": "f1",
+        "threshold": 37.279,
+        "episodes": 12,
+        "hot_days": 47
+      },
+      {
+        "percentile": 95.0,
+        "fold": "f2",
+        "threshold": 37.316,
+        "episodes": 8,
+        "hot_days": 36
+      },
+      {
+        "percentile": 95.0,
+        "fold": "f3",
+        "threshold": 37.328,
+        "episodes": 8,
+        "hot_days": 41
+      },
+      {
+        "percentile": 95.0,
+        "fold": "f4",
+        "threshold": 37.361,
+        "episodes": 16,
+        "hot_days": 76
+      },
+      {
+        "percentile": 92.5,
+        "fold": "f1",
+        "threshold": 36.963,
+        "episodes": 19,
+        "hot_days": 75
+      },
+      {
+        "percentile": 92.5,
+        "fold": "f2",
+        "threshold": 37.03,
+        "episodes": 14,
+        "hot_days": 59
+      },
+      {
+        "percentile": 92.5,
+        "fold": "f3",
+        "threshold": 37.043,
+        "episodes": 12,
+        "hot_days": 56
+      },
+      {
+        "percentile": 92.5,
+        "fold": "f4",
+        "threshold": 37.059,
+        "episodes": 26,
+        "hot_days": 105
+      },
+      {
+        "percentile": 90.0,
+        "fold": "f1",
+        "threshold": 36.71,
+        "episodes": 20,
+        "hot_days": 101
+      },
+      {
+        "percentile": 90.0,
+        "fold": "f2",
+        "threshold": 36.774,
+        "episodes": 19,
+        "hot_days": 83
+      },
+      {
+        "percentile": 90.0,
+        "fold": "f3",
+        "threshold": 36.798,
+        "episodes": 21,
+        "hot_days": 82
+      },
+      {
+        "percentile": 90.0,
+        "fold": "f4",
+        "threshold": 36.822,
+        "episodes": 27,
+        "hot_days": 123
+      }
+    ]
+  },
+  "chosen_percentile": 95.0,
+  "thresholds_by_fold": {
+    "f1": 36.153,
+    "f2": 36.201,
+    "f3": 36.213,
+    "f4": 36.207
+  }
+}

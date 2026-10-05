@@ -76,7 +76,7 @@ ARRAY_FIELDS = ("X", "y", "y_raw", "clim_target", "hot", "stratum", "persist")
 
 
 @pytest.mark.parametrize("fold", list(FOLDS))
-@pytest.mark.parametrize("target, labels, anomaly", [("t_max", "v2", False), ("wbgt_bom_max", "v2", True)])
+@pytest.mark.parametrize("target, labels, anomaly", [("t_max", "v2", False), ("wbgt_bom_max", "v2", True), ("wbgt_lj_max", "wbgt", False)])
 def test_no_leakage_from_after_the_training_years(monkeypatch, fold, target, labels, anomaly):
     """Changing every value after train_end must leave normalisation, target scaling and all
     training arrays bit-identical (climatology, labels, hot mask and inputs are train-only)."""
@@ -130,3 +130,34 @@ def test_unknown_inputs_are_rejected():
         fold_daily("f1", "hi_max", "v2")
     with pytest.raises(ValueError):
         fold_daily("f1", "t_max", "v3")
+
+
+def test_wbgt_label_marks_only_wbgt_season_days_with_train_only_threshold():
+    from training.folds import wbgt_label_setting
+    from pipeline.labels_v2 import in_wbgt_season, wbgt_threshold
+
+    d, _ = fold_daily("f2", "wbgt_lj_max", "wbgt")
+    var, pct = wbgt_label_setting()
+    assert var == "wbgt_lj_max"
+    train_end, _, _ = fold_bounds("f2")
+    thr = wbgt_threshold(d.index, d[var], d.index <= train_end, pct)
+    hot = d["hot"].to_numpy(dtype=bool)
+    assert not hot[~in_wbgt_season(d.index)].any()
+    assert (d.loc[hot, var] >= thr).all()
+
+
+@pytest.mark.parametrize("target", ["t_max", "wbgt_lj_max"])
+def test_dp_residual_round_trip_and_damped_forecast(target):
+    labels = "v2" if target == "t_max" else "wbgt"
+    f = build_fold("f3", target, labels, target_form="dp_residual")
+    assert f.target_form == "dp_residual" and not f.anomaly_target
+    assert np.allclose(f.to_raw(f.val.y.astype(np.float64), "val"), f.val.y_raw, atol=1e-4)
+    raw = build_fold("f3", target, labels)
+    assert np.array_equal(raw.val.damped, f.val.damped) and np.array_equal(raw.val.y_raw, f.val.y_raw)
+    # the residual target is centred near zero on training windows
+    assert abs(f.y_mean) < 0.5
+
+
+def test_unknown_target_form_is_rejected():
+    with pytest.raises(ValueError, match="target_form"):
+        build_fold("f1", "t_max", "v2", target_form="ratio")

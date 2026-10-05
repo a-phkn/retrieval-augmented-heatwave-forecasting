@@ -1,0 +1,30 @@
+{
+  "run_id": "A2L_dp",
+  "parent": "A2L",
+  "description": "Improvement candidate: learn a correction to damped persistence of physical WBGT.",
+  "target": "wbgt_lj_max",
+  "labels": "wbgt",
+  "anomaly_target": false,
+  "target_form": "dp_residual",
+  "hot_weight": 20,
+  "early_stop": "inner_2y",
+  "seeds": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9
+  ],
+  "folds": [
+    "f1",
+    "f2",
+    "f3",
+    "f4"
+  ],
+  "threads": 8
+}
