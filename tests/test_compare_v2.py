@@ -139,6 +139,18 @@ def test_control_choice_follows_the_preregistered_rule():
     assert c["choice"] == "b" and not c["passes_floor"]
 
 
+def test_adopted_control_fixes_hot_weight_then_applies_the_rule():
+    """Decision 2026-10-06: hot_weight = 5, then the pre-registered rule picks the form."""
+    rows = [{**_row("hw1", 2.29, -0.07, -0.11, complexity=1), "hot_weight": 1},
+            {**_row("raw5", 2.40, +0.03, -0.04, complexity=1), "hot_weight": 5},
+            {**_row("anom5", 2.37, +0.00, -0.06, complexity=2), "hot_weight": 5}]
+    assert cv.choose_control(rows)["choice"] == "hw1"  # the rule as written
+    c = cv.adopted_control(rows)
+    assert c["choice"] == "anom5" and c["passes_floor"]  # 0.03 C apart: beyond the tie margin
+    assert "decision 2026-10-06" in c["reason"]
+    assert cv.adopted_control([rows[0]]) is None  # no hot_weight-5 run in the family
+
+
 def test_relabel_and_ensemble():
     strata = ["normal"] * 10
     df = _toy("m", [0, 1], [np.full(10, 1.0), np.full(10, 3.0)], strata)

@@ -460,3 +460,24 @@ Control choice (G2), applied after all runs, separately for the Tmax and the WBG
 - If two are within 0.02 °C, take the simpler one: fewer changes from the parent.
 - If none passes, report the family as failing the floor and keep the variant closest to it.
 - Extreme-day and forecast-conditioned results are reported for every variant but do not drive the choice.
+
+**G2 controls: A1prime_hw5 (Tmax) and A2Lr_hw5 (WBGT physical): DECIDED 2026-10-06 (user), a disclosed deviation**
+- All 15 pre-registered improvement runs finished (10 seeds × 4 folds each). Report: `evaluation_v2/week3_controls.md`.
+- The rule above, as written, picks hot_weight = 1 in both families (`A1prime_hw1`, `A2L_hw1`). Lower hot_weight
+  always lowers all-days RMSE, and the rule looks only at all days. The result defeats the project's purpose:
+  - Tmax hw1: no extreme-day gain over damped persistence (−0.03 °C, CI [−0.32, +0.26]).
+  - WBGT hw1: forecasts **0** WBGT hot days in 12 validation years (observed: 360 extreme instances).
+- Decision: fix hot_weight = 5, then apply the pre-registered rule unchanged among the hot_weight = 5 runs.
+  - Tmax → `A1prime_hw5`: all days −0.009 vs damped persistence (CI [−0.042, +0.025], a tie);
+    extreme days −0.93 °C (CI [−1.19, −0.67]).
+  - WBGT → `A2Lr_hw5` (2.373 vs A2L_hw5 2.400, beyond the 0.02 °C tie margin): all days +0.004
+    (CI [−0.060, +0.069], a tie); extreme days −1.20 °C (CI [−1.34, −1.06]).
+- Why hw5 rather than hw10: hw10 fails the floor for WBGT and is borderline for Tmax (p = 0.052), with a
+  larger warm bias on forecast hot days (+1.4 °C Tmax).
+- Honesty conditions:
+  1. This is a post-hoc change to a pre-registered rule, made after seeing development-fold results. Report it
+     as such in the paper, with the rule's own choice (hw1) shown alongside.
+  2. It was decided on 2007–2018 development folds only; the test period (2019+) remains locked.
+  3. `evaluation/compare_v2.py` reports both choices (`ADOPTED_HOT_WEIGHT = 5`).
+- Lesson for later pre-registrations (retrieval ladder, G3): a selection rule must score both all days AND
+  heat days, or it will select models that never warn.

@@ -6,7 +6,7 @@
 > log at the end. Short forms are explained in [`GLOSSARY.md`](GLOSSARY.md); the full
 > plan is in [`PLAN_REVIEW_v5.md`](PLAN_REVIEW_v5.md).
 >
-> **Last updated:** 2026-10-05 (Week 3: G2 results, physical WBGT, WBGT label)
+> **Last updated:** 2026-10-06 (Week 3: control models chosen)
 
 ---
 
@@ -326,14 +326,14 @@ a historical reference.
   in-season values from the fold's training years.
 - **Why a longer season:** humid heat peaks in the Jul–Sep monsoon.
 - **Choosing the percentile:** the highest of 99 / 98 / 97.5 / 95 / 92.5 / 90 that gives
-  ≥ 25 episodes, the same rule as for Tmax. Result: **97.5th percentile of the BoM index (≈ 37.7)
-  → 28 episodes** (`configs/wbgt_label.json`, `evaluation/select_wbgt_label.py`).
+  ≥ 25 episodes, the same rule as for Tmax. Result (the label in use, physical WBGT since
+  2026-10-05): **95th percentile ≈ 36.2 °C → 29 episodes**, spread over May–Sep (sun and
+  humidity) (`configs/wbgt_label.json`, `evaluation/select_wbgt_label.py`).
 - **Key finding: dry and humid heatwaves are mostly different events.** Tmax heatwaves fall in
   Apr–Jun; BoM-WBGT heatwaves in Jun–Aug. Only 27 days are hot under both (1980–2018). A
   Tmax-only warning system would miss most humid heatwaves.
-- **Sensitivity:** with the *physical* WBGT the rule picks the 95th percentile (≈ 36.2 °C,
-  29 episodes), whose heatwaves spread over May–Sep (sun and humidity). Its days overlap the
-  BoM-label days only partly (54 shared).
+- **Sensitivity:** with the BoM index the same rule picks the 97.5th percentile (≈ 37.7,
+  28 episodes). Its days overlap the physical-WBGT label days only partly (54 shared).
 
 ### 8.4 Rolling folds, `training/folds.py`
 
@@ -411,14 +411,44 @@ RMSE in °C; Δ is model minus baseline, so negative = model better.
   - Official alert tiers stay Tmax-based. Humid heat is a separate, clearly labelled heat-stress
     note, never an official "heatwave" declaration.
   - The final model must output both Tmax and WBGT (the physics head does this).
-- **Pre-registered improvement runs** (15 runs, running now):
+- **Pre-registered improvement runs** (15 runs, all finished 2026-10-06):
   - Tmax anomaly target (A1prime_r);
   - learning a correction to damped persistence (A1prime_dp, A2L_dp);
   - `hot_weight` 1 / 5 / 10 for A1′, A2L and A2Lr.
-- **How the control is chosen** (rule fixed *before* the runs, `context/decisions.md`): among runs
-  not significantly worse than damped persistence, take the lowest all-days error; near-ties go to
-  the simpler run.
+- **How the control was to be chosen** (rule fixed *before* the runs, `context/decisions.md`):
+  among runs not significantly worse than damped persistence, take the lowest all-days error;
+  near-ties go to the simpler run.
 - The 10-seed average stays a reported extra, as decided on 2026-10-04.
+
+**Improvement results** (`evaluation_v2/week3_controls.md`). The one lever that matters is
+`hot_weight` (how much extra weight hot days get in training). The other two ideas (anomaly
+target for Tmax, correction to damped persistence) did not help.
+
+| Run | hot_weight | All days | Δ vs damped persistence | Extreme days | Δ vs damped persistence | Hot days it forecasts (per seed) |
+|---|---|---|---|---|---|---|
+| A1′ (Tmax) | 1 | 2.14 | −0.04 ✅ | 3.05 | −0.03 (no gain) | 115 (real: 730) |
+| **A1′ (Tmax)** | **5** | **2.18** | **−0.01 (tie) ✅** | **2.15** | **−0.93** | 512 |
+| A1′ (Tmax) | 10 | 2.23 | +0.04 (borderline) ✅ | 1.83 | −1.25 | 885 |
+| A1′ (Tmax) | 20 | 2.29 | +0.11 ❌ | 1.58 | −1.51 | 1,198 |
+| A2Lr (WBGT) | 1 | 2.29 | −0.08 ✅ | 4.17 | −0.31 | **0** |
+| **A2Lr (WBGT)** | **5** | **2.37** | **+0.00 (tie) ✅** | **3.27** | **−1.20** | 54 |
+| A2Lr (WBGT) | 10 | 2.52 | +0.15 ❌ | 2.70 | −1.77 | 378 |
+| A2Lr (WBGT) | 20 | 2.76 | +0.39 ❌ | 2.27 | −2.21 | 1,615 |
+
+This is a trade-off: less weight on hot days gives a better all-days score but worse heatwave
+forecasts.
+
+- **Raw RMSE across targets is not comparable.** Physical WBGT is harder to forecast than the BoM
+  index because it includes sun and wind: even climatology scores 2.50 against 1.87. A2r (BoM)
+  and A2Lr_hw1 (physical) both beat damped persistence by about 3.5 %.
+- **Decision 2026-10-06: the controls are `A1prime_hw5` (Tmax) and `A2Lr_hw5` (WBGT).** This
+  departs from the pre-registered rule, which picks hot_weight 1. That model brings no heatwave
+  gain for Tmax, and for WBGT it **never forecasts a hot day**, so it is useless for heat warnings.
+  - hot_weight is fixed at 5; the rule picks everything else unchanged.
+  - The decision was made on development data only; the test years are still locked.
+  - The paper must report the change and show the rule's own choice alongside.
+  - hw5 ties damped persistence on all days and beats it by about 1 °C on extreme days.
+  - Lesson: later selection rules (e.g. for retrieval) must score both all days and heat days.
 
 ---
 
@@ -573,7 +603,8 @@ the project's virtual environment (`.venv`); nothing is installed globally.
 ## 12. Open items
 
 - v2 download complete and verified; Liljegren WBGT built and checked (§8.2).
-- Decide whether the WBGT models should forecast the *physical* WBGT instead of the BoM index.
+- ~~Decide whether the WBGT models should forecast the *physical* WBGT~~ Done (2026-10-05): yes.
+- ~~Choose the G2 control models~~ Done (2026-10-06): A1prime_hw5 and A2Lr_hw5 (§8.5).
 - Advisory: map the 123 actions with no alert level onto the colour tiers (team decision pending).
 - Upstream download: run `pipeline/download_era5_upstream.py` (about 3–4 days of free API quota), then the G-D0 check (does upstream heat lead Delhi?).
 - ~~Confirm the 4 acceptance heatwave dates~~ Done (2026-10-05): 3 have IMD regional or
@@ -594,3 +625,4 @@ the project's virtual environment (`.venv`); nothing is installed globally.
 | 2026-10-05 | §9.1: how RAG helps the DSTGNN and how we prove it (design, controls, current status). |
 | 2026-10-05 | WBGT models switched to physical WBGT + WBGT label (with conditions); 15 pre-registered improvement runs started. |
 | 2026-10-05 | Physical (Liljegren) WBGT built, crediting Liljegren/Argonne and Kong & Huber; BoM claim corrected (2–3 °C, not 6); WBGT label (97.5th pct); Week-3 G2 results. |
+| 2026-10-06 | 15 improvement runs done; hot_weight is the lever; controls A1prime_hw5 / A2Lr_hw5 (disclosed deviation from the rule); §8.3 corrected: the label in use is physical WBGT, 95th pct; CI made robust to runner CPU differences. |

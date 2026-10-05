@@ -39,7 +39,7 @@ Short, frequently-updated. See `build_plan.md` for full milestone detail.
    changed).
 
 ## Last verified state (2026-10-04)
-- `pytest` → 195 passed (leakage 3, retrieval eligibility 6, manifest 12, stats 46, predict_v1 8, hourly features 16, downloader v2 13, upstream downloader 11, compare v2 12, wbgt liljegren 11, wbgt label 5, labels v2 13, folds 27, trainer 12).
+- `pytest` → 196 passed (2026-10-06; leakage 3, retrieval eligibility 6, manifest 12, stats 46, predict_v1 8, hourly features 16, downloader v2 13, upstream downloader 11, compare v2 13, wbgt liljegren 11, wbgt label 5, labels v2 13, folds 27, trainer 12).
 - `retrieval/candidates.parquet` + `retrieval/faiss_index.bin` rebuilt in the
   new venv; `feature_normalization_stats.json` reproduced byte-identically.
 - v1 frozen: `data/MANIFEST.json` (30 files incl. A1 checkpoints + raw-data fingerprint), window index
@@ -56,6 +56,16 @@ Short, frequently-updated. See `build_plan.md` for full milestone detail.
   The 10-seed ensemble gives A2 −0.074, A2r −0.077 (both significant) and A1′ +0.070.
   A1′ over-forecasts heatwaves (~1,200 forecast hot days/seed vs ~730 observed; +1.66 °C bias on them).
   The control choice is held until the improvement candidates have run: ensemble, hot_weight sweep, Tmax anomaly target, damped-persistence residual.
+- **Improvement runs done (2026-10-06)**: all 15 pre-registered runs, 10 seeds × 4 folds, 72 registry rows (18 runs × 4 folds).
+  - hot_weight is the only lever: lower = better all days, worse extremes. The anomaly target (Tmax) and the dp-residual did not help.
+  - **Controls (decision 2026-10-06, disclosed deviation): `A1prime_hw5` (Tmax), `A2Lr_hw5` (WBGT physical).**
+    - The pre-registered rule alone picks hw1 (`A1prime_hw1`, `A2L_hw1`). The WBGT hw1 model forecasts 0 hot days.
+    - hw5: ties damped persistence on all days (−0.009 / +0.004), beats it on extremes (−0.93 / −1.20 °C).
+  - Queue note: the 2 h background cap stopped A2L_hw5 mid-fold. Its partial outputs and 3 registry rows were removed and the run was redone in full.
+- **CI (2026-10-06)**: commits ba6659b and 7523bd6 failed 2 tests on GitHub only, from runner CPU float differences:
+  - the index rebuild rewrote the frozen stats file in the last digits;
+  - A1 bit-for-bit retraining.
+  Fix: CI checks the rebuilt stats to 1e-9 and then restores the committed file; the bit-for-bit test runs locally only.
 - **Liljegren WBGT** (`pipeline/wbgt_liljegren.py`, `pipeline/build_wbgt_liljegren.py`):
   - Liljegren/Argonne C ported (option B); Kong & Huber (2022) methodology; checked against PyWBGT
     (max diff 0.007 °C on 3,000 real hours) and against the original iteration (within 0.02 K).

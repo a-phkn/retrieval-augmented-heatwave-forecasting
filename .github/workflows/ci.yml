@@ -2,8 +2,10 @@
 # It only READS the repo and reports pass/fail -- it never changes code, data or models.
 #
 #   tests     the full pytest suite + the frozen-v1 manifest check, on Windows with the
-#             exact Python and package versions used locally (requirements.lock.txt), so
-#             the bit-for-bit reproduction tests run on the same platform they were frozen on.
+#             exact Python and package versions used locally (requirements.lock.txt).
+#             GitHub runners vary in CPU type, and float arithmetic can differ in the last
+#             digits between CPU types. So the bit-for-bit A1 retraining test runs locally
+#             only, and the rebuilt index statistics are compared with a tolerance.
 #   security  gitleaks (no secrets anywhere in git history) and pip-audit (no known
 #             vulnerabilities in the pinned packages). Also runs weekly, because new
 #             advisories appear without any code change.
@@ -52,6 +54,30 @@ jobs:
         run: |
           python -m retrieval.build_index
           python -m retrieval.precompute_analogues
+
+      # build_index also rewrites the committed (frozen v1) normalisation stats. Check the
+      # rebuild agrees with the committed file to 1e-9, then restore the committed bytes so
+      # the manifest check tests the repo, not this runner's float rounding.
+      - name: Check rebuilt index stats, then restore the committed file
+        shell: bash
+        run: |
+          set -euo pipefail
+          f=retrieval/feature_normalization_stats.json
+          git show "HEAD:$f" > "$RUNNER_TEMP/committed_stats.json"
+          python - "$RUNNER_TEMP/committed_stats.json" "$f" <<'EOF'
+          import json, math, sys
+          def same(a, b):
+              if isinstance(a, dict):
+                  return isinstance(b, dict) and a.keys() == b.keys() and all(same(a[k], b[k]) for k in a)
+              if isinstance(a, list):
+                  return isinstance(b, list) and len(a) == len(b) and all(map(same, a, b))
+              if isinstance(a, float) or isinstance(b, float):
+                  return math.isclose(a, b, rel_tol=1e-9, abs_tol=1e-12)
+              return a == b
+          old, new = (json.load(open(p, encoding="utf-8")) for p in sys.argv[1:])
+          sys.exit(0 if same(old, new) else "rebuilt index stats differ from the committed file beyond 1e-9")
+          EOF
+          git checkout -- "$f"
 
       - name: Tests
         run: python -m pytest -q
