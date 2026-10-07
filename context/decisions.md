@@ -669,3 +669,61 @@ was computed**
 - Consequence: tuning K, the input form or the attention design is not worth it. A retrieval variant can only help
   if it matches on information the query's own inputs lack (e.g. the regional upstream pattern that G-D0 found
   useful), or if the R2-R4 ladder changes what is retrieved. Report: `evaluation_v2/retrieval_information_check.md`.
+
+**Regional-pattern retrieval rung Rg: PRE-REGISTERED 2026-10-07, before any Rg number was computed** (user approved)
+- Why: the information check found that analogues matched on Delhi's own recent weather add nothing the query's own
+  inputs lack. Matching on the REGIONAL pattern (which G-D0 showed carries extra forecast information) might.
+- Matching (mode `region`; no tuning): per window, the standardised anomalies on the last 3 input days of daily Tmax
+  at the 27 upstream points plus Delhi (84 values). The WBGT family adds the standardised anomalies of daily mean
+  dew point at the 27 points plus Delhi's daily mean relative humidity (Delhi has no dew point in the daily table),
+  same 3 days (168 values in total). Climatologies from the fold's training years only (`pipeline.climatology`, as
+  G-D0). Each value is z-scored over the fold's candidate windows, then cosine similarity, as R0.
+- Everything else as R0: same candidate pool and eligibility, same dedup, K = 5, same model and trainer.
+- Random control: R0-rand (its pool is identical to Rg's), so no new random runs.
+- Step 1, screen (no training, training years only): the information check, with the same pre-specified rule
+  (held-out RMSE gain vs the query-only baseline with CI entirely below 0, AND larger than R0-rand's with CI entirely
+  below 0). If information is present for a family, step 2 runs that family's Rg config; otherwise Rg is recorded as
+  not worth training for that family and is not run. Descriptive: the same check with the upstream readings added to
+  the baseline (predicts whether Rg could help the graph backbone, which sees upstream data anyway).
+- Step 2, G3 rule unchanged: Rg helps only if (1) not significantly worse than the control on all days, (2) extreme
+  days significantly better than the control, (3) extreme days significantly better than R0-rand. If Rg and earlier
+  rungs both help, lowest extreme RMSE wins, ties within 0.02 °C go to the simpler rung (R0, then R1, then Rg).
+- Added after G3 had been seen (G3 = none): reported as a post-G3 exploration, with that disclosed.
+
+**Rg screen result (2026-10-07): information PRESENT in both families -> both Rg runs started**
+- Held-out (training years) RMSE change from adding the Rg analogue signal to the query-only baseline: Tmax -0.028
+  [-0.037, -0.018] °C, WBGT -0.039 [-0.051, -0.028]; vs R0-rand the same. Extreme days (descriptive): Tmax -0.120,
+  WBGT -0.087. Correlation of the Rg signal with the truth at lead 1: Tmax +0.74, WBGT +0.47 (R0: +0.69, +0.28),
+  and the gain over R0 grows with lead.
+- Descriptive, important for G-R*: when the baseline ALSO gets the upstream readings directly, Rg adds about nothing
+  on all days (Tmax -0.001 [-0.002, +0.000]; WBGT +0.000) and little on Tmax extreme days (-0.012). Rg's extra
+  information is the regional pattern itself, which a model given the upstream data already has. Expectation: Rg
+  may help the LSTM control (Delhi-only inputs) but little on the graph backbone. To be tested, not assumed.
+- Runs: `A1prime_hw5_Rg`, `A2Lr_hw5_Rg` (configs; queue `configs/week4_rg_queue.txt`), code_sha256 f1dd5eae...
+  (uncommitted when started; to be committed after, as before).
+
+**Rg result (2026-10-07): real all-days gain for WBGT, but G3 still selects nothing** (post-G3 exploration, disclosed)
+- WBGT (physical), Rg vs control `A2Lr_hw5`: all days -0.044 [-0.071, -0.016] °C (p = 0.003, about 2%), in all 4
+  folds; extreme days -0.160 [-0.307, -0.013] (p = 0.035), in 3 of 4 folds (f3 worse). Rg vs R0-rand: all days
+  -0.059 (p < 0.001), normal days -0.058 (p < 0.001), extreme days -0.116 [-0.265, +0.032] (p = 0.114) -> condition 3
+  fails, so G3 = none. Condition 3 is NOT relaxed after seeing p = 0.114 (that would make the rule outcome-dependent).
+  The extreme-day test detects about 0.21 °C at 80% power. The all-days results survive a Bonferroni correction for
+  2 families x 3 rungs; the extreme-day p = 0.035 does not.
+- Where the WBGT extreme-day gain comes from: entirely a smaller cold bias on those days (mean error -3.02 -> -2.81
+  °C; spread 1.28 -> 1.34, slightly worse). All-days bias is unchanged (+0.44), so it is not a uniform warm shift.
+  Rg forecasts many more hot days (147 vs 54 per seed): about 18 extra hits and 75 extra false alarms per seed.
+  Both models still catch only a few % of the observed hot lead-days. Rg is still not significantly better than
+  damped persistence (-0.039 [-0.112, +0.033]).
+- Tmax, Rg vs `A1prime_hw5`: all days -0.003 [-0.029, +0.023]; extreme +0.045 [-0.090, +0.180]: no detectable gain,
+  though the all-days interval still includes the screen's -0.028. Possible reasons (hypotheses, untested): the Tmax
+  control gets analogue outcomes in raw units while the screen used standardised anomalies (the WBGT model's form);
+  and Rg analogues are season-mismatched (35% within +-30 days, mean 66 days apart, vs 95% and 12 days for R0).
+- Interpretation: consistent with Rg passing regional information INDIRECTLY to a Delhi-only model (the network
+  never sees upstream data, only which past cases are retrieved). Whether Rg adds anything to a backbone that sees
+  upstream data directly is the G-R* question.
+- Independent review: signed off with changes (no leakage: region features read exactly q-1..q-3, date alignment
+  checked, candidates use their own input days; numbers reproduced to 4 decimals). Applied: Rg post-G3 disclosure
+  and corrected caveats in the report, an extreme-day bias column, a unit test that region features read only the
+  last 3 input days. Provenance: Rg runs' code_sha256 f1dd5eae...; they read `datasets_v2/upstream_daily.parquet`
+  (sha256 ab7b368579f5b85b...), which their registry data_sha256 does not include, and the trainer's CODE_FILES omit
+  `pipeline/download_era5_upstream.py` (sets the node order). Both fixed for future runs in a separate commit.

@@ -1,5 +1,5 @@
-"""retrieval/fold_retrieval.py: per-fold candidate pool, v1 eligibility rules, the three
-modes (sim / rand / time) and the analogue-ensemble forecast. Pre-2019 data only."""
+"""retrieval/fold_retrieval.py: per-fold candidate pool, v1 eligibility rules, the modes
+(sim / rand / time / time_rand / region) and the analogue-ensemble forecast. Pre-2019 data only."""
 import numpy as np
 import pandas as pd
 import pytest
@@ -46,7 +46,7 @@ def test_primary_fold_with_v1_labels_reproduces_v1_analogues():
     assert n_short == 881
 
 
-@pytest.mark.parametrize("mode", ["sim", "rand", "time", "time_rand"])
+@pytest.mark.parametrize("mode", ["sim", "rand", "time", "time_rand", "region"])
 def test_analogues_are_eligible_training_windows(f1, mode):
     train_end, _, _ = fold_bounds("f1")
     for windows in (f1.val_w, f1.train_w.iloc[::7]):
@@ -75,7 +75,7 @@ def test_analogues_are_eligible_training_windows(f1, mode):
 
 
 def test_validation_queries_get_full_analogue_sets(f1):
-    for mode in ("sim", "rand", "time", "time_rand"):
+    for mode in ("sim", "rand", "time", "time_rand", "region"):
         r = f1.retrieve(f1.val_w["query_date"], mode, seed=0)
         assert (r.idx >= 0).all(), mode
 
@@ -143,6 +143,70 @@ def test_no_leakage_from_after_the_training_years(monkeypatch):
     # only depend on training data; the chosen set may change because the QUERY changed.
     q = before.val_w["query_date"].iloc[:1]  # first val query: its inputs are all training days
     assert np.array_equal(before.retrieve(q, "sim").idx, after.retrieve(q, "sim").idx)
+
+
+def test_region_mode_matches_r0_pool_but_ranks_by_the_regional_pattern(f1):
+    """Rg differs from R0 only in the similarity used: same eligible pool (so R0-rand is its
+    random control), different and descending-similarity picks."""
+    for windows in (f1.val_w, f1.train_w.iloc[::11]):
+        q = windows["query_date"]
+        assert np.array_equal(f1.retrieve(q, "sim").n_eligible, f1.retrieve(q, "region").n_eligible)
+    q = f1.val_w["query_date"]
+    rg = f1.retrieve(q, "region")
+    assert (rg.idx != f1.retrieve(q, "sim").idx).any(axis=1).mean() > 0.5
+    assert (np.diff(rg.sim, axis=1) <= 1e-12).all()
+    assert np.array_equal(rg.idx, f1.retrieve(q, "region", seed=5).idx)  # deterministic, seed ignored
+
+
+def test_region_features_have_the_preregistered_shape():
+    tmax = FoldRetriever("f1", "v2", "t_max")
+    wbgt = FoldRetriever("f1", "wbgt", "wbgt_lj_max")
+    assert tmax._region_state()[0].shape == (len(tmax.cand_dates), 3 * 28)  # Tmax at 27 points + Delhi
+    assert wbgt._region_state()[0].shape == (len(wbgt.cand_dates), 3 * 56)  # + dew point x27 + Delhi RH
+    rz = tmax._region_state()[3]
+    train_end, _, _ = fold_bounds("f1")
+    train = rz[rz.index <= train_end]
+    assert np.allclose(train.mean(), 0, atol=0.05) and np.allclose(train.std(), 1, atol=0.1)  # training anomalies
+
+
+def test_region_features_read_only_the_last_three_input_days():
+    """Every column, Delhi's included: the forecast days (q..q+4) and anything earlier than
+    q-3 must not enter a window's regional vector (independent review 2026-10-07)."""
+    dates = pd.date_range("2000-01-01", periods=40)
+    rz = pd.DataFrame(np.arange(40 * 3, dtype=float).reshape(40, 3), index=dates,
+                      columns=["temperature_2m_max__n24e068", "t_max__delhi", "relative_humidity_mean__delhi"])
+    q = pd.DatetimeIndex([dates[20]])
+    base = fr_mod.region_features(rz, q)
+    assert np.array_equal(base[0], np.concatenate([rz.iloc[19], rz.iloc[18], rz.iloc[17]]))
+    changed = rz.copy()
+    changed.iloc[20:] += 99.0  # forecast days and later
+    changed.iloc[:17] -= 99.0  # older than the 3 lags
+    assert np.array_equal(fr_mod.region_features(changed, q), base)
+
+
+def test_region_mode_has_no_leakage_from_after_the_training_years(monkeypatch):
+    """Changing every upstream value after train_end must not change Rg's candidate vectors,
+    their normalisation, or the analogues of a query whose inputs are all training days."""
+    train_end, _, _ = fold_bounds("f2")
+    before = FoldRetriever("f2", "v2")
+    b_vec, b_mean = before._region_state()[:2]
+    original = pd.read_parquet
+
+    def altered(path, *args, **kwargs):
+        df = original(path, *args, **kwargs)
+        if str(path).endswith("upstream_daily.parquet"):
+            df = df.copy()
+            df.loc[df.index > train_end] += 7.0
+        return df
+
+    monkeypatch.setattr(fr_mod.pd, "read_parquet", altered)
+    after = FoldRetriever("f2", "v2")
+    a_vec, a_mean = after._region_state()[:2]
+    assert np.array_equal(b_vec, a_vec) and np.array_equal(b_mean, a_mean)
+    late = before._region_state()[3].index > train_end
+    assert not np.allclose(before._region_state()[3][late], after._region_state()[3][late])  # the change took effect
+    q = before.val_w["query_date"].iloc[:1]
+    assert np.array_equal(before.retrieve(q, "region").idx, after.retrieve(q, "region").idx)
 
 
 def test_unknown_mode_and_fold_rejected(f1):

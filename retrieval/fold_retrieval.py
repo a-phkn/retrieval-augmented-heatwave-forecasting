@@ -1,5 +1,5 @@
 """
-Fold-aware analogue retrieval for v2 (plan v5, Week 3: rungs R0, R0-rand, R1, R1-rand).
+Fold-aware analogue retrieval for v2 (plan v5, Week 3: rungs R0, R0-rand, R1, R1-rand; Week 4: Rg).
 
 Why a new module: v1's retrieval (retrieval/features.py, build_index.py) uses a
 climatology and feature normalisation fitted on 1980-2015, which contains the validation
@@ -25,6 +25,11 @@ Modes (pre-registered 2026-10-06, context/decisions.md):
           query's (circular), then top-K by similarity.
   "time_rand"  R1-rand: R1's eligible pool (same +-30-day window), K drawn at random as in
           "rand". It is R1's own random control (added 2026-10-07, G3 condition 3).
+  "region"  Rg: top-K by cosine similarity of the REGIONAL pattern instead of Delhi's own
+          features: standardised anomalies on the last 3 input days of daily Tmax at the 27
+          upstream points plus Delhi; the WBGT family adds the 27 points' daily mean dew point
+          and Delhi's relative humidity (pre-registered 2026-10-07). Same pool, rules and dedup
+          as R0, so R0-rand is its random control.
 
 Run from repo root (prints a summary for one fold):
     python -m retrieval.fold_retrieval f4 v2
@@ -33,14 +38,16 @@ from __future__ import annotations
 
 import sys
 from dataclasses import dataclass
+from pathlib import Path
 
 import numpy as np
 import pandas as pd
 
+from pipeline.climatology import apply_climatology, doy_climatology
 from retrieval.features import FEATURE_NAMES
-from training.folds import FOLDS, FORECAST_DAYS, INPUT_DAYS, fold_daily, fold_windows
+from training.folds import FOLDS, FORECAST_DAYS, INPUT_DAYS, TEST_START, fold_bounds, fold_daily, fold_windows
 
-MODES = ("sim", "rand", "time", "time_rand")
+MODES = ("sim", "rand", "time", "time_rand", "region")
 RANDOM_MODES = ("rand", "time_rand")  # need a seed; draws are fixed per fold and seed
 K_DEFAULT = 5
 BUFFER_DAYS = 19  # v1: candidate_latest_start = query_date - 19 days
@@ -48,6 +55,8 @@ MIN_DAYS_APART = 10
 MAX_PER_EPISODE = 2
 DOY_WINDOW = 30
 _TOP_POOL = 200  # most-similar candidates screened before dedup (full sort if too few survive)
+REGION_LAGS = 3  # Rg: last 3 input days
+UPSTREAM_PATH = Path(__file__).resolve().parents[1] / "datasets_v2" / "upstream_daily.parquet"
 
 
 def window_features(d: pd.DataFrame, query_dates) -> np.ndarray:
@@ -88,6 +97,40 @@ def window_episode(d: pd.DataFrame, query_dates) -> np.ndarray:
     return np.where(np.isfinite(first), first, 0).astype(np.int64)
 
 
+def regional_daily(fold: str, d: pd.DataFrame, target: str) -> pd.DataFrame:
+    """(dates, columns) daily standardised anomalies used by Rg, climatology from the fold's
+    training years only: Tmax at the 27 upstream points plus Delhi; for a WBGT target also the
+    27 points' daily mean dew point and Delhi's daily mean relative humidity. Pre-2019 rows only."""
+    from pipeline.download_era5_upstream import NODES, node_id  # local: only Rg needs the upstream data
+
+    nodes = [node_id(a, o) for a, o in NODES]
+    vars_ = ["temperature_2m_max"] + (["dew_point_2m_mean"] if target != "t_max" else [])
+    cols = [f"{v}__{n}" for v in vars_ for n in nodes]
+    up = pd.read_parquet(UPSTREAM_PATH, columns=cols, filters=[("date", "<", TEST_START)])
+    up = up[up.index < TEST_START].reindex(d.index)
+    up["t_max__delhi"] = d["t_max"]
+    if target != "t_max":
+        up["relative_humidity_mean__delhi"] = d["relative_humidity_mean"]
+    if up.isna().any().any():
+        raise ValueError("regional data missing for some days")
+    train_end, _, _ = fold_bounds(fold)
+    train = up.index <= train_end
+    out = {}
+    for c in up.columns:
+        m, sd = apply_climatology(up.index, doy_climatology(up[c], train))
+        out[c] = (up[c].to_numpy() - m) / sd
+    return pd.DataFrame(out, index=up.index)
+
+
+def region_features(rz: pd.DataFrame, query_dates) -> np.ndarray:
+    """(N, REGION_LAGS * columns): each column's anomaly on the last REGION_LAGS input days."""
+    pos = rz.index.get_indexer(pd.DatetimeIndex(query_dates))
+    if (pos < REGION_LAGS).any():
+        raise ValueError("window input days missing from the regional table")
+    v = rz.to_numpy(dtype=np.float64)
+    return np.concatenate([v[pos - 1 - k] for k in range(REGION_LAGS)], axis=1)
+
+
 def _unit(x: np.ndarray) -> np.ndarray:
     n = np.linalg.norm(x, axis=1, keepdims=True)
     n[n == 0] = 1.0
@@ -108,6 +151,8 @@ class FoldRetriever:
         if fold not in FOLDS:
             raise ValueError(f"unknown fold {fold!r}")
         self.fold = fold
+        self.target = target
+        self._region = None  # (vectors, mean, std, daily table), built on first Rg request
         # target only selects which climatology channels fold_daily adds; the retrieval
         # features use Tmax channels for every target (the v1 feature set).
         self.d, _ = fold_daily(fold, target, labels)
@@ -127,13 +172,29 @@ class FoldRetriever:
     def query_vectors(self, query_dates) -> np.ndarray:
         return _unit((window_features(self.d, query_dates) - self.mean) / self.std)
 
+    def _region_state(self) -> tuple[np.ndarray, np.ndarray, np.ndarray, pd.DataFrame]:
+        if self._region is None:
+            rz = regional_daily(self.fold, self.d, self.target)
+            raw = region_features(rz, self.cand_dates)
+            mean, std = raw.mean(axis=0), raw.std(axis=0)  # training windows only
+            std[std == 0] = 1.0
+            self._region = (_unit((raw - mean) / std), mean, std, rz)
+        return self._region
+
+    def region_query_vectors(self, query_dates) -> np.ndarray:
+        _, mean, std, rz = self._region_state()
+        return _unit((region_features(rz, query_dates) - mean) / std)
+
     def retrieve(self, query_dates, mode: str = "sim", k: int = K_DEFAULT, seed: int | None = None) -> Retrieved:
         if mode not in MODES:
             raise ValueError(f"mode must be one of {MODES}")
         if mode in RANDOM_MODES and seed is None:
             raise ValueError(f"mode {mode!r} needs a seed")
         q = pd.DatetimeIndex(query_dates)
-        qv = self.query_vectors(q)
+        if mode == "region":
+            qv, cand_vectors = self.region_query_vectors(q), self._region_state()[0]
+        else:
+            qv, cand_vectors = self.query_vectors(q), self.vectors
         q_ep = window_episode(self.d, q)
         q_doy = (q - pd.Timedelta(days=1)).dayofyear.to_numpy()
         n_cand = np.searchsorted(self.cand_dates.values, (q - pd.Timedelta(days=BUFFER_DAYS)).values, side="right")
@@ -145,7 +206,7 @@ class FoldRetriever:
         n_elig = np.zeros(n, dtype=np.int64)
         for start in range(0, n, 1024):
             stop = min(start + 1024, n)
-            sims = qv[start:stop] @ self.vectors.T
+            sims = qv[start:stop] @ cand_vectors.T
             for r in range(stop - start):
                 i = start + r
                 elig = np.zeros(len(self.cand_dates), dtype=bool)

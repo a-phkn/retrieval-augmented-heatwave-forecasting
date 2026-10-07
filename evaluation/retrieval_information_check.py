@@ -28,14 +28,16 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 
-from retrieval.fold_retrieval import BUFFER_DAYS, K_DEFAULT, FoldRetriever, window_features
+from retrieval.fold_retrieval import BUFFER_DAYS, K_DEFAULT, FoldRetriever, region_features, window_features
 from training.folds import FOLDS, FORECAST_DAYS, INPUT_DAYS, fold_bounds
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
 OUT_DIR = REPO_ROOT / "evaluation_v2"
 FAMILIES = {"Tmax": ("t_max", "v2"), "WBGT (physical)": ("wbgt_lj_max", "wbgt")}
-MODES = {"R0": ("sim", None), "R0-rand": ("rand", range(10)), "R1": ("time", None), "R1-rand": ("time_rand", range(10))}
-PAIRS = (("R0", "R0-rand"), ("R1", "R1-rand"))
+MODES = {"R0": ("sim", None), "R0-rand": ("rand", range(10)), "R1": ("time", None), "R1-rand": ("time_rand", range(10)),
+         "Rg": ("region", None)}
+PAIRS = (("R0", "R0-rand"), ("R1", "R1-rand"), ("Rg", "R0-rand"))  # Rg shares R0's pool (pre-registered 2026-10-07)
+UPSTREAM_EXTRA = ("Rg",)  # descriptive: also scored against a baseline that is given the upstream readings
 HELD_OUT_YEARS = 2
 RIDGE_ALPHA = 1.0
 N_BOOT = 2000
@@ -94,20 +96,31 @@ def fold_family(fold: str, target: str, labels: str) -> dict:
     def sq_err(pred_z: np.ndarray) -> np.ndarray:  # deg C^2 per (held query, lead)
         return ((pred_z - y[ev]) * scale) ** 2
 
-    out = {"base": sq_err(ridge_fit_predict(base_x[fit], y[fit], base_x[ev]))[None]}
+    # descriptive: the same baseline also given the regional readings Rg matches on (the graph backbone sees them)
+    up_x = np.column_stack([base_x, region_features(fr._region_state()[3], q)])
+    out = {"base": sq_err(ridge_fit_predict(base_x[fit], y[fit], base_x[ev]))[None],
+           "base+up": sq_err(ridge_fit_predict(up_x[fit], y[fit], up_x[ev]))[None]}
+
+    def augmented(x: np.ndarray, sig: np.ndarray) -> np.ndarray:
+        per_lead = []
+        for lead in range(FORECAST_DAYS):  # the signal enters per lead (its own lead's analogue mean)
+            xa = np.column_stack([x, sig[:, lead]])
+            per_lead.append(ridge_fit_predict(xa[fit], y[fit, lead:lead + 1], xa[ev])[:, 0])
+        return np.column_stack(per_lead)
+
     corr = {}
     for name, runs in retrieved.items():
-        errs, cs = [], []
+        errs, errs_up, cs = [], [], []
         for idx in runs:
             sig = np.zeros((len(q), FORECAST_DAYS))
             sig[full] = analogue_signal(z, idx[full], cand_pos)
-            per_lead = []
-            for lead in range(FORECAST_DAYS):  # the signal enters per lead (its own lead's analogue mean)
-                xa = np.column_stack([base_x, sig[:, lead]])
-                per_lead.append(ridge_fit_predict(xa[fit], y[fit, lead:lead + 1], xa[ev])[:, 0])
-            errs.append(sq_err(np.column_stack(per_lead)))
+            errs.append(sq_err(augmented(base_x, sig)))
+            if name in UPSTREAM_EXTRA:
+                errs_up.append(sq_err(augmented(up_x, sig)))
             cs.append([np.corrcoef(sig[ev, lead], y[ev, lead])[0, 1] for lead in range(FORECAST_DAYS)])
         out[name] = np.stack(errs)  # (seeds, n_held, L)
+        if errs_up:
+            out[f"{name}+up"] = np.stack(errs_up)
         corr[name] = np.mean(cs, axis=0)
     stratum = d["stratum"].to_numpy()[pos[:, None] + leads][ev]
     return {"errors": out, "corr": corr, "year": np.repeat(q[ev].year.to_numpy()[:, None], FORECAST_DAYS, axis=1),
@@ -150,6 +163,11 @@ def summarise(parts: list[dict]) -> dict:
         for rung, rand in PAIRS:
             rows[f"{rung} vs {rand}"] = cluster_boot(lambda w, a=rung, b=rand: rmse_seedmean(se[a], w) - rmse_seedmean(se[b], w),
                                                     years, rng)
+        for k in UPSTREAM_EXTRA:
+            rows[f"{k}+up vs base+up"] = cluster_boot(lambda w, k=k: rmse_seedmean(se[f"{k}+up"], w) - rmse_seedmean(se["base+up"], w),
+                                                      years, rng)
+            rows["base+up vs base"] = cluster_boot(lambda w: rmse_seedmean(se["base+up"], w) - rmse_seedmean(se["base"], w),
+                                                   years, rng)
         res[subset] = rows
     by_lead = {}
     for lead in range(FORECAST_DAYS):
@@ -170,7 +188,7 @@ def _ci(t) -> str:
 
 
 def write_report(results: dict, meta: dict) -> None:
-    L = ["# Retrieval information check (2026-10-07)", "",
+    L = ["# Retrieval information check (2026-10-07; Rg added the same day, pre-registered)", "",
          "Specified in `context/decisions.md` before it was run. No training; training years only (each fold's last "
          "2 training years held out; no validation block used).", "",
          "Question: do the analogues' own next 5 days add information beyond the query's own 14 input days? "
@@ -179,11 +197,19 @@ def write_report(results: dict, meta: dict) -> None:
     for fam, r in results.items():
         L += [f"## {fam}", "",
               f"Held-out query-days: {r['all']['n_rows']} (extreme: {r['extreme']['n_rows']}); fit queries: {meta[fam]['n_fit']}.", "",
-              f"**Information present (pre-specified rule):** R0 {'yes' if r['information_present']['R0'] else 'no'}, "
-              f"R1 {'yes' if r['information_present']['R1'] else 'no'}", "",
+              "**Information present (pre-specified rule):** "
+              + ", ".join(f"{k} {'yes' if v else 'no'}" for k, v in r["information_present"].items()), "",
               "| Comparison | All days Δ RMSE (95% CI) | Extreme days Δ RMSE (95% CI, descriptive) |", "|---|---|---|"]
         for k in [f"{m} vs base" for m in MODES] + [f"{a} vs {b}" for a, b in PAIRS]:
             L.append(f"| {k.replace('base', 'query-only baseline')} | {_ci(r['all'][k])} | {_ci(r['extreme'][k])} |")
+        L += ["", "Descriptive (Rg, pre-registered 2026-10-07): the baseline is also given the upstream readings Rg "
+              "matches on, as the graph backbone would be. Does Rg still add anything?", "",
+              "| Comparison | All days Δ RMSE (95% CI) | Extreme days Δ RMSE (95% CI) |", "|---|---|---|"]
+        for k in ["base+up vs base"] + [f"{m}+up vs base+up" for m in UPSTREAM_EXTRA]:
+            label = {"base+up vs base": "query-only baseline + upstream vs query-only baseline"}.get(
+                k, k.replace("+up vs base+up", " added to (query-only baseline + upstream)"))
+            L.append(f"| {label} | "
+                     f"{_ci(r['all'][k])} | {_ci(r['extreme'][k])} |")
         L += ["", f"Query-only baseline RMSE: all {r['all']['rmse']['base']:.3f} °C, extreme {r['extreme']['rmse']['base']:.3f} °C.", "",
               "By lead (RMSE °C, all days) and correlation of the analogue signal with the truth (held-out):", "",
               "| Lead | Baseline | " + " | ".join(MODES) + " | " + " | ".join(f"corr {m}" for m in MODES) + " |",
@@ -213,8 +239,9 @@ def main() -> None:
     write_report(results, meta)
     (OUT_DIR / "retrieval_information_check.json").write_text(json.dumps(results, indent=2, default=float) + "\n", encoding="utf-8")
     for fam, r in results.items():
-        print(f"{fam}: information present R0={r['information_present']['R0']} R1={r['information_present']['R1']}")
-        for k in ["R0 vs base", "R1 vs base", "R0 vs R0-rand", "R1 vs R1-rand"]:
+        print(f"{fam}: information present {r['information_present']}")
+        for k in ["R0 vs base", "R1 vs base", "Rg vs base", "R0 vs R0-rand", "R1 vs R1-rand", "Rg vs R0-rand",
+                  "base+up vs base", "Rg+up vs base+up"]:
             print(f"  {k:14s} all {_ci(r['all'][k])}")
 
 

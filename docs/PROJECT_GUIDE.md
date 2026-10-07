@@ -606,6 +606,24 @@ in brackets is the 95% interval; if it crosses 0, the change is not significant.
   that G-D0 showed is useful, or if R2–R4 change what is retrieved.
 - Report: `evaluation_v2/retrieval_information_check.md`.
 
+**Rg: matching on the regional pattern (added 2026-10-07, after G3; disclosed as such)**
+- **What it is:** instead of past days that looked like Delhi, Rg retrieves past days whose *regional* pattern
+  matched the last 3 days (heat at the 27 upstream points over north-west India and Pakistan, plus dew point for
+  WBGT). The rule was written down first, and a training-years screen showed this information is new to the model.
+- **WBGT result:** about 2% lower error on all days (−0.044 °C, p = 0.003), in all 4 validation blocks, and
+  clearly better than random past days on all days (−0.059 °C, p < 0.001). This is the first retrieval variant
+  that measurably helps.
+- **Why G3 still says "none":** on extreme days Rg beat the plain model (−0.16 °C) but not random past days
+  (−0.12 °C, p = 0.11; the test can only see about 0.21 °C). The rule is not loosened after the fact.
+- **Careful reading of the extreme-day gain:** it comes entirely from forecasting *less far below* the true value
+  on those days (bias −3.0 → −2.8 °C). Rg also forecasts many more hot days (147 vs 54 per seed), mostly false
+  alarms.
+- **Tmax:** no detectable change (−0.003 °C on all days). Possibly because the Tmax model gets the analogues'
+  outcomes in raw °C, or because regional matches are often from a different season. Untested ideas, not findings.
+- **What it means:** the model never sees upstream data, so Rg seems to pass regional information to a Delhi-only
+  model indirectly. Whether it still helps a model that sees upstream data directly (the graph) is the G-R* test.
+- Independently reviewed (no leakage; numbers reproduced). Report: `evaluation_v2/week3_controls.md`.
+
 ### 9.1 How RAG helps the DSTGNN, and how we prove it (design; results pending)
 
 **What each part contributes:**
@@ -779,3 +797,4 @@ the project's virtual environment (`.venv`); nothing is installed globally.
 | 2026-10-06 | Part D (IMD humid-heat wording, 7-day lead time) in §9; fold-aware retrieval R0/R0-rand/R1 built and pre-registered (G3 rule), runs started; DSTGNN skeleton passes G-D1. |
 | 2026-10-07 | R1-rand added and run; G3: no retrieval rung helps yet (Tmax or WBGT), independently reviewed; Week 4 continues with R2–R4 and mechanism checks. |
 | 2026-10-07 | Retrieval information check: analogues add no information beyond the query's own inputs, so tuning the network's use of them won't help. |
+| 2026-10-07 | Rg (regional-pattern retrieval) added after G3: WBGT −2% error on all days and beats random analogues; extreme-day condition missed (p = 0.11), so G3 still none; reviewed. |

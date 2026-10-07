@@ -1,4 +1,4 @@
-# Retrieval information check (2026-10-07)
+# Retrieval information check (2026-10-07; Rg added the same day, pre-registered)
 
 Specified in `context/decisions.md` before it was run. No training; training years only (each fold's last 2 training years held out; no validation block used).
 
@@ -8,55 +8,73 @@ Question: do the analogues' own next 5 days add information beyond the query's o
 
 Held-out query-days: 14530 (extreme: 385); fit queries: 41439.
 
-**Information present (pre-specified rule):** R0 no, R1 no
+**Information present (pre-specified rule):** R0 no, R1 no, Rg yes
 
 | Comparison | All days Δ RMSE (95% CI) | Extreme days Δ RMSE (95% CI, descriptive) |
 |---|---|---|
 | R0 vs query-only baseline | -0.001 [-0.002, +0.000] | -0.002 [-0.007, +0.003] |
 | R0-rand vs query-only baseline | +0.000 [-0.000, +0.000] | +0.000 [-0.001, +0.001] |
-| R1 vs query-only baseline | -0.000 [-0.001, +0.000] | -0.002 [-0.006, +0.004] |
+| R1 vs query-only baseline | -0.000 [-0.001, +0.000] | -0.002 [-0.006, +0.003] |
 | R1-rand vs query-only baseline | +0.000 [-0.000, +0.001] | -0.000 [-0.001, +0.001] |
-| R0 vs R0-rand | -0.001 [-0.002, +0.000] | -0.002 [-0.008, +0.003] |
+| Rg vs query-only baseline | -0.028 [-0.037, -0.018] | -0.120 [-0.149, -0.099] |
+| R0 vs R0-rand | -0.001 [-0.002, +0.000] | -0.002 [-0.007, +0.004] |
 | R1 vs R1-rand | -0.001 [-0.001, +0.000] | -0.001 [-0.006, +0.004] |
+| Rg vs R0-rand | -0.028 [-0.037, -0.018] | -0.121 [-0.150, -0.100] |
+
+Descriptive (Rg, pre-registered 2026-10-07): the baseline is also given the upstream readings Rg matches on, as the graph backbone would be. Does Rg still add anything?
+
+| Comparison | All days Δ RMSE (95% CI) | Extreme days Δ RMSE (95% CI) |
+|---|---|---|
+| query-only baseline + upstream vs query-only baseline | -0.067 [-0.083, -0.049] | -0.105 [-0.227, +0.018] |
+| Rg added to (query-only baseline + upstream) | -0.001 [-0.002, +0.000] | -0.012 [-0.022, -0.003] |
 
 Query-only baseline RMSE: all 2.185 °C, extreme 2.847 °C.
 
 By lead (RMSE °C, all days) and correlation of the analogue signal with the truth (held-out):
 
-| Lead | Baseline | R0 | R0-rand | R1 | R1-rand | corr R0 | corr R0-rand | corr R1 | corr R1-rand |
-|---|---|---|---|---|---|---|---|---|---|
-| 1 | 1.555 | 1.555 | 1.556 | 1.555 | 1.556 | +0.694 | +0.005 | +0.686 | -0.009 |
-| 2 | 2.071 | 2.071 | 2.071 | 2.071 | 2.071 | +0.469 | -0.004 | +0.464 | -0.015 |
-| 3 | 2.300 | 2.301 | 2.301 | 2.301 | 2.301 | +0.320 | +0.003 | +0.317 | -0.020 |
-| 4 | 2.406 | 2.406 | 2.406 | 2.407 | 2.406 | +0.249 | +0.008 | +0.255 | -0.020 |
-| 5 | 2.467 | 2.464 | 2.467 | 2.465 | 2.468 | +0.153 | +0.006 | +0.165 | -0.008 |
+| Lead | Baseline | R0 | R0-rand | R1 | R1-rand | Rg | corr R0 | corr R0-rand | corr R1 | corr R1-rand | corr Rg |
+|---|---|---|---|---|---|---|---|---|---|---|---|
+| 1 | 1.555 | 1.555 | 1.556 | 1.555 | 1.556 | 1.514 | +0.694 | +0.005 | +0.686 | -0.009 | +0.743 |
+| 2 | 2.071 | 2.071 | 2.071 | 2.071 | 2.071 | 2.020 | +0.469 | -0.004 | +0.464 | -0.015 | +0.566 |
+| 3 | 2.300 | 2.301 | 2.301 | 2.301 | 2.301 | 2.266 | +0.320 | +0.003 | +0.317 | -0.020 | +0.430 |
+| 4 | 2.406 | 2.406 | 2.406 | 2.407 | 2.406 | 2.391 | +0.249 | +0.008 | +0.255 | -0.020 | +0.327 |
+| 5 | 2.467 | 2.464 | 2.467 | 2.465 | 2.468 | 2.459 | +0.153 | +0.006 | +0.165 | -0.008 | +0.254 |
 
 ## WBGT (physical)
 
 Held-out query-days: 14530 (extreme: 205); fit queries: 41439.
 
-**Information present (pre-specified rule):** R0 no, R1 no
+**Information present (pre-specified rule):** R0 no, R1 no, Rg yes
 
 | Comparison | All days Δ RMSE (95% CI) | Extreme days Δ RMSE (95% CI, descriptive) |
 |---|---|---|
-| R0 vs query-only baseline | +0.000 [-0.002, +0.003] | -0.012 [-0.021, -0.001] |
+| R0 vs query-only baseline | +0.000 [-0.002, +0.003] | -0.012 [-0.020, -0.001] |
 | R0-rand vs query-only baseline | -0.000 [-0.000, +0.000] | -0.001 [-0.001, +0.000] |
-| R1 vs query-only baseline | +0.000 [-0.002, +0.002] | -0.009 [-0.018, +0.002] |
+| R1 vs query-only baseline | +0.000 [-0.002, +0.002] | -0.009 [-0.017, +0.001] |
 | R1-rand vs query-only baseline | +0.000 [+0.000, +0.000] | -0.001 [-0.002, -0.000] |
-| R0 vs R0-rand | +0.000 [-0.002, +0.003] | -0.011 [-0.021, -0.001] |
-| R1 vs R1-rand | -0.000 [-0.002, +0.002] | -0.008 [-0.017, +0.002] |
+| Rg vs query-only baseline | -0.039 [-0.051, -0.028] | -0.087 [-0.116, -0.059] |
+| R0 vs R0-rand | +0.000 [-0.002, +0.002] | -0.011 [-0.020, -0.002] |
+| R1 vs R1-rand | -0.000 [-0.002, +0.002] | -0.008 [-0.017, +0.003] |
+| Rg vs R0-rand | -0.039 [-0.051, -0.028] | -0.086 [-0.114, -0.057] |
+
+Descriptive (Rg, pre-registered 2026-10-07): the baseline is also given the upstream readings Rg matches on, as the graph backbone would be. Does Rg still add anything?
+
+| Comparison | All days Δ RMSE (95% CI) | Extreme days Δ RMSE (95% CI) |
+|---|---|---|
+| query-only baseline + upstream vs query-only baseline | -0.134 [-0.165, -0.103] | -0.326 [-0.542, -0.123] |
+| Rg added to (query-only baseline + upstream) | +0.000 [-0.000, +0.001] | +0.003 [+0.000, +0.005] |
 
 Query-only baseline RMSE: all 2.253 °C, extreme 4.539 °C.
 
 By lead (RMSE °C, all days) and correlation of the analogue signal with the truth (held-out):
 
-| Lead | Baseline | R0 | R0-rand | R1 | R1-rand | corr R0 | corr R0-rand | corr R1 | corr R1-rand |
-|---|---|---|---|---|---|---|---|---|---|
-| 1 | 1.973 | 1.972 | 1.973 | 1.972 | 1.973 | +0.277 | +0.002 | +0.267 | -0.002 |
-| 2 | 2.237 | 2.237 | 2.237 | 2.237 | 2.238 | +0.135 | +0.008 | +0.126 | -0.009 |
-| 3 | 2.314 | 2.315 | 2.314 | 2.315 | 2.314 | +0.060 | -0.005 | +0.050 | -0.007 |
-| 4 | 2.349 | 2.350 | 2.349 | 2.350 | 2.350 | +0.037 | +0.003 | +0.043 | -0.006 |
-| 5 | 2.368 | 2.369 | 2.369 | 2.369 | 2.369 | +0.030 | -0.002 | +0.043 | -0.005 |
+| Lead | Baseline | R0 | R0-rand | R1 | R1-rand | Rg | corr R0 | corr R0-rand | corr R1 | corr R1-rand | corr Rg |
+|---|---|---|---|---|---|---|---|---|---|---|---|
+| 1 | 1.973 | 1.972 | 1.973 | 1.972 | 1.973 | 1.917 | +0.277 | +0.002 | +0.267 | -0.002 | +0.469 |
+| 2 | 2.237 | 2.237 | 2.237 | 2.237 | 2.238 | 2.173 | +0.135 | +0.008 | +0.126 | -0.009 | +0.338 |
+| 3 | 2.314 | 2.315 | 2.314 | 2.315 | 2.314 | 2.268 | +0.060 | -0.005 | +0.050 | -0.007 | +0.248 |
+| 4 | 2.349 | 2.350 | 2.349 | 2.350 | 2.350 | 2.324 | +0.037 | +0.003 | +0.043 | -0.006 | +0.170 |
+| 5 | 2.368 | 2.369 | 2.369 | 2.369 | 2.369 | 2.360 | +0.030 | -0.002 | +0.043 | -0.005 | +0.102 |
 
 Notes:
 - Random versions (R0-rand, R1-rand): 10 seeds; RMSE is the mean over seeds, as in the main comparison.

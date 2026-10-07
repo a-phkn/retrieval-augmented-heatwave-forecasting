@@ -39,7 +39,7 @@ Short, frequently-updated. See `build_plan.md` for full milestone detail.
    changed).
 
 ## Last verified state (2026-10-04)
-- `pytest` → 251 passed (2026-10-07). Earlier: 196 passed (2026-10-06; leakage 3, retrieval eligibility 6, manifest 12, stats 46, predict_v1 8, hourly features 16, downloader v2 13, upstream downloader 11, compare v2 13, wbgt liljegren 11, wbgt label 5, labels v2 13, folds 27, trainer 12).
+- `pytest` → 256 passed (2026-10-07). Earlier: 196 passed (2026-10-06; leakage 3, retrieval eligibility 6, manifest 12, stats 46, predict_v1 8, hourly features 16, downloader v2 13, upstream downloader 11, compare v2 13, wbgt liljegren 11, wbgt label 5, labels v2 13, folds 27, trainer 12).
 - `retrieval/candidates.parquet` + `retrieval/faiss_index.bin` rebuilt in the
   new venv; `feature_normalization_stats.json` reproduced byte-identically.
 - v1 frozen: `data/MANIFEST.json` (30 files incl. A1 checkpoints + raw-data fingerprint), window index
@@ -80,6 +80,9 @@ Short, frequently-updated. See `build_plan.md` for full milestone detail.
 - **Retrieval information check (2026-10-07)**: `evaluation/retrieval_information_check.py`. On held-out training
   years, adding the analogues' outcomes to a query-only linear forecast changes RMSE by ~0.000 °C (both families,
   both rungs): the analogues are redundant with the query's own inputs. Tuning the fusion is not worth it.
+- **Rg (2026-10-07, post-G3, pre-registered + training-years screen)**: regional-pattern matching. WBGT: all days
+  -0.044 °C (p = 0.003), beats R0-rand on all days (p < 0.001); extreme vs R0-rand p = 0.114 -> G3 still none.
+  Tmax: no detectable change. Reviewed, signed off with changes (applied). G-R* will test Rg on the graph backbone.
 - **DSTGNN skeleton (2026-10-06)**: `models/dstgnn.py` (graph GRU, modes none/static/dynamic + adaptive),
   `pipeline/graph.py` (Delhi + 27 nodes, geographic and wind-gated advective edges). G-D1: 13 tests pass.
   The plan said `data/graph.py`; it is `pipeline/graph.py` because `data/` holds raw data.

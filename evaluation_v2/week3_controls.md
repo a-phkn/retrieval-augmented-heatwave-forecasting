@@ -45,15 +45,18 @@ Why they differ: the rule scores all days only, and a lower hot_weight always he
 
 Control: `A1prime_hw5`. Δ = rung minus control; negative = rung better. Each rung also has a random control fed the same model random eligible past windows (R0 vs R0-rand; R1 vs R1-rand, random within ±30 days of the same time of year): beating it shows the retrieved *information* is used, not just the extra machinery or the season.
 
+**Rg was added after G3 had been seen** (G3 = none for R0/R1). It was pre-registered on 2026-10-07 and screened on training years before any Rg training (`evaluation_v2/retrieval_information_check.md`). The idea also followed G-D0, which was scored on these validation blocks; Rg reuses G-D0's pre-registered layout (27 points, 3 lags) untuned. Treat Rg as post-G3 exploration.
+
 **G3 choice:** none (no rung meets all three conditions: retrieval does not help yet)
 
-| Rung | Run | All RMSE | Δ all vs control (95% CI) | p | Extreme RMSE | Δ extreme vs control (95% CI) | p | G3 conditions 1 / 2 / 3 | Forecast hot days / bias (descriptive) |
-|---|---|---|---|---|---|---|---|---|---|
-| R0 | A1prime_hw5_R0 | 2.191 | +0.016 [-0.003, +0.034] | 0.091 | 2.225 | +0.072 [-0.050, +0.194] | 0.217 | ✅ / ❌ / ❌ | 520 / +0.87 |
-| R0-rand | A1prime_hw5_R0rand | 2.188 | +0.012 [-0.010, +0.034] | 0.265 | 2.155 | +0.002 [-0.122, +0.126] | 0.971 | (control) | 549 / +0.86 |
-| R1 | A1prime_hw5_R1 | 2.190 | +0.015 [-0.004, +0.034] | 0.124 | 2.176 | +0.022 [-0.121, +0.165] | 0.734 | ✅ / ❌ / ❌ | 523 / +0.89 |
-| R1-rand | A1prime_hw5_R1rand | 2.193 | +0.018 [+0.000, +0.035] | 0.048 | 2.161 | +0.008 [-0.101, +0.116] | 0.876 | (control) | 568 / +0.96 |
-| AnEn (no network) | anen | 2.388 | +0.212 [+0.169, +0.256] | <0.001 | 3.281 | +1.128 [+0.887, +1.369] | <0.001 | (baseline) | 211 / +0.77 |
+| Rung | Run | All RMSE | Δ all vs control (95% CI) | p | Extreme RMSE | Δ extreme vs control (95% CI) | p | G3 conditions 1 / 2 / 3 | Extreme-day bias, rung / control (descriptive) | Forecast hot days / bias (descriptive) |
+|---|---|---|---|---|---|---|---|---|---|---|
+| R0 | A1prime_hw5_R0 | 2.191 | +0.016 [-0.003, +0.034] | 0.091 | 2.225 | +0.072 [-0.050, +0.194] | 0.217 | ✅ / ❌ / ❌ | -1.75 / -1.71 | 520 / +0.87 |
+| R0-rand | A1prime_hw5_R0rand | 2.188 | +0.012 [-0.010, +0.034] | 0.265 | 2.155 | +0.002 [-0.122, +0.126] | 0.971 | (control) | -1.68 / -1.71 | 549 / +0.86 |
+| R1 | A1prime_hw5_R1 | 2.190 | +0.015 [-0.004, +0.034] | 0.124 | 2.176 | +0.022 [-0.121, +0.165] | 0.734 | ✅ / ❌ / ❌ | -1.71 / -1.71 | 523 / +0.89 |
+| R1-rand | A1prime_hw5_R1rand | 2.193 | +0.018 [+0.000, +0.035] | 0.048 | 2.161 | +0.008 [-0.101, +0.116] | 0.876 | (control) | -1.67 / -1.71 | 568 / +0.96 |
+| Rg | A1prime_hw5_Rg | 2.172 | -0.003 [-0.029, +0.023] | 0.814 | 2.198 | +0.045 [-0.090, +0.180] | 0.476 | ✅ / ❌ / ❌ | -1.72 / -1.71 | 548 / +0.85 |
+| AnEn (no network) | anen | 2.388 | +0.212 [+0.169, +0.256] | <0.001 | 3.281 | +1.128 [+0.887, +1.369] | <0.001 | (baseline) | -2.85 / -1.71 | 211 / +0.77 |
 
 Conditions: (1) not significantly worse than the control on all days; (2) significantly better than the control on extreme days; (3) significantly better than its own random control on extreme days. p < 0.05 with a positive Δ on all days fails (1), even when the rounded CI shows +0.000.
 
@@ -63,20 +66,24 @@ Rung vs its random control, every stratum (Δ = rung minus random control, 95% C
 |---|---|---|---|---|---|---|
 | R0 | A1prime_hw5_R0rand | +0.003 [-0.020, +0.026] (p 0.775) | +0.001 [-0.025, +0.026] (p 0.952) | +0.036 [-0.162, +0.235] (p 0.683) | +0.070 [-0.102, +0.242] (p 0.386) | 0.24 °C |
 | R1 | A1prime_hw5_R1rand | -0.003 [-0.023, +0.017] (p 0.772) | -0.003 [-0.024, +0.018] (p 0.757) | -0.062 [-0.293, +0.169] (p 0.551) | +0.015 [-0.160, +0.189] (p 0.856) | 0.24 °C |
+| Rg | A1prime_hw5_R0rand | -0.015 [-0.046, +0.015] (p 0.318) | -0.017 [-0.051, +0.016] (p 0.295) | -0.017 [-0.207, +0.173] (p 0.838) | +0.043 [-0.123, +0.208] (p 0.578) | 0.23 °C |
 
 ## Retrieval ladder, WBGT (physical) family (gate G3, rule pre-registered 2026-10-06, amended before results)
 
 Control: `A2Lr_hw5`. Δ = rung minus control; negative = rung better. Each rung also has a random control fed the same model random eligible past windows (R0 vs R0-rand; R1 vs R1-rand, random within ±30 days of the same time of year): beating it shows the retrieved *information* is used, not just the extra machinery or the season.
 
+**Rg was added after G3 had been seen** (G3 = none for R0/R1). It was pre-registered on 2026-10-07 and screened on training years before any Rg training (`evaluation_v2/retrieval_information_check.md`). The idea also followed G-D0, which was scored on these validation blocks; Rg reuses G-D0's pre-registered layout (27 points, 3 lags) untuned. Treat Rg as post-G3 exploration.
+
 **G3 choice:** none (no rung meets all three conditions: retrieval does not help yet)
 
-| Rung | Run | All RMSE | Δ all vs control (95% CI) | p | Extreme RMSE | Δ extreme vs control (95% CI) | p | G3 conditions 1 / 2 / 3 | Forecast hot days / bias (descriptive) |
-|---|---|---|---|---|---|---|---|---|---|
-| R0 | A2Lr_hw5_R0 | 2.388 | +0.014 [-0.002, +0.030] | 0.076 | 3.210 | -0.064 [-0.139, +0.010] | 0.085 | ✅ / ❌ / ❌ | 75 / +1.96 |
-| R0-rand | A2Lr_hw5_R0rand | 2.388 | +0.015 [-0.001, +0.032] | 0.068 | 3.230 | -0.044 [-0.126, +0.039] | 0.273 | (control) | 68 / +1.90 |
-| R1 | A2Lr_hw5_R1 | 2.388 | +0.015 [+0.000, +0.030] | 0.045 | 3.208 | -0.065 [-0.133, +0.002] | 0.057 | ❌ / ❌ / ❌ | 77 / +2.03 |
-| R1-rand | A2Lr_hw5_R1rand | 2.383 | +0.010 [-0.004, +0.023] | 0.160 | 3.236 | -0.038 [-0.110, +0.034] | 0.276 | (control) | 60 / +1.57 |
-| AnEn (no network) | anen | 2.590 | +0.216 [+0.150, +0.283] | <0.001 | 4.793 | +1.519 [+1.311, +1.726] | <0.001 | (baseline) | 6 / +2.77 |
+| Rung | Run | All RMSE | Δ all vs control (95% CI) | p | Extreme RMSE | Δ extreme vs control (95% CI) | p | G3 conditions 1 / 2 / 3 | Extreme-day bias, rung / control (descriptive) | Forecast hot days / bias (descriptive) |
+|---|---|---|---|---|---|---|---|---|---|---|
+| R0 | A2Lr_hw5_R0 | 2.388 | +0.014 [-0.002, +0.030] | 0.076 | 3.210 | -0.064 [-0.139, +0.010] | 0.085 | ✅ / ❌ / ❌ | -2.94 / -3.02 | 75 / +1.96 |
+| R0-rand | A2Lr_hw5_R0rand | 2.388 | +0.015 [-0.001, +0.032] | 0.068 | 3.230 | -0.044 [-0.126, +0.039] | 0.273 | (control) | -2.97 / -3.02 | 68 / +1.90 |
+| R1 | A2Lr_hw5_R1 | 2.388 | +0.015 [+0.000, +0.030] | 0.045 | 3.208 | -0.065 [-0.133, +0.002] | 0.057 | ❌ / ❌ / ❌ | -2.94 / -3.02 | 77 / +2.03 |
+| R1-rand | A2Lr_hw5_R1rand | 2.383 | +0.010 [-0.004, +0.023] | 0.160 | 3.236 | -0.038 [-0.110, +0.034] | 0.276 | (control) | -2.98 / -3.02 | 60 / +1.57 |
+| Rg | A2Lr_hw5_Rg | 2.329 | -0.044 [-0.071, -0.016] | 0.003 | 3.114 | -0.160 [-0.307, -0.013] | 0.035 | ✅ / ✅ / ❌ | -2.81 / -3.02 | 147 / +1.75 |
+| AnEn (no network) | anen | 2.590 | +0.216 [+0.150, +0.283] | <0.001 | 4.793 | +1.519 [+1.311, +1.726] | <0.001 | (baseline) | -4.57 / -3.02 | 6 / +2.77 |
 
 Conditions: (1) not significantly worse than the control on all days; (2) significantly better than the control on extreme days; (3) significantly better than its own random control on extreme days. p < 0.05 with a positive Δ on all days fails (1), even when the rounded CI shows +0.000.
 
@@ -86,6 +93,7 @@ Rung vs its random control, every stratum (Δ = rung minus random control, 95% C
 |---|---|---|---|---|---|---|
 | R0 | A2Lr_hw5_R0rand | -0.001 [-0.020, +0.018] (p 0.936) | +0.000 [-0.021, +0.022] (p 0.982) | -0.018 [-0.093, +0.057] (p 0.622) | -0.020 [-0.107, +0.066] (p 0.619) | 0.12 °C |
 | R1 | A2Lr_hw5_R1rand | +0.005 [-0.010, +0.021] (p 0.488) | +0.007 [-0.010, +0.024] (p 0.414) | -0.023 [-0.095, +0.049] (p 0.519) | -0.028 [-0.087, +0.032] (p 0.333) | 0.08 °C |
+| Rg | A2Lr_hw5_R0rand | -0.059 [-0.088, -0.030] (p <0.001) | -0.058 [-0.090, -0.026] (p <0.001) | -0.047 [-0.167, +0.073] (p 0.425) | -0.116 [-0.265, +0.032] (p 0.114) | 0.21 °C |
 
 ## Other runs (historical BoM-index runs and chain steps)
 
@@ -112,6 +120,7 @@ Rung vs its random control, every stratum (Δ = rung minus random control, 95% C
 | A2Lr_hw5_R0rand | 2.096 | -0.049 [-0.433, +0.334] |
 | A2Lr_hw5_R1 | 2.101 | -0.045 [-0.449, +0.360] |
 | A2Lr_hw5_R1rand | 2.055 | -0.090 [-0.498, +0.317] |
+| A2Lr_hw5_Rg | 2.071 | -0.074 [-0.569, +0.421] |
 
 ## Forecast-conditioned: days each model FORECASTS a hot day by its own label rule
 
@@ -128,6 +137,7 @@ Descriptive. A warm-biased model forecasts many hot days with a positive bias (f
 | A1prime_hw5_R0rand | 549 | 2.298 | +0.855 |
 | A1prime_hw5_R1 | 523 | 2.361 | +0.885 |
 | A1prime_hw5_R1rand | 568 | 2.395 | +0.956 |
+| A1prime_hw5_Rg | 548 | 2.304 | +0.845 |
 | A1prime_r | 1486 | 3.150 | +1.915 |
 | A2L | 1534 | 3.584 | +2.879 |
 | A2L_dp | 1624 | 3.580 | +2.920 |
@@ -142,6 +152,7 @@ Descriptive. A warm-biased model forecasts many hot days with a positive bias (f
 | A2Lr_hw5_R0rand | 68 | 2.851 | +1.901 |
 | A2Lr_hw5_R1 | 77 | 2.933 | +2.033 |
 | A2Lr_hw5_R1rand | 60 | 2.500 | +1.575 |
+| A2Lr_hw5_Rg | 147 | 2.594 | +1.748 |
 | damped_persistence (t_max) | 153 | 1.649 | -0.120 |
 | persistence (t_max) | 789 | 3.357 | +2.051 |
 | damped_persistence (wbgt_lj_max) | 8 | 2.347 | +1.755 |
@@ -203,6 +214,12 @@ Descriptive. A warm-biased model forecasts many hot days with a positive bias (f
 | t_max | v2 | damped_persistence -> A1prime_hw5_R1rand | extreme | 730 | -0.922 | [-1.225, -0.618] | <0.001 | 11 | 11/11 |
 | t_max | v2 | A1prime_hw5 -> A1prime_hw5_R1rand | all | 21835 | +0.018 | [+0.000, +0.035] | 0.048 | 36 | 11/36 |
 | t_max | v2 | A1prime_hw5 -> A1prime_hw5_R1rand | extreme | 730 | +0.008 | [-0.101, +0.116] | 0.876 | 11 | 6/11 |
+| t_max | v2 | damped_persistence -> A1prime_hw5_Rg | all | 21835 | -0.012 | [-0.051, +0.027] | 0.545 | 36 | 18/36 |
+| t_max | v2 | damped_persistence -> A1prime_hw5_Rg | normal | 21045 | +0.028 | [-0.012, +0.067] | 0.165 | 36 | 16/36 |
+| t_max | v2 | damped_persistence -> A1prime_hw5_Rg | unusual | 60 | -0.639 | [-1.005, -0.272] | 0.004 | 9* | 9/9 |
+| t_max | v2 | damped_persistence -> A1prime_hw5_Rg | extreme | 730 | -0.885 | [-1.218, -0.552] | <0.001 | 11 | 11/11 |
+| t_max | v2 | A1prime_hw5 -> A1prime_hw5_Rg | all | 21835 | -0.003 | [-0.029, +0.023] | 0.814 | 36 | 13/36 |
+| t_max | v2 | A1prime_hw5 -> A1prime_hw5_Rg | extreme | 730 | +0.045 | [-0.090, +0.180] | 0.476 | 11 | 6/11 |
 | t_max | v2 | damped_persistence -> A1prime_r | all | 21835 | +0.115 | [+0.046, +0.184] | 0.002 | 36 | 15/36 |
 | t_max | v2 | damped_persistence -> A1prime_r | normal | 21045 | +0.180 | [+0.089, +0.271] | <0.001 | 36 | 14/36 |
 | t_max | v2 | damped_persistence -> A1prime_r | unusual | 60 | -1.506 | [-1.935, -1.078] | <0.001 | 9* | 9/9 |
@@ -293,6 +310,12 @@ Descriptive. A warm-biased model forecasts many hot days with a positive bias (f
 | wbgt_lj_max | wbgt | damped_persistence -> A2Lr_hw5_R1rand | extreme | 360 | -1.235 | [-1.358, -1.113] | <0.001 | 14 | 14/14 |
 | wbgt_lj_max | wbgt | A2Lr_hw5 -> A2Lr_hw5_R1rand | all | 21835 | +0.010 | [-0.004, +0.023] | 0.160 | 36 | 12/36 |
 | wbgt_lj_max | wbgt | A2Lr_hw5 -> A2Lr_hw5_R1rand | extreme | 360 | -0.038 | [-0.110, +0.034] | 0.276 | 14 | 9/14 |
+| wbgt_lj_max | wbgt | damped_persistence -> A2Lr_hw5_Rg | all | 21835 | -0.039 | [-0.112, +0.033] | 0.276 | 36 | 23/36 |
+| wbgt_lj_max | wbgt | damped_persistence -> A2Lr_hw5_Rg | normal | 21085 | +0.038 | [-0.044, +0.120] | 0.353 | 36 | 18/36 |
+| wbgt_lj_max | wbgt | damped_persistence -> A2Lr_hw5_Rg | unusual | 390 | -1.180 | [-1.331, -1.029] | <0.001 | 21 | 21/21 |
+| wbgt_lj_max | wbgt | damped_persistence -> A2Lr_hw5_Rg | extreme | 360 | -1.358 | [-1.489, -1.227] | <0.001 | 14 | 14/14 |
+| wbgt_lj_max | wbgt | A2Lr_hw5 -> A2Lr_hw5_Rg | all | 21835 | -0.044 | [-0.071, -0.016] | 0.003 | 36 | 28/36 |
+| wbgt_lj_max | wbgt | A2Lr_hw5 -> A2Lr_hw5_Rg | extreme | 360 | -0.160 | [-0.307, -0.013] | 0.035 | 14 | 9/14 |
 | wbgt_bom_max | v2 | damped_persistence -> A2r | all | 21835 | -0.056 | [-0.105, -0.008] | 0.024 | 36 | 23/36 |
 | wbgt_bom_max | v2 | damped_persistence -> A2r | normal | 21045 | -0.043 | [-0.092, +0.006] | 0.083 | 36 | 23/36 |
 | wbgt_bom_max | v2 | damped_persistence -> A2r | unusual | 60 | -0.541 | [-0.792, -0.291] | 0.001 | 9* | 8/9 |
@@ -307,11 +330,12 @@ Notes:
 - Neural models early-stop on the last 2 TRAINING years of each fold; validation blocks never choose a checkpoint.
 - These are development (out-of-fold) results. The test period (2019+) is locked until Week 7.
 - Retrieval caveats (independent review 2026-10-06):
-  - analogue similarity uses v1's 17 features, which are Tmax-based, for the WBGT family too (as pre-registered);
+  - R0/R1 similarity uses v1's 17 features, which are Tmax-based, for the WBGT family too (as pre-registered); Rg matches on the regional pattern instead (upstream Tmax anomalies, plus dew point for WBGT, last 3 input days);
   - the network receives analogue outcomes in its own target units (for A2Lr: WBGT anomaly in deg C, scaled), while AnEn averages standardised anomalies;
   - the 'not from the query's own episode' rule looks at the query's target days, as in v1. That is future label information, but it can only remove candidates. It affects a handful of training queries and no validation query, because validation queries only see training windows;
   - the forecast-conditioned count and bias are descriptive, not a pass/fail condition (amendment 2026-10-06);
   - power: a null result means no gain of about the 'Detectable' size; smaller benefits are not ruled out. Extreme days come from few year x season clusters (about 11-14), close to the fragile region;
-  - multiple comparisons: 2 families x 2 rungs x 3 conditions, no correction. A future pass should be read with that in mind; it cannot turn a fail into a pass;
-  - provenance: the retrieval runs were trained from uncommitted code (registry git_commit is the previous commit, dirty = True). The registry code_sha256 identifies the exact code: 49129b3d... = commit 312ec5f (R0, R0-rand, R1); a99ec74b... = commit 5a3cb99 (R1-rand);
+  - multiple comparisons: 2 families x 3 rungs x 3 conditions, no correction, and more rungs follow. A future pass should be read with that in mind; it cannot turn a fail into a pass;
+  - extreme-day bias column: observed-extreme days are by construction ones the models under-forecast, so a gain there can come from a smaller cold bias rather than a better day-to-day forecast (forecaster's dilemma);
+  - provenance: the retrieval runs were trained from uncommitted code (registry git_commit is the previous commit, dirty = True). The registry code_sha256 identifies the exact code: 49129b3d... = commit 312ec5f (R0, R0-rand, R1); a99ec74b... = commit 5a3cb99 (R1-rand); f1dd5eae... = commit 'Add regional-pattern retrieval rung Rg' (Rg). Rg also reads datasets_v2/upstream_daily.parquet (sha256 ab7b3685...), which the registry data_sha256 of those runs does not include;
   - AnEn being far worse than the control says the raw analogue outcomes carry little skill on their own; it does not test how the network uses them.

@@ -70,10 +70,14 @@ FAMILIES = {"Tmax": ("t_max", "v2"), "WBGT (physical)": ("wbgt_lj_max", "wbgt")}
 ADOPTED_HOT_WEIGHT = 5  # decision 2026-10-06 (deviation from the pre-registered rule, disclosed)
 # Retrieval ladder (pre-registered 2026-10-06): controls and rung order for the tie rule.
 RETRIEVAL_CONTROLS = {"Tmax": "A1prime_hw5", "WBGT (physical)": "A2Lr_hw5"}
-RUNG_NAMES = {"sim": "R0", "rand": "R0-rand", "time": "R1", "time_rand": "R1-rand"}
-RUNG_SIMPLICITY = {"sim": 0, "time": 1}
-# Each rung's random control (amendment 2026-10-06: R1 is judged against calendar-matched R1-rand).
-RANDOM_CONTROL = {"sim": "rand", "time": "time_rand"}
+RUNG_NAMES = {"sim": "R0", "rand": "R0-rand", "time": "R1", "time_rand": "R1-rand", "region": "Rg"}
+RUNG_SIMPLICITY = {"sim": 0, "time": 1, "region": 2}
+# Each rung's random control (amendment 2026-10-06: R1 is judged against calendar-matched R1-rand;
+# Rg, pre-registered 2026-10-07, shares R0's pool, so R0-rand is its random control).
+RANDOM_CONTROL = {"sim": "rand", "time": "time_rand", "region": "rand"}
+# G3 is decided once these have run. Rg is optional: it is trained only for a family whose
+# training-years information screen passed (decision 2026-10-07).
+G3_REQUIRED = {"sim", "rand", "time", "time_rand"}
 
 
 # ------------------------------------------------------------------ runs and baselines
@@ -278,6 +282,12 @@ def choose_retrieval_rung(rows: list[dict]) -> dict:
             "reason": f"lowest extreme-day RMSE among {len(helps)} helping rung(s) (ties within {TIE_MARGIN_C} C -> simpler)"}
 
 
+def extreme_bias(df: pd.DataFrame) -> float:
+    """Mean error (forecast - actual) on observed-extreme days, averaged over seeds (descriptive)."""
+    e = df[df["stratum"] == "extreme"]
+    return float((e["pred"] - e["actual"]).groupby(e["seed"]).mean().mean()) if len(e) else float("nan")
+
+
 def g3_conditions(r: dict) -> tuple[bool, bool, bool]:
     """The three G3 conditions for one rung row. A missing (NaN) CI bound fails its condition."""
     return (bool(r["ctrl_all_ci_low"] <= 0),  # (1) all days: CI not entirely above 0
@@ -323,7 +333,8 @@ def retrieval_rows(fam: str, runs: dict, preds: dict, summary: list[dict], anen:
                "rmse_all": rmse_by(df), "rmse_extreme": rmse_by(df[df["stratum"] == "extreme"]),
                "ctrl_all_delta": a["delta"], "ctrl_all_ci_low": a["ci_low"], "ctrl_all_ci": _ci(a), "ctrl_all_p": a["p_value"],
                "ctrl_ext_delta": e["delta"], "ctrl_ext_ci_high": e["ci_high"], "ctrl_ext_ci": _ci(e),
-               "ctrl_ext_p": e["p_value"], "ctrl_ext_mde": mde80(e), "fc": by_id.get(rid, {}).get("fc")}
+               "ctrl_ext_p": e["p_value"], "ctrl_ext_mde": mde80(e), "fc": by_id.get(rid, {}).get("fc"),
+               "ext_bias": extreme_bias(df), "ctrl_ext_bias": extreme_bias(ctrl)}
         rand_id = rungs.get(RANDOM_CONTROL.get(mode, ""))
         if rand_id is not None:
             rand = preds[rand_id]
@@ -464,7 +475,7 @@ def main() -> None:
             if r["mode"] == "anen":
                 r["fc"] = anen_fc
         ret_rows[fam] = rows
-        complete = {r["mode"] for r in rows} >= set(RUNG_NAMES)
+        complete = {r["mode"] for r in rows} >= G3_REQUIRED
         rungs = [r for r in rows if r["mode"] in RUNG_SIMPLICITY]
         ret_choice[fam] = (choose_retrieval_rung(rungs) if complete
                            else {"choice": None, "helps": [], "reason": "not all rungs have run yet"})
@@ -511,11 +522,17 @@ def main() -> None:
               f"Control: `{RETRIEVAL_CONTROLS[fam]}`. Δ = rung minus control; negative = rung better. "
               "Each rung also has a random control fed the same model random eligible past windows (R0 vs R0-rand; "
               "R1 vs R1-rand, random within ±30 days of the same time of year): beating it shows the retrieved "
-              "*information* is used, not just the extra machinery or the season.", "",
+              "*information* is used, not just the extra machinery or the season.", ""]
+        if any(r["mode"] == "region" for r in rows):
+            L += ["**Rg was added after G3 had been seen** (G3 = none for R0/R1). It was pre-registered on 2026-10-07 and "
+                  "screened on training years before any Rg training (`evaluation_v2/retrieval_information_check.md`). "
+                  "The idea also followed G-D0, which was scored on these validation blocks; Rg reuses G-D0's "
+                  "pre-registered layout (27 points, 3 lags) untuned. Treat Rg as post-G3 exploration.", ""]
+        L += [
               f"**G3 choice:** {('`' + c['choice'] + '`') if c['choice'] else 'none'} ({c['reason']})", "",
               "| Rung | Run | All RMSE | Δ all vs control (95% CI) | p | Extreme RMSE | Δ extreme vs control (95% CI) | p | "
-              "G3 conditions 1 / 2 / 3 | Forecast hot days / bias (descriptive) |",
-              "|---|---|---|---|---|---|---|---|---|---|"]
+              "G3 conditions 1 / 2 / 3 | Extreme-day bias, rung / control (descriptive) | Forecast hot days / bias (descriptive) |",
+              "|---|---|---|---|---|---|---|---|---|---|---|"]
         for r in rows:
             fc = r.get("fc") or {}
             fc_txt = f"{fc['n_per_seed']:.0f} / {fc['bias']:+.2f}" if fc else "n/a"
@@ -525,7 +542,7 @@ def main() -> None:
                 g3 = "(control)" if r["mode"] in RANDOM_CONTROL.values() else "(baseline)"
             L.append(f"| {r['rung']} | {r['run_id']} | {r['rmse_all']:.3f} | {r['ctrl_all_delta']:+.3f} {r['ctrl_all_ci']} | "
                      f"{_fmt_p(r['ctrl_all_p'])} | {r['rmse_extreme']:.3f} | {r['ctrl_ext_delta']:+.3f} {r['ctrl_ext_ci']} | "
-                     f"{_fmt_p(r['ctrl_ext_p'])} | {g3} | {fc_txt} |")
+                     f"{_fmt_p(r['ctrl_ext_p'])} | {g3} | {r['ext_bias']:+.2f} / {r['ctrl_ext_bias']:+.2f} | {fc_txt} |")
         if any(r["mode"] in RUNG_SIMPLICITY for r in rows):
             L += ["", "Conditions: (1) not significantly worse than the control on all days; (2) significantly better than the "
                   "control on extreme days; (3) significantly better than its own random control on extreme days. "
@@ -582,7 +599,8 @@ def main() -> None:
           "- These are development (out-of-fold) results. The test period (2019+) is locked until Week 7."]
     if ret_rows:
         L += ["- Retrieval caveats (independent review 2026-10-06):",
-              "  - analogue similarity uses v1's 17 features, which are Tmax-based, for the WBGT family too (as pre-registered);",
+              "  - R0/R1 similarity uses v1's 17 features, which are Tmax-based, for the WBGT family too (as pre-registered); "
+              "Rg matches on the regional pattern instead (upstream Tmax anomalies, plus dew point for WBGT, last 3 input days);",
               "  - the network receives analogue outcomes in its own target units (for A2Lr: WBGT anomaly in deg C, scaled), "
               "while AnEn averages standardised anomalies;",
               "  - the 'not from the query's own episode' rule looks at the query's target days, as in v1. That is future "
@@ -591,11 +609,16 @@ def main() -> None:
               "  - the forecast-conditioned count and bias are descriptive, not a pass/fail condition (amendment 2026-10-06);",
               "  - power: a null result means no gain of about the 'Detectable' size; smaller benefits are not ruled out. "
               "Extreme days come from few year x season clusters (about 11-14), close to the fragile region;",
-              "  - multiple comparisons: 2 families x 2 rungs x 3 conditions, no correction. A future pass should be read "
-              "with that in mind; it cannot turn a fail into a pass;",
+              f"  - multiple comparisons: 2 families x {len({r['mode'] for rr in ret_rows.values() for r in rr if r['mode'] in RUNG_SIMPLICITY})} "
+              "rungs x 3 conditions, no correction, and more rungs follow. A future pass should be read with that in mind; "
+              "it cannot turn a fail into a pass;",
+              "  - extreme-day bias column: observed-extreme days are by construction ones the models under-forecast, so a "
+              "gain there can come from a smaller cold bias rather than a better day-to-day forecast (forecaster's dilemma);",
               "  - provenance: the retrieval runs were trained from uncommitted code (registry git_commit is the previous "
               "commit, dirty = True). The registry code_sha256 identifies the exact code: 49129b3d... = commit 312ec5f "
-              "(R0, R0-rand, R1); a99ec74b... = commit 5a3cb99 (R1-rand);",
+              "(R0, R0-rand, R1); a99ec74b... = commit 5a3cb99 (R1-rand); f1dd5eae... = commit 'Add regional-pattern "
+              "retrieval rung Rg' (Rg). Rg also reads datasets_v2/upstream_daily.parquet (sha256 ab7b3685...), which the "
+              "registry data_sha256 of those runs does not include;",
               "  - AnEn being far worse than the control says the raw analogue outcomes carry little skill on their own; "
               "it does not test how the network uses them."]
     (OUT_DIR / "week3_controls.md").write_text("\n".join(L) + "\n", encoding="utf-8")

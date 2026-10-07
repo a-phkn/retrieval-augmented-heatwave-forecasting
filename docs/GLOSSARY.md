@@ -56,6 +56,7 @@ attributed to that one change.
 | **G2** | The Week-3 gate: choose the control models. |
 | **G3** | The gate that picks the best retrieval rung. Pre-registered rule (tightened before results): a rung counts only if it is not worse than its control on all days, significantly better on extreme days, and significantly better than its own random control (R0-rand for R0, R1-rand for R1) on extreme days. |
 | **R1-rand** | Random eligible analogues from within ±30 days of the same time of year: R1's fair random control. In configs its mode is `time_rand`. |
+| **Rg** | Regional-pattern retrieval: past days matched on the heat (and, for WBGT, humidity) pattern at the 27 upstream points over the last 3 days, not on Delhi alone. Its random control is R0-rand (same pool). Added after G3. |
 | **Tie margin** | In the control rule, two runs within 0.02 °C all-days RMSE count as tied, and the simpler one (fewer changes) wins. |
 
 ## Statistics and evaluation
