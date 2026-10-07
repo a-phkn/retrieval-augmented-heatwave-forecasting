@@ -835,3 +835,14 @@ fold by fold (a background-job cutoff loses at most one fold; finished folds are
   Δ RMSE (head minus direct) is >= +0.05 °C for WBGT vs A2Lr_hw5 OR for Tmax vs A1prime_hw5 (same non-inferiority
   margin as G-D3). If it fails: two separate direct models (one Tmax, one WBGT), which still output both but
   without guaranteed consistency, disclosed.
+
+**Physics-head rung run: PRE-REGISTERED 2026-10-07, before any physics-head training**
+- Run `PH_lstm` (config to be added with the trainer hook after the graph queue): the control LSTM encoder + the
+  physics head (`models/physics_head.py`), trained by `training/physics_train.py`; 10 seeds x 4 folds, hot_weight 5,
+  inner_2y early stopping on the total loss, the LSTM recipe (batch 64, Adam 1e-3, 100 epochs, patience 10).
+- Inputs: the union of the two control families' inputs (A2Lr_hw5's 14 columns + A1prime_hw5's 3 Tmax-climatology
+  channels = 17), because one model forecasts both targets. Disclosed: each control saw only its own columns.
+- Outputs scored separately: WBGT (WBGT label strata) vs `A2Lr_hw5`, Tmax (Tmax label strata) vs `A1prime_hw5`,
+  same paired cluster-jackknife tests. Keep rule as decided: the head stays unless, on all days, the upper end of
+  the 95% CI of Δ RMSE (head minus direct) is >= +0.05 °C for WBGT or for Tmax. Extreme-day results and the
+  ingredient errors are reported, not pass/fail. On the final backbone the same rule is re-checked (G-R* stage).
