@@ -1,5 +1,5 @@
 """
-Fold-aware analogue retrieval for v2 (plan v5, Week 3: rungs R0, R0-rand, R1).
+Fold-aware analogue retrieval for v2 (plan v5, Week 3: rungs R0, R0-rand, R1, R1-rand).
 
 Why a new module: v1's retrieval (retrieval/features.py, build_index.py) uses a
 climatology and feature normalisation fitted on 1980-2015, which contains the validation
@@ -23,6 +23,8 @@ Modes (pre-registered 2026-10-06, context/decisions.md):
   "rand"  R0-rand: K random eligible windows (same rules and dedup), fixed per fold and seed.
   "time"  R1: only candidates whose window-end day of year is within +-30 days of the
           query's (circular), then top-K by similarity.
+  "time_rand"  R1-rand: R1's eligible pool (same +-30-day window), K drawn at random as in
+          "rand". It is R1's own random control (added 2026-10-07, G3 condition 3).
 
 Run from repo root (prints a summary for one fold):
     python -m retrieval.fold_retrieval f4 v2
@@ -38,7 +40,8 @@ import pandas as pd
 from retrieval.features import FEATURE_NAMES
 from training.folds import FOLDS, FORECAST_DAYS, INPUT_DAYS, fold_daily, fold_windows
 
-MODES = ("sim", "rand", "time")
+MODES = ("sim", "rand", "time", "time_rand")
+RANDOM_MODES = ("rand", "time_rand")  # need a seed; draws are fixed per fold and seed
 K_DEFAULT = 5
 BUFFER_DAYS = 19  # v1: candidate_latest_start = query_date - 19 days
 MIN_DAYS_APART = 10
@@ -127,14 +130,14 @@ class FoldRetriever:
     def retrieve(self, query_dates, mode: str = "sim", k: int = K_DEFAULT, seed: int | None = None) -> Retrieved:
         if mode not in MODES:
             raise ValueError(f"mode must be one of {MODES}")
-        if mode == "rand" and seed is None:
-            raise ValueError("mode 'rand' needs a seed")
+        if mode in RANDOM_MODES and seed is None:
+            raise ValueError(f"mode {mode!r} needs a seed")
         q = pd.DatetimeIndex(query_dates)
         qv = self.query_vectors(q)
         q_ep = window_episode(self.d, q)
         q_doy = (q - pd.Timedelta(days=1)).dayofyear.to_numpy()
         n_cand = np.searchsorted(self.cand_dates.values, (q - pd.Timedelta(days=BUFFER_DAYS)).values, side="right")
-        rng = np.random.default_rng([list(FOLDS).index(self.fold), seed, 20261006]) if mode == "rand" else None
+        rng = np.random.default_rng([list(FOLDS).index(self.fold), seed, 20261006]) if mode in RANDOM_MODES else None
 
         n = len(q)
         idx = np.full((n, k), -1, dtype=np.int64)
@@ -149,14 +152,14 @@ class FoldRetriever:
                 elig[: n_cand[i]] = True
                 if q_ep[i] > 0:
                     elig &= self.cand_episode != q_ep[i]
-                if mode == "time":
+                if mode in ("time", "time_rand"):
                     diff = np.abs(self.cand_doy - q_doy[i])
                     elig &= np.minimum(diff, 365 - diff) <= DOY_WINDOW
                 n_elig[i] = elig.sum()
                 if n_elig[i] == 0:
                     continue
                 row = sims[r]
-                if mode == "rand":
+                if mode in RANDOM_MODES:
                     order = rng.permutation(np.flatnonzero(elig))
                     chosen = self._dedup(order, k)
                 else:

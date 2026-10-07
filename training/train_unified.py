@@ -22,9 +22,9 @@ Config keys (configs/*.json):
     anomaly_target (bool), hot_weight, early_stop, seeds (list), folds (list of "f1".."f4"),
     target_form (optional: "raw" | "anomaly" | "dp_residual"; default from anomaly_target),
     threads (optional int; results are bit-reproducible only at the same thread count),
-    retrieval (optional: {"mode": "sim" | "rand" | "time", "k": 5}). With it, the model is
+    retrieval (optional: {"mode": "sim" | "rand" | "time" | "time_rand", "k": 5}). With it, the model is
         models.retrieval_lstm_v2 fed K analogues per window from retrieval.fold_retrieval
-        (this fold's training windows only; "rand" draws are fixed per fold and seed). The
+        (this fold's training windows only; "rand"/"time_rand" draws are fixed per fold and seed). The
         analogues' outcomes are given in the model's own target units (same target form and
         scaling). Without it, the plain LSTM path below is used unchanged.
 
@@ -68,7 +68,7 @@ from torch.utils.data import DataLoader, TensorDataset
 from evaluation.predict_v1 import long_frame
 from models.lstm import LSTMForecaster
 from models.retrieval_lstm_v2 import RetrievalAugmentedLSTMv2
-from retrieval.fold_retrieval import MODES as RETRIEVAL_MODES
+from retrieval.fold_retrieval import MODES as RETRIEVAL_MODES, RANDOM_MODES
 from retrieval.fold_retrieval import FoldRetriever
 from training.folds import (
     DAILY_V2_PATH, FOLDS, LABEL_VERSIONS, LILJEGREN_DAILY_PATH, TARGET_FORMS, TARGETS, WBGT_LABEL_CONFIG,
@@ -350,8 +350,8 @@ def _run(cfg: dict, folds: list[str], seeds: list[int], out_dir: Path, model_dir
             ckpt = model_dir / cfg["run_id"] / fold / f"seed_{seed}" / "checkpoint.pt"
             ckpt.parent.mkdir(parents=True, exist_ok=True)
             if ret:
-                if ret["mode"] == "rand" or fixed is None:
-                    s = seed if ret["mode"] == "rand" else None
+                if ret["mode"] in RANDOM_MODES or fixed is None:
+                    s = seed if ret["mode"] in RANDOM_MODES else None
                     fixed = (retriever.retrieve(data.train.query_dates, ret["mode"], ret["k"], seed=s),
                              retriever.retrieve(data.val.query_dates, ret["mode"], ret["k"], seed=s))
                 r_tr, r_va = fixed

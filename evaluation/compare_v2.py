@@ -29,6 +29,10 @@ label: in season and forecast >= the fold's WBGT threshold). Descriptive, not pa
 Control choice (pre-registered 2026-10-05, context/decisions.md), per family:
   among runs NOT significantly worse than damped persistence on all days, the lowest
   all-days RMSE; within 0.02 C prefer fewer changes (non-raw target form, hot_weight != 20).
+Retrieval ladder (pre-registered 2026-10-06): runs with a "retrieval" config key are kept
+  out of the control choice and reported in their own section against their control
+  (A1prime_hw5 / A2Lr_hw5), against R0-rand, and next to the analogue-ensemble (AnEn)
+  baseline; choose_retrieval_rung applies the G3 rule.
 Adopted control (decision 2026-10-06, a disclosed deviation): the rule above picks
   hot_weight = 1, whose WBGT model never forecasts a hot day. hot_weight is therefore fixed
   at 5 and the same rule chooses among the hot_weight = 5 runs. Both choices are reported.
@@ -62,6 +66,12 @@ DEFAULT_HOT_WEIGHT = 20
 TIE_MARGIN_C = 0.02
 FAMILIES = {"Tmax": ("t_max", "v2"), "WBGT (physical)": ("wbgt_lj_max", "wbgt")}
 ADOPTED_HOT_WEIGHT = 5  # decision 2026-10-06 (deviation from the pre-registered rule, disclosed)
+# Retrieval ladder (pre-registered 2026-10-06): controls and rung order for the tie rule.
+RETRIEVAL_CONTROLS = {"Tmax": "A1prime_hw5", "WBGT (physical)": "A2Lr_hw5"}
+RUNG_NAMES = {"sim": "R0", "rand": "R0-rand", "time": "R1", "time_rand": "R1-rand"}
+RUNG_SIMPLICITY = {"sim": 0, "time": 1}
+# Each rung's random control (amendment 2026-10-06: R1 is judged against calendar-matched R1-rand).
+RANDOM_CONTROL = {"sim": "rand", "time": "time_rand"}
 
 
 # ------------------------------------------------------------------ runs and baselines
@@ -233,6 +243,87 @@ def _wbgt_thresholds(folds=tuple(FOLDS)) -> dict[str, float]:
     return out
 
 
+def anen_run(target: str, labels: str, folds=tuple(FOLDS)) -> pd.DataFrame:
+    """Analogue-ensemble baseline (non-neural) on the validation blocks: the same top-5 R0
+    analogues (retrieval.fold_retrieval, "sim"), averaged as standardised anomalies."""
+    from retrieval.fold_retrieval import FoldRetriever, anen_forecast
+
+    frames = []
+    for fold in folds:
+        fr = FoldRetriever(fold, labels, target)
+        val = build_fold(fold, target, labels).val
+        r = fr.retrieve(val.query_dates, "sim")
+        dates = np.where(r.idx >= 0, fr.cand_dates.values[np.maximum(r.idx, 0)], np.datetime64("NaT"))
+        pred = anen_forecast(fr.d, target, val.query_dates, dates)
+        frames.append(long_frame("anen", 0, val.query_dates, pred, val.y_raw, val.stratum).assign(fold=fold))
+    return pd.concat(frames, ignore_index=True)
+
+
+def choose_retrieval_rung(rows: list[dict]) -> dict:
+    """Pre-registered G3 rule (context/decisions.md 2026-10-06, as amended before results),
+    over one family's rungs (the random controls are not candidates). A rung helps only if
+    (1) it is not significantly worse than the control on all days, (2) it is significantly
+    better on extreme days, and (3) it is significantly better than ITS random control on
+    extreme days (R0 vs R0-rand, R1 vs R1-rand). Lowest extreme RMSE wins; within 0.02 C the
+    simpler rung (R0 before R1). The forecast-conditioned bias is descriptive only."""
+    helps = [r for r in rows
+             if not (r["ctrl_all_delta"] > 0 and r["ctrl_all_ci_low"] > 0)
+             and r["ctrl_ext_ci_high"] < 0
+             and r.get("rand_ext_ci_high", np.nan) < 0]
+    if not helps:
+        return {"choice": None, "helps": [], "reason": "no rung meets all three conditions: retrieval does not help yet"}
+    best = min(r["rmse_extreme"] for r in helps)
+    tied = [r for r in helps if r["rmse_extreme"] - best <= TIE_MARGIN_C]
+    pick = min(tied, key=lambda r: (RUNG_SIMPLICITY[r["mode"]], r["rmse_extreme"]))
+    return {"choice": pick["run_id"], "helps": [r["run_id"] for r in helps],
+            "reason": f"lowest extreme-day RMSE among {len(helps)} helping rung(s) (ties within {TIE_MARGIN_C} C -> simpler)"}
+
+
+def retrieval_rows(fam: str, runs: dict, preds: dict, summary: list[dict], anen: pd.DataFrame | None) -> list[dict]:
+    """One row per retrieval run of a family (and the AnEn baseline): deltas vs the control,
+    vs the rung's own random control on every stratum, and the forecast-conditioned check."""
+    control = RETRIEVAL_CONTROLS[fam]
+    if control not in preds:
+        return []
+    ctrl = preds[control]
+    by_id = {r["run_id"]: r for r in summary}
+    rungs: dict[str, str] = {}
+    family_key = (runs[control]["target"], runs[control]["labels"])
+    for rid, c in runs.items():
+        if not (c.get("retrieval") and rid in preds and (c["target"], c["labels"]) == family_key):
+            continue
+        if c["parent"] not in (control, f"{control}_R0"):  # never drop a run silently (it would block G3)
+            raise ValueError(f"{fam}: retrieval run {rid} has parent {c['parent']!r}; "
+                             f"expected {control!r} or {control + '_R0'!r}")
+        mode = c["retrieval"]["mode"]
+        if mode in rungs:  # never let a second run (e.g. a k ablation) silently replace a rung
+            raise ValueError(f"{fam}: runs {rungs[mode]} and {rid} both claim retrieval mode {mode!r}")
+        rungs[mode] = rid
+    rows = []
+    entries = [(m, rid, preds[rid]) for m, rid in rungs.items()] + ([("anen", "anen", anen)] if anen is not None else [])
+    for mode, rid, df in entries:
+        a, e = compare(ctrl, df, "all"), compare(ctrl, df, "extreme")
+        row = {"run_id": rid, "mode": mode, "rung": RUNG_NAMES.get(mode, "AnEn (no network)"),
+               "rmse_all": rmse_by(df), "rmse_extreme": rmse_by(df[df["stratum"] == "extreme"]),
+               "ctrl_all_delta": a["delta"], "ctrl_all_ci_low": a["ci_low"], "ctrl_all_ci": _ci(a), "ctrl_all_p": a["p_value"],
+               "ctrl_ext_delta": e["delta"], "ctrl_ext_ci_high": e["ci_high"], "ctrl_ext_ci": _ci(e),
+               "ctrl_ext_p": e["p_value"], "fc": by_id.get(rid, {}).get("fc")}
+        rand_id = rungs.get(RANDOM_CONTROL.get(mode, ""))
+        if rand_id is not None:
+            rand = preds[rand_id]
+            row["rand_run"] = rand_id
+            for s in STRATA:
+                if s != "all" and not (df["stratum"] == s).any():  # stratum absent: report n/a
+                    row[f"rand_{s}_delta"], row[f"rand_{s}_ci"], row[f"rand_{s}_p"] = float("nan"), "n/a", float("nan")
+                    continue
+                v = compare(rand, df, s)
+                row[f"rand_{s}_delta"], row[f"rand_{s}_ci"], row[f"rand_{s}_p"] = v["delta"], _ci(v), v["p_value"]
+                if s == "extreme":
+                    row["rand_ext_ci_high"] = v["ci_high"]
+        rows.append(row)
+    return rows
+
+
 def complexity(cfg: dict) -> int:
     """Changes from the family's base recipe (for the pre-registered tie rule)."""
     return int(cfg.get("target_form", "raw") != "raw") + int(cfg["hot_weight"] != DEFAULT_HOT_WEIGHT)
@@ -301,6 +392,7 @@ def main() -> None:
         ens_dp = compare(dp, ens, "all")
         row = {"run_id": run_id, "parent": cfg["parent"], "target": cfg["target"], "labels": cfg["labels"],
                "target_form": cfg.get("target_form", "raw"), "hot_weight": cfg["hot_weight"], "complexity": complexity(cfg),
+               "retrieval": cfg.get("retrieval", {}).get("mode", ""),
                "rmse_all": rmse_by(df), "rmse_extreme": rmse_by(df[df["stratum"] == "extreme"]),
                "dp_all_delta": res["all"]["delta"], "dp_all_ci": _ci(res["all"]), "dp_all_p": res["all"]["p_value"],
                "dp_ext_delta": res["extreme"]["delta"], "dp_ext_ci": _ci(res["extreme"]),
@@ -337,18 +429,36 @@ def main() -> None:
 
     choices, rule_choices = {}, {}
     for fam, key in FAMILIES.items():
-        rows = [r for r in summary if (r["target"], r["labels"]) == key]
+        rows = [r for r in summary if (r["target"], r["labels"]) == key and not r["retrieval"]]
         if rows:
             rule_choices[fam] = choose_control(rows)
             adopted = adopted_control(rows)
             if adopted is not None:
                 choices[fam] = adopted
 
+    ret_rows, ret_choice = {}, {}
+    for fam, key in FAMILIES.items():
+        has_rungs = any(c.get("retrieval") and (c["target"], c["labels"]) == key and r in preds for r, c in runs.items())
+        if not has_rungs:
+            continue
+        anen = anen_run(*key)
+        anen_fc = forecast_conditioned(anen, tmax_clim) if key[1] == "v2" else forecast_conditioned_wbgt(anen, wbgt_thr)
+        rows = retrieval_rows(fam, runs, preds, summary, anen)
+        for r in rows:
+            if r["mode"] == "anen":
+                r["fc"] = anen_fc
+        ret_rows[fam] = rows
+        complete = {r["mode"] for r in rows} >= set(RUNG_NAMES)
+        rungs = [r for r in rows if r["mode"] in RUNG_SIMPLICITY]
+        ret_choice[fam] = (choose_retrieval_rung(rungs) if complete
+                           else {"choice": None, "helps": [], "reason": "not all rungs have run yet"})
+
     OUT_DIR.mkdir(parents=True, exist_ok=True)
     with open(OUT_DIR / "week3_controls.json", "w", encoding="utf-8", newline="\n") as fh:
         json.dump({"pooled_folds": list(FOLDS), "metric": "rmse", "missing_runs": missing, "summary": summary,
                    "tests": tests, "baseline_forecast_conditioned": baseline_fc, "control_choice": choices,
-                   "control_choice_preregistered_rule": rule_choices, "wbgt_thresholds": wbgt_thr}, fh, indent=2, default=float)
+                   "control_choice_preregistered_rule": rule_choices, "wbgt_thresholds": wbgt_thr,
+                   "retrieval": ret_rows, "retrieval_choice": ret_choice}, fh, indent=2, default=float)
 
     L = ["# Week 3: control models vs simple baselines (gate G2)", "",
          "Generated by `python -m evaluation.compare_v2`. Out-of-fold validation 2007-2018 (folds f1-f4 pooled), "
@@ -367,8 +477,7 @@ def main() -> None:
           "WBGT hot day. The deviation fixes hot_weight at 5 and keeps the rule for everything else; it was decided "
           "on development folds only, with the test period still locked. See context/decisions.md 2026-10-06."]
     for fam, key in FAMILIES.items():
-        rows = [r for r in summary if (r["target"], r["labels"]) == key]
-        others = [r for r in summary if (r["target"], r["labels"]) not in FAMILIES.values()]
+        rows = [r for r in summary if (r["target"], r["labels"]) == key and not r["retrieval"]]
         for title, rr in ((f"{fam} family ({key[0]}, {key[1]} labels)", rows),):
             if not rr:
                 continue
@@ -380,6 +489,29 @@ def main() -> None:
                 L.append(f"| {r['run_id']} | {r['target_form']} | {r['hot_weight']} | {r['rmse_all']:.3f} | {r['clim_all_delta']:+.3f} | "
                          f"{r['dp_all_delta']:+.3f} {r['dp_all_ci']} | {_fmt_p(r['dp_all_p'])} | {'✅' if r['floor_pass'] else '❌'} | "
                          f"{r['rmse_extreme']:.3f} | {r['dp_ext_delta']:+.3f} {r['dp_ext_ci']} | {r['ens_dp_delta']:+.3f} ({_fmt_p(r['ens_dp_p'])}) |")
+    for fam, rows in ret_rows.items():
+        c = ret_choice[fam]
+        L += ["", f"## Retrieval ladder, {fam} family (gate G3, rule pre-registered 2026-10-06, amended before results)", "",
+              f"Control: `{RETRIEVAL_CONTROLS[fam]}`. Δ = rung minus control; negative = rung better. "
+              "Each rung also has a random control fed the same model random eligible past windows (R0 vs R0-rand; "
+              "R1 vs R1-rand, random within ±30 days of the same time of year): beating it shows the retrieved "
+              "*information* is used, not just the extra machinery or the season.", "",
+              f"**G3 choice:** {('`' + c['choice'] + '`') if c['choice'] else 'none'} ({c['reason']})", "",
+              "| Rung | Run | All RMSE | Δ all vs control (95% CI) | Extreme RMSE | Δ extreme vs control (95% CI) | "
+              "Forecast hot days / bias (descriptive) |",
+              "|---|---|---|---|---|---|---|"]
+        for r in rows:
+            fc = r.get("fc") or {}
+            fc_txt = f"{fc['n_per_seed']:.0f} / {fc['bias']:+.2f}" if fc else "n/a"
+            L.append(f"| {r['rung']} | {r['run_id']} | {r['rmse_all']:.3f} | {r['ctrl_all_delta']:+.3f} {r['ctrl_all_ci']} | "
+                     f"{r['rmse_extreme']:.3f} | {r['ctrl_ext_delta']:+.3f} {r['ctrl_ext_ci']} | {fc_txt} |")
+        vs = [r for r in rows if "rand_run" in r]
+        if vs:
+            L += ["", "Rung vs its random control, every stratum (Δ = rung minus random control, 95% CI):", "",
+                  "| Rung | Random control | " + " | ".join(STRATA) + " |", "|---|---|" + "---|" * len(STRATA)]
+            for r in vs:
+                L.append(f"| {r['rung']} | {r['rand_run']} | "
+                         + " | ".join(f"{r[f'rand_{s}_delta']:+.3f} {r[f'rand_{s}_ci']}" for s in STRATA) + " |")
     other_rows = [r for r in summary if (r["target"], r["labels"]) not in FAMILIES.values()]
     if other_rows:
         L += ["", "## Other runs (historical BoM-index runs and chain steps)", "",
@@ -420,6 +552,15 @@ def main() -> None:
           "- 10-seed ensemble = mean of the 10 seeds' forecasts; reported as an extra, not the primary score.",
           "- Neural models early-stop on the last 2 TRAINING years of each fold; validation blocks never choose a checkpoint.",
           "- These are development (out-of-fold) results. The test period (2019+) is locked until Week 7."]
+    if ret_rows:
+        L += ["- Retrieval caveats (independent review 2026-10-06):",
+              "  - analogue similarity uses v1's 17 features, which are Tmax-based, for the WBGT family too (as pre-registered);",
+              "  - the network receives analogue outcomes in its own target units (for A2Lr: WBGT anomaly in deg C, scaled), "
+              "while AnEn averages standardised anomalies;",
+              "  - the 'not from the query's own episode' rule looks at the query's target days, as in v1. That is future "
+              "label information, but it can only remove candidates. It affects a handful of training queries and no "
+              "validation query, because validation queries only see training windows;",
+              "  - the forecast-conditioned count and bias are descriptive, not a pass/fail condition (amendment 2026-10-06)."]
     (OUT_DIR / "week3_controls.md").write_text("\n".join(L) + "\n", encoding="utf-8")
     # ASCII-only console summary (the Windows console may not encode the report's symbols)
     for r in sorted(summary, key=lambda x: (x["target"], x["labels"], x["rmse_all"])):
@@ -428,6 +569,13 @@ def main() -> None:
     for fam, c in choices.items():
         print(f"control [{fam}]: {c['choice']} (passes floor: {c['passes_floor']}; "
               f"pre-registered rule alone: {rule_choices[fam]['choice']})")
+    for fam, rows in ret_rows.items():
+        for r in rows:
+            vs_rand = (f"  ext vs {r['rand_run']} {r['rand_extreme_delta']:+.3f} {r['rand_extreme_ci']}"
+                       if "rand_run" in r else "")
+            print(f"retrieval [{fam}] {r['rung']:8s} all vs control {r['ctrl_all_delta']:+.3f} {r['ctrl_all_ci']}  "
+                  f"ext vs control {r['ctrl_ext_delta']:+.3f} {r['ctrl_ext_ci']}{vs_rand}")
+        print(f"G3 [{fam}]: {ret_choice[fam]['choice']} ({ret_choice[fam]['reason']})")
     print(f"-> {(OUT_DIR / 'week3_controls.md').relative_to(REPO_ROOT)}")
 
 

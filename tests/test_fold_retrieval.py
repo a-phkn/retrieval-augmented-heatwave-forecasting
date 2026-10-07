@@ -46,7 +46,7 @@ def test_primary_fold_with_v1_labels_reproduces_v1_analogues():
     assert n_short == 881
 
 
-@pytest.mark.parametrize("mode", ["sim", "rand", "time"])
+@pytest.mark.parametrize("mode", ["sim", "rand", "time", "time_rand"])
 def test_analogues_are_eligible_training_windows(f1, mode):
     train_end, _, _ = fold_bounds("f1")
     for windows in (f1.val_w, f1.train_w.iloc[::7]):
@@ -67,7 +67,7 @@ def test_analogues_are_eligible_training_windows(f1, mode):
             assert all((eps == e).sum() <= 2 for e in set(eps[eps > 0]))  # dedup: <= 2 per episode
             if q_ep[i] > 0:
                 assert q_ep[i] not in eps  # rule 3: not from the query's own episode
-        if mode == "time":
+        if mode in ("time", "time_rand"):
             qd = (q - pd.Timedelta(days=1)).dayofyear.to_numpy()[:, None]
             cd = f1.cand_doy[np.maximum(r.idx, 0)]
             diff = np.abs(cd - qd)
@@ -75,7 +75,7 @@ def test_analogues_are_eligible_training_windows(f1, mode):
 
 
 def test_validation_queries_get_full_analogue_sets(f1):
-    for mode in ("sim", "rand", "time"):
+    for mode in ("sim", "rand", "time", "time_rand"):
         r = f1.retrieve(f1.val_w["query_date"], mode, seed=0)
         assert (r.idx >= 0).all(), mode
 
@@ -101,6 +101,19 @@ def test_random_control_sees_exactly_the_same_eligible_pool(f1):
     for windows in (f1.val_w, f1.train_w.iloc[::11]):
         q = windows["query_date"]
         assert np.array_equal(f1.retrieve(q, "sim").n_eligible, f1.retrieve(q, "rand", seed=4).n_eligible)
+
+
+def test_time_random_control_matches_r1_pool_and_is_seeded(f1):
+    """R1-rand differs from R1 only in how it orders R1's eligible candidates."""
+    for windows in (f1.val_w, f1.train_w.iloc[::11]):
+        q = windows["query_date"]
+        assert np.array_equal(f1.retrieve(q, "time").n_eligible, f1.retrieve(q, "time_rand", seed=4).n_eligible)
+    q = f1.val_w["query_date"]
+    a, b, c = (f1.retrieve(q, "time_rand", seed=s).idx for s in (1, 1, 2))
+    assert np.array_equal(a, b) and not np.array_equal(a, c)
+    assert (a != f1.retrieve(q, "time").idx).any(axis=1).mean() > 0.9
+    with pytest.raises(ValueError, match="seed"):
+        f1.retrieve(q, "time_rand")
 
 
 def test_similarity_order_is_descending(f1):

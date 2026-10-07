@@ -151,6 +151,68 @@ def test_adopted_control_fixes_hot_weight_then_applies_the_rule():
     assert cv.adopted_control([rows[0]]) is None  # no hot_weight-5 run in the family
 
 
+def _rung(run, mode, ext, all_d=-0.01, all_lo=-0.05, ext_hi=-0.1, rand_hi=-0.05):
+    return {"run_id": run, "mode": mode, "rmse_extreme": ext, "ctrl_all_delta": all_d, "ctrl_all_ci_low": all_lo,
+            "ctrl_ext_ci_high": ext_hi, "rand_ext_ci_high": rand_hi}
+
+
+def test_retrieval_rung_choice_follows_the_preregistered_g3_rule():
+    # R1 is lowest but within 0.02 C of R0 -> the simpler R0
+    c = cv.choose_retrieval_rung([_rung("r0", "sim", 3.10), _rung("r1", "time", 3.09)])
+    assert c["choice"] == "r0" and c["helps"] == ["r0", "r1"]
+    # each condition alone disqualifies a rung
+    assert cv.choose_retrieval_rung([_rung("a", "sim", 3.0, all_d=0.05, all_lo=0.01)])["choice"] is None  # worse all days
+    assert cv.choose_retrieval_rung([_rung("b", "sim", 3.0, ext_hi=0.02)])["choice"] is None  # extreme gain not significant
+    # amendment: beating the random control must be significant, not a point difference
+    assert cv.choose_retrieval_rung([_rung("c", "sim", 3.0, rand_hi=0.01)])["choice"] is None
+    no_rand = _rung("d", "sim", 3.0)
+    del no_rand["rand_ext_ci_high"]
+    assert cv.choose_retrieval_rung([no_rand])["choice"] is None  # no random control run -> cannot pass
+    c = cv.choose_retrieval_rung([_rung("r0", "sim", 3.20), _rung("r1", "time", 3.10)])
+    assert c["choice"] == "r1"  # beyond the tie margin
+
+
+def test_retrieval_rows_pair_each_rung_with_its_own_random_control():
+    strata = ["normal"] * 6 + ["extreme"] * 4
+    rng = np.random.default_rng(1)
+
+    def run(name):
+        return _toy(name, [0, 1], [rng.normal(size=10), rng.normal(size=10)], strata)
+
+    preds = {k: run(k) for k in ("C", "C_R0", "C_R0rand", "C_R1", "C_R1rand")}
+    base = {"target": "t", "labels": "l"}
+    runs = {"C": {**base, "parent": "x"},
+            "C_R0": {**base, "parent": "C", "retrieval": {"mode": "sim", "k": 5}},
+            "C_R0rand": {**base, "parent": "C", "retrieval": {"mode": "rand", "k": 5}},
+            "C_R1": {**base, "parent": "C_R0", "retrieval": {"mode": "time", "k": 5}},
+            "C_R1rand": {**base, "parent": "C", "retrieval": {"mode": "time_rand", "k": 5}}}
+    cv.RETRIEVAL_CONTROLS["toy"] = "C"
+    try:
+        rows = {r["mode"]: r for r in cv.retrieval_rows("toy", runs, preds, [], None)}
+        assert rows["sim"]["rand_run"] == "C_R0rand" and rows["time"]["rand_run"] == "C_R1rand"
+        assert "rand_run" not in rows["rand"] and "rand_run" not in rows["time_rand"]
+        assert all(f"rand_{s}_delta" in rows["sim"] for s in cv.STRATA)  # every stratum reported
+        exp = cv.compare(preds["C_R1rand"], preds["C_R1"], "extreme")["delta"]
+        assert rows["time"]["rand_extreme_delta"] == pytest.approx(exp)
+        bad_parent = {**runs, "C_R1rand": {**runs["C_R1rand"], "parent": "C_R1"}}
+        with pytest.raises(ValueError, match="parent"):  # a mis-parented control must not vanish silently
+            cv.retrieval_rows("toy", bad_parent, preds, [], None)
+        runs["C_R0k10"] = {**runs["C_R0"]}
+        preds["C_R0k10"] = run("C_R0k10")
+        with pytest.raises(ValueError, match="both claim"):
+            cv.retrieval_rows("toy", runs, preds, [], None)
+    finally:
+        del cv.RETRIEVAL_CONTROLS["toy"]
+
+
+def test_anen_run_sits_on_the_scored_windows():
+    an = cv.anen_run("t_max", "v2", folds=("f1",))
+    base = cv.fold_baselines("f1", "t_max")["climatology"]
+    assert cv._labels(an).equals(cv._labels(base))
+    assert np.array_equal(an["actual"].to_numpy(), base["actual"].to_numpy())
+    assert np.isfinite(an["pred"]).all() and (an["pred"] != base["pred"]).mean() > 0.9
+
+
 def test_relabel_and_ensemble():
     strata = ["normal"] * 10
     df = _toy("m", [0, 1], [np.full(10, 1.0), np.full(10, 3.0)], strata)
