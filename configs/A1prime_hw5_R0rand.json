@@ -1,0 +1,34 @@
+{
+  "run_id": "A1prime_hw5_R0rand",
+  "parent": "A1prime_hw5",
+  "description": "Retrieval control R0-rand: control A1prime_hw5 + 5 random eligible analogues (fixed per fold and seed).",
+  "target": "t_max",
+  "labels": "v2",
+  "anomaly_target": false,
+  "target_form": "raw",
+  "hot_weight": 5,
+  "early_stop": "inner_2y",
+  "seeds": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9
+  ],
+  "folds": [
+    "f1",
+    "f2",
+    "f3",
+    "f4"
+  ],
+  "threads": 8,
+  "retrieval": {
+    "mode": "rand",
+    "k": 5
+  }
+}

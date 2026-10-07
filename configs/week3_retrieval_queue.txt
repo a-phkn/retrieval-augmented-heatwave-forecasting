@@ -1,0 +1,6 @@
+A1prime_hw5_R0
+A1prime_hw5_R0rand
+A1prime_hw5_R1
+A2Lr_hw5_R0
+A2Lr_hw5_R0rand
+A2Lr_hw5_R1

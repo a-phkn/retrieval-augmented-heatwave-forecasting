@@ -1,0 +1,34 @@
+{
+  "run_id": "A2Lr_hw5_R0",
+  "parent": "A2Lr_hw5",
+  "description": "Retrieval rung R0 (RA-v1 design): control A2Lr_hw5 + top-5 analogues by similarity, fold-aware.",
+  "target": "wbgt_lj_max",
+  "labels": "wbgt",
+  "anomaly_target": true,
+  "target_form": "anomaly",
+  "hot_weight": 5,
+  "early_stop": "inner_2y",
+  "seeds": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9
+  ],
+  "folds": [
+    "f1",
+    "f2",
+    "f3",
+    "f4"
+  ],
+  "threads": 8,
+  "retrieval": {
+    "mode": "sim",
+    "k": 5
+  }
+}

@@ -239,16 +239,20 @@ def fold_daily(fold: str, target: str, labels: str) -> tuple[pd.DataFrame, list[
         d[f"{target}_anomaly"] = d[target].to_numpy() - m
         target_channels = [target, f"clim_mean_{target}", f"clim_std_{target}", f"{target}_anomaly"]
 
+    # episode_id (0 = none) is used by retrieval's "no analogue from the query's own episode" rule.
     if labels == "v1":
         d["hot"], d["stratum"] = _v1_labels(d.index, d["t_max"].to_numpy(), t_mean, t_std)
+        d["episode_id"] = episodes(d.index, d["hot"].to_numpy(), min_span_days=3)[0]
     elif labels == "v2":
         lab = label_frame(d.index, d["t_max"], d["t_max_anomaly"])
         d["hot"], d["stratum"] = lab["hot_v2"].to_numpy(), lab["stratum_v2"].to_numpy()
+        d["episode_id"] = lab["episode_id_v2"].to_numpy()
     else:  # wbgt: percentile threshold from THIS fold's training years
         var, pct = wbgt_label_setting()
         thr = wbgt_threshold(d.index, d[var], train_mask, pct)
         lab = label_frame_wbgt(d.index, d[var], thr)
         d["hot"], d["stratum"] = lab["hot_wbgt"].to_numpy(), lab["stratum_wbgt"].to_numpy()
+        d["episode_id"] = lab["episode_id_wbgt"].to_numpy()
     return d, BASE_FEATURES + target_channels
 
 

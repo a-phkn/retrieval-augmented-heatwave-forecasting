@@ -21,7 +21,12 @@ Config keys (configs/*.json):
     run_id, parent, description, target ("t_max" | "wbgt_bom_max"), labels ("v1" | "v2"),
     anomaly_target (bool), hot_weight, early_stop, seeds (list), folds (list of "f1".."f4"),
     target_form (optional: "raw" | "anomaly" | "dp_residual"; default from anomaly_target),
-    threads (optional int; results are bit-reproducible only at the same thread count).
+    threads (optional int; results are bit-reproducible only at the same thread count),
+    retrieval (optional: {"mode": "sim" | "rand" | "time", "k": 5}). With it, the model is
+        models.retrieval_lstm_v2 fed K analogues per window from retrieval.fold_retrieval
+        (this fold's training windows only; "rand" draws are fixed per fold and seed). The
+        analogues' outcomes are given in the model's own target units (same target form and
+        scaling). Without it, the plain LSTM path below is used unchanged.
 
 Registry RMSE values of different targets (Tmax vs WBGT) are NOT comparable. Compare runs
 through the skill columns, 1 - RMSE / RMSE_ref, where climatology and persistence are
@@ -31,6 +36,9 @@ Outputs:
     predictions_v2/<run_id>/<fold>.parquet  val predictions, predict_v1 long format
                                             (seed, query_date, lead, target_date, pred,
                                             actual, error, stratum, cluster_id)
+    predictions_v2/<run_id>/<fold>_analogues.parquet  retrieval runs only: per seed and
+                                            val query, the K analogues (rank, date,
+                                            similarity) and the model's attention weights
     models/v2/<run_id>/<fold>/seed_<n>/checkpoint.pt   (gitignored; regenerable)
     registry/runs.csv                       one row per (run, fold): config, data and code
                                             hashes, git commit + dirty flag, seeds, threads,
@@ -59,6 +67,9 @@ from torch.utils.data import DataLoader, TensorDataset
 
 from evaluation.predict_v1 import long_frame
 from models.lstm import LSTMForecaster
+from models.retrieval_lstm_v2 import RetrievalAugmentedLSTMv2
+from retrieval.fold_retrieval import MODES as RETRIEVAL_MODES
+from retrieval.fold_retrieval import FoldRetriever
 from training.folds import (
     DAILY_V2_PATH, FOLDS, LABEL_VERSIONS, LILJEGREN_DAILY_PATH, TARGET_FORMS, TARGETS, WBGT_LABEL_CONFIG,
     FoldData, SplitArrays, build_fold, inner_split,
@@ -73,7 +84,7 @@ WINDOW_INDEX = REPO_ROOT / "splits" / "window_index_v1.parquet"
 CODE_FILES = [
     "training/folds.py", "training/train_unified.py", "pipeline/labels_v2.py",
     "pipeline/climatology.py", "models/lstm.py", "training/data.py", "evaluation/predict_v1.py",
-    "evaluation/stats.py",
+    "evaluation/stats.py", "retrieval/fold_retrieval.py", "retrieval/features.py", "models/retrieval_lstm_v2.py",
 ]
 EARLY_STOP = ("inner_2y", "val_block")
 
@@ -81,7 +92,8 @@ EARLY_STOP = ("inner_2y", "val_block")
 BATCH_SIZE, MAX_EPOCHS, PATIENCE, LR = 64, 100, 10, 1e-3
 REQUIRED_KEYS = {"run_id", "parent", "target", "labels", "anomaly_target", "hot_weight", "early_stop", "seeds", "folds"}
 REGISTRY_FIELDS = [
-    "timestamp_utc", "run_id", "parent", "fold", "target", "labels", "anomaly_target", "target_form", "hot_weight",
+    "timestamp_utc", "run_id", "parent", "fold", "target", "labels", "anomaly_target", "target_form", "retrieval",
+    "hot_weight",
     "early_stop", "seeds", "config_sha256", "data_sha256", "code_sha256", "git_commit", "git_dirty",
     "device", "torch_threads", "torch_version", "n_fit_windows", "n_stop_windows", "n_val_windows",
     "val_rmse_all", "val_rmse_extreme", "clim_rmse_all", "clim_rmse_extreme",
@@ -107,6 +119,11 @@ def load_config(path: Path) -> dict:
     if form not in TARGET_FORMS or (cfg["anomaly_target"] and form != "anomaly"):
         raise ValueError(f"target_form must be one of {TARGET_FORMS} and agree with anomaly_target")
     cfg["target_form"] = form
+    if "retrieval" in cfg:
+        r = cfg["retrieval"]
+        if not (isinstance(r, dict) and r.get("mode") in RETRIEVAL_MODES
+                and isinstance(r.get("k"), int) and r["k"] > 0 and set(r) <= {"mode", "k"}):
+            raise ValueError(f'retrieval must be {{"mode": one of {RETRIEVAL_MODES}, "k": positive int}}')
     return cfg
 
 
@@ -151,6 +168,69 @@ def train_one_seed(seed: int, tr: SplitArrays, va: SplitArrays, hot_weight: floa
                 break
     model.load_state_dict(best_state)
     return model
+
+
+def _analogue_batch(pool_X: torch.Tensor, pool_y: torch.Tensor, idx: torch.Tensor):
+    """(x_analogues, y_analogues, mask) for a (B, K) block of pool positions (-1 = none)."""
+    mask = idx >= 0
+    safe = idx.clamp(min=0)
+    return pool_X[safe], pool_y[safe], mask
+
+
+def predict_ra(model: RetrievalAugmentedLSTMv2, X: np.ndarray, idx: np.ndarray, pool_X: torch.Tensor,
+               pool_y: torch.Tensor, batch: int = 1024) -> tuple[np.ndarray, np.ndarray]:
+    """Normalised predictions (N, 5) and attention weights (N, K), in eval mode."""
+    model.eval()
+    preds, atts = [], []
+    with torch.no_grad():
+        for s in range(0, len(X), batch):
+            xa, ya, m = _analogue_batch(pool_X, pool_y, torch.from_numpy(idx[s:s + batch]))
+            p, a = model(torch.from_numpy(X[s:s + batch]), xa, ya, m)
+            preds.append(p.numpy())
+            atts.append(a.numpy())
+    return np.concatenate(preds), np.concatenate(atts)
+
+
+def train_one_seed_ra(seed: int, tr: SplitArrays, va: SplitArrays, hot_weight: float, idx_tr: np.ndarray,
+                      idx_va: np.ndarray, pool_X: torch.Tensor, pool_y: torch.Tensor) -> RetrievalAugmentedLSTMv2:
+    """train_one_seed with analogues: same recipe (seed handling, Adam, batch, epochs,
+    patience, weighted MSE); each window carries the pool positions of its analogues."""
+    set_seed(seed)
+    ds = TensorDataset(torch.from_numpy(tr.X), torch.from_numpy(tr.y), torch.from_numpy(tr.hot.astype(np.float32)),
+                       torch.from_numpy(idx_tr))
+    loader = DataLoader(ds, batch_size=BATCH_SIZE, shuffle=True)
+    val_y, val_hot = torch.from_numpy(va.y), torch.from_numpy(va.hot.astype(np.float32))
+
+    model = RetrievalAugmentedLSTMv2(n_features=tr.X.shape[2])
+    optimizer = torch.optim.Adam(model.parameters(), lr=LR)
+    best_val, best_state, stale = float("inf"), None, 0
+    for _ in range(MAX_EPOCHS):
+        model.train()
+        for xb, yb, hb, ib in loader:
+            optimizer.zero_grad()
+            pred, _ = model(xb, *_analogue_batch(pool_X, pool_y, ib))
+            loss = weighted_mse(pred, yb, hb, hot_weight)
+            loss.backward()
+            optimizer.step()
+        val_pred, _ = predict_ra(model, va.X, idx_va, pool_X, pool_y)
+        val_loss = weighted_mse(torch.from_numpy(val_pred), val_y, val_hot, hot_weight).item()
+        if val_loss < best_val - 1e-6:
+            best_val, stale = val_loss, 0
+            best_state = {k: v.clone() for k, v in model.state_dict().items()}
+        else:
+            stale += 1
+            if stale >= PATIENCE:
+                break
+    model.load_state_dict(best_state)
+    return model
+
+
+def _positions(sub: SplitArrays, full: SplitArrays) -> np.ndarray:
+    """Row positions of sub's windows within full (sub is a subset of full)."""
+    pos = pd.DatetimeIndex(full.query_dates).get_indexer(pd.DatetimeIndex(sub.query_dates))
+    if (pos < 0).any():
+        raise ValueError("subset windows not found in the full split")
+    return pos
 
 
 def _sha256_file(path: Path) -> str:
@@ -257,20 +337,50 @@ def _run(cfg: dict, folds: list[str], seeds: list[int], out_dir: Path, model_dir
         t0 = time.time()
         data = build_fold(fold, cfg["target"], cfg["labels"], target_form=cfg["target_form"])
         fit, stop = fit_and_stop_sets(data, cfg["early_stop"])
-        frames = []
+        ret = cfg.get("retrieval")
+        if ret:
+            retriever = FoldRetriever(fold, cfg["labels"], cfg["target"])
+            if not pd.DatetimeIndex(retriever.train_w["query_date"]).equals(pd.DatetimeIndex(data.train.query_dates)):
+                raise ValueError("retrieval pool and training windows disagree")
+            pool_X, pool_y = torch.from_numpy(data.train.X), torch.from_numpy(data.train.y)
+            pos_fit, pos_stop = _positions(fit, data.train), _positions(stop, data.train)
+            fixed = None  # sim / time retrieval does not depend on the seed: compute once
+        frames, an_frames = [], []
         for seed in seeds:
-            model = train_one_seed(seed, fit, stop, float(cfg["hot_weight"]))
             ckpt = model_dir / cfg["run_id"] / fold / f"seed_{seed}" / "checkpoint.pt"
             ckpt.parent.mkdir(parents=True, exist_ok=True)
-            torch.save(model.state_dict(), ckpt)
-            model.eval()
-            with torch.no_grad():
-                pred = data.to_raw(model(torch.from_numpy(data.val.X)).numpy(), "val")  # float32, as v1
+            if ret:
+                if ret["mode"] == "rand" or fixed is None:
+                    s = seed if ret["mode"] == "rand" else None
+                    fixed = (retriever.retrieve(data.train.query_dates, ret["mode"], ret["k"], seed=s),
+                             retriever.retrieve(data.val.query_dates, ret["mode"], ret["k"], seed=s))
+                r_tr, r_va = fixed
+                model = train_one_seed_ra(seed, fit, stop, float(cfg["hot_weight"]), r_tr.idx[pos_fit],
+                                          r_tr.idx[pos_stop], pool_X, pool_y)
+                torch.save(model.state_dict(), ckpt)
+                pred_norm, att = predict_ra(model, data.val.X, r_va.idx, pool_X, pool_y)
+                pred = data.to_raw(pred_norm, "val")
+                k = r_va.idx.shape[1]
+                an_frames.append(pd.DataFrame({
+                    "seed": seed, "query_date": np.repeat(pd.DatetimeIndex(data.val.query_dates), k),
+                    "rank": np.tile(np.arange(1, k + 1), len(r_va.idx)),
+                    "analogue_query_date": np.where(r_va.idx >= 0, retriever.cand_dates.values[np.maximum(r_va.idx, 0)],
+                                                    np.datetime64("NaT")).ravel(),
+                    "similarity": r_va.sim.ravel(), "attention": att.ravel()}))
+            else:
+                model = train_one_seed(seed, fit, stop, float(cfg["hot_weight"]))
+                torch.save(model.state_dict(), ckpt)
+                model.eval()
+                with torch.no_grad():
+                    pred = data.to_raw(model(torch.from_numpy(data.val.X)).numpy(), "val")  # float32, as v1
             frames.append(long_frame(cfg["run_id"], seed, data.val.query_dates, pred, data.val.y_raw, data.val.stratum))
             print(f"  [{cfg['run_id']} {fold}] seed {seed}: val RMSE {np.sqrt(np.mean(frames[-1]['error'] ** 2)):.4f}", flush=True)
         df = pd.concat(frames, ignore_index=True)
         out_dir.mkdir(parents=True, exist_ok=True)
         (out_dir / cfg["run_id"]).mkdir(parents=True, exist_ok=True)
+        if an_frames:  # written first, so a complete {fold}.parquet implies its analogues exist
+            pd.concat(an_frames, ignore_index=True).to_parquet(out_dir / cfg["run_id"] / f"{fold}_analogues.parquet",
+                                                               index=False)
         df.to_parquet(out_dir / cfg["run_id"] / f"{fold}.parquet", index=False)
         results[fold] = df
 
@@ -287,6 +397,7 @@ def _run(cfg: dict, folds: list[str], seeds: list[int], out_dir: Path, model_dir
                 "timestamp_utc": datetime.now(timezone.utc).isoformat(timespec="seconds"),
                 "run_id": cfg["run_id"], "parent": cfg["parent"], "fold": fold, "target": cfg["target"],
                 "labels": cfg["labels"], "anomaly_target": cfg["anomaly_target"], "target_form": cfg["target_form"],
+                "retrieval": f"{ret['mode']} k={ret['k']}" if ret else "",
                 "hot_weight": cfg["hot_weight"],
                 "early_stop": cfg["early_stop"], "seeds": " ".join(map(str, seeds)), "config_sha256": cfg_hash,
                 "data_sha256": data_hash, "code_sha256": code_hash, "git_commit": commit, "git_dirty": dirty,
