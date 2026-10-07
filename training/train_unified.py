@@ -22,7 +22,7 @@ Config keys (configs/*.json):
     anomaly_target (bool), hot_weight, early_stop, seeds (list), folds (list of "f1".."f4"),
     target_form (optional: "raw" | "anomaly" | "dp_residual"; default from anomaly_target),
     threads (optional int; results are bit-reproducible only at the same thread count),
-    retrieval (optional: {"mode": "sim" | "rand" | "time" | "time_rand", "k": 5}). With it, the model is
+    retrieval (optional: {"mode": "sim" | "rand" | "time" | "time_rand" | "region", "k": 5}). With it, the model is
         models.retrieval_lstm_v2 fed K analogues per window from retrieval.fold_retrieval
         (this fold's training windows only; "rand"/"time_rand" draws are fixed per fold and seed). The
         analogues' outcomes are given in the model's own target units (same target form and
@@ -68,7 +68,7 @@ from torch.utils.data import DataLoader, TensorDataset
 from evaluation.predict_v1 import long_frame
 from models.lstm import LSTMForecaster
 from models.retrieval_lstm_v2 import RetrievalAugmentedLSTMv2
-from retrieval.fold_retrieval import MODES as RETRIEVAL_MODES, RANDOM_MODES
+from retrieval.fold_retrieval import MODES as RETRIEVAL_MODES, RANDOM_MODES, UPSTREAM_PATH
 from retrieval.fold_retrieval import FoldRetriever
 from training.folds import (
     DAILY_V2_PATH, FOLDS, LABEL_VERSIONS, LILJEGREN_DAILY_PATH, TARGET_FORMS, TARGETS, WBGT_LABEL_CONFIG,
@@ -85,6 +85,7 @@ CODE_FILES = [
     "training/folds.py", "training/train_unified.py", "pipeline/labels_v2.py",
     "pipeline/climatology.py", "models/lstm.py", "training/data.py", "evaluation/predict_v1.py",
     "evaluation/stats.py", "retrieval/fold_retrieval.py", "retrieval/features.py", "models/retrieval_lstm_v2.py",
+    "pipeline/download_era5_upstream.py",  # its NODES list sets the order of Rg's regional columns
 ]
 EARLY_STOP = ("inner_2y", "val_block")
 
@@ -324,13 +325,20 @@ def run(cfg: dict, folds: list[str] | None = None, seeds: list[int] | None = Non
         torch.set_num_threads(prev_threads)
 
 
+def _data_files(cfg: dict) -> list[Path]:
+    """Data files a run reads; their hashes form the registry data_sha256."""
+    files = [DAILY_V2_PATH, WINDOW_INDEX] + ([LILJEGREN_DAILY_PATH] if LILJEGREN_DAILY_PATH.exists() else [])
+    if cfg["labels"] == "wbgt":
+        files.append(WBGT_LABEL_CONFIG)
+    if (cfg.get("retrieval") or {}).get("mode") == "region":
+        files.append(UPSTREAM_PATH)  # Rg reads the upstream dataset
+    return files
+
+
 def _run(cfg: dict, folds: list[str], seeds: list[int], out_dir: Path, model_dir: Path,
          write_registry: bool) -> dict[str, pd.DataFrame]:
     cfg_hash = hashlib.sha256(json.dumps(cfg, sort_keys=True).encode()).hexdigest()
-    data_files = [DAILY_V2_PATH, WINDOW_INDEX] + ([LILJEGREN_DAILY_PATH] if LILJEGREN_DAILY_PATH.exists() else [])
-    if cfg["labels"] == "wbgt":
-        data_files.append(WBGT_LABEL_CONFIG)
-    data_hash = hashlib.sha256("".join(_sha256_file(p) for p in data_files).encode()).hexdigest()
+    data_hash = hashlib.sha256("".join(_sha256_file(p) for p in _data_files(cfg)).encode()).hexdigest()
     code_hash, commit, dirty = _code_sha256(), _git("rev-parse", "HEAD"), _git_dirty()
     results = {}
     for fold in folds:

@@ -145,3 +145,12 @@ def test_every_shipped_run_config_follows_the_decision_rules():
         assert cfg["run_id"] == p.stem, p
         assert cfg["seeds"] == list(range(10)) and cfg["folds"] == ["f1", "f2", "f3", "f4"], p
         assert cfg["early_stop"] == "inner_2y" and cfg["threads"] == 8, p
+
+
+def test_data_files_include_upstream_only_for_regional_retrieval():
+    from retrieval.fold_retrieval import UPSTREAM_PATH
+    base = {"labels": "v2"}
+    assert UPSTREAM_PATH not in tu._data_files(base)
+    assert UPSTREAM_PATH not in tu._data_files({**base, "retrieval": {"mode": "sim", "k": 5}})
+    assert UPSTREAM_PATH in tu._data_files({**base, "retrieval": {"mode": "region", "k": 5}})
+    assert "pipeline/download_era5_upstream.py" in tu.CODE_FILES
