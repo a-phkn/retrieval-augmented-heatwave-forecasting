@@ -9,6 +9,11 @@ angle), applies the exact formula (pipeline.wbgt_liljegren_torch) per cell, and 
 9 cells: the same definition as the target wbgt_lj_max. With perfect ingredients the head
 reproduces the target exactly (tests/test_build_peak_ingredients.py).
 
+It also outputs Tmax (decision 2026-10-07: the final model must give both): per cell,
+Tmax_c = (temperature at the WBGT peak hour) + softplus(gap) >= that temperature, since the
+day's maximum can never be below any hour's; Tmax = mean of the 9 cells' Tmax_c, exactly how
+the Tmax target is defined (each cell's daily maximum, then the cell mean).
+
 Output ranges are physical by construction:
   t, pressure     fold-training mean + SD x raw, then clamped to a physical range
   rh              100 x sigmoid           (0-100 %)
@@ -31,6 +36,7 @@ from torch.nn import functional as F
 from pipeline.wbgt_liljegren_torch import wbgt
 
 INGREDIENTS = ("t", "rh", "pressure", "wind", "ghi", "fdir", "cosz")
+OUTPUTS = (*INGREDIENTS, "tmax")  # per cell: the 7 peak-hour ingredients + the daily maximum temperature
 N_CELLS, FORECAST_DAYS = 9, 5
 GHI_MAX = 1100.0  # W/m2: upper bound per unit cos(zenith), above clear-sky values at Delhi
 T_RANGE, P_RANGE = (-10.0, 55.0), (850.0, 1050.0)
@@ -44,16 +50,17 @@ class PhysicsHead(nn.Module):
         super().__init__()
         self.n_cells, self.forecast_days = n_cells, forecast_days
         self.net = nn.Sequential(nn.Linear(in_dim, hidden), nn.ReLU(),
-                                 nn.Linear(hidden, forecast_days * n_cells * len(INGREDIENTS)))
+                                 nn.Linear(hidden, forecast_days * n_cells * (len(INGREDIENTS) + 1)))
         for name, v in (("t_mean", t_mean), ("t_std", t_std), ("p_mean", p_mean), ("p_std", p_std)):
             self.register_buffer(name, torch.as_tensor(v, dtype=torch.float32).reshape(n_cells))
 
     def ingredients(self, h: torch.Tensor) -> dict[str, torch.Tensor]:
-        """(B, D) -> each ingredient (B, forecast_days, n_cells), in physical units."""
-        raw = self.net(h).reshape(h.shape[0], self.forecast_days, self.n_cells, len(INGREDIENTS))
-        r = dict(zip(INGREDIENTS, raw.unbind(-1)))
+        """(B, D) -> each of OUTPUTS (B, forecast_days, n_cells), in physical units."""
+        raw = self.net(h).reshape(h.shape[0], self.forecast_days, self.n_cells, len(INGREDIENTS) + 1)
+        r = dict(zip((*INGREDIENTS, "gap"), raw.unbind(-1)))
         cosz = torch.sigmoid(r["cosz"])
-        return {"t": torch.clamp(self.t_mean + self.t_std * r["t"], *T_RANGE),
+        t = torch.clamp(self.t_mean + self.t_std * r["t"], *T_RANGE)
+        return {"t": t, "tmax": t + F.softplus(r["gap"]),
                 "rh": 100.0 * torch.sigmoid(r["rh"]),
                 "pressure": torch.clamp(self.p_mean + self.p_std * r["pressure"], *P_RANGE),
                 "wind": F.softplus(r["wind"]),
@@ -61,11 +68,12 @@ class PhysicsHead(nn.Module):
                 "fdir": torch.sigmoid(r["fdir"]),
                 "cosz": cosz}
 
-    def forward(self, h: torch.Tensor) -> tuple[torch.Tensor, dict[str, torch.Tensor]]:
-        """(WBGT (B, forecast_days) in deg C = 9-cell mean of per-cell WBGT, ingredients)."""
+    def forward(self, h: torch.Tensor) -> dict[str, torch.Tensor]:
+        """{"wbgt": (B, forecast_days) 9-cell mean of per-cell WBGT (deg C), "tmax": (B, forecast_days)
+        9-cell mean of per-cell daily maximum temperature (deg C), "cells": per-cell outputs}."""
         g = self.ingredients(h)
         per_cell = wbgt(g["t"], g["rh"], g["pressure"], g["wind"], g["ghi"], g["fdir"], g["cosz"])["wbgt"]
-        return per_cell.mean(dim=-1), g
+        return {"wbgt": per_cell.mean(dim=-1), "tmax": g["tmax"].mean(dim=-1), "cells": g}
 
 
 class LSTMPhysics(nn.Module):
@@ -78,6 +86,6 @@ class LSTMPhysics(nn.Module):
                             dropout=dropout if num_layers > 1 else 0.0)
         self.head = PhysicsHead(hidden_size, **head_stats)
 
-    def forward(self, x: torch.Tensor) -> tuple[torch.Tensor, dict[str, torch.Tensor]]:
+    def forward(self, x: torch.Tensor) -> dict[str, torch.Tensor]:
         out, _ = self.lstm(x)
         return self.head(out[:, -1])

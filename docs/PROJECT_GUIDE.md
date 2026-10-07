@@ -410,7 +410,7 @@ RMSE in °C; Δ is model minus baseline, so negative = model better.
 - **Two conditions:**
   - Official alert tiers stay Tmax-based. Humid heat is a separate, clearly labelled heat-stress
     note, never an official "heatwave" declaration.
-  - The final model must output both Tmax and WBGT (the physics head does this).
+  - The final model must output both Tmax and WBGT (the physics head does this: see §9).
 - **Pre-registered improvement runs** (15 runs, all finished 2026-10-06):
   - Tmax anomaly target (A1prime_r);
   - learning a correction to damped persistence (A1prime_dp, A2L_dp);
@@ -468,15 +468,30 @@ forecasts.
   are 27 points over north-west India and Pakistan, plus Delhi. Delhi's heatwaves are often
   hot dry air blown in from the north-west over 1–3 days, so a graph that follows the wind
   can see them coming.
-- **Physics head (the output layer, on top of the backbone):** the model predicts temperature
-  and humidity, then computes WBGT with the physical formula inside the model. So Tmax and
-  WBGT always come out physically consistent, which the 2026-10-05 condition requires.
-- **The best retrieval step** (G3) adds the past analogues.
+- **Physics head (the output layer, on top of the backbone; design fixed 2026-10-07):**
+  - For each forecast day and each of Delhi's 9 grid cells, the model predicts the weather
+    "ingredients" at that cell's hottest hour: temperature, humidity, pressure, wind, sunshine,
+    the share of direct sun, and the sun's angle.
+  - It then computes that cell's WBGT with the **exact** physical (Liljegren) formula, built into
+    the model, and averages the 9 cells. That is exactly how the WBGT target is defined, so
+    perfect ingredients give the perfect answer.
+  - It also outputs **Tmax**: per cell, the temperature at the hottest hour plus a gap that can't
+    be negative (the day's maximum is never below any hour's), averaged over the cells. So Tmax
+    and WBGT are always physically consistent, as the 2026-10-05 condition requires.
+  - **Trained on:** WBGT and Tmax errors, equally, plus a small penalty (weight 0.1) for
+    ingredients that differ from the real ones, so the ingredients stay meaningful (e.g. "this
+    heat stress is humidity-driven").
+  - **Why exact, not a learned imitation:** the imitation was 0.40 °C off on hot-day peaks, more
+    than any gain we are chasing.
+  - **Stays unless clearly worse:** kept unless, on all days, it is more than 0.05 °C worse than
+    separate direct models (for WBGT or for Tmax). Otherwise: two separate models, disclosed.
+- **Retrieval:** whichever retrieval step earns its place. So far G3 selected none; Rg (regional
+  matching) helped WBGT on all days and R2 (varied analogues) passed its screen; G-R* tests them on
+  the chosen backbone.
 
-Only the backbone can change. If the graph fails its checks (G-D0: does upstream heat help at
-all? G-D3: is it at least as good as a plain LSTM given the same upstream data?), the backbone
-becomes an LSTM, and the physics head and retrieval stay. The final choice ("BB\*") is made by
-the end of Week 5.
+The backbone is decided by G-D3 at the end of Week 5 ("BB\*"): the graph, only if it is not
+worse than both the plain LSTM and U1 (the LSTM given the same upstream data) by more than
+0.05 °C; otherwise the plain LSTM, or U1 if the data, not the graph, is what helps.
 
 **DSTGNN skeleton (built 2026-10-06; `models/dstgnn.py`, `pipeline/graph.py`):**
 - **Nodes:** Delhi (node 0) plus the 27 upstream points.

@@ -820,3 +820,18 @@ fold by fold (a background-job cutoff loses at most one fold; finished folds are
   the numpy reference, gradients checked against finite differences), `pipeline/build_peak_ingredients.py` (9-cell
   mean of peak WBGT = target to < 1e-9 °C), `models/physics_head.py`. First rung: WBGT family on the control LSTM vs
   `A2Lr_hw5`, wired into the trainer after the graph queue (hashed code).
+
+**Physics head outputs Tmax too, trained on equal footing, and stays unless clearly worse: DECIDED 2026-10-07 (user), before any physics-head training**
+- Gap found: the D3 head predicts each cell's temperature at its WBGT peak hour, not the daily maximum, so it did
+  not output Tmax, which the 2026-10-05 condition requires (official alert tiers are Tmax-based).
+- Tmax output: per cell, Tmax_c = (temperature at the WBGT peak hour) + softplus(learned gap) >= that temperature
+  (the daily maximum can never be below any hour's temperature); Tmax = mean of the 9 cells' Tmax_c, which is
+  exactly how the Tmax target is defined (each cell's daily maximum, then the cell mean).
+- Loss (option ii): hot-weighted MSE on WBGT (WBGT label, the A2Lr_hw5 recipe) + hot-weighted MSE on Tmax (Tmax
+  label, the A1prime_hw5 recipe), each in its own normalised units, + 0.1 x the ingredient term (now 8 per cell: the
+  7 peak-hour ingredients and the cell's daily Tmax).
+- Keep rule (reconciles 2026-10-06 "the head stays" with evidence): the head stays in the final model unless, on
+  all days, it is worse than the separate direct models by more than 0.05 °C, i.e. the upper end of the 95% CI of
+  Δ RMSE (head minus direct) is >= +0.05 °C for WBGT vs A2Lr_hw5 OR for Tmax vs A1prime_hw5 (same non-inferiority
+  margin as G-D3). If it fails: two separate direct models (one Tmax, one WBGT), which still output both but
+  without guaranteed consistency, disclosed.
