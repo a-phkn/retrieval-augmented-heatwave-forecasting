@@ -863,3 +863,20 @@ fold by fold (a background-job cutoff loses at most one fold; finished folds are
 - Implication for the ladder: R2's MMR targets redundancy, which the metrics show is real for R0-style matching;
   fusion that discriminates between analogues (non-uniform attention) is not happening and would need a different
   design (not planned; noted for the paper).
+
+**G-D3 across families, and a graph tuning round before any fallback: DECIDED 2026-10-07 (user), before any graph result was looked at**
+- Cross-family rule (the final model is one backbone for both targets; implemented in `evaluation/graph_gates.py`):
+  graph if (a) and (b) pass in BOTH families (if the families pick different graph configs, the WBGT family's is
+  used, WBGT being the primary target); control LSTM if (a) fails in either family or no G-D2-passing candidate
+  exists in a family; U1 if (a) passes in both and (b) fails in at least one.
+- If the result is "control LSTM" or "U1", the user is told first and ONE tuning round is run before falling back
+  (the user prefers the graph if it can be made to work):
+  1. Tuned: the G-D3 candidate config (C4 if none passed G-D2), over a fixed grid of 8: hidden size {32, 64},
+     learning rate {1e-3, 3e-4}, dropout {0, 0.2}.
+  2. Selection only on each fold's last 2 TRAINING years (the inner early-stopping block), 3 seeds (0-2), lowest
+     mean all-days RMSE (°C) over the 4 folds. No 2007-2018 validation number is used to choose.
+  3. U1 gets the same tuning round (8 combinations: hidden {64, 128}, learning rate {1e-3, 3e-4}, dropout
+     {0, 0.2}), so check (b) stays fair. The control LSTM is not retuned (all other comparisons rest on it); check
+     (a) therefore slightly favours the tuned graph, disclosed.
+  4. The tuned graph and tuned U1 then run once, 10 seeds x 4 folds, and the same G-D3 rule decides. No second
+     tuning round: if the graph still fails, the fallback above applies. Cost ~15-18 h of background compute.
