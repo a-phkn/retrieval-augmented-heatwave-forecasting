@@ -592,6 +592,20 @@ in brackets is the 95% interval; if it crosses 0, the change is not significant.
   (plan v5, risk 5).
 - Full tables: `evaluation_v2/week3_controls.md`; decision record: `context/decisions.md`.
 
+**Can tuning fix it? Checked 2026-10-07: no, the information isn't there.**
+- **The check:** without training anything, does knowing what happened after the retrieved past days improve a
+  simple forecast that already uses the query's own 14 days? It was scored on each fold's last 2 training years,
+  so no validation data was touched, and the reading rule was written down first.
+- **Result:** the improvement is about 0.000 °C for both rungs, both families.
+- **Why:** the retrieved days' futures *do* track the real outcome (correlation 0.69 for Tmax on day 1), but
+  only because those days were picked for looking like the query's recent weather. What followed them is
+  what the query's own recent weather already predicts. The retrieval repeats information the model already
+  has; random past days carry none at all.
+- **So:** tuning how analogues are fed into the network (K, input form, attention) would not help. Retrieval can
+  only add something if it matches on information the query *lacks*, such as the regional upstream heat pattern
+  that G-D0 showed is useful, or if R2–R4 change what is retrieved.
+- Report: `evaluation_v2/retrieval_information_check.md`.
+
 ### 9.1 How RAG helps the DSTGNN, and how we prove it (design; results pending)
 
 **What each part contributes:**
@@ -764,3 +778,4 @@ the project's virtual environment (`.venv`); nothing is installed globally.
 | 2026-10-06 | 15 improvement runs done; hot_weight is the lever; controls A1prime_hw5 / A2Lr_hw5 (disclosed deviation from the rule); §8.3 corrected: the label in use is physical WBGT, 95th pct; CI made robust to runner CPU differences. |
 | 2026-10-06 | Part D (IMD humid-heat wording, 7-day lead time) in §9; fold-aware retrieval R0/R0-rand/R1 built and pre-registered (G3 rule), runs started; DSTGNN skeleton passes G-D1. |
 | 2026-10-07 | R1-rand added and run; G3: no retrieval rung helps yet (Tmax or WBGT), independently reviewed; Week 4 continues with R2–R4 and mechanism checks. |
+| 2026-10-07 | Retrieval information check: analogues add no information beyond the query's own inputs, so tuning the network's use of them won't help. |

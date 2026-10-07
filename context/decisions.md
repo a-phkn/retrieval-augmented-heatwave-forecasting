@@ -636,3 +636,36 @@ was computed**
   (analogue age, redundancy, season mismatch) to show why retrieval does or does not help. Which retrieval, if
   any, goes into the final model (G-R*) is decided after R2-R4.
 - Report: `evaluation_v2/week3_controls.md` (retrieval sections).
+
+**Retrieval information check: SPECIFIED 2026-10-07, before it was run** (user asked whether tuning could help)
+- Question: do the retrieved analogues' outcomes carry information about the query's next 5 days BEYOND what the
+  query's own 14 input days already say? If yes, the network is not using it (tune how it is fed in); if no, tune
+  how analogues are matched, or accept the null. No training; no validation block (2007-2018 val years) is used.
+- Data: per fold and family (Tmax/v2 labels; physical WBGT/WBGT labels), the fold's TRAINING windows only.
+  Queries with a full set of 5 analogues. Analogues from `FoldRetriever` exactly as in the runs: R0 (sim), R1
+  (time), and their random versions (rand, time_rand; seeds 0-9, averaged).
+- Signal: the mean standardised anomaly of the 5 analogues' own next 5 days (the AnEn signal), per lead.
+- Baseline: ridge (alpha 1, fixed) of the query's standardised target anomaly per lead on the query's own inputs:
+  v1's 17 window features plus the target's last-day and 14-day-mean standardised anomaly. Augmented: the same plus
+  the analogue signal. Fitted on all training queries before the fold's last 2 training years; scored on those last
+  2 years (8 held-out years over the 4 folds), in °C (anomaly x the fold's climatological SD + mean).
+- Reading rule: "information present" if, pooled over folds and leads 1-5, the augmented model's held-out RMSE on
+  all days is lower than the baseline's with a year-cluster bootstrap 95% CI entirely below 0, AND the gain for R0
+  (or R1) is larger than for its random version (CI of the difference entirely below 0). Extreme days and each lead
+  are descriptive (few events). Only 8 year-clusters: fragile, and stated as such.
+
+**Retrieval information check result (2026-10-07): the information is NOT there; tuning the feeding will not help**
+- Pre-specified rule: information present for neither rung in either family. Pooled held-out RMSE change from adding
+  the analogue signal to the query-only linear model: Tmax R0 -0.001 [-0.002, +0.000], R1 -0.000; WBGT R0 +0.000
+  [-0.002, +0.003], R1 +0.000. Rung vs its random version: the same, about 0.
+- Why: the analogue signal DOES track the truth (correlation at lead 1: Tmax +0.69, WBGT +0.28; random analogues
+  about 0), but only because analogues are matched on the query's own recent state. What followed them is what the
+  query's own inputs already predict, so it adds nothing new. Retrieval as matched here repeats information the
+  model already has.
+- Descriptive only: on WBGT extreme days R0 shows a tiny gain over its random version (-0.011 [-0.021, -0.001] °C);
+  too small to matter.
+- Sanity check: the query-only linear model scores 2.185 °C (Tmax, all days), close to the LSTM control (2.175 on
+  the validation blocks), so the comparison baseline is realistic.
+- Consequence: tuning K, the input form or the attention design is not worth it. A retrieval variant can only help
+  if it matches on information the query's own inputs lack (e.g. the regional upstream pattern that G-D0 found
+  useful), or if the R2-R4 ladder changes what is retrieved. Report: `evaluation_v2/retrieval_information_check.md`.
