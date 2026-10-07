@@ -234,3 +234,11 @@ def test_relabel_and_ensemble():
     assert (cv.relabel(df, by_date)["stratum"] == "extreme").all()
     ens = cv.ensemble(df)
     assert len(ens) == 10 and (ens["error"] == 2.0).all() and set(ens["seed"]) == {0}
+
+
+def test_variant_runs_are_not_control_candidates():
+    assert not cv.is_variant({"hot_weight": 5})
+    assert not cv.is_variant({"backbone": "lstm"})
+    for cfg in ({"retrieval": {"mode": "sim", "k": 5}}, {"backbone": "dstgnn", "graph": {"mode": "none", "adaptive": False}},
+                {"backbone": "lstm_upstream"}, {"head": "physics"}):
+        assert cv.is_variant(cfg)

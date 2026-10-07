@@ -33,6 +33,9 @@ Retrieval ladder (pre-registered 2026-10-06): runs with a "retrieval" config key
   out of the control choice and reported in their own section against their control
   (A1prime_hw5 / A2Lr_hw5), against R0-rand, and next to the analogue-ensemble (AnEn)
   baseline; choose_retrieval_rung applies the G3 rule.
+Graph and physics-head runs (config keys "backbone" other than "lstm", or "head";
+  pre-registered 2026-10-07) are also kept out of the control choice; their gates are
+  evaluated separately.
 Adopted control (decision 2026-10-06, a disclosed deviation): the rule above picks
   hot_weight = 1, whose WBGT model never forecasts a hot day. hot_weight is therefore fixed
   at 5 and the same rule chooses among the hot_weight = 5 runs. Both choices are reported.
@@ -351,6 +354,11 @@ def retrieval_rows(fam: str, runs: dict, preds: dict, summary: list[dict], anen:
     return rows
 
 
+def is_variant(cfg: dict) -> bool:
+    """Runs that are not control candidates: retrieval rungs, other backbones, physics heads."""
+    return bool(cfg.get("retrieval") or cfg.get("backbone", "lstm") != "lstm" or cfg.get("head"))
+
+
 def complexity(cfg: dict) -> int:
     """Changes from the family's base recipe (for the pre-registered tie rule)."""
     return int(cfg.get("target_form", "raw") != "raw") + int(cfg["hot_weight"] != DEFAULT_HOT_WEIGHT)
@@ -419,7 +427,7 @@ def main() -> None:
         ens_dp = compare(dp, ens, "all")
         row = {"run_id": run_id, "parent": cfg["parent"], "target": cfg["target"], "labels": cfg["labels"],
                "target_form": cfg.get("target_form", "raw"), "hot_weight": cfg["hot_weight"], "complexity": complexity(cfg),
-               "retrieval": cfg.get("retrieval", {}).get("mode", ""),
+               "retrieval": cfg.get("retrieval", {}).get("mode", ""), "variant": is_variant(cfg),
                "rmse_all": rmse_by(df), "rmse_extreme": rmse_by(df[df["stratum"] == "extreme"]),
                "dp_all_delta": res["all"]["delta"], "dp_all_ci": _ci(res["all"]), "dp_all_p": res["all"]["p_value"],
                "dp_ext_delta": res["extreme"]["delta"], "dp_ext_ci": _ci(res["extreme"]),
@@ -456,7 +464,7 @@ def main() -> None:
 
     choices, rule_choices = {}, {}
     for fam, key in FAMILIES.items():
-        rows = [r for r in summary if (r["target"], r["labels"]) == key and not r["retrieval"]]
+        rows = [r for r in summary if (r["target"], r["labels"]) == key and not r["variant"]]
         if rows:
             rule_choices[fam] = choose_control(rows)
             adopted = adopted_control(rows)
@@ -504,7 +512,7 @@ def main() -> None:
           "WBGT hot day. The deviation fixes hot_weight at 5 and keeps the rule for everything else; it was decided "
           "on development folds only, with the test period still locked. See context/decisions.md 2026-10-06."]
     for fam, key in FAMILIES.items():
-        rows = [r for r in summary if (r["target"], r["labels"]) == key and not r["retrieval"]]
+        rows = [r for r in summary if (r["target"], r["labels"]) == key and not r["variant"]]
         for title, rr in ((f"{fam} family ({key[0]}, {key[1]} labels)", rows),):
             if not rr:
                 continue

@@ -650,6 +650,18 @@ in brackets is the 95% interval; if it crosses 0, the change is not significant.
   Rg. Not trained.
 - Report: `evaluation_v2/retrieval_ladder_screen.md`.
 
+**Why retrieval behaves as it does (mechanism metrics, 2026-10-07; descriptive)**
+- **The network treats its 5 analogues as equal.** Its attention is almost perfectly even in every rung, and
+  it doesn't favour the most similar analogue. It effectively averages them.
+- **R0/R1 pick near-duplicates** (mean similarity 0.88 to each other), so the average adds little beyond one of
+  them. R2's diversity targets exactly this.
+- **Rg's analogues are more varied but often off-season** (about 2 months apart on average; only 35–41% within a
+  month of the same time of year). This may be why Rg did not help Tmax.
+- **Rg's analogue outcomes track the real outcome best on ordinary days**, but on WBGT extreme days they don't
+  track it at all. Its extreme-day gain came from a smaller cold bias, not from foreseeing the extremes.
+- Analogues are 14–17 years old on average in every rung, so correcting for warming (R4) had little to fix.
+- Report: `evaluation_v2/retrieval_mechanisms.md`.
+
 ### 9.1 How RAG helps the DSTGNN, and how we prove it (design; results pending)
 
 **What each part contributes:**

@@ -846,3 +846,20 @@ fold by fold (a background-job cutoff loses at most one fold; finished folds are
   same paired cluster-jackknife tests. Keep rule as decided: the head stays unless, on all days, the upper end of
   the 95% CI of Δ RMSE (head minus direct) is >= +0.05 °C for WBGT or for Tmax. Extreme-day results and the
   ingredient errors are reported, not pass/fail. On the final backbone the same rule is re-checked (G-R* stage).
+
+**Retrieval mechanism metrics (2026-10-07, descriptive)** (`evaluation/retrieval_mechanisms.py`, `evaluation_v2/retrieval_mechanisms.md`)
+- Attention is essentially uniform in every rung (unevenness 0.004-0.04 on a 0-1 scale; Spearman of attention with
+  similarity +0.03 to +0.08 for retrieved analogues): the network averages its 5 analogues and does not prefer the
+  most similar. (With random analogues it does lean towards the more similar ones: +0.12 to +0.46.)
+- R0/R1 analogues are near-duplicates (mean pairwise similarity 0.88 in Delhi's feature space). Rg's are far less
+  alike in Delhi space (0.34-0.38) but often off-season (mean 57-66 days apart; 35-41% within +-30 days, vs 95% for
+  R0). Analogue age is similar for all rungs (14-17 years on average), so the warming correction (R4) had little to
+  correct.
+- Outcome signal (analogue outcomes vs the query's truth, out of fold): Rg strongest on all days at every lead
+  (WBGT lead 1 +0.47 vs R0 +0.30; Tmax +0.74 vs +0.70). On WBGT observed-extreme days Rg's correlation is about 0
+  (-0.08 to -0.02; correlations on extreme days are depressed by the restricted range, but R0/R1 stay slightly
+  positive at lead 1). Consistent with the review: Rg's extreme-day gain came from a smaller cold bias, not from
+  tracking extremes.
+- Implication for the ladder: R2's MMR targets redundancy, which the metrics show is real for R0-style matching;
+  fusion that discriminates between analogues (non-uniform attention) is not happening and would need a different
+  design (not planned; noted for the paper).
