@@ -808,3 +808,15 @@ fold by fold (a background-job cutoff loses at most one fold; finished folds are
 - R2 training runs (`A1prime_hw5_R2`, `A2Lr_hw5_R2`; mode to be added to retrieval/fold_retrieval.py) wait until
   the graph queue is done, because fold_retrieval.py is hashed and must not change while it runs. Random control:
   R0-rand.
+
+**Physics head loss: WBGT loss + ingredient supervision, weight 0.1: DECIDED 2026-10-07 (user), before any physics-head training**
+- Loss = the run's usual hot-weighted MSE on its target (in the target's normalised units) + 0.1 x the mean squared
+  error of the 7 x 9 predicted peak-hour ingredients against `datasets_v2/peak_ingredients_daily.parquet`, each
+  ingredient standardised by its fold-training-years mean and SD (per cell). Weight 0.1 fixed a priori, not tuned.
+- Why: keeps the ingredients physically meaningful (interpretable drivers for the advisory, e.g. humidity-driven
+  heat stress) and gives the head more to learn from; with WBGT alone any ingredient mix giving the right WBGT
+  would do.
+- Built (no training yet): `pipeline/wbgt_liljegren_torch.py` (exact formula, implicit-function gradients; matches
+  the numpy reference, gradients checked against finite differences), `pipeline/build_peak_ingredients.py` (9-cell
+  mean of peak WBGT = target to < 1e-9 °C), `models/physics_head.py`. First rung: WBGT family on the control LSTM vs
+  `A2Lr_hw5`, wired into the trainer after the graph queue (hashed code).
