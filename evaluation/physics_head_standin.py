@@ -12,6 +12,13 @@ not 9 hourly profiles, so even the exact formula has a representation error. Thr
       true target. The floor for a head that predicts peak-hour ingredients, exact or not.
   R2  representation, fixed hour: the exact formula on the 9-cell mean inputs at one fixed
       hour (the most common peak hour) vs the true target. A simpler head (no peak-hour choice).
+  R3  per-cell head, shared hour: the exact formula on EACH cell's inputs at one shared hour
+      per day (the peak hour of the 9-cell mean profile), then averaged over cells.
+  R4  per-cell head, own peak hour: each cell's inputs at that cell's own WBGT peak hour,
+      formula, then averaged. Equals the target by construction (sanity check, should be 0).
+  R5  9-cell-mean head + learned correction: R1 plus a linear correction (target on R1 and the
+      peak hour's inputs) fitted on 1980-2015 days, scored on 2016-2018. A simple lower bound
+      on what a learned correction recovers (a network's correction sees more).
   S   stand-in fidelity: a small neural network trained to reproduce the exact formula from
       its inputs (air temperature, humidity, pressure, 10 m wind, global radiation, direct
       fraction, sun angle), compared with the exact formula on the same inputs. This is the
@@ -154,6 +161,26 @@ def main() -> None:
     fx = fixed["wbgt_exact"].to_numpy()
     res["R2_fixed_hour_exact_vs_target"] = {"eval_all_days": stats(fx[ev] - tgt[ev]), "eval_hot_days": stats(fx[hot] - tgt[hot])}
 
+    # R3 / R4: per-cell heads (exact formula in each of the 9 cells, then the cell average)
+    shared = pd.Series(peak_idx.values, index=peak_idx.index).reindex(days)  # timestamp of the mean profile's peak
+    r3, r4 = [], []
+    for c in cells:
+        w = c.set_index("time")["wbgt"]
+        r3.append(w.reindex(shared.values).to_numpy())
+        r4.append(w.groupby(w.index.normalize()).max().reindex(days).to_numpy())
+    r3, r4 = np.nanmean(np.vstack(r3), axis=0), np.nanmean(np.vstack(r4), axis=0)
+    res["R3_per_cell_shared_hour_vs_target"] = {"eval_all_days": stats(r3[ev] - tgt[ev]), "eval_hot_days": stats(r3[hot] - tgt[hot])}
+    res["R4_per_cell_own_peak_vs_target"] = {"eval_all_days": stats(r4[ev] - tgt[ev]), "eval_hot_days": stats(r4[hot] - tgt[hot])}
+
+    # R5: 9-cell-mean head + a linear correction fitted on 1980-2015 days only
+    xc = np.column_stack([peak["wbgt_exact"].to_numpy(), peak[INPUTS].to_numpy(np.float64)])
+    fit_days = days <= TRAIN_END
+    a = np.column_stack([np.ones(fit_days.sum()), xc[fit_days]])
+    coef, *_ = np.linalg.lstsq(a, tgt[fit_days], rcond=None)
+    r5 = np.column_stack([np.ones(len(days)), xc]) @ coef
+    res["R5_mean_head_plus_linear_correction_vs_target"] = {"eval_all_days": stats(r5[ev] - tgt[ev]),
+                                                            "eval_hot_days": stats(r5[hot] - tgt[hot])}
+
     # stand-in: reproduce the exact formula from its inputs (hourly 9-cell mean rows)
     rows = mean[mean.index <= pd.Timestamp("2018-12-31 23:00")]
     X, y = rows[INPUTS].to_numpy(np.float64), rows["wbgt_exact"].to_numpy()
@@ -189,6 +216,13 @@ def main() -> None:
          f"hot days {f(res['R1_peak_hour_exact_vs_target']['eval_hot_days'])}",
          f"- R2, the same at a fixed hour ({fixed_hour}:00 IST, the most common peak): all days "
          f"{f(res['R2_fixed_hour_exact_vs_target']['eval_all_days'])}; hot days {f(res['R2_fixed_hour_exact_vs_target']['eval_hot_days'])}",
+         f"- R3, per-cell head (formula in each of the 9 cells at one shared hour, then averaged): all days "
+         f"{f(res['R3_per_cell_shared_hour_vs_target']['eval_all_days'])}; hot days {f(res['R3_per_cell_shared_hour_vs_target']['eval_hot_days'])}",
+         f"- R4, per-cell head at each cell's own peak hour (equals the target by construction): all days "
+         f"{f(res['R4_per_cell_own_peak_vs_target']['eval_all_days'])}; hot days {f(res['R4_per_cell_own_peak_vs_target']['eval_hot_days'])}",
+         f"- R5, 9-cell-average head + linear correction (fitted 1980-2015): all days "
+         f"{f(res['R5_mean_head_plus_linear_correction_vs_target']['eval_all_days'])}; hot days "
+         f"{f(res['R5_mean_head_plus_linear_correction_vs_target']['eval_hot_days'])}",
          f"- Peak-hour shares: {res['peak_hour_share']}", "",
          "## Stand-in end to end (stand-in at the peak hour vs the true target)", "",
          f"- All days: {f(res['S_end_to_end_peak_hour_vs_target']['eval_all_days'])}",

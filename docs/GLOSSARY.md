@@ -29,10 +29,13 @@ attributed to that one change.
 | **R0 / R0-rand / R1 run names** | `A1prime_hw5_R0`, `A1prime_hw5_R0rand`, `A1prime_hw5_R1` (and the same for `A2Lr_hw5`): the control plus retrieval. R0 = most similar analogues; R0-rand = random eligible analogues (the control for retrieval itself); R1 = R0 limited to analogues within ±30 days of the same time of year. |
 | **Fold-aware retrieval** | `retrieval/fold_retrieval.py`: analogues searched only among a fold's own training windows, with features and normalisation from its training years, so validation years never leak into retrieval. |
 | **C1–C4** | DSTGNN controls: C1 plain LSTM (Delhi only); C2 the same recurrent network on every node but no edges (Delhi's state plus the average upstream state); C3 fixed geographic edges; C4 full DSTGNN (daily wind-gated edges, optionally plus adaptive ones). C4 vs C2 = what the graph itself adds. |
-| **G-R\*** | The best retrieval step (from R1–R4) added to the DSTGNN. |
+| **G-R\*** | The test of whether the best retrieval step (Rg and/or R2–R4) still helps once it is added to the chosen backbone (the graph, or U1). |
+| **U1** | The flattened-upstream control: the plain LSTM given the same 27 upstream points' daily data as the graph, laid side by side in one input row. If the graph is not better than U1, the gain comes from the data, not the graph. |
+| **C4a** | C4 plus learned "adaptive" connections between neighbouring points (reported next to C4). |
+| **Non-inferiority margin** | How much worse a model may be and still count as "not worse": for G-D3, the upper end of the 95% range of its error difference must stay below +0.05 °C. |
 | **BB\*** | "Best backbone": the architecture finally chosen (DSTGNN, or the physics-guided LSTM if the DSTGNN fails its gates). |
 | **H1** | Optional extra classification head that predicts the yes/no heatwave flag directly. |
-| **Physics head (2a)** | Model predicts temperature and humidity, then computes WBGT/Heat Index with the physical formulas inside the model. |
+| **Physics head (2a)** | The model predicts the weather "ingredients" (temperature, humidity, wind, sunshine) and computes WBGT from them with the exact physical (Liljegren) formula inside the model. Chosen design (2026-10-07): exact formula (A), applied separately in each of Delhi's 9 cells at that cell's own hottest hour, then averaged (D3). |
 
 ## Baselines
 

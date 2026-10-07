@@ -624,6 +624,17 @@ in brackets is the 95% interval; if it crosses 0, the change is not significant.
   model indirectly. Whether it still helps a model that sees upstream data directly (the graph) is the G-R* test.
 - Independently reviewed (no leakage; numbers reproduced). Report: `evaluation_v2/week3_controls.md`.
 
+**R2–R4 on top of Rg (screened 2026-10-07, training years only, rules written first)**
+- **R2, varied analogues (MMR):** picks similar past days that are also *different from each other*. It adds a
+  little on top of Rg (about −0.01 °C for both Tmax and WBGT), and the 5 analogues are less alike
+  (similarity 0.79 → 0.70). **Passes: will be trained** after the graph runs (its code would change the hash
+  the graph runs depend on).
+- **R3, drift gate:** when the recent weather series looks unstable, use only analogues from the last 15
+  years. The gate does switch on (27% of days for Tmax, 12% for WBGT), but it adds nothing over Rg. Not trained.
+- **R4, warming correction:** shifts old analogues' outcomes by the warming trend since then. Adds nothing over
+  Rg. Not trained.
+- Report: `evaluation_v2/retrieval_ladder_screen.md`.
+
 ### 9.1 How RAG helps the DSTGNN, and how we prove it (design; results pending)
 
 **What each part contributes:**
@@ -798,3 +809,4 @@ the project's virtual environment (`.venv`); nothing is installed globally.
 | 2026-10-07 | R1-rand added and run; G3: no retrieval rung helps yet (Tmax or WBGT), independently reviewed; Week 4 continues with R2–R4 and mechanism checks. |
 | 2026-10-07 | Retrieval information check: analogues add no information beyond the query's own inputs, so tuning the network's use of them won't help. |
 | 2026-10-07 | Rg (regional-pattern retrieval) added after G3: WBGT −2% error on all days and beats random analogues; extreme-day condition missed (p = 0.11), so G3 still none; reviewed. |
+| 2026-10-07 | Physics head chosen (exact formula, per cell at each cell's peak hour); graph runs C2–C4a + U1 started (G-D4 passed); R2–R4 screened: R2 passes, R3/R4 add nothing over Rg. |

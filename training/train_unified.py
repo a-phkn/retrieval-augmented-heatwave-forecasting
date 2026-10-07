@@ -27,6 +27,11 @@ Config keys (configs/*.json):
         (this fold's training windows only; "rand"/"time_rand" draws are fixed per fold and seed). The
         analogues' outcomes are given in the model's own target units (same target form and
         scaling). Without it, the plain LSTM path below is used unchanged.
+    backbone (optional, default "lstm"; pre-registered 2026-10-07): "lstm_upstream" = the same LSTM
+        given the 27 upstream points' daily inputs flattened next to Delhi's (U1); "dstgnn" =
+        models.dstgnn fed Delhi's inputs plus the upstream nodes (training.graph_data), with
+        graph {"mode": "none" | "static" | "dynamic", "adaptive": bool} (C2 / C3 / C4 / C4a).
+        Same loss, optimiser, batch, epochs, patience and early stopping as the LSTM.
 
 Registry RMSE values of different targets (Tmax vs WBGT) are NOT comparable. Compare runs
 through the skill columns, 1 - RMSE / RMSE_ref, where climatology and persistence are
@@ -57,6 +62,7 @@ import hashlib
 import json
 import subprocess
 import time
+from dataclasses import replace
 from datetime import datetime, timezone
 from pathlib import Path
 
@@ -66,6 +72,7 @@ import torch
 from torch.utils.data import DataLoader, TensorDataset
 
 from evaluation.predict_v1 import long_frame
+from models.dstgnn import GRAPH_MODES, DSTGNN
 from models.lstm import LSTMForecaster
 from models.retrieval_lstm_v2 import RetrievalAugmentedLSTMv2
 from retrieval.fold_retrieval import MODES as RETRIEVAL_MODES, RANDOM_MODES, UPSTREAM_PATH
@@ -74,6 +81,7 @@ from training.folds import (
     DAILY_V2_PATH, FOLDS, LABEL_VERSIONS, LILJEGREN_DAILY_PATH, TARGET_FORMS, TARGETS, WBGT_LABEL_CONFIG,
     FoldData, SplitArrays, build_fold, inner_split,
 )
+from training.graph_data import N_UP_FEATURES, UpstreamDaily, build_upstream, load_upstream
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
 PRED_DIR = REPO_ROOT / "predictions_v2"
@@ -86,7 +94,9 @@ CODE_FILES = [
     "pipeline/climatology.py", "models/lstm.py", "training/data.py", "evaluation/predict_v1.py",
     "evaluation/stats.py", "retrieval/fold_retrieval.py", "retrieval/features.py", "models/retrieval_lstm_v2.py",
     "pipeline/download_era5_upstream.py",  # its NODES list sets the order of Rg's regional columns
+    "training/graph_data.py", "models/dstgnn.py", "pipeline/graph.py",
 ]
+BACKBONES = ("lstm", "lstm_upstream", "dstgnn")
 EARLY_STOP = ("inner_2y", "val_block")
 
 # Recipe of training/train_lstm.py (v1) -- keep identical.
@@ -94,7 +104,7 @@ BATCH_SIZE, MAX_EPOCHS, PATIENCE, LR = 64, 100, 10, 1e-3
 REQUIRED_KEYS = {"run_id", "parent", "target", "labels", "anomaly_target", "hot_weight", "early_stop", "seeds", "folds"}
 REGISTRY_FIELDS = [
     "timestamp_utc", "run_id", "parent", "fold", "target", "labels", "anomaly_target", "target_form", "retrieval",
-    "hot_weight",
+    "backbone", "hot_weight",
     "early_stop", "seeds", "config_sha256", "data_sha256", "code_sha256", "git_commit", "git_dirty",
     "device", "torch_threads", "torch_version", "n_fit_windows", "n_stop_windows", "n_val_windows",
     "val_rmse_all", "val_rmse_extreme", "clim_rmse_all", "clim_rmse_extreme",
@@ -125,6 +135,19 @@ def load_config(path: Path) -> dict:
         if not (isinstance(r, dict) and r.get("mode") in RETRIEVAL_MODES
                 and isinstance(r.get("k"), int) and r["k"] > 0 and set(r) <= {"mode", "k"}):
             raise ValueError(f'retrieval must be {{"mode": one of {RETRIEVAL_MODES}, "k": positive int}}')
+    backbone = cfg.get("backbone", "lstm")  # not stored: existing configs keep their hash
+    if backbone not in BACKBONES:
+        raise ValueError(f"backbone must be one of {BACKBONES}")
+    if backbone != "lstm" and "retrieval" in cfg:
+        raise ValueError("retrieval is only wired to the plain LSTM backbone so far")
+    g = cfg.get("graph")
+    if backbone == "dstgnn":
+        if not (isinstance(g, dict) and g.get("mode") in GRAPH_MODES and isinstance(g.get("adaptive"), bool)
+                and set(g) == {"mode", "adaptive"} and not (g["adaptive"] and g["mode"] != "dynamic")):
+            raise ValueError(f'dstgnn needs graph {{"mode": one of {GRAPH_MODES}, "adaptive": bool}} '
+                             '(adaptive only with "dynamic")')
+    elif g is not None:
+        raise ValueError("graph is only valid with backbone 'dstgnn'")
     return cfg
 
 
@@ -222,6 +245,77 @@ def train_one_seed_ra(seed: int, tr: SplitArrays, va: SplitArrays, hot_weight: f
             stale += 1
             if stale >= PATIENCE:
                 break
+    model.load_state_dict(best_state)
+    return model
+
+
+def with_upstream(split: SplitArrays, upd: UpstreamDaily) -> SplitArrays:
+    """U1 inputs: Delhi's normalised inputs with the 27 points' inputs flattened next to them."""
+    up = upd.x[upd.positions(split.query_dates)]  # (N, 14, 27, F_up)
+    return replace(split, X=np.concatenate([split.X, up.reshape(*up.shape[:2], -1)], axis=2))
+
+
+def make_dstgnn(graph: dict, f_delhi: int, upd: UpstreamDaily) -> DSTGNN:
+    static = torch.from_numpy(upd.static_adj) if graph["mode"] == "static" else None
+    return DSTGNN(n_nodes=upd.mask.shape[0], f_delhi=f_delhi, f_upstream=N_UP_FEATURES, graph=graph["mode"],
+                  adaptive=graph["adaptive"], static_adj=static, neighbour_mask=torch.from_numpy(upd.mask))
+
+
+def _graph_batch(upd_x: torch.Tensor, upd_adj: torch.Tensor, pos: torch.Tensor, dynamic: bool):
+    """(x_up (B, 14, 27, F), adj (B, 14, 28, 28) or None) for a block of window input-day positions."""
+    return upd_x[pos], (upd_adj[pos] if dynamic else None)
+
+
+def predict_graph(model: DSTGNN, X: np.ndarray, pos: np.ndarray, upd_x: torch.Tensor, upd_adj: torch.Tensor,
+                  batch: int = 1024) -> np.ndarray:
+    """Normalised predictions (N, 5), in eval mode."""
+    model.eval()
+    dynamic, out = model.graph == "dynamic", []
+    with torch.no_grad():
+        for s in range(0, len(X), batch):
+            xu, a = _graph_batch(upd_x, upd_adj, torch.from_numpy(pos[s:s + batch]), dynamic)
+            out.append(model(torch.from_numpy(X[s:s + batch]), xu, a).numpy())
+    return np.concatenate(out)
+
+
+def train_one_seed_graph(seed: int, tr: SplitArrays, va: SplitArrays, hot_weight: float, graph: dict,
+                         upd: UpstreamDaily, pos_tr: np.ndarray, pos_va: np.ndarray,
+                         log: dict | None = None) -> DSTGNN:
+    """train_one_seed for the DSTGNN: same recipe (seed handling, Adam, batch, epochs, patience,
+    weighted MSE). `log` (optional) receives the early-stopping loss per epoch and whether every
+    training loss was finite (gate G-D2)."""
+    set_seed(seed)
+    upd_x, upd_adj = torch.from_numpy(upd.x), torch.from_numpy(upd.adj)
+    ds = TensorDataset(torch.from_numpy(tr.X), torch.from_numpy(tr.y), torch.from_numpy(tr.hot.astype(np.float32)),
+                       torch.from_numpy(pos_tr))
+    loader = DataLoader(ds, batch_size=BATCH_SIZE, shuffle=True)
+    val_y, val_hot = torch.from_numpy(va.y), torch.from_numpy(va.hot.astype(np.float32))
+    model = make_dstgnn(graph, tr.X.shape[2], upd)
+    dynamic = model.graph == "dynamic"
+    optimizer = torch.optim.Adam(model.parameters(), lr=LR)
+    best_val, best_state, stale, finite, val_curve = float("inf"), None, 0, True, []
+    for _ in range(MAX_EPOCHS):
+        model.train()
+        for xb, yb, hb, pb in loader:
+            optimizer.zero_grad()
+            loss = weighted_mse(model(xb, *_graph_batch(upd_x, upd_adj, pb, dynamic)), yb, hb, hot_weight)
+            finite &= bool(torch.isfinite(loss))
+            loss.backward()
+            optimizer.step()
+        val_pred = predict_graph(model, va.X, pos_va, upd_x, upd_adj)
+        val_loss = weighted_mse(torch.from_numpy(val_pred), val_y, val_hot, hot_weight).item()
+        val_curve.append(val_loss)
+        if val_loss < best_val - 1e-6:
+            best_val, stale = val_loss, 0
+            best_state = {k: v.clone() for k, v in model.state_dict().items()}
+        else:
+            stale += 1
+            if stale >= PATIENCE:
+                break
+    if log is not None:
+        log.update(val_curve=val_curve, finite=finite)
+    if best_state is None:
+        raise RuntimeError("no finite early-stopping loss in any epoch")
     model.load_state_dict(best_state)
     return model
 
@@ -330,8 +424,8 @@ def _data_files(cfg: dict) -> list[Path]:
     files = [DAILY_V2_PATH, WINDOW_INDEX] + ([LILJEGREN_DAILY_PATH] if LILJEGREN_DAILY_PATH.exists() else [])
     if cfg["labels"] == "wbgt":
         files.append(WBGT_LABEL_CONFIG)
-    if (cfg.get("retrieval") or {}).get("mode") == "region":
-        files.append(UPSTREAM_PATH)  # Rg reads the upstream dataset
+    if (cfg.get("retrieval") or {}).get("mode") == "region" or cfg.get("backbone", "lstm") != "lstm":
+        files.append(UPSTREAM_PATH)  # Rg and the upstream backbones read the upstream dataset
     return files
 
 
@@ -340,11 +434,22 @@ def _run(cfg: dict, folds: list[str], seeds: list[int], out_dir: Path, model_dir
     cfg_hash = hashlib.sha256(json.dumps(cfg, sort_keys=True).encode()).hexdigest()
     data_hash = hashlib.sha256("".join(_sha256_file(p) for p in _data_files(cfg)).encode()).hexdigest()
     code_hash, commit, dirty = _code_sha256(), _git("rev-parse", "HEAD"), _git_dirty()
+    backbone = cfg.get("backbone", "lstm")
+    up_table = load_upstream() if backbone != "lstm" else None
     results = {}
     for fold in folds:
         t0 = time.time()
         data = build_fold(fold, cfg["target"], cfg["labels"], target_form=cfg["target_form"])
         fit, stop = fit_and_stop_sets(data, cfg["early_stop"])
+        val = data.val
+        if backbone != "lstm":
+            upd = build_upstream(fold, up_table)
+            if backbone == "lstm_upstream":
+                fit, stop, val = with_upstream(fit, upd), with_upstream(stop, upd), with_upstream(val, upd)
+            else:
+                pos_fit, pos_stop, pos_val = (upd.positions(a.query_dates) for a in (fit, stop, val))
+                upd_x, upd_adj = torch.from_numpy(upd.x), torch.from_numpy(upd.adj)
+                gate_log = []
         ret = cfg.get("retrieval")
         if ret:
             retriever = FoldRetriever(fold, cfg["labels"], cfg["target"])
@@ -375,12 +480,19 @@ def _run(cfg: dict, folds: list[str], seeds: list[int], out_dir: Path, model_dir
                     "analogue_query_date": np.where(r_va.idx >= 0, retriever.cand_dates.values[np.maximum(r_va.idx, 0)],
                                                     np.datetime64("NaT")).ravel(),
                     "similarity": r_va.sim.ravel(), "attention": att.ravel()}))
+            elif backbone == "dstgnn":
+                log: dict = {}
+                model = train_one_seed_graph(seed, fit, stop, float(cfg["hot_weight"]), cfg["graph"], upd,
+                                             pos_fit, pos_stop, log=log)
+                torch.save(model.state_dict(), ckpt)
+                pred = data.to_raw(predict_graph(model, val.X, pos_val, upd_x, upd_adj), "val")
+                gate_log.append({"fold": fold, "seed": seed, **log})
             else:
                 model = train_one_seed(seed, fit, stop, float(cfg["hot_weight"]))
                 torch.save(model.state_dict(), ckpt)
                 model.eval()
                 with torch.no_grad():
-                    pred = data.to_raw(model(torch.from_numpy(data.val.X)).numpy(), "val")  # float32, as v1
+                    pred = data.to_raw(model(torch.from_numpy(val.X)).numpy(), "val")  # float32, as v1
             frames.append(long_frame(cfg["run_id"], seed, data.val.query_dates, pred, data.val.y_raw, data.val.stratum))
             print(f"  [{cfg['run_id']} {fold}] seed {seed}: val RMSE {np.sqrt(np.mean(frames[-1]['error'] ** 2)):.4f}", flush=True)
         df = pd.concat(frames, ignore_index=True)
@@ -389,6 +501,9 @@ def _run(cfg: dict, folds: list[str], seeds: list[int], out_dir: Path, model_dir
         if an_frames:  # written first, so a complete {fold}.parquet implies its analogues exist
             pd.concat(an_frames, ignore_index=True).to_parquet(out_dir / cfg["run_id"] / f"{fold}_analogues.parquet",
                                                                index=False)
+        if backbone == "dstgnn":  # gate G-D2 evidence, written first for the same reason
+            (out_dir / cfg["run_id"] / f"{fold}_training_log.json").write_text(json.dumps(gate_log) + "\n",
+                                                                               encoding="utf-8")
         df.to_parquet(out_dir / cfg["run_id"] / f"{fold}.parquet", index=False)
         results[fold] = df
 
@@ -406,6 +521,8 @@ def _run(cfg: dict, folds: list[str], seeds: list[int], out_dir: Path, model_dir
                 "run_id": cfg["run_id"], "parent": cfg["parent"], "fold": fold, "target": cfg["target"],
                 "labels": cfg["labels"], "anomaly_target": cfg["anomaly_target"], "target_form": cfg["target_form"],
                 "retrieval": f"{ret['mode']} k={ret['k']}" if ret else "",
+                "backbone": backbone if backbone != "dstgnn" else
+                f"dstgnn {cfg['graph']['mode']}{' +adaptive' if cfg['graph']['adaptive'] else ''}",
                 "hot_weight": cfg["hot_weight"],
                 "early_stop": cfg["early_stop"], "seeds": " ".join(map(str, seeds)), "config_sha256": cfg_hash,
                 "data_sha256": data_hash, "code_sha256": code_hash, "git_commit": commit, "git_dirty": dirty,

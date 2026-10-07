@@ -40,6 +40,54 @@
       "max_abs": 6.299580761198243
     }
   },
+  "R3_per_cell_shared_hour_vs_target": {
+    "eval_all_days": {
+      "n": 1096,
+      "rmse": 0.2843539338592341,
+      "bias": -0.13667639977213003,
+      "p99_abs": 1.1990075028172236,
+      "max_abs": 1.8526017405624984
+    },
+    "eval_hot_days": {
+      "n": 47,
+      "rmse": 0.6880448417692709,
+      "bias": -0.4986407661725719,
+      "p99_abs": 1.6120260477027784,
+      "max_abs": 1.704440681734063
+    }
+  },
+  "R4_per_cell_own_peak_vs_target": {
+    "eval_all_days": {
+      "n": 1096,
+      "rmse": 0.0,
+      "bias": 0.0,
+      "p99_abs": 0.0,
+      "max_abs": 0.0
+    },
+    "eval_hot_days": {
+      "n": 47,
+      "rmse": 0.0,
+      "bias": 0.0,
+      "p99_abs": 0.0,
+      "max_abs": 0.0
+    }
+  },
+  "R5_mean_head_plus_linear_correction_vs_target": {
+    "eval_all_days": {
+      "n": 1096,
+      "rmse": 0.30586306022354715,
+      "bias": 0.00042917631115416274,
+      "p99_abs": 1.2060840551639453,
+      "max_abs": 2.0270832735917566
+    },
+    "eval_hot_days": {
+      "n": 47,
+      "rmse": 0.7065665427246529,
+      "bias": -0.3055796765108189,
+      "p99_abs": 1.9839362289676137,
+      "max_abs": 2.0270832735917566
+    }
+  },
   "S_standin_vs_exact": {
     "eval_all_hours": {
       "n": 26304,
@@ -82,5 +130,5 @@
   "n_train_hours": 315576,
   "n_eval_days": 1096,
   "n_eval_hot_days": 47,
-  "seconds": 149.8
+  "seconds": 95.0
 }

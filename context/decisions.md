@@ -727,3 +727,84 @@ was computed**
   last 3 input days. Provenance: Rg runs' code_sha256 f1dd5eae...; they read `datasets_v2/upstream_daily.parquet`
   (sha256 ab7b368579f5b85b...), which their registry data_sha256 does not include, and the trainer's CODE_FILES omit
   `pipeline/download_era5_upstream.py` (sets the node order). Both fixed for future runs in a separate commit.
+
+**Physics head design: exact Liljegren (A) + per-cell head at each cell's own peak hour (D3): DECIDED 2026-10-07 (user)**
+- Evidence (`evaluation_v2/physics_head_standin.md`, 2016-2018, perfect ingredients): a learned stand-in misses the
+  exact formula by 0.40 °C at hot-day peak hours, larger than any retrieval gain measured so far, so the formula is
+  exact (ported to torch, differentiable). Representation floors on hot days: 9-cell-average ingredients 1.08 °C;
+  per cell at a shared hour 0.69; average + linear correction 0.71; per cell at each cell's own peak hour 0 (equals
+  the target by construction). D3 chosen: the head predicts each of the 9 cells' ingredients at that cell's WBGT
+  peak hour (incl. the peak-hour sun angle), applies the exact formula per cell, and averages.
+- Fallback if D3 does not train: average head + learned correction (D4). The physics head is a rung judged against
+  direct WBGT prediction; it goes into the final model only if it helps.
+
+**Retrieval R2-R4 move onto Rg's regional matching, each screened first: DECIDED 2026-10-07 (user)**
+- The information check showed R0's matching (Delhi's own features) adds nothing the query lacks, so R2 (MMR
+  diversity), R3 (drift gate) and R4 (climate-shift correction) are built on Rg's regional matching instead. Each is
+  specified here before it is computed, screened with the training-years information check, and trained only if
+  the screen passes. Random control for each: R0-rand (same pool), unless the rung changes the pool. Post-G3
+  exploration, disclosed.
+
+**Graph backbone runs and gates G-D2 / G-D3 / G-D4: PRE-REGISTERED 2026-10-07, before any graph training** (user approved, incl. the tightened G-D3)
+- Runs per family (Tmax: like `A1prime_hw5`; physical WBGT: like `A2Lr_hw5`): same target form, hot_weight 5,
+  inner_2y early stopping, 10 seeds x 4 folds, same loss and optimiser recipe as the LSTM controls.
+  C2 = DSTGNN graph "none"; C3 = "static" (geographic edges); C4 = "dynamic" (wind-gated advective edges);
+  C4a = C4 + adaptive adjacency (reported next to C4); U1 = the control LSTM given the same upstream inputs
+  flattened (Delhi features + 27 x upstream features per day). C1 = the existing controls.
+- Upstream node inputs (fixed): 11 daily variables (dew point, relative humidity, shortwave radiation, top-layer soil
+  moisture, surface pressure, Tmax, Tmean, Tmin, wind speed, wind u, wind v) plus the Tmax standardised anomaly
+  (day-of-year climatology, fold training years). Each standardised per node and variable over the fold's training
+  years. Delhi node: the control's own feature set, unchanged.
+- Edges: day t's message uses day t-1's edges (model design). Advective weights from each source node's daily mean
+  wind (speed from u/v, direction from u/v); Delhi's own wind direction is not in its table, so Delhi's outgoing
+  edges use the mean u/v of its 8 neighbours.
+- G-D4 compute: time one C4 seed-fold first. <= 15 min: run as planned; slower: the graph configs use 5 seeds
+  (0-4), disclosed.
+- G-D2 trainability, per graph config: training losses finite for every seed-fold; the early-stopping loss at the
+  best epoch lower than after epoch 1 in >= 90% of seed-folds; seed-to-seed SD of the all-days RMSE <= 2x the
+  control LSTM's.
+- G-D3 (end of Week 5): the graph candidate is the lowest all-days RMSE among C3/C4/C4a that passed G-D2 (ties
+  within 0.02 °C -> the simpler, C3 < C4 < C4a). It is the backbone only if, on all days, (a) vs the control LSTM
+  and (b) vs U1, the upper end of the 95% CI of Δ RMSE (graph minus other) is below +0.05 °C (non-inferiority
+  margin). If (a) fails: backbone = control LSTM. If only (b) fails: backbone = U1 (the gain is the data, not the
+  graph). (b) is a tightening of the plan's G-D3, decided before results because Rg showed upstream data helps WBGT.
+- Claims about graph STRUCTURE (advection) need C4 or C3 significantly better than U1 and than C2; reported
+  descriptively otherwise.
+
+**Retrieval rungs R2-R4 on Rg's regional matching: SPECIFIED 2026-10-07, before any R2-R4 number** (user approved the move onto Rg + screening)
+- R2 (Rg + MMR diversity): from Rg's eligible pool, the 200 most similar candidates (regional similarity) are picked
+  greedily by maximal marginal relevance, score = 0.7 x sim(query, c) - 0.3 x max over already-chosen s of
+  sim(c, s) (regional vectors; lambda 0.7 fixed a priori, not tuned), with the usual dedup rules applied during the
+  greedy pass; K = 5. Random control: R0-rand (same pool).
+- R3 (Rg + one drift gate): per query, ADF and KPSS tests (statsmodels, already pinned; ADF autolag AIC, KPSS
+  "c" with automatic lags) on the target's standardised anomaly over the 365 days before the query's first input
+  day. Drift if ADF p > 0.05 OR KPSS p < 0.05 (as plan v5). If drift: Rg restricted to candidates from the last 15
+  years before the query; otherwise plain Rg. Power check first: the firing rate on training queries; if it is
+  below 5% or above 95% the gate is inert (R3 = Rg or = "recent-only Rg") and that is recorded instead of screening
+  R3. Random control: random draws from the same (gated) pool, seeded per fold and seed.
+- R4 (Rg + climate-shift adjustment): each analogue's outcome is shifted by beta x (query year - analogue year),
+  beta = OLS slope of the target's heat-season (Mar-Sep) mean anomaly on year over the fold's training years. For
+  Tmax beta is expected near 0 (negative control). Random control: R0-rand with the same adjustment (so the
+  adjustment alone is not credited to retrieval).
+- Screen (training years, the information check): a rung is trained only if (i) it passes the rule already used
+  (gain vs the query-only baseline and vs its random control, both CIs entirely below 0) AND (ii) it adds to Rg
+  (Δ RMSE vs Rg, CI entirely below 0), since each is built on Rg. If trained: same configs as Rg plus the change,
+  G3 rule unchanged (random control as above), post-G3 exploration, disclosed.
+
+**G-D4 result: PASS (2026-10-07)** - one C4 seed on fold f4 (the largest) took 3.2 min (20 epochs) on this CPU,
+under the 15-min limit, so the graph configs run with all 10 seeds. Graph queue (`configs/week4_graph_queue.txt`,
+10 runs) started with code_sha256 b5e778d6... (uncommitted; hashed files are not edited while it runs). It runs
+fold by fold (a background-job cutoff loses at most one fold; finished folds are skipped on relaunch).
+
+**R2-R4 screen result (2026-10-07): R2 passes (both families); R3 and R4 do not add to Rg** (`evaluation_v2/retrieval_ladder_screen.md`)
+- R2 (Rg + MMR): vs query-only baseline Tmax -0.037 [-0.045, -0.028], WBGT -0.049 [-0.060, -0.039]; vs R0-rand the
+  same; vs Rg Tmax -0.009 [-0.016, -0.001], WBGT -0.010 [-0.015, -0.006] -> train. MMR lowers the analogues' mean
+  pairwise similarity (Tmax 0.79 -> 0.70, WBGT 0.73 -> 0.63), so the gain is consistent with less redundancy.
+- R3 (drift gate): power check passed (firing rate Tmax 26.5%, WBGT 11.6%, inside 5-95%), but vs Rg +0.002 (Tmax)
+  and -0.001 (WBGT), CIs include 0 -> not trained. Restricting to recent analogues when the series looks
+  non-stationary adds nothing.
+- R4 (climate shift): trend beta Tmax +0.04 to +0.10, WBGT +0.10 to +0.14 SD/decade (per fold); vs Rg -0.000 (Tmax),
+  +0.002 (WBGT) -> not trained. Correcting old analogues for the warming trend adds nothing.
+- R2 training runs (`A1prime_hw5_R2`, `A2Lr_hw5_R2`; mode to be added to retrieval/fold_retrieval.py) wait until
+  the graph queue is done, because fold_retrieval.py is hashed and must not change while it runs. Random control:
+  R0-rand.

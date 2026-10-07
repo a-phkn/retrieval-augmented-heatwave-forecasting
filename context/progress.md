@@ -39,7 +39,7 @@ Short, frequently-updated. See `build_plan.md` for full milestone detail.
    changed).
 
 ## Last verified state (2026-10-04)
-- `pytest` → 257 passed (2026-10-07). Earlier: 196 passed (2026-10-06; leakage 3, retrieval eligibility 6, manifest 12, stats 46, predict_v1 8, hourly features 16, downloader v2 13, upstream downloader 11, compare v2 13, wbgt liljegren 11, wbgt label 5, labels v2 13, folds 27, trainer 12).
+- `pytest` → 272 passed (2026-10-07). Earlier: 196 passed (2026-10-06; leakage 3, retrieval eligibility 6, manifest 12, stats 46, predict_v1 8, hourly features 16, downloader v2 13, upstream downloader 11, compare v2 13, wbgt liljegren 11, wbgt label 5, labels v2 13, folds 27, trainer 12).
 - `retrieval/candidates.parquet` + `retrieval/faiss_index.bin` rebuilt in the
   new venv; `feature_normalization_stats.json` reproduced byte-identically.
 - v1 frozen: `data/MANIFEST.json` (30 files incl. A1 checkpoints + raw-data fingerprint), window index
@@ -83,6 +83,10 @@ Short, frequently-updated. See `build_plan.md` for full milestone detail.
 - **Rg (2026-10-07, post-G3, pre-registered + training-years screen)**: regional-pattern matching. WBGT: all days
   -0.044 °C (p = 0.003), beats R0-rand on all days (p < 0.001); extreme vs R0-rand p = 0.114 -> G3 still none.
   Tmax: no detectable change. Reviewed, signed off with changes (applied). G-R* will test Rg on the graph backbone.
+- **Week 4 (2026-10-07)**: physics head decided (exact Liljegren, per-cell at each cell's own peak hour; D3).
+  Graph trainer built (`training/graph_data.py`, `backbone` key in the trainer); G-D4 PASS (3.2 min per C4
+  seed-fold); graph queue of 10 runs (C2, C3, C4, C4a, U1 x 2 families) running fold by fold, code b5e778d6...
+  R2-R4 screen (`evaluation/retrieval_ladder_screen.py`): R2 passes, R3/R4 no; R2 trains after the graph queue.
 - **DSTGNN skeleton (2026-10-06)**: `models/dstgnn.py` (graph GRU, modes none/static/dynamic + adaptive),
   `pipeline/graph.py` (Delhi + 27 nodes, geographic and wind-gated advective edges). G-D1: 13 tests pass.
   The plan said `data/graph.py`; it is `pipeline/graph.py` because `data/` holds raw data.
