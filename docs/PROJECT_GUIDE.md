@@ -6,7 +6,7 @@
 > log at the end. Short forms are explained in [`GLOSSARY.md`](GLOSSARY.md); the full
 > plan is in [`PLAN_REVIEW_v5.md`](PLAN_REVIEW_v5.md).
 >
-> **Last updated:** 2026-10-06 (Week 3: control models chosen)
+> **Last updated:** 2026-10-06 (Week 3: retrieval runs started, DSTGNN skeleton)
 
 ---
 
@@ -463,16 +463,64 @@ forecasts.
 | 7 | Case studies 2019, 2022, 2024 | **One test-set run (10 seeds)** | Retrieval results on test | Advisory on real forecasts; human evaluation |
 | 8 | Paper: data and labels | Paper: models and results | Paper: retrieval | Demo + reproducibility pack |
 
-**Final model options:**
-- **Regional DSTGNN** (graph neural network): the nodes are ~20–30 points over
-  north-west India and Pakistan, plus Delhi. Delhi's heatwaves are often hot dry air
-  blown in from the north-west over 1–3 days, so a graph that follows the wind can see
-  them coming.
-- **Physics head:** the model predicts temperature and humidity, then computes WBGT with
-  the physical formula inside the model, so the outputs are always physically consistent.
+**The final model has three parts, used together:**
+- **Backbone (reads the inputs): the regional DSTGNN** (graph neural network). Its nodes
+  are 27 points over north-west India and Pakistan, plus Delhi. Delhi's heatwaves are often
+  hot dry air blown in from the north-west over 1–3 days, so a graph that follows the wind
+  can see them coming.
+- **Physics head (the output layer, on top of the backbone):** the model predicts temperature
+  and humidity, then computes WBGT with the physical formula inside the model. So Tmax and
+  WBGT always come out physically consistent, which the 2026-10-05 condition requires.
+- **The best retrieval step** (G3) adds the past analogues.
 
-If the DSTGNN doesn't beat a plain LSTM given the same upstream data, we fall back to the
-physics-guided LSTM.
+Only the backbone can change. If the graph fails its checks (G-D0: does upstream heat help at
+all? G-D3: is it at least as good as a plain LSTM given the same upstream data?), the backbone
+becomes an LSTM, and the physics head and retrieval stay. The final choice ("BB\*") is made by
+the end of Week 5.
+
+**DSTGNN skeleton (built 2026-10-06; `models/dstgnn.py`, `pipeline/graph.py`):**
+- **Nodes:** Delhi (node 0) plus the 27 upstream points.
+- **Edges:** each day a node sends information only to its **neighbours** (points within
+  370 km: the 8 surrounding points, for Delhi too), and only to those
+  **downwind** of it. The edge is stronger when the wind is stronger and the nodes are
+  closer, and it uses the previous day's wind, the wind that actually carried the air.
+  Optionally, the network also learns extra edges of its own, but only between the same
+  neighbours, so it can't invent a 1,000 km jump in one day. (An independent review caught
+  that the first version allowed exactly that.)
+- **Through time:** a graph GRU steps through the 14 input days, and each day a node takes
+  in its neighbours' state from the day before. So information moves one node (about
+  220 km) per day, about the speed of a typical pre-monsoon north-westerly wind.
+- **The forecast** is read from Delhi's final state. Upstream data can reach Delhi *only*
+  along the edges, which is what lets us measure what the graph adds.
+- **Gate G-D1 passed** (17 tests; synthetic inputs on the real 28-node graph):
+  - output shapes are right and gradients reach every part of the model;
+  - day t never sees later days;
+  - no edges means upstream data has no effect;
+  - information moves exactly one node per day. On the real graph, heat at the farthest
+    point (24 N 68 E, 5 hops away) reaches Delhi only if it happened at least 5 days
+    earlier;
+  - edges point downwind, use the previous day's wind and stay between neighbours;
+  - reordering the upstream nodes changes nothing.
+- **Gate G-D0 passed (2026-10-07): upstream heat does help.** The upstream download is
+  complete and verified: 27 points × 47 years, every day present, no missing values.
+  - **The check:** a simple linear forecast using Delhi's own recent heat *plus* the 27 points'
+    heat on the last 3 days, compared with damped persistence on 2007–2018, fitted fold by fold.
+  - **The result:** it cut Delhi's Tmax error over leads 1–3 from 2.009 to 1.898 °C (−0.11 °C,
+    95% CI −0.14 to −0.08). That's bigger than any LSTM improvement so far. On heatwave days
+    the gain was −0.23 °C.
+  - **Where the signal comes from:** most from the west and south-west (Thar desert, Kutch,
+    500–1000 km away), least from points next to Delhi. Map:
+    `evaluation_v2/figures/gd0_upstream_map.png`.
+  - **How it compares** (Tmax, 2007–2018, all 5 leads). The linear upstream forecast (2.104 °C)
+    beats every Delhi-only LSTM on all days, our control included (2.175; 0.07 °C better, a
+    real difference). On heatwave days, the LSTMs trained with extra weight on hot days win by far
+    (control 2.153 vs linear 2.908). The same holds for WBGT. Nothing yet does both; that is the
+    graph network's job. It hasn't been trained yet: the G-D0 forecast is a linear formula, not
+    the graph.
+  - **What it doesn't show:** a delay that grows with distance. Almost every point helps most
+    with yesterday's value, which looks like the large-scale heat pattern rather than air seen
+    moving point to point. Whether the graph structure itself adds anything is tested in G-D3,
+    against an LSTM given the same upstream data.
 
 **Retrieval ladder (R0 → R4):**
 - **R0** is the RA-v1 design.
@@ -482,6 +530,67 @@ physics-guided LSTM.
   correction for analogues from an older, cooler climate.
 
 The best step is then attached to the final model.
+
+**Retrieval on the folds (built 2026-10-06; result 2026-10-07, below):**
+- **Fold-aware:** analogues are searched only among each fold's own training windows, with
+  features and normalisation from those years (`retrieval/fold_retrieval.py`). v1's
+  retrieval used 1980–2015 statistics, which would have leaked folds f1–f3's validation
+  years.
+- **Checked against v1:** on fold f4 with v1 labels, it returns *exactly* v1's analogues
+  for all 1,092 validation days.
+  - It also exposed a small v1 limitation: for 881 training days in 1980–88, v1 found
+    fewer than 5 analogues. v1 screened only the 500 most similar windows, so early windows
+    with few eligible candidates came up short. The new code checks all candidates.
+- **Runs:** R0, R0-rand and R1 on each control (`A1prime_hw5`, `A2Lr_hw5`), 10 seeds × 4
+  folds, plus the non-neural analogue ensemble (AnEn) as a reference.
+- **Model:** `models/retrieval_lstm_v2.py`, the RA-v1 design. When a day has no past
+  analogue at all, it now adds nothing; RA-v1 added a small learned offset instead.
+- **Rule fixed before the results** (gate G3, `context/decisions.md`): a rung counts only
+  if all three hold:
+  1. it is not worse than its control on all days;
+  2. it is significantly better on extreme days;
+  3. it is **significantly** better than its own random control on extreme days.
+- **Tightened after an independent review, before any result was seen:**
+  - condition 3 must be significant, not a 0.001 °C difference;
+  - R1 is compared with **R1-rand** (random past windows from the same time of year), so
+    R1 can't win just by matching the season. R1-rand is two extra runs, added after the
+    current queue;
+  - the "forecasting warmer" check is reported but is not a pass/fail condition, because
+    no threshold for it was fixed in advance.
+
+**G3 result (2026-10-07): retrieval does not help yet. No rung passes, for Tmax or WBGT.**
+
+"Δ" is the change in extreme-day error vs the plain model (°C); negative = better. The range
+in brackets is the 95% interval; if it crosses 0, the change is not significant.
+
+| | R0 vs plain model | R1 vs plain model | R0 vs its random version | R1 vs its random version |
+|---|---|---|---|---|
+| Tmax | +0.07 [−0.05, +0.19] | +0.02 | +0.07 [−0.10, +0.24] | +0.02 [−0.16, +0.19] |
+| WBGT | −0.06 [−0.14, +0.01] | −0.07 [−0.13, +0.00] | −0.02 [−0.11, +0.07] | −0.03 [−0.09, +0.03] |
+
+- **Tmax:** retrieval adds nothing; it is slightly worse on extreme days.
+- **WBGT:** every retrieval model, *including the random ones* (−0.04), is a little better on
+  extreme days, but not significantly. The real rungs are no better than their random
+  versions, so the gain does not come from the past days being looked up. It comes from the
+  larger model, and partly from forecasting warmer: on WBGT the retrieval models forecast
+  about 75 hot days per seed instead of 54, with a larger warm bias.
+- **All days:** every retrieval model is about 0.015 °C worse. For WBGT R1 this is just
+  significant (p = 0.045), so R1 also fails condition 1.
+- **How small a gain could we have seen?** About 0.24 °C on Tmax and 0.08–0.12 °C on WBGT
+  (extreme days, 80% power). A smaller benefit is not ruled out.
+- **The analogue ensemble** (average what followed the most similar past windows, no network)
+  is far worse than the plain model (+1.1 °C Tmax, +1.5 °C WBGT on extreme days). So the most
+  similar past windows say little about the next 5 days on their own.
+- **Checked by an independent reviewer:** every number reproduced to 4 decimals from the
+  saved forecasts; R1-rand verified as a fair control; no leakage found. Its two reporting
+  fixes (p values shown, extra caveats) are applied.
+- **What happens next:** nothing is attached to the final model yet. Week 4 tries the
+  remaining rungs (R2 varied analogues, R3 drift gate, R4 correction for older, cooler
+  analogues). Each is judged by the same rule against its own random version. Mechanism checks
+  (analogue age, redundancy, season mismatch) will show *why* retrieval does or does not
+  help. A well-explained "retrieval adds no information here" is still a publishable result
+  (plan v5, risk 5).
+- Full tables: `evaluation_v2/week3_controls.md`; decision record: `context/decisions.md`.
 
 ### 9.1 How RAG helps the DSTGNN, and how we prove it (design; results pending)
 
@@ -547,7 +656,34 @@ helps (see the change log).
   advisory;
 - every recommended action must come from a verified library of **word-for-word quotes
   from official documents**;
-- **health actions only**, unless official energy-grid sources are found.
+- **health and energy actions** (energy included by team decision 2026-10-06, since official
+  energy sources were found: CEA, BEE and Delhi power-company notices);
+- which alert colour unlocks which action is being sourced by Cowork (Part E,
+  `docs/PHASE6_PART_E_BRIEF.md`); only 12 of 135 actions have a colour from the sources so far;
+- **"If this happens"** (decision 2026-10-06): actions triggered by something that has already
+  happened (a heat-stroke patient, heat deaths) are kept in their own clearly labelled section,
+  never mixed with the forecast actions. Clinical steps sit behind a "for health professionals"
+  disclaimer;
+- **front end** (decision 2026-10-06): one interactive web page (Week 8) with the 5-day chart,
+  the alert colours, a click-a-day advisory and the "If this happens" section. Nothing to install;
+  it could be upgraded to React later.
+
+**What IMD says about humid heat and warning lead time** (Cowork research Part D, checked
+against the saved documents; details in `sources/PHASE6_PART_D_RESULT.md`):
+- **IMD's own humid-heat term** is "Hot & Humid Weather": a station's maximum temperature 3 °C
+  above normal *together with* above-normal relative humidity (IMD heat-wave FAQ, p.2). It has
+  no humidity value and no colour category. IMD launched an *experimental* heat index in 2023
+  (PIB, 26 Jul 2023) but has published no thresholds for it.
+  → Our humid-heat note must say it comes from **our** physical WBGT and never present a WBGT
+  or heat-index threshold as IMD's.
+- **Lead time:** since July 2023, IMD issues colour-coded warnings, including heat-wave
+  warnings, daily **for the next seven days**. This replaced five days (IMD FAQ), and before
+  that four days for the 2017 heat-warning system (NDMA 2019, NCDC 2025). Our 5-day forecast is
+  inside IMD's horizon; it adds detail, it does not go beyond it.
+- **No documented Delhi humid-heat events before 2019** were found in IMD, government or
+  peer-reviewed sources. So the WBGT label cannot be checked against official events; this is a
+  stated limitation. (A 2022 paper by IMD authors notes Delhi's heat stress is lower than
+  Chennai's because Delhi is less humid.)
 
 ---
 
@@ -626,3 +762,5 @@ the project's virtual environment (`.venv`); nothing is installed globally.
 | 2026-10-05 | WBGT models switched to physical WBGT + WBGT label (with conditions); 15 pre-registered improvement runs started. |
 | 2026-10-05 | Physical (Liljegren) WBGT built, crediting Liljegren/Argonne and Kong & Huber; BoM claim corrected (2–3 °C, not 6); WBGT label (97.5th pct); Week-3 G2 results. |
 | 2026-10-06 | 15 improvement runs done; hot_weight is the lever; controls A1prime_hw5 / A2Lr_hw5 (disclosed deviation from the rule); §8.3 corrected: the label in use is physical WBGT, 95th pct; CI made robust to runner CPU differences. |
+| 2026-10-06 | Part D (IMD humid-heat wording, 7-day lead time) in §9; fold-aware retrieval R0/R0-rand/R1 built and pre-registered (G3 rule), runs started; DSTGNN skeleton passes G-D1. |
+| 2026-10-07 | R1-rand added and run; G3: no retrieval rung helps yet (Tmax or WBGT), independently reviewed; Week 4 continues with R2–R4 and mechanism checks. |

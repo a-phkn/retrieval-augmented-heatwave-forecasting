@@ -50,6 +50,8 @@ import numpy as np
 import pandas as pd
 
 from evaluation.predict_v1 import LEADS, long_frame
+from scipy import stats as sp_stats
+
 from evaluation.stats import paired_cluster_test
 from pipeline.labels_v2 import hot_days_tmax, in_wbgt_season, wbgt_threshold
 from training.folds import FOLDS, build_fold, fold_bounds, fold_daily, fold_windows, wbgt_label_setting
@@ -266,10 +268,7 @@ def choose_retrieval_rung(rows: list[dict]) -> dict:
     better on extreme days, and (3) it is significantly better than ITS random control on
     extreme days (R0 vs R0-rand, R1 vs R1-rand). Lowest extreme RMSE wins; within 0.02 C the
     simpler rung (R0 before R1). The forecast-conditioned bias is descriptive only."""
-    helps = [r for r in rows
-             if not (r["ctrl_all_delta"] > 0 and r["ctrl_all_ci_low"] > 0)
-             and r["ctrl_ext_ci_high"] < 0
-             and r.get("rand_ext_ci_high", np.nan) < 0]
+    helps = [r for r in rows if all(g3_conditions(r))]
     if not helps:
         return {"choice": None, "helps": [], "reason": "no rung meets all three conditions: retrieval does not help yet"}
     best = min(r["rmse_extreme"] for r in helps)
@@ -277,6 +276,23 @@ def choose_retrieval_rung(rows: list[dict]) -> dict:
     pick = min(tied, key=lambda r: (RUNG_SIMPLICITY[r["mode"]], r["rmse_extreme"]))
     return {"choice": pick["run_id"], "helps": [r["run_id"] for r in helps],
             "reason": f"lowest extreme-day RMSE among {len(helps)} helping rung(s) (ties within {TIE_MARGIN_C} C -> simpler)"}
+
+
+def g3_conditions(r: dict) -> tuple[bool, bool, bool]:
+    """The three G3 conditions for one rung row. A missing (NaN) CI bound fails its condition."""
+    return (bool(r["ctrl_all_ci_low"] <= 0),  # (1) all days: CI not entirely above 0
+            bool(r["ctrl_ext_ci_high"] < 0),  # (2) extreme days vs control: CI entirely below 0
+            bool(r.get("rand_ext_ci_high", np.nan) < 0))  # (3) extreme days vs own random control
+
+
+def mde80(res: dict) -> float:
+    """Smallest true difference the paired test detects with 80% power (two-sided 5%),
+    from the CI half-width and the cluster t distribution (G-1 df)."""
+    df = res["n_clusters"] - 1
+    if df < 1 or np.isnan(res["ci_low"]):
+        return float("nan")
+    t975 = sp_stats.t.ppf(0.975, df)
+    return float((t975 + sp_stats.t.ppf(0.80, df)) * (res["ci_high"] - res["ci_low"]) / (2 * t975))
 
 
 def retrieval_rows(fam: str, runs: dict, preds: dict, summary: list[dict], anen: pd.DataFrame | None) -> list[dict]:
@@ -307,7 +323,7 @@ def retrieval_rows(fam: str, runs: dict, preds: dict, summary: list[dict], anen:
                "rmse_all": rmse_by(df), "rmse_extreme": rmse_by(df[df["stratum"] == "extreme"]),
                "ctrl_all_delta": a["delta"], "ctrl_all_ci_low": a["ci_low"], "ctrl_all_ci": _ci(a), "ctrl_all_p": a["p_value"],
                "ctrl_ext_delta": e["delta"], "ctrl_ext_ci_high": e["ci_high"], "ctrl_ext_ci": _ci(e),
-               "ctrl_ext_p": e["p_value"], "fc": by_id.get(rid, {}).get("fc")}
+               "ctrl_ext_p": e["p_value"], "ctrl_ext_mde": mde80(e), "fc": by_id.get(rid, {}).get("fc")}
         rand_id = rungs.get(RANDOM_CONTROL.get(mode, ""))
         if rand_id is not None:
             rand = preds[rand_id]
@@ -319,7 +335,7 @@ def retrieval_rows(fam: str, runs: dict, preds: dict, summary: list[dict], anen:
                 v = compare(rand, df, s)
                 row[f"rand_{s}_delta"], row[f"rand_{s}_ci"], row[f"rand_{s}_p"] = v["delta"], _ci(v), v["p_value"]
                 if s == "extreme":
-                    row["rand_ext_ci_high"] = v["ci_high"]
+                    row["rand_ext_ci_high"], row["rand_ext_mde"] = v["ci_high"], mde80(v)
         rows.append(row)
     return rows
 
@@ -497,21 +513,33 @@ def main() -> None:
               "R1 vs R1-rand, random within ±30 days of the same time of year): beating it shows the retrieved "
               "*information* is used, not just the extra machinery or the season.", "",
               f"**G3 choice:** {('`' + c['choice'] + '`') if c['choice'] else 'none'} ({c['reason']})", "",
-              "| Rung | Run | All RMSE | Δ all vs control (95% CI) | Extreme RMSE | Δ extreme vs control (95% CI) | "
-              "Forecast hot days / bias (descriptive) |",
-              "|---|---|---|---|---|---|---|"]
+              "| Rung | Run | All RMSE | Δ all vs control (95% CI) | p | Extreme RMSE | Δ extreme vs control (95% CI) | p | "
+              "G3 conditions 1 / 2 / 3 | Forecast hot days / bias (descriptive) |",
+              "|---|---|---|---|---|---|---|---|---|---|"]
         for r in rows:
             fc = r.get("fc") or {}
             fc_txt = f"{fc['n_per_seed']:.0f} / {fc['bias']:+.2f}" if fc else "n/a"
+            if r["mode"] in RUNG_SIMPLICITY:
+                g3 = " / ".join("✅" if ok else "❌" for ok in g3_conditions(r))
+            else:
+                g3 = "(control)" if r["mode"] in RANDOM_CONTROL.values() else "(baseline)"
             L.append(f"| {r['rung']} | {r['run_id']} | {r['rmse_all']:.3f} | {r['ctrl_all_delta']:+.3f} {r['ctrl_all_ci']} | "
-                     f"{r['rmse_extreme']:.3f} | {r['ctrl_ext_delta']:+.3f} {r['ctrl_ext_ci']} | {fc_txt} |")
+                     f"{_fmt_p(r['ctrl_all_p'])} | {r['rmse_extreme']:.3f} | {r['ctrl_ext_delta']:+.3f} {r['ctrl_ext_ci']} | "
+                     f"{_fmt_p(r['ctrl_ext_p'])} | {g3} | {fc_txt} |")
+        if any(r["mode"] in RUNG_SIMPLICITY for r in rows):
+            L += ["", "Conditions: (1) not significantly worse than the control on all days; (2) significantly better than the "
+                  "control on extreme days; (3) significantly better than its own random control on extreme days. "
+                  "p < 0.05 with a positive Δ on all days fails (1), even when the rounded CI shows +0.000."]
         vs = [r for r in rows if "rand_run" in r]
         if vs:
-            L += ["", "Rung vs its random control, every stratum (Δ = rung minus random control, 95% CI):", "",
-                  "| Rung | Random control | " + " | ".join(STRATA) + " |", "|---|---|" + "---|" * len(STRATA)]
+            L += ["", "Rung vs its random control, every stratum (Δ = rung minus random control, 95% CI, p). "
+                  "Last column: smallest extreme-day difference this test detects with 80% power.", "",
+                  "| Rung | Random control | " + " | ".join(STRATA) + " | Detectable (extreme, 80% power) |",
+                  "|---|---|" + "---|" * len(STRATA) + "---|"]
             for r in vs:
                 L.append(f"| {r['rung']} | {r['rand_run']} | "
-                         + " | ".join(f"{r[f'rand_{s}_delta']:+.3f} {r[f'rand_{s}_ci']}" for s in STRATA) + " |")
+                         + " | ".join(f"{r[f'rand_{s}_delta']:+.3f} {r[f'rand_{s}_ci']} (p {_fmt_p(r[f'rand_{s}_p'])})" for s in STRATA)
+                         + f" | {r.get('rand_ext_mde', float('nan')):.2f} °C |")
     other_rows = [r for r in summary if (r["target"], r["labels"]) not in FAMILIES.values()]
     if other_rows:
         L += ["", "## Other runs (historical BoM-index runs and chain steps)", "",
@@ -560,7 +588,16 @@ def main() -> None:
               "  - the 'not from the query's own episode' rule looks at the query's target days, as in v1. That is future "
               "label information, but it can only remove candidates. It affects a handful of training queries and no "
               "validation query, because validation queries only see training windows;",
-              "  - the forecast-conditioned count and bias are descriptive, not a pass/fail condition (amendment 2026-10-06)."]
+              "  - the forecast-conditioned count and bias are descriptive, not a pass/fail condition (amendment 2026-10-06);",
+              "  - power: a null result means no gain of about the 'Detectable' size; smaller benefits are not ruled out. "
+              "Extreme days come from few year x season clusters (about 11-14), close to the fragile region;",
+              "  - multiple comparisons: 2 families x 2 rungs x 3 conditions, no correction. A future pass should be read "
+              "with that in mind; it cannot turn a fail into a pass;",
+              "  - provenance: the retrieval runs were trained from uncommitted code (registry git_commit is the previous "
+              "commit, dirty = True). The registry code_sha256 identifies the exact code: 49129b3d... = commit 312ec5f "
+              "(R0, R0-rand, R1); a99ec74b... = commit 5a3cb99 (R1-rand);",
+              "  - AnEn being far worse than the control says the raw analogue outcomes carry little skill on their own; "
+              "it does not test how the network uses them."]
     (OUT_DIR / "week3_controls.md").write_text("\n".join(L) + "\n", encoding="utf-8")
     # ASCII-only console summary (the Windows console may not encode the report's symbols)
     for r in sorted(summary, key=lambda x: (x["target"], x["labels"], x["rmse_all"])):

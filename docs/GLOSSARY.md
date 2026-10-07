@@ -26,7 +26,9 @@ attributed to that one change.
 | **GNN** | Graph neural network: a network whose inputs are points on a map (nodes) connected by links (edges) along which information is passed. |
 | **RA-v1 (R0)** | The original retrieval-augmented LSTM (LSTM + attention over 5 retrieved past analogues). Frozen in `models/frozen/ra_lstm_v1/`. |
 | **R1–R4** | The "retrieval ladder", one improvement per step: R1 calendar (time) alignment, R2 diversity (MMR), R3 drift gate, R4 climate-shift correction of old analogues. |
-| **C1–C4** | DSTGNN controls: C1 plain LSTM; C2 one shared LSTM per grid node, no graph; C3 fixed geographic graph; C4 full DSTGNN. C4 vs C2 = what the graph itself adds. |
+| **R0 / R0-rand / R1 run names** | `A1prime_hw5_R0`, `A1prime_hw5_R0rand`, `A1prime_hw5_R1` (and the same for `A2Lr_hw5`): the control plus retrieval. R0 = most similar analogues; R0-rand = random eligible analogues (the control for retrieval itself); R1 = R0 limited to analogues within ±30 days of the same time of year. |
+| **Fold-aware retrieval** | `retrieval/fold_retrieval.py`: analogues searched only among a fold's own training windows, with features and normalisation from its training years, so validation years never leak into retrieval. |
+| **C1–C4** | DSTGNN controls: C1 plain LSTM (Delhi only); C2 the same recurrent network on every node but no edges (Delhi's state plus the average upstream state); C3 fixed geographic edges; C4 full DSTGNN (daily wind-gated edges, optionally plus adaptive ones). C4 vs C2 = what the graph itself adds. |
 | **G-R\*** | The best retrieval step (from R1–R4) added to the DSTGNN. |
 | **BB\*** | "Best backbone": the architecture finally chosen (DSTGNN, or the physics-guided LSTM if the DSTGNN fails its gates). |
 | **H1** | Optional extra classification head that predicts the yes/no heatwave flag directly. |
@@ -52,6 +54,8 @@ attributed to that one change.
 | **Test lock** | The 2019–2026 test data is used exactly once, at the end, after all choices are written down in `docs/PREREGISTRATION.md`. Prevents unconscious tuning to the test set. |
 | **Credibility floor** | A minimum standard a model must meet before its heatwave-day gains count: **not significantly worse than damped persistence on all days** (decision 2026-10-04). |
 | **G2** | The Week-3 gate: choose the control models. |
+| **G3** | The gate that picks the best retrieval rung. Pre-registered rule (tightened before results): a rung counts only if it is not worse than its control on all days, significantly better on extreme days, and significantly better than its own random control (R0-rand for R0, R1-rand for R1) on extreme days. |
+| **R1-rand** | Random eligible analogues from within ±30 days of the same time of year: R1's fair random control. In configs its mode is `time_rand`. |
 | **Tie margin** | In the control rule, two runs within 0.02 °C all-days RMSE count as tied, and the simpler one (fewer changes) wins. |
 
 ## Statistics and evaluation
@@ -71,6 +75,7 @@ attributed to that one change.
 | **FPR** | False-positive rate: how often a test reports "significant" when there is no real difference (should be about 5%). |
 | **Power** | Probability that a test detects a real improvement of a given size. |
 | **MDE** | Minimum detectable effect: the smallest improvement that can be detected with 80% power given our data. |
+| **80% power** | A real effect of the MDE size would be detected (p < 0.05) 4 times out of 5. A non-significant result therefore rules out effects of about that size, not smaller ones. |
 | **Paired cluster (jackknife) t-test** | The main significance test (`evaluation/stats.py`): compares two models on the same days, recomputing the result with one block left out at a time to measure uncertainty honestly. |
 | **DM test** | Diebold–Mariano test of equal forecast accuracy; used as a secondary check. |
 | **Rolling-origin folds / OOF** | Train on all years before a block, evaluate on the block (2007–09, 2010–12, 2013–15, 2016–18). OOF = out-of-fold predictions; gives about 12 years of honest evaluation instead of 3. |
@@ -123,7 +128,10 @@ attributed to that one change.
 | **ERA5-Land** | Finer (0.1 deg) land version of ERA5; dropped from the plan because it adds little independent signal for Delhi. |
 | **N9 / N42** | 9 grid cells (current data, 0.25 deg apart) / 42 finer cells (dropped). |
 | **Regional upstream graph** | Plan v5 DSTGNN design: nodes across NW India/Pakistan, where Delhi's hot air comes from 1–3 days earlier. |
-| **DSTGNN** | Dynamic spatio-temporal graph neural network: passes information between map locations. |
+| **DSTGNN** | Dynamic spatio-temporal graph neural network: passes information between map locations. Ours (`models/dstgnn.py`) has Delhi as node 0 and the 27 upstream points as the other nodes. |
+| **Edge (advective / geographic)** | A link along which a node passes information to another. Geographic edges depend only on distance (fixed). Advective edges change daily: a node only sends to nodes **downwind** of it, more strongly with stronger wind (`pipeline/graph.py`). |
+| **Adaptive adjacency** | Extra edges the network learns by itself (Graph WaveNet, Wu et al. 2019), for links the wind rule misses. |
+| **Graph GRU (DCRNN-style)** | The recurrent unit that steps through the 14 input days, receiving each neighbour's previous-day state; information moves one node (~220 km) per day. GRU = gated recurrent unit, a simpler cousin of the LSTM. DCRNN: Li et al. 2018. |
 | **FAISS** | Library used for fast similarity search over past windows. |
 | **Analogue** | A past 14-day weather window similar to the current one; its following 5 days are the "analogue outcome". |
 | **SARAF** | Stationarity-aware retrieval-augmented forecasting (Zhou et al. 2026); source of the time-alignment, diversity and stationarity ideas. |

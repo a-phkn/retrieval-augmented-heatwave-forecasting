@@ -170,6 +170,19 @@ def test_retrieval_rung_choice_follows_the_preregistered_g3_rule():
     assert cv.choose_retrieval_rung([no_rand])["choice"] is None  # no random control run -> cannot pass
     c = cv.choose_retrieval_rung([_rung("r0", "sim", 3.20), _rung("r1", "time", 3.10)])
     assert c["choice"] == "r1"  # beyond the tie margin
+    # a barely significant all-days loss (CI low just above 0) fails condition 1
+    assert cv.g3_conditions(_rung("e", "sim", 3.0, all_d=0.015, all_lo=0.0004)) == (False, True, True)
+    # a missing CI bound fails its condition, consistently for all three
+    assert cv.g3_conditions(_rung("f", "sim", 3.0, all_lo=np.nan, ext_hi=np.nan, rand_hi=np.nan)) == (False, False, False)
+
+
+def test_mde80_scales_with_the_ci_width():
+    res = {"n_clusters": 11, "ci_low": -0.1, "ci_high": 0.1}
+    t975 = 2.228138851986274  # t(0.975, 10 df)
+    t80 = 0.8790578285505887  # t(0.80, 10 df)
+    assert cv.mde80(res) == pytest.approx((t975 + t80) * 0.1 / t975)
+    assert cv.mde80({**res, "ci_low": -0.2, "ci_high": 0.2}) == pytest.approx(2 * cv.mde80(res))
+    assert np.isnan(cv.mde80({**res, "n_clusters": 1})) and np.isnan(cv.mde80({**res, "ci_low": np.nan}))
 
 
 def test_retrieval_rows_pair_each_rung_with_its_own_random_control():

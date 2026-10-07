@@ -184,3 +184,9 @@ Please update these so the report is internally consistent.
 
 Return: a short markdown file `sources/PHASE6_PART_D_RESULT.md` with D1–D4, plus any new PDFs in
 `sources/pdfs/` and quotes added to the JSON files in the same verified format as before.
+
+---
+
+## Part E: alert colours and which action belongs to which colour
+
+See `docs/PHASE6_PART_E_BRIEF.md` (2026-10-06).

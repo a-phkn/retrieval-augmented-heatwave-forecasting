@@ -39,7 +39,7 @@ Short, frequently-updated. See `build_plan.md` for full milestone detail.
    changed).
 
 ## Last verified state (2026-10-04)
-- `pytest` → 196 passed (2026-10-06; leakage 3, retrieval eligibility 6, manifest 12, stats 46, predict_v1 8, hourly features 16, downloader v2 13, upstream downloader 11, compare v2 13, wbgt liljegren 11, wbgt label 5, labels v2 13, folds 27, trainer 12).
+- `pytest` → 247 passed (2026-10-07). Earlier: 196 passed (2026-10-06; leakage 3, retrieval eligibility 6, manifest 12, stats 46, predict_v1 8, hourly features 16, downloader v2 13, upstream downloader 11, compare v2 13, wbgt liljegren 11, wbgt label 5, labels v2 13, folds 27, trainer 12).
 - `retrieval/candidates.parquet` + `retrieval/faiss_index.bin` rebuilt in the
   new venv; `feature_normalization_stats.json` reproduced byte-identically.
 - v1 frozen: `data/MANIFEST.json` (30 files incl. A1 checkpoints + raw-data fingerprint), window index
@@ -62,6 +62,36 @@ Short, frequently-updated. See `build_plan.md` for full milestone detail.
     - The pre-registered rule alone picks hw1 (`A1prime_hw1`, `A2L_hw1`). The WBGT hw1 model forecasts 0 hot days.
     - hw5: ties damped persistence on all days (−0.009 / +0.004), beats it on extremes (−0.93 / −1.20 °C).
   - Queue note: the 2 h background cap stopped A2L_hw5 mid-fold. Its partial outputs and 3 registry rows were removed and the run was redone in full.
+- **Part D (2026-10-06)** verified against saved documents: IMD "Hot & Humid Weather" (FAQ p.2, qualitative);
+  current IMD warning lead time = 7 days since July 2023 (PIB 26 Jul 2023), not 5 as Cowork's result file says
+  (its file is stale vs its own JSON: 51 vs 58 rows); D1 none found (limitation stands). Fixes sent back to Cowork.
+- **Retrieval rungs (2026-10-06)**: `retrieval/fold_retrieval.py` (per-fold pool, features, normalisation) reproduces
+  v1's analogues exactly on f4 / v1 labels (1,092/1,092 val queries). It also found that v1's precompute
+  truncated 881 training queries (1980-88): 500-candidate screen, no fallback.
+  - `models/retrieval_lstm_v2.py`: zero context when there is no analogue.
+  - Trainer `retrieval` config key; 6 runs queued, ~37 min each; log in scratchpad `week3_retrieval.log`.
+  - G3 rule pre-registered in decisions.md before the runs.
+- **G3 result (2026-10-07): none.** All 8 retrieval runs done (R1-rand = mode `time_rand`, added after the
+  first 6; their 192 analogue-list fingerprints re-checked unchanged). Commits 312ec5f, 5a3cb99 (code hashes
+  match the registry). No rung beats its random control on extreme days; Tmax rungs are slightly worse than the
+  control, WBGT rungs (and the random ones) slightly better but not significantly. Detectable effect about 0.24 °C
+  (Tmax) and 0.08-0.12 °C (WBGT). Independently reviewed and signed off with reporting fixes (applied). Details in
+  decisions.md. Next: Week 4 R2-R4 + mechanism metrics.
+- **DSTGNN skeleton (2026-10-06)**: `models/dstgnn.py` (graph GRU, modes none/static/dynamic + adaptive),
+  `pipeline/graph.py` (Delhi + 27 nodes, geographic and wind-gated advective edges). G-D1: 13 tests pass.
+  The plan said `data/graph.py`; it is `pipeline/graph.py` because `data/` holds raw data.
+- **Upstream + G-D0 (2026-10-07)**: raw download 1269/1269 verified (all days, no NaN, grid/timezone/elevation
+  OK; 29 tiny negative soil-moisture values clipped). `pipeline/build_upstream_daily.py` ->
+  `datasets_v2/upstream_daily.parquet` (17,051 x 324, raw fingerprint in `.meta.json`).
+  G-D0 (`evaluation/gd0_upstream_signal.py`, rule pre-registered first): **PASS**, Tmax leads 1-3 Δ -0.111
+  [-0.144, -0.077]; west and south-west points strongest; best lag 1 day almost everywhere (no
+  travel-time pattern in the linear check).
+- **Physics-head design study (2026-10-07)**: `evaluation/physics_head_standin.py`.
+  - The stand-in reproduces the exact Liljegren formula with RMSE 0.12 overall but 0.40 at hot-day peak hours,
+    so the evidence favours exact.
+  - Averaging the 9 cells' ingredients first loses 1.08 °C (bias -0.88) on hot days even with the exact formula,
+    which argues for a per-cell head or a learned correction.
+  - Decision deferred to Week 4 (user).
 - **CI (2026-10-06)**: commits ba6659b and 7523bd6 failed 2 tests on GitHub only, from runner CPU float differences:
   - the index rebuild rewrote the frozen stats file in the last digits;
   - A1 bit-for-bit retraining.

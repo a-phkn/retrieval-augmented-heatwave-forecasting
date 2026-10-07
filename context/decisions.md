@@ -481,3 +481,158 @@ Control choice (G2), applied after all runs, separately for the Tmax and the WBG
   3. `evaluation/compare_v2.py` reports both choices (`ADOPTED_HOT_WEIGHT = 5`).
 - Lesson for later pre-registrations (retrieval ladder, G3): a selection rule must score both all days AND
   heat days, or it will select models that never warn.
+
+**Retrieval ladder, first rungs (R0 / R0-rand / R1): PRE-REGISTERED 2026-10-06, before any of these runs**
+- Controls: `A1prime_hw5` (Tmax family) and `A2Lr_hw5` (WBGT physical family). Each rung is the control plus
+  retrieval, nothing else changed (same target form, hot_weight 5, 10 seeds, folds f1-f4, inner_2y early stop).
+- Retrieval is rebuilt per fold from that fold's training years only (features, normalisation, candidate pool,
+  episodes). v1 eligibility rules kept: analogue finishes >= 19 days before the query; validation queries see
+  training windows only; no analogue from the query's own episode; dedup max 2 per episode, >= 10 days apart; K = 5.
+- Rungs:
+  - **R0**: top-K by cosine similarity on v1's 17 features (the RA-v1 design).
+  - **R0-rand**: K random eligible analogues (same eligibility and dedup), fixed per fold and seed. Control.
+  - **R1**: only candidates whose window-end day of year is within ±30 days of the query's, then top-K by
+    similarity. Our calendar-alignment rung, in the spirit of SARAF's time alignment (exact SARAF formula not
+    checked: the paper is not in the repo).
+- Model: `models/retrieval_lstm_v2.py` = RA-v1 architecture; a query with no eligible analogue gets a zero
+  context vector (v1 attends over zero-padded slots).
+- **Selection rule (G3), applied per family after all rungs have run.** It scores heat days as well as all days
+  (lesson of 2026-10-06). A rung "helps" only if ALL hold, using paired cluster tests on 2007-2018 pooled folds:
+  1. not significantly worse than its control on all days;
+  2. significantly better than its control on extreme days (95% CI entirely below 0);
+  3. lower extreme-day RMSE than R0-rand (for R0-rand itself: n/a, it is the control).
+  Among rungs that help, pick the lowest extreme-day RMSE; within 0.02 °C, the simpler rung (R0 < R1).
+  If none helps, retrieval is reported as not helping at this stage (a valid result; see plan risk 5).
+- Always reported: R0 vs R0-rand on all strata (the key "is the retrieved information used?" test), the
+  forecast-conditioned count and bias (so a rung cannot win by forecasting warmer), and the AnEn baseline.
+
+**G3 rule amendment: 2026-10-06, BEFORE any retrieval-queue result was looked at** (prompted by an independent code review)
+1. **Condition 3 must be significant:** "lower extreme-day RMSE than R0-rand" becomes "significantly lower: 95% CI of
+   (rung - its random control) on extreme days entirely below 0". A 0.001 °C point difference must not count.
+2. **R1 gets a calendar-matched random control, R1-rand:** random eligible analogues within ±30 days of the query's
+   day of year. R0-rand draws from all seasons, so R1 could beat it just by carrying season-matched climatology.
+   Condition 3 for R1 is judged against R1-rand; for R0, against R0-rand. R1-rand is added to the queue as two more
+   runs (one per family), using the same seeds and folds.
+3. **The warm-bias check stays descriptive** (forecast-conditioned count and bias, reported for every rung).
+   It is not a pass/fail condition, because no threshold was pre-registered and picking one now would be arbitrary.
+   Condition 1 (not significantly worse on all days) remains the only enforced guard against a general warm bias.
+   The report says this plainly.
+4. All of R0 vs R0-rand (and R1 vs R1-rand) are reported on all four strata (all / normal / unusual / extreme).
+
+**Correction to the wording of the G3 amendment above (2026-10-06, after a second review)**
+- "BEFORE any retrieval-queue result was looked at" is accurate about *viewing*, but results already *existed*.
+  When the amendment was written (about 22:01 IST), the queue had finished `A1prime_hw5_R0` fold f1 (registry row
+  16:25:10 UTC = 21:55 IST). Fold f2 followed at 16:36:06 UTC (22:06 IST). No score from the queue had been
+  displayed to the author: the log checks printed only run start lines.
+- Disclosure: during the second review (after the amendment existed), the reviewer's hash check printed the two
+  R0 registry rows, so the reviewer saw two extreme-day RMSE values for R0 alone (f1 1.835, f2 2.164). No control,
+  random-control or comparison numbers were seen. These values were not used for any decision.
+- Training code unchanged since the queue started: the reviewer recomputed `_code_sha256()` = 49129b3d…e9c3, which
+  equals the registry's code_sha256 for both rows.
+
+**Phase 6 scope: energy actions INCLUDED: DECIDED 2026-10-06 (user)**
+- The 21 energy actions in `sources/phase6_candidate_actions.json` (CEA advisory, BEE AC 24 °C notice, DISCOM
+  demand-side notices) are in scope for the advisory. This replaces "health-only unless official energy sources
+  are found": official energy sources were found.
+- Same rules as for health actions: word-for-word quote, page, verified; a tier only from a source or a recorded
+  team decision.
+- Still open: observation-triggered actions (in or out of the forecast advisory), and the tier mapping
+  (Part E brief for Cowork, `docs/PHASE6_PART_E_BRIEF.md`).
+
+**Phase 6: observation-triggered actions: DECIDED 2026-10-06 (user)**
+- Actions triggered by something that has already happened (a heat-stroke patient, body temperature >= 40 °C,
+  a cluster of heat deaths, a workplace measurement) are NOT forecast actions. They go in a separate
+  **"If this happens"** section of the advisory and demo page, clearly labelled "not a prediction", and are never
+  mixed with the forecast-based actions.
+- One page for everyone (no separate health-worker view). The public first-aid steps are shown directly. The
+  clinical protocols (IV fluids, cooling targets, emergency-department steps) sit in a collapsed
+  "For health professionals" sub-section behind a disclaimer ("clinical guidance quoted from NCDC/NPCCHH, for
+  trained health workers only; members of the public: call 108/102").
+- The advisory output keeps two separate lists (forecast actions; if-this-happens notes), and the verifier checks
+  both against the verified quotes.
+- Front end (open): plan v5 says a static demo page (Week 8). Proposed: a single interactive HTML page (no build
+  tools, nothing installed). Upgrade to React only if Week 7 has slack, and only with Node.js approved.
+
+**Front end: interactive single-file HTML page: DECIDED 2026-10-06 (user)**
+- Week 8 demo = one interactive HTML page: 5-day forecast chart (Tmax / WBGT toggle), colour-coded alert days,
+  click a day for its advisory, the "If this happens" section, and a replay of past heatwaves once the test
+  lock opens. No build tools and nothing installed; a charting library is loaded from a CDN.
+- It reads the advisory's JSON output, so a later upgrade to React reuses the same data. Upgrade only if needed,
+  and only with Node.js approved.
+
+**Final-model architecture: graph backbone + physics head + retrieval: CONFIRMED 2026-10-06 (user)**
+- Plan v5 §4 "Option 1 + 2a together", now written down explicitly. Final model = regional DSTGNN backbone +
+  physics-structured output head (predicts temperature and humidity, computes WBGT inside the model) + the best
+  retrieval rung (G3).
+- Only the backbone is conditional. If G-D0 (upstream signal) or G-D3 (non-inferiority vs an LSTM given the
+  same upstream data) fails, the backbone becomes an LSTM. The physics head and retrieval stay; the head is also
+  required by the 2026-10-05 condition (output both Tmax and WBGT). BB* is decided by the end of Week 5.
+- Wording fix: "fall back to the physics-guided LSTM" (plan and guide) means LSTM backbone + physics head, not
+  dropping the physics part.
+
+**Gate G-D0 (does upstream heat help Delhi's forecast?): PRE-REGISTERED 2026-10-06, before any upstream number
+was computed**
+- Question: do the 27 upstream points carry information about Delhi's next 5 days that Delhi's own recent weather
+  does not? This is a cheap linear check, done before any graph network is trained.
+- Data: `datasets_v2/upstream_daily.parquet` (from the verified raw download). Only folds f1-f4, validation 2007-2018;
+  nothing from 2019 on is read. Per fold, from that fold's training years only: each point's Tmax day-of-year
+  climatology, standardised anomalies, and all fitted coefficients.
+- Reference: Delhi damped persistence (per-lead factor on Delhi's last standardised Tmax anomaly).
+- Augmented: per lead L = 1..5, ridge regression of Delhi's standardised Tmax anomaly on Delhi's last anomaly PLUS
+  the 27 points' standardised Tmax anomalies on the last 3 input days (81 extra inputs). The ridge strength is
+  chosen from {0.1, 1, 10, 100, 1000} on each fold's last 2 training years (inner split, as inner_2y), then
+  refitted on all training years. Forecasts are converted back to °C with the fold's Delhi climatology.
+- **PASS** if, pooled over the four validation blocks, the augmented forecast has significantly lower RMSE than
+  damped persistence on ALL days over leads 1-3 (paired cluster-jackknife test, year x season clusters,
+  95% CI entirely below 0). Otherwise FAIL: the backbone becomes an LSTM (architecture decision 2026-10-06).
+- Reported but not part of pass/fail: each lead separately; extreme days (Tmax label); WBGT (physical) with the
+  same method; and WHICH points help: per-point skill gain (Delhi + that one point's 3 lags) and the ridge
+  weights per point and lag, shown on a map. If advection matters, the points that help should lie upwind
+  (north-west/west) and the useful lag should grow with distance. A "control direction" summary compares points
+  to the north-west/west with points to the south-east/east.
+- Upstream soil moisture: ERA5 gives tiny negative values (-0.001 to -0.003) on 29 days at 3 dry points; they are
+  clipped to 0 in the dataset (not used by this gate).
+
+**Gate G-D0 result: PASS (2026-10-07), the graph backbone stays**
+- Delhi Tmax, all days, leads 1-3: RMSE 2.009 (damped persistence) -> 1.898 (+ 27 upstream points, 3 lags, ridge);
+  Δ -0.111 °C [-0.144, -0.077], p < 0.001. The gain is significant at every lead 1-5, and on extreme days
+  (leads 1-3: Δ -0.233 [-0.333, -0.133]). Physical WBGT (descriptive): Δ -0.167 [-0.210, -0.125] on all days;
+  on extreme days not significant (Δ -0.113 [-0.294, +0.067]).
+- Every point helps on its own. The strongest are to the west and south-west (Thar / Kutch, 430-1050 km;
+  bearings 227-266°); the weakest are next to Delhi, whose information is already in Delhi's own history.
+- Not seen: best lag is 1 day at 26 of 27 points, so this linear check shows no travel time that grows with
+  distance. The signal looks like the large-scale heat pattern a day earlier. The east-vs-west contrast is weak by
+  design (only 1 point east/south-east). G-D3 must show the graph beats an LSTM given the SAME upstream data
+  (flattened) before any claim about graph structure or advection.
+- Report: `evaluation_v2/gd0_upstream.md`; map: `evaluation_v2/figures/gd0_upstream_map.png`.
+
+**Gate G3 result: NO rung selected (2026-10-07), retrieval does not help yet**
+- Runs: R0, R0-rand, R1, R1-rand on each control (`A1prime_hw5`, `A2Lr_hw5`), 10 seeds x 4 folds, scored out of
+  fold on 2007-2018. R1-rand (mode `time_rand`: random draws from R1's own +-30-day pool, seeded per fold and seed)
+  was added after the first 6 runs, as the amendment required; the 192 analogue-list fingerprints of those runs
+  were re-checked unchanged first. Code: commit 312ec5f (code_sha256 49129b3d..., R0/R0-rand/R1) and 5a3cb99
+  (a99ec74b..., R1-rand). The runs were trained before that code was committed (registry git_commit 6fad43b,
+  dirty); the code hash identifies the exact code.
+- Tmax: both rungs slightly WORSE than the control on extreme days (R0 +0.072 [-0.050, +0.194], R1 +0.022) and no
+  better than their random controls (R0 vs R0-rand +0.070 [-0.102, +0.242]; R1 vs R1-rand +0.015 [-0.160, +0.189]).
+- WBGT (physical): every variant, the random ones included, is slightly better on extreme days but none
+  significantly (R0 -0.064 [-0.139, +0.010]; R1 -0.065 [-0.133, +0.002]; R0-rand -0.044; R1-rand -0.038). Rung vs
+  its random control: R0 -0.020 [-0.107, +0.066]; R1 -0.028 [-0.087, +0.032]. So any gain is not attributable to
+  the retrieved information. All variants are ~0.015 °C worse on all days; WBGT R1 significantly so (p = 0.045),
+  failing condition 1 as well. On WBGT the retrieval variants forecast more hot days with a larger warm bias than
+  the control (R0 75/seed, +1.96; R1 77, +2.03; control 54, +1.61): part of the small extreme-day gain looks like
+  forecasting warmer.
+- Power: the extreme-day test can detect differences of about 0.24 °C (Tmax) and 0.08-0.12 °C (WBGT) at 80%
+  power; smaller benefits are not ruled out. 2 families x 2 rungs x 3 conditions, no multiple-comparison
+  correction (cannot turn this fail into a pass).
+- The non-neural analogue ensemble (AnEn) is far worse than the control (+1.13 Tmax, +1.52 WBGT on extreme days):
+  the raw analogue outcomes carry little skill on their own.
+- Independent review: signed off with changes (numbers reproduced to 4 decimals from the prediction files; R1-rand
+  verified as a valid control; no leakage found). Applied: p values and a per-condition pass/fail column in the
+  report (two all-days failures were hidden by rounding), detectable-effect sizes, the caveats above, and a missing
+  CI bound now fails condition 1 too (it already failed conditions 2 and 3; no effect on this result).
+- Consequence: no rung is attached to anything yet. Week 4 continues the ladder (R2 diversity, R3 drift gate, R4
+  climate-shift correction), each judged by the same rule against its own random control, plus mechanism metrics
+  (analogue age, redundancy, season mismatch) to show why retrieval does or does not help. Which retrieval, if
+  any, goes into the final model (G-R*) is decided after R2-R4.
+- Report: `evaluation_v2/week3_controls.md` (retrieval sections).

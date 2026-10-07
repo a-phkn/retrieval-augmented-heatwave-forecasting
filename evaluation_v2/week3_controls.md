@@ -41,6 +41,52 @@ Why they differ: the rule scores all days only, and a lower hot_weight always he
 | A2L_dp | dp_residual | 20 | 2.775 | +0.277 | +0.406 [+0.277, +0.535] | <0.001 | ❌ | 2.251 | -2.221 [-2.481, -1.961] | +0.372 (<0.001) |
 | A2L | raw | 20 | 2.801 | +0.303 | +0.432 [+0.297, +0.567] | <0.001 | ❌ | 2.293 | -2.178 [-2.638, -1.718] | +0.385 (<0.001) |
 
+## Retrieval ladder, Tmax family (gate G3, rule pre-registered 2026-10-06, amended before results)
+
+Control: `A1prime_hw5`. Δ = rung minus control; negative = rung better. Each rung also has a random control fed the same model random eligible past windows (R0 vs R0-rand; R1 vs R1-rand, random within ±30 days of the same time of year): beating it shows the retrieved *information* is used, not just the extra machinery or the season.
+
+**G3 choice:** none (no rung meets all three conditions: retrieval does not help yet)
+
+| Rung | Run | All RMSE | Δ all vs control (95% CI) | p | Extreme RMSE | Δ extreme vs control (95% CI) | p | G3 conditions 1 / 2 / 3 | Forecast hot days / bias (descriptive) |
+|---|---|---|---|---|---|---|---|---|---|
+| R0 | A1prime_hw5_R0 | 2.191 | +0.016 [-0.003, +0.034] | 0.091 | 2.225 | +0.072 [-0.050, +0.194] | 0.217 | ✅ / ❌ / ❌ | 520 / +0.87 |
+| R0-rand | A1prime_hw5_R0rand | 2.188 | +0.012 [-0.010, +0.034] | 0.265 | 2.155 | +0.002 [-0.122, +0.126] | 0.971 | (control) | 549 / +0.86 |
+| R1 | A1prime_hw5_R1 | 2.190 | +0.015 [-0.004, +0.034] | 0.124 | 2.176 | +0.022 [-0.121, +0.165] | 0.734 | ✅ / ❌ / ❌ | 523 / +0.89 |
+| R1-rand | A1prime_hw5_R1rand | 2.193 | +0.018 [+0.000, +0.035] | 0.048 | 2.161 | +0.008 [-0.101, +0.116] | 0.876 | (control) | 568 / +0.96 |
+| AnEn (no network) | anen | 2.388 | +0.212 [+0.169, +0.256] | <0.001 | 3.281 | +1.128 [+0.887, +1.369] | <0.001 | (baseline) | 211 / +0.77 |
+
+Conditions: (1) not significantly worse than the control on all days; (2) significantly better than the control on extreme days; (3) significantly better than its own random control on extreme days. p < 0.05 with a positive Δ on all days fails (1), even when the rounded CI shows +0.000.
+
+Rung vs its random control, every stratum (Δ = rung minus random control, 95% CI, p). Last column: smallest extreme-day difference this test detects with 80% power.
+
+| Rung | Random control | all | normal | unusual | extreme | Detectable (extreme, 80% power) |
+|---|---|---|---|---|---|---|
+| R0 | A1prime_hw5_R0rand | +0.003 [-0.020, +0.026] (p 0.775) | +0.001 [-0.025, +0.026] (p 0.952) | +0.036 [-0.162, +0.235] (p 0.683) | +0.070 [-0.102, +0.242] (p 0.386) | 0.24 °C |
+| R1 | A1prime_hw5_R1rand | -0.003 [-0.023, +0.017] (p 0.772) | -0.003 [-0.024, +0.018] (p 0.757) | -0.062 [-0.293, +0.169] (p 0.551) | +0.015 [-0.160, +0.189] (p 0.856) | 0.24 °C |
+
+## Retrieval ladder, WBGT (physical) family (gate G3, rule pre-registered 2026-10-06, amended before results)
+
+Control: `A2Lr_hw5`. Δ = rung minus control; negative = rung better. Each rung also has a random control fed the same model random eligible past windows (R0 vs R0-rand; R1 vs R1-rand, random within ±30 days of the same time of year): beating it shows the retrieved *information* is used, not just the extra machinery or the season.
+
+**G3 choice:** none (no rung meets all three conditions: retrieval does not help yet)
+
+| Rung | Run | All RMSE | Δ all vs control (95% CI) | p | Extreme RMSE | Δ extreme vs control (95% CI) | p | G3 conditions 1 / 2 / 3 | Forecast hot days / bias (descriptive) |
+|---|---|---|---|---|---|---|---|---|---|
+| R0 | A2Lr_hw5_R0 | 2.388 | +0.014 [-0.002, +0.030] | 0.076 | 3.210 | -0.064 [-0.139, +0.010] | 0.085 | ✅ / ❌ / ❌ | 75 / +1.96 |
+| R0-rand | A2Lr_hw5_R0rand | 2.388 | +0.015 [-0.001, +0.032] | 0.068 | 3.230 | -0.044 [-0.126, +0.039] | 0.273 | (control) | 68 / +1.90 |
+| R1 | A2Lr_hw5_R1 | 2.388 | +0.015 [+0.000, +0.030] | 0.045 | 3.208 | -0.065 [-0.133, +0.002] | 0.057 | ❌ / ❌ / ❌ | 77 / +2.03 |
+| R1-rand | A2Lr_hw5_R1rand | 2.383 | +0.010 [-0.004, +0.023] | 0.160 | 3.236 | -0.038 [-0.110, +0.034] | 0.276 | (control) | 60 / +1.57 |
+| AnEn (no network) | anen | 2.590 | +0.216 [+0.150, +0.283] | <0.001 | 4.793 | +1.519 [+1.311, +1.726] | <0.001 | (baseline) | 6 / +2.77 |
+
+Conditions: (1) not significantly worse than the control on all days; (2) significantly better than the control on extreme days; (3) significantly better than its own random control on extreme days. p < 0.05 with a positive Δ on all days fails (1), even when the rounded CI shows +0.000.
+
+Rung vs its random control, every stratum (Δ = rung minus random control, 95% CI, p). Last column: smallest extreme-day difference this test detects with 80% power.
+
+| Rung | Random control | all | normal | unusual | extreme | Detectable (extreme, 80% power) |
+|---|---|---|---|---|---|---|
+| R0 | A2Lr_hw5_R0rand | -0.001 [-0.020, +0.018] (p 0.936) | +0.000 [-0.021, +0.022] (p 0.982) | -0.018 [-0.093, +0.057] (p 0.622) | -0.020 [-0.107, +0.066] (p 0.619) | 0.12 °C |
+| R1 | A2Lr_hw5_R1rand | +0.005 [-0.010, +0.021] (p 0.488) | +0.007 [-0.010, +0.024] (p 0.414) | -0.023 [-0.095, +0.049] (p 0.519) | -0.028 [-0.087, +0.032] (p 0.333) | 0.08 °C |
+
 ## Other runs (historical BoM-index runs and chain steps)
 
 | Run | Target | Labels | Form | hot_weight | All RMSE | Δ vs damped persistence (95% CI) | Floor | Extreme RMSE | Δ extreme vs damped |
@@ -62,6 +108,10 @@ Why they differ: the rule scores all days only, and a lower hot_weight always he
 | A2Lr_hw1 | 1.969 | -0.177 [-0.337, -0.016] |
 | A2Lr_hw10 | 2.291 | +0.146 [-0.413, +0.705] |
 | A2Lr_hw5 | 2.062 | -0.084 [-0.449, +0.282] |
+| A2Lr_hw5_R0 | 2.098 | -0.047 [-0.481, +0.386] |
+| A2Lr_hw5_R0rand | 2.096 | -0.049 [-0.433, +0.334] |
+| A2Lr_hw5_R1 | 2.101 | -0.045 [-0.449, +0.360] |
+| A2Lr_hw5_R1rand | 2.055 | -0.090 [-0.498, +0.317] |
 
 ## Forecast-conditioned: days each model FORECASTS a hot day by its own label rule
 
@@ -74,6 +124,10 @@ Descriptive. A warm-biased model forecasts many hot days with a positive bias (f
 | A1prime_hw1 | 115 | 1.708 | -0.712 |
 | A1prime_hw10 | 885 | 2.729 | +1.384 |
 | A1prime_hw5 | 512 | 2.275 | +0.760 |
+| A1prime_hw5_R0 | 520 | 2.324 | +0.873 |
+| A1prime_hw5_R0rand | 549 | 2.298 | +0.855 |
+| A1prime_hw5_R1 | 523 | 2.361 | +0.885 |
+| A1prime_hw5_R1rand | 568 | 2.395 | +0.956 |
 | A1prime_r | 1486 | 3.150 | +1.915 |
 | A2L | 1534 | 3.584 | +2.879 |
 | A2L_dp | 1624 | 3.580 | +2.920 |
@@ -84,6 +138,10 @@ Descriptive. A warm-biased model forecasts many hot days with a positive bias (f
 | A2Lr_hw1 | 0 | nan | +nan |
 | A2Lr_hw10 | 378 | 3.107 | +2.342 |
 | A2Lr_hw5 | 54 | 2.592 | +1.612 |
+| A2Lr_hw5_R0 | 75 | 2.904 | +1.964 |
+| A2Lr_hw5_R0rand | 68 | 2.851 | +1.901 |
+| A2Lr_hw5_R1 | 77 | 2.933 | +2.033 |
+| A2Lr_hw5_R1rand | 60 | 2.500 | +1.575 |
 | damped_persistence (t_max) | 153 | 1.649 | -0.120 |
 | persistence (t_max) | 789 | 3.357 | +2.051 |
 | damped_persistence (wbgt_lj_max) | 8 | 2.347 | +1.755 |
@@ -121,6 +179,30 @@ Descriptive. A warm-biased model forecasts many hot days with a positive bias (f
 | t_max | v2 | damped_persistence -> A1prime_hw5 | extreme | 730 | -0.929 | [-1.191, -0.668] | <0.001 | 11 | 11/11 |
 | t_max | v2 | A1prime -> A1prime_hw5 | all | 21835 | -0.115 | [-0.166, -0.065] | <0.001 | 36 | 27/36 |
 | t_max | v2 | A1prime -> A1prime_hw5 | extreme | 730 | +0.577 | [+0.416, +0.739] | <0.001 | 11 | 0/11 |
+| t_max | v2 | damped_persistence -> A1prime_hw5_R0 | all | 21835 | +0.007 | [-0.028, +0.042] | 0.693 | 36 | 14/36 |
+| t_max | v2 | damped_persistence -> A1prime_hw5_R0 | normal | 21045 | +0.046 | [+0.010, +0.082] | 0.015 | 36 | 11/36 |
+| t_max | v2 | damped_persistence -> A1prime_hw5_R0 | unusual | 60 | -0.585 | [-1.081, -0.089] | 0.026 | 9* | 7/9 |
+| t_max | v2 | damped_persistence -> A1prime_hw5_R0 | extreme | 730 | -0.857 | [-1.158, -0.557] | <0.001 | 11 | 11/11 |
+| t_max | v2 | A1prime_hw5 -> A1prime_hw5_R0 | all | 21835 | +0.016 | [-0.003, +0.034] | 0.091 | 36 | 8/36 |
+| t_max | v2 | A1prime_hw5 -> A1prime_hw5_R0 | extreme | 730 | +0.072 | [-0.050, +0.194] | 0.217 | 11 | 3/11 |
+| t_max | v2 | damped_persistence -> A1prime_hw5_R0rand | all | 21835 | +0.004 | [-0.036, +0.043] | 0.854 | 36 | 18/36 |
+| t_max | v2 | damped_persistence -> A1prime_hw5_R0rand | normal | 21045 | +0.045 | [+0.008, +0.082] | 0.020 | 36 | 12/36 |
+| t_max | v2 | damped_persistence -> A1prime_hw5_R0rand | unusual | 60 | -0.621 | [-1.069, -0.174] | 0.013 | 9* | 8/9 |
+| t_max | v2 | damped_persistence -> A1prime_hw5_R0rand | extreme | 730 | -0.927 | [-1.236, -0.619] | <0.001 | 11 | 11/11 |
+| t_max | v2 | A1prime_hw5 -> A1prime_hw5_R0rand | all | 21835 | +0.012 | [-0.010, +0.034] | 0.265 | 36 | 13/36 |
+| t_max | v2 | A1prime_hw5 -> A1prime_hw5_R0rand | extreme | 730 | +0.002 | [-0.122, +0.126] | 0.971 | 11 | 7/11 |
+| t_max | v2 | damped_persistence -> A1prime_hw5_R1 | all | 21835 | +0.006 | [-0.030, +0.043] | 0.736 | 36 | 14/36 |
+| t_max | v2 | damped_persistence -> A1prime_hw5_R1 | normal | 21045 | +0.047 | [+0.009, +0.084] | 0.016 | 36 | 12/36 |
+| t_max | v2 | damped_persistence -> A1prime_hw5_R1 | unusual | 60 | -0.622 | [-1.159, -0.085] | 0.028 | 9* | 7/9 |
+| t_max | v2 | damped_persistence -> A1prime_hw5_R1 | extreme | 730 | -0.907 | [-1.220, -0.594] | <0.001 | 11 | 11/11 |
+| t_max | v2 | A1prime_hw5_R0 -> A1prime_hw5_R1 | all | 21835 | -0.001 | [-0.020, +0.019] | 0.941 | 36 | 21/36 |
+| t_max | v2 | A1prime_hw5_R0 -> A1prime_hw5_R1 | extreme | 730 | -0.050 | [-0.196, +0.097] | 0.469 | 11 | 8/11 |
+| t_max | v2 | damped_persistence -> A1prime_hw5_R1rand | all | 21835 | +0.009 | [-0.026, +0.044] | 0.606 | 36 | 15/36 |
+| t_max | v2 | damped_persistence -> A1prime_hw5_R1rand | normal | 21045 | +0.050 | [+0.016, +0.085] | 0.006 | 36 | 12/36 |
+| t_max | v2 | damped_persistence -> A1prime_hw5_R1rand | unusual | 60 | -0.560 | [-0.995, -0.125] | 0.018 | 9* | 7/9 |
+| t_max | v2 | damped_persistence -> A1prime_hw5_R1rand | extreme | 730 | -0.922 | [-1.225, -0.618] | <0.001 | 11 | 11/11 |
+| t_max | v2 | A1prime_hw5 -> A1prime_hw5_R1rand | all | 21835 | +0.018 | [+0.000, +0.035] | 0.048 | 36 | 11/36 |
+| t_max | v2 | A1prime_hw5 -> A1prime_hw5_R1rand | extreme | 730 | +0.008 | [-0.101, +0.116] | 0.876 | 11 | 6/11 |
 | t_max | v2 | damped_persistence -> A1prime_r | all | 21835 | +0.115 | [+0.046, +0.184] | 0.002 | 36 | 15/36 |
 | t_max | v2 | damped_persistence -> A1prime_r | normal | 21045 | +0.180 | [+0.089, +0.271] | <0.001 | 36 | 14/36 |
 | t_max | v2 | damped_persistence -> A1prime_r | unusual | 60 | -1.506 | [-1.935, -1.078] | <0.001 | 9* | 9/9 |
@@ -187,6 +269,30 @@ Descriptive. A warm-biased model forecasts many hot days with a positive bias (f
 | wbgt_lj_max | wbgt | damped_persistence -> A2Lr_hw5 | extreme | 360 | -1.198 | [-1.339, -1.056] | <0.001 | 14 | 14/14 |
 | wbgt_lj_max | wbgt | A2Lr -> A2Lr_hw5 | all | 21835 | -0.381 | [-0.465, -0.298] | <0.001 | 36 | 34/36 |
 | wbgt_lj_max | wbgt | A2Lr -> A2Lr_hw5 | extreme | 360 | +1.009 | [+0.763, +1.254] | <0.001 | 14 | 0/14 |
+| wbgt_lj_max | wbgt | damped_persistence -> A2Lr_hw5_R0 | all | 21835 | +0.019 | [-0.048, +0.086] | 0.571 | 36 | 21/36 |
+| wbgt_lj_max | wbgt | damped_persistence -> A2Lr_hw5_R0 | normal | 21085 | +0.097 | [+0.018, +0.175] | 0.017 | 36 | 17/36 |
+| wbgt_lj_max | wbgt | damped_persistence -> A2Lr_hw5_R0 | unusual | 390 | -1.151 | [-1.224, -1.078] | <0.001 | 21 | 21/21 |
+| wbgt_lj_max | wbgt | damped_persistence -> A2Lr_hw5_R0 | extreme | 360 | -1.262 | [-1.388, -1.135] | <0.001 | 14 | 14/14 |
+| wbgt_lj_max | wbgt | A2Lr_hw5 -> A2Lr_hw5_R0 | all | 21835 | +0.014 | [-0.002, +0.030] | 0.076 | 36 | 9/36 |
+| wbgt_lj_max | wbgt | A2Lr_hw5 -> A2Lr_hw5_R0 | extreme | 360 | -0.064 | [-0.139, +0.010] | 0.085 | 14 | 10/14 |
+| wbgt_lj_max | wbgt | damped_persistence -> A2Lr_hw5_R0rand | all | 21835 | +0.020 | [-0.048, +0.087] | 0.562 | 36 | 20/36 |
+| wbgt_lj_max | wbgt | damped_persistence -> A2Lr_hw5_R0rand | normal | 21085 | +0.096 | [+0.017, +0.176] | 0.019 | 36 | 15/36 |
+| wbgt_lj_max | wbgt | damped_persistence -> A2Lr_hw5_R0rand | unusual | 390 | -1.133 | [-1.227, -1.039] | <0.001 | 21 | 21/21 |
+| wbgt_lj_max | wbgt | damped_persistence -> A2Lr_hw5_R0rand | extreme | 360 | -1.241 | [-1.364, -1.118] | <0.001 | 14 | 14/14 |
+| wbgt_lj_max | wbgt | A2Lr_hw5 -> A2Lr_hw5_R0rand | all | 21835 | +0.015 | [-0.001, +0.032] | 0.068 | 36 | 7/36 |
+| wbgt_lj_max | wbgt | A2Lr_hw5 -> A2Lr_hw5_R0rand | extreme | 360 | -0.044 | [-0.126, +0.039] | 0.273 | 14 | 11/14 |
+| wbgt_lj_max | wbgt | damped_persistence -> A2Lr_hw5_R1 | all | 21835 | +0.019 | [-0.045, +0.084] | 0.547 | 36 | 21/36 |
+| wbgt_lj_max | wbgt | damped_persistence -> A2Lr_hw5_R1 | normal | 21085 | +0.098 | [+0.021, +0.174] | 0.014 | 36 | 16/36 |
+| wbgt_lj_max | wbgt | damped_persistence -> A2Lr_hw5_R1 | unusual | 390 | -1.163 | [-1.240, -1.086] | <0.001 | 21 | 21/21 |
+| wbgt_lj_max | wbgt | damped_persistence -> A2Lr_hw5_R1 | extreme | 360 | -1.263 | [-1.400, -1.126] | <0.001 | 14 | 14/14 |
+| wbgt_lj_max | wbgt | A2Lr_hw5_R0 -> A2Lr_hw5_R1 | all | 21835 | +0.001 | [-0.014, +0.016] | 0.938 | 36 | 17/36 |
+| wbgt_lj_max | wbgt | A2Lr_hw5_R0 -> A2Lr_hw5_R1 | extreme | 360 | -0.001 | [-0.064, +0.062] | 0.967 | 14 | 7/14 |
+| wbgt_lj_max | wbgt | damped_persistence -> A2Lr_hw5_R1rand | all | 21835 | +0.014 | [-0.052, +0.080] | 0.668 | 36 | 19/36 |
+| wbgt_lj_max | wbgt | damped_persistence -> A2Lr_hw5_R1rand | normal | 21085 | +0.091 | [+0.014, +0.167] | 0.022 | 36 | 15/36 |
+| wbgt_lj_max | wbgt | damped_persistence -> A2Lr_hw5_R1rand | unusual | 390 | -1.140 | [-1.228, -1.052] | <0.001 | 21 | 21/21 |
+| wbgt_lj_max | wbgt | damped_persistence -> A2Lr_hw5_R1rand | extreme | 360 | -1.235 | [-1.358, -1.113] | <0.001 | 14 | 14/14 |
+| wbgt_lj_max | wbgt | A2Lr_hw5 -> A2Lr_hw5_R1rand | all | 21835 | +0.010 | [-0.004, +0.023] | 0.160 | 36 | 12/36 |
+| wbgt_lj_max | wbgt | A2Lr_hw5 -> A2Lr_hw5_R1rand | extreme | 360 | -0.038 | [-0.110, +0.034] | 0.276 | 14 | 9/14 |
 | wbgt_bom_max | v2 | damped_persistence -> A2r | all | 21835 | -0.056 | [-0.105, -0.008] | 0.024 | 36 | 23/36 |
 | wbgt_bom_max | v2 | damped_persistence -> A2r | normal | 21045 | -0.043 | [-0.092, +0.006] | 0.083 | 36 | 23/36 |
 | wbgt_bom_max | v2 | damped_persistence -> A2r | unusual | 60 | -0.541 | [-0.792, -0.291] | 0.001 | 9* | 8/9 |
@@ -200,3 +306,12 @@ Notes:
 - 10-seed ensemble = mean of the 10 seeds' forecasts; reported as an extra, not the primary score.
 - Neural models early-stop on the last 2 TRAINING years of each fold; validation blocks never choose a checkpoint.
 - These are development (out-of-fold) results. The test period (2019+) is locked until Week 7.
+- Retrieval caveats (independent review 2026-10-06):
+  - analogue similarity uses v1's 17 features, which are Tmax-based, for the WBGT family too (as pre-registered);
+  - the network receives analogue outcomes in its own target units (for A2Lr: WBGT anomaly in deg C, scaled), while AnEn averages standardised anomalies;
+  - the 'not from the query's own episode' rule looks at the query's target days, as in v1. That is future label information, but it can only remove candidates. It affects a handful of training queries and no validation query, because validation queries only see training windows;
+  - the forecast-conditioned count and bias are descriptive, not a pass/fail condition (amendment 2026-10-06);
+  - power: a null result means no gain of about the 'Detectable' size; smaller benefits are not ruled out. Extreme days come from few year x season clusters (about 11-14), close to the fragile region;
+  - multiple comparisons: 2 families x 2 rungs x 3 conditions, no correction. A future pass should be read with that in mind; it cannot turn a fail into a pass;
+  - provenance: the retrieval runs were trained from uncommitted code (registry git_commit is the previous commit, dirty = True). The registry code_sha256 identifies the exact code: 49129b3d... = commit 312ec5f (R0, R0-rand, R1); a99ec74b... = commit 5a3cb99 (R1-rand);
+  - AnEn being far worse than the control says the raw analogue outcomes carry little skill on their own; it does not test how the network uses them.
