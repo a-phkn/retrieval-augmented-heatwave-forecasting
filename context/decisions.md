@@ -912,3 +912,68 @@ fold by fold (a background-job cutoff loses at most one fold; finished folds are
   C2 is not retuned, so this comparison favours C3-pool; disclosed.
 - Order: tuning grids for both families (C3, C3-pool, U1) -> 10-seed runs of the 6 selected configs -> PH_lstm and
   the two R2 runs. ~28-30 h of background compute; safe to pause between folds.
+
+**Independent ML review (2026-10-08) and the decisions taken on it: DECIDED 2026-10-08 (user), while the tuning
+round was running and BEFORE any tuning result (selection or 10-seed) was looked at**
+- A read-only reviewer found, among others (findings verified by the owner where marked):
+  - (verified) the G-D0 ridge (Delhi's last anomaly + 27 x 3 upstream Tmax anomalies, per lead, alpha on the inner
+    block, refit on all training years) has all-days RMSE 2.104 (Tmax) / 2.217 (WBGT): better than U1 and C3 in
+    both families and than every neural model on WBGT all days; it is in no results table. On extreme days the
+    hot-weighted LSTMs are far better (Tmax control 2.153 vs ridge 2.908).
+  - the extreme-day stratum is dominated by conditional bias (WBGT control: extreme bias -3.02 °C, ~85% of the
+    extreme MSE), so "better on extremes" is confounded with "forecasts warmer" (Lerch et al. 2017).
+  - the backbone rule can return a dominated model (U1 is worse than C2 in both families).
+  - (verified) tuning is not blind to the reported years: the f2/f3/f4 inner blocks (2008-09, 2011-12, 2014-15)
+    lie inside the pooled 2007-2018 evaluation; selection reuses the early-stopping block; the trainer logs
+    validation RMSE for tuning runs (never used to select, but visible).
+  - the one-hop-per-day graph cannot carry the previous-day signal G-D0 found 500-1000 km away (likely more
+    important than over-squashing); C2 has no node identity (a regional mean).
+  - (verified) the physics trainer steps the optimiser on a non-finite loss; hard clamps zero the gradient.
+  - neural models never see the last 2 training years (no refit; the ridge refits); +0.4 °C all-days warm bias;
+    the test period has ~23 year x season clusters (~8 hot-season ones), so a confirmatory protocol is needed.
+- **Backbone rule, amended (disclosed; replaces steps 1-3 of the tuning-round decision above):**
+  - Candidates: tuned C3, tuned C3-pool, C2 (as run, 10 seeds; not retuned, disclosed), tuned U1, the control LSTM.
+  - Eligible: non-inferior on all days (95% CI upper end < +0.05 °C) to the control LSTM AND to tuned U1, in BOTH
+    families (the control and U1 are compared only with the other).
+  - Among the eligible: the lowest WBGT all-days RMSE (primary target); ties within 0.02 °C go to the simpler
+    (control < U1 < C2 < C3 < C3-pool). Tmax and extreme-day results reported for every candidate.
+  - C2 is named a "regional node model (no edges)", not a graph; graph-structure claims stay governed by the
+    structure-claim rule (CI entirely below 0 against both U1 and C2).
+  - The ridge baselines (below) are reported next to every candidate but are not eligible (no encoder for the
+    retrieval and physics-head rungs).
+  - **Nothing is final until the user has seen the result and approved the choice.**
+- **Physics head, before PH_lstm runs (robustness only; the design is unchanged):** skip the optimiser step on a
+  non-finite loss (count skipped batches in the training log; any skip is reported); replace the hard clamps on t
+  and pressure with smooth clamps (identity inside the range, non-zero gradient outside). Applied after the
+  tuned runs finish (the files are hashed), committed, then PH_lstm and R2 run under the new code hash.
+- **Reporting additions (evaluation only; no gate changes):**
+  1. Ridge baselines in every results table: the G-D0 ridge ("ridge_up") and a hot-weighted version (weighted least
+     squares, weights 1 + (hw - 1) x hot with the family's hot_weight 5), by lead and stratum, with paired tests
+     against C2 and the final backbone.
+  2. Bias split and calibration: extreme-day bias and error SD for every model; a recalibration control (per-lead
+     linear a + b x forecast, fitted on each fold's inner block, from checkpoint predictions); the 10-seed ensemble
+     mean as the forecast; a hot-day Brier score (Gaussian predictive distribution: mean = ensemble mean, SD from
+     inner-block residuals).
+  3. Selection-free-years check: G-D3 / backbone tests re-run on 2007, 2010, 2013, 2016-2018 only (years never used
+     for early stopping or selection), next to the pooled result.
+  4. A confirmatory test protocol (docs/CONFIRMATORY_PROTOCOL.md), frozen before the 2019+ test lock is opened.
+- Not adopted now (possible later, disclosed exploration only): attention-readout graph arms, node embeddings, a
+  Delhi-only DSTGNN ablation, refit-on-all-training-years sensitivity.
+
+**Multi-hop graph arm "C3-hop": DECIDED 2026-10-08 (user), after the G-D3 result and the ML review, before any
+tuning result; disclosed as post-result exploration**
+- Defect found while designing it (verified by unit test, `tests/test_dstgnn_multihop.py`): in `models/dstgnn.py`
+  with the Delhi readout, a message on day t carries neighbours' states of day t-1 one hop, so NO upstream point's
+  last input day ever reaches the forecast, and a point h hops away contributes data at least h + 1 days old.
+  G-D0 found the useful upstream signal is the last input day (best lag 1 at 26 of 27 points), 2-4 hops away.
+  This, more than over-squashing, plausibly explains why the edged graphs lose to C2 (whose pooled readout reads
+  every node's last-day state).
+- C3-hop (`models/dstgnn_multihop.py`): C3's static edges; K = 4 hops per day inside the recurrence (DCRNN-style
+  K-step diffusion, one weight per hop) and a final K-hop transport of the last day's states into Delhi before
+  the head; Delhi-only readout, so upstream data still reaches the forecast only along the edges. K = 4 = the
+  largest hop distance from any upstream point to Delhi (not tuned).
+- Hyperparameters: tuned C3's selection, per family (no separate tuning). 10 seeds x 4 folds x 2 families.
+- Joins the amended backbone rule's candidates (simplicity after C3-pool; must pass G-D2, (a) and (b)), and is
+  reported against C3 and C2. Nothing is final without the user's approval.
+- Runs after the tuned runs: the trainer hook (`hops` in the graph config) is a prepared patch applied together
+  with the physics-head fixes, because the trainer and model files are hashed by the running tuning queue.

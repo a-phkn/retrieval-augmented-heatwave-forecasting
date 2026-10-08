@@ -148,73 +148,101 @@ def write_report(results: dict, decision: dict) -> None:
 
 
 # ------------------------------------------------------------------ after the tuning round
-# decisions.md, 2026-10-08 ("Graph tuning round, with one added arm C3-pool"), written before any
-# tuning result existed. Runs: {control}_C3_tuned, {control}_C3pool_tuned, {control}_U1_tuned.
+# decisions.md 2026-10-08: the tuning round (C3, C3-pool, U1 tuned) and the amended backbone rule
+# taken on the independent ML review, both written before any tuning result existed.
+# Runs: {control}_C3_tuned, {control}_C3pool_tuned, {control}_U1_tuned, {control}_C2 as run, and the
+# multi-hop arm {control}_C3hop (tuned C3's hyperparameters; added after the review, disclosed).
 
 TUNED_GRAPHS = ("C3", "C3pool")
+GRAPH_MODELS = ("C2", *TUNED_GRAPHS, "C3hop")  # graph-code models (G-D2 applies)
+SIMPLICITY = ("control", "U1", "C2", "C3", "C3pool", "C3hop")  # simplest first (tie-break)
+PRIMARY = "WBGT (physical)"
+SELECTION_FREE_YEARS = (2007, 2010, 2013, 2016, 2017, 2018)  # never an inner (early-stopping / selection) block
 
 
-def tuned_decision(fam: dict[str, dict]) -> dict:
-    """fam: per family {arm: {"g_d2": bool, "a": bool, "b": bool}} for arm in TUNED_GRAPHS.
-    1. tuned C3 passes (G-D2, a, b) in both families -> graph C3;
-    2. else tuned C3-pool passes in both -> graph C3-pool (post-result, test run confirms);
-    3. else control LSTM if tuned C3's (a) fails in either family, otherwise tuned U1."""
-    def passes(arm: str) -> bool:
-        return all(r[arm]["g_d2"] and r[arm]["a"] and r[arm]["b"] for r in fam.values())
+def eligible(fam: dict[str, dict]) -> dict[str, bool]:
+    """fam: per family {model: {"g_d2": bool, "a": bool, "b": bool}} for C2 / C3 / C3pool, plus
+    {"U1": {"a": bool}, "control": {"b": bool}}. Eligible = non-inferior to the control (a) and to
+    tuned U1 (b) in BOTH families; graph-code models must also pass G-D2."""
+    ok = {"control": all(r["control"]["b"] for r in fam.values()),
+          "U1": all(r["U1"]["a"] for r in fam.values())}
+    for m in GRAPH_MODELS:
+        ok[m] = all(r[m]["g_d2"] and r[m]["a"] and r[m]["b"] for r in fam.values())
+    return ok
 
-    if passes("C3"):
-        return {"backbone": "graph C3 (tuned)", "reason": "tuned C3 passed G-D2, (a) and (b) in both families"}
-    if passes("C3pool"):
-        return {"backbone": "graph C3-pool (tuned)",
-                "reason": "tuned C3 failed; tuned C3-pool passed G-D2, (a) and (b) in both families. Chosen after a "
-                          "post-result change (decisions.md 2026-10-08); the locked test run is its confirmation"}
-    if not all(r["C3"]["a"] for r in fam.values()):
-        return {"backbone": "control LSTM", "reason": "no tuned graph arm passed; tuned C3's (a) failed in a family"}
-    return {"backbone": "U1 (tuned)", "reason": "no tuned graph arm passed; tuned C3's (a) passed in both families"}
+
+def amended_decision(ok: dict[str, bool], wbgt_rmse: dict[str, float]) -> dict:
+    """Lowest WBGT all-days RMSE among the eligible; ties within TIE_C go to the simpler. PROVISIONAL:
+    nothing is final until the user has seen the result and approved it."""
+    cands = [m for m in SIMPLICITY if ok.get(m)]
+    if not cands:
+        return {"backbone": "control", "provisional": True, "reason": "no model eligible; the control is kept"}
+    best = min(wbgt_rmse[m] for m in cands)
+    pick = next(m for m in cands if wbgt_rmse[m] - best <= TIE_C)
+    names = {"control": "control LSTM", "U1": "U1 (tuned)", "C2": "C2, regional node model (no edges)",
+             "C3": "graph C3 (tuned)", "C3pool": "graph C3-pool (tuned; arm added after the G-D3 result)",
+             "C3hop": "graph C3-hop (multi-hop; arm added after the ML review)"}
+    return {"backbone": names[pick], "model": pick, "provisional": True, "eligible": cands,
+            "reason": f"lowest WBGT all-days RMSE among the eligible {cands} (ties within {TIE_C} °C to the simpler). "
+                      "PROVISIONAL: awaiting the user's approval"}
+
+
+def selection_free(df: pd.DataFrame) -> pd.DataFrame:
+    """Only forecasts whose target date falls in a year never used as an inner block (M1 sensitivity)."""
+    return df[pd.DatetimeIndex(df["target_date"]).year.isin(SELECTION_FREE_YEARS)]
 
 
 def evaluate_tuned_family(fam: str) -> dict:
     ctrl_id = CONTROLS[fam]
-    ctrl = load_run(ctrl_id)
-    runs = {a: load_run(f"{ctrl_id}_{a}_tuned") for a in (*TUNED_GRAPHS, "U1")} | {"C2": load_run(f"{ctrl_id}_C2")}
-    missing = [a for a, df in runs.items() if df is None]
+    runs = {"control": load_run(ctrl_id), "C2": load_run(f"{ctrl_id}_C2")}
+    runs |= {m: load_run(f"{ctrl_id}_{m}_tuned") for m in ("U1", *TUNED_GRAPHS)} | {"C3hop": load_run(f"{ctrl_id}_C3hop")}
+    missing = [m for m, df in runs.items() if df is None]
     if missing:
         raise FileNotFoundError(f"{fam}: runs not complete: {missing}")
-    ctrl_sd = seed_rmses(ctrl)
-    out = {"rmse_all": {a: rmse_by(df) for a, df in runs.items()} | {"control": rmse_by(ctrl)},
-           "rmse_extreme": {a: rmse_by(df[df["stratum"] == "extreme"]) for a, df in runs.items()}
-           | {"control": rmse_by(ctrl[ctrl["stratum"] == "extreme"])},
-           "g_d2": {a: g_d2(load_logs(f"{ctrl_id}_{a}_tuned"), seed_rmses(runs[a]), ctrl_sd) for a in TUNED_GRAPHS}}
-    tests = {}
-    for a in TUNED_GRAPHS:
-        for other, name in ((ctrl, "control"), (runs["U1"], "tuned U1"), (runs["C2"], "C2")):
-            for s in ("all", "extreme"):
-                tests[f"{a} tuned vs {name} ({s})"] = compare(other, runs[a], s)
-    for s in ("all", "extreme"):
-        tests[f"C3pool tuned vs C3 tuned ({s})"] = compare(runs["C3"], runs["C3pool"], s)
-        tests[f"U1 tuned vs control ({s})"] = compare(ctrl, runs["U1"], s)
-    out["tests"] = tests
-    out["arms"] = {a: {"g_d2": out["g_d2"][a]["pass"], "a": non_inferior(tests[f"{a} tuned vs control (all)"]),
-                       "b": non_inferior(tests[f"{a} tuned vs tuned U1 (all)"])} for a in TUNED_GRAPHS}
+    ctrl_sd = seed_rmses(runs["control"])
+    logs = {"C2": f"{ctrl_id}_C2", "C3hop": f"{ctrl_id}_C3hop"} | {m: f"{ctrl_id}_{m}_tuned" for m in TUNED_GRAPHS}
+    out = {"rmse_all": {m: rmse_by(df) for m, df in runs.items()},
+           "rmse_extreme": {m: rmse_by(df[df["stratum"] == "extreme"]) for m, df in runs.items()},
+           "g_d2": {m: g_d2(load_logs(r), seed_rmses(runs[m]), ctrl_sd) for m, r in logs.items()}}
+    tests, free = {}, {}
+    pairs = [(m, o) for m in GRAPH_MODELS for o in ("control", "U1")]
+    pairs += [("U1", "control"), ("control", "U1"), ("C3pool", "C3"), ("C3pool", "C2"), ("C3", "C2"),
+              ("C3hop", "C3"), ("C3hop", "C2")]
+    for m, o in pairs:
+        for s in ("all", "extreme"):
+            tests[f"{m} vs {o} ({s})"] = compare(runs[o], runs[m], s)
+        free[f"{m} vs {o} (all)"] = compare(selection_free(runs[o]), selection_free(runs[m]), "all")
+    out["tests"], out["tests_selection_free"] = tests, free
+    out["models"] = {m: {"g_d2": out["g_d2"][m]["pass"], "a": non_inferior(tests[f"{m} vs control (all)"]),
+                         "b": non_inferior(tests[f"{m} vs U1 (all)"])} for m in GRAPH_MODELS}
+    out["models"]["U1"] = {"a": non_inferior(tests["U1 vs control (all)"])}
+    out["models"]["control"] = {"b": non_inferior(tests["control vs U1 (all)"])}
     return out
 
 
-def write_tuned_report(results: dict, decision: dict) -> None:
-    L = ["# Graph backbone after the tuning round (decisions.md 2026-10-08)", "",
-         f"**Backbone (BB\\*): {decision['backbone']}** ({decision['reason']}).", "",
-         "Out of fold 2007-2018, 10 seeds x 4 folds; hyperparameters were selected on the inner 2-year blocks only "
-         "(`evaluation_v2/graph_tuning.md`). The control LSTM and C2 are not retuned (comparisons against them favour "
-         f"the tuned models; disclosed). Non-inferiority margin {MARGIN_C} °C on the upper end of the 95% CI.", ""]
+def write_tuned_report(results: dict, decision: dict, ok: dict[str, bool]) -> None:
+    L = ["# Backbone after the tuning round (amended rule, decisions.md 2026-10-08)", "",
+         f"**Provisional backbone: {decision['backbone']}** ({decision['reason']}).", "",
+         "Out of fold 2007-2018, 10 seeds x 4 folds. U1 / C3 / C3-pool: hyperparameters selected on the inner 2-year "
+         "blocks (`evaluation_v2/graph_tuning.md`); the control and C2 are not retuned (comparisons favour the tuned "
+         f"models; disclosed). Non-inferiority margin {MARGIN_C} °C on the upper end of the 95% CI. U1 below = tuned U1.",
+         "", "Eligible in both families: " + ", ".join(f"{m} {'yes' if v else 'no'}" for m, v in ok.items()), ""]
     for fam, r in results.items():
-        L += [f"## {fam} (control `{CONTROLS[fam]}`)", "", "| Arm | G-D2 | (a) vs control | (b) vs tuned U1 |",
-              "|---|---|---|---|"]
-        L += [f"| {a} tuned | {v['g_d2']} | {v['a']} | {v['b']} |" for a, v in r["arms"].items()]
-        L += ["", "| Model | All RMSE | Extreme RMSE |", "|---|---|---|"]
-        L += [f"| {m} | {r['rmse_all'][m]:.3f} | {r['rmse_extreme'][m]:.3f} |" for m in r["rmse_all"]]
-        L += ["", "| Comparison | Δ RMSE (95% CI) | p |", "|---|---|---|"]
-        L += [f"| {k} | {t['delta']:+.3f} {_ci(t)} | {t['p_value']:.3f} |" for k, t in r["tests"].items()]
+        L += [f"## {fam} (control `{CONTROLS[fam]}`)", "", "| Model | All RMSE | Extreme RMSE | G-D2 |", "|---|---|---|---|"]
+        L += [f"| {m} | {r['rmse_all'][m]:.3f} | {r['rmse_extreme'][m]:.3f} | "
+              f"{('pass' if r['g_d2'][m]['pass'] else 'FAIL') if m in r['g_d2'] else ''} |" for m in r["rmse_all"]]
+        L += ["", "| Comparison | Δ RMSE (95% CI) | p | Selection-free years: Δ all (95% CI) |", "|---|---|---|---|"]
+        for k, t in r["tests"].items():
+            f = r["tests_selection_free"].get(k)
+            L.append(f"| {k} | {t['delta']:+.3f} {_ci(t)} | {t['p_value']:.3f} | "
+                     + (f"{f['delta']:+.3f} {_ci(f)}" if f else "") + " |")
         L.append("")
+    L += [f"Selection-free years = target dates in {SELECTION_FREE_YEARS}: never an inner block of any fold, so never "
+          "used for early stopping or tuning selection (the f2-f4 inner blocks 2008-09, 2011-12, 2014-15 lie inside "
+          "2007-2018)."]
     (OUT_DIR / "graph_gates_tuned.md").write_text("\n".join(L) + "\n", encoding="utf-8")
+
+
 
 
 def main(argv: list[str] | None = None) -> None:
@@ -225,8 +253,9 @@ def main(argv: list[str] | None = None) -> None:
     args = ap.parse_args(argv)
     if args.tuned:
         results = {fam: evaluate_tuned_family(fam) for fam in CONTROLS}
-        decision = tuned_decision({f: r["arms"] for f, r in results.items()})
-        write_tuned_report(results, decision)
+        ok = eligible({f: r["models"] for f, r in results.items()})
+        decision = amended_decision(ok, results[PRIMARY]["rmse_all"])
+        write_tuned_report(results, decision, ok)
         out = OUT_DIR / "graph_gates_tuned.json"
     else:
         results = {fam: evaluate_family(fam) for fam in CONTROLS}

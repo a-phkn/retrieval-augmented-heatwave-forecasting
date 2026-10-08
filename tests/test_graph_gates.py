@@ -40,12 +40,48 @@ def test_backbone_decision_across_families():
     assert gg.backbone_decision({T: ok, W: {**ok, "b": False}})["backbone"] == "U1"
 
 
-def test_tuned_decision_follows_the_amended_rule():
+
+def _fam(c2=None, c3=None, pool=None, hop=None, u1_a=True, ctrl_b=False):
     ok = {"g_d2": True, "a": True, "b": True}
-    both = lambda c3, pool: {T: {"C3": c3, "C3pool": pool}, W: {"C3": c3, "C3pool": pool}}  # noqa: E731
-    assert gg.tuned_decision(both(ok, ok))["backbone"] == "graph C3 (tuned)"  # the agreed arm first
-    assert gg.tuned_decision(both({**ok, "b": False}, ok))["backbone"] == "graph C3-pool (tuned)"
-    assert gg.tuned_decision(both({**ok, "b": False}, {**ok, "g_d2": False}))["backbone"] == "U1 (tuned)"
-    assert gg.tuned_decision(both({**ok, "a": False}, {**ok, "b": False}))["backbone"] == "control LSTM"
-    mixed = {T: {"C3": ok, "C3pool": ok}, W: {"C3": {**ok, "b": False}, "C3pool": {**ok, "a": False}}}
-    assert gg.tuned_decision(mixed)["backbone"] == "U1 (tuned)"  # an arm must pass in BOTH families
+    return {"C2": c2 or ok, "C3": c3 or ok, "C3pool": pool or ok, "C3hop": hop or ok, "U1": {"a": u1_a},
+            "control": {"b": ctrl_b}}
+
+
+def test_eligibility_needs_both_checks_in_both_families():
+    bad_b = {"g_d2": True, "a": True, "b": False}
+    ok = gg.eligible({T: _fam(), W: _fam(c3=bad_b)})
+    assert ok == {"control": False, "U1": True, "C2": True, "C3": False, "C3pool": True, "C3hop": True}
+    no_d2 = {"g_d2": False, "a": True, "b": True}
+    assert not gg.eligible({T: _fam(pool=no_d2), W: _fam()})["C3pool"]  # graph code must pass G-D2
+    assert gg.eligible({T: _fam(ctrl_b=True), W: _fam(ctrl_b=True)})["control"]
+
+
+def test_amended_decision_picks_lowest_wbgt_rmse_with_simplicity_ties_and_stays_provisional():
+    ok = {"control": False, "U1": True, "C2": True, "C3": True, "C3pool": True, "C3hop": False}
+    rmse = {"control": 2.37, "U1": 2.27, "C2": 2.254, "C3": 2.30, "C3pool": 2.20, "C3hop": 2.10}
+    d = gg.amended_decision(ok, rmse)
+    assert d["model"] == "C3pool" and d["provisional"]
+    assert gg.amended_decision(ok, {**rmse, "C3pool": 2.24})["model"] == "C2"  # within 0.02 -> simpler C2
+    assert gg.amended_decision({**ok, "C2": False}, {**rmse, "C3pool": 2.24})["model"] == "C3pool"
+    assert gg.amended_decision({k: False for k in ok}, rmse)["backbone"] == "control"
+
+
+def test_selection_free_years_exclude_every_inner_block():
+    import pandas as pd
+
+    from training.folds import FOLDS, fold_bounds
+
+    inner = {y for f in FOLDS for y in (fold_bounds(f)[0].year - 1, fold_bounds(f)[0].year)}
+    assert not inner & set(gg.SELECTION_FREE_YEARS)
+    assert set(gg.SELECTION_FREE_YEARS) | (inner & set(range(2007, 2019))) == set(range(2007, 2019))
+    df = pd.DataFrame({"target_date": pd.to_datetime(["2008-05-01", "2010-05-01", "2016-01-01"])})
+    assert gg.selection_free(df)["target_date"].dt.year.tolist() == [2010, 2016]
+
+
+def test_multi_hop_arm_is_a_candidate_and_needs_g_d2():
+    ok = gg.eligible({T: _fam(hop={"g_d2": False, "a": True, "b": True}), W: _fam()})
+    assert not ok["C3hop"]
+    ok = {m: True for m in gg.SIMPLICITY}
+    rmse = {"control": 2.37, "U1": 2.27, "C2": 2.254, "C3": 2.30, "C3pool": 2.26, "C3hop": 2.20}
+    assert gg.amended_decision(ok, rmse)["model"] == "C3hop"
+    assert gg.amended_decision(ok, {**rmse, "C3hop": 2.24})["model"] == "C2"  # within 0.02 of C2 -> simpler

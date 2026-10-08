@@ -39,7 +39,7 @@ Short, frequently-updated. See `build_plan.md` for full milestone detail.
    changed).
 
 ## Last verified state (2026-10-04)
-- `pytest` → 315 passed (2026-10-08). 272 passed (2026-10-07). Earlier: 196 passed (2026-10-06; leakage 3, retrieval eligibility 6, manifest 12, stats 46, predict_v1 8, hourly features 16, downloader v2 13, upstream downloader 11, compare v2 13, wbgt liljegren 11, wbgt label 5, labels v2 13, folds 27, trainer 12).
+- `pytest` → 323 passed (2026-10-08, after the review additions). 315 earlier that day. 272 passed (2026-10-07). Earlier: 196 passed (2026-10-06; leakage 3, retrieval eligibility 6, manifest 12, stats 46, predict_v1 8, hourly features 16, downloader v2 13, upstream downloader 11, compare v2 13, wbgt liljegren 11, wbgt label 5, labels v2 13, folds 27, trainer 12).
 - `retrieval/candidates.parquet` + `retrieval/faiss_index.bin` rebuilt in the
   new venv; `feature_normalization_stats.json` reproduced byte-identically.
 - v1 frozen: `data/MANIFEST.json` (30 files incl. A1 checkpoints + raw-data fingerprint), window index
@@ -93,7 +93,17 @@ Short, frequently-updated. See `build_plan.md` for full milestone detail.
   selection on inner blocks only, registry `registry/tuning_runs.csv`) with the post-result arm C3-pool
   (decisions.md 2026-10-08), then the 6 tuned 10-seed runs, then PH_lstm + R2 (patches applied 2026-10-08).
   Queue log: scratchpad `week5.log`. The first tuning combo reproduces original C3 (seed 0 f1 2.1386 both).
-  Afterwards: `python -m evaluation.graph_gates --tuned`.
+  Afterwards: `python -m evaluation.graph_gates --tuned` (amended rule: provisional pick, user approves).
+- **ML review (2026-10-08)**, read-only reviewer; decisions in decisions.md. Added: `evaluation/ridge_baselines.py`
+  (G-D0 ridge reproduced 2.104 / 2.217; hot-weighted ridge), `evaluation/calibration_check.py` (bias split,
+  inner-block recalibration from checkpoints, ensemble, hot-day Brier; every checkpoint reproduces its saved
+  forecasts; inner caches in predictions_v2/inner, regenerable), selection-free-years tests and the amended rule
+  in `evaluation/graph_gates.py`, `docs/CONFIRMATORY_PROTOCOL.md` (draft). PH_lstm + R2 held (queue file in
+  scratchpad `week4_ph_r2_queue.held.txt`) until the physics NaN guard / smooth clamps are applied after the
+  tuned runs.
+- **C3-hop (2026-10-08)**: `models/dstgnn_multihop.py` + 7 tests (not yet in CODE_FILES, so the running queue's hash
+  is unchanged). Trainer hook, physics fixes and C3-hop configs are prepared patches in scratchpad `post_queue/`
+  (RUNBOOK.md), dry-run tested on a scratch copy of the repo; applied after the tuned runs.
 - **DSTGNN skeleton (2026-10-06)**: `models/dstgnn.py` (graph GRU, modes none/static/dynamic + adaptive),
   `pipeline/graph.py` (Delhi + 27 nodes, geographic and wind-gated advective edges). G-D1: 13 tests pass.
   The plan said `data/graph.py`; it is `pipeline/graph.py` because `data/` holds raw data.

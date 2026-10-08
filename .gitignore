@@ -62,3 +62,6 @@ context.zip
 runs/
 # v2 per-fold training checkpoints (regenerable via training/train_unified.py)
 models/v2/
+
+# v2 inner-block forecast cache (regenerable: python -m evaluation.calibration_check)
+predictions_v2/inner/

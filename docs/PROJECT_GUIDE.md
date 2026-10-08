@@ -563,6 +563,45 @@ worse than both the plain LSTM and U1 (the LSTM given the same upstream data) by
     it if it is chosen.
   - Order of choice: tuned C3 if it passes, else tuned C3-pool, else the agreed fallback.
   - Check: the first tuning combination equals the original C3 and reproduced its result exactly.
+- **Independent ML review (2026-10-08) and what changed.** An outside-style reviewer went through all the
+  ML and found no leakage, but several weak spots in what we compare and claim. The decisions taken are
+  in decisions.md (2026-10-08). What came out of it:
+  - **A simple linear model is a serious baseline** (`evaluation_v2/ridge_baselines.md`). The G-D0
+    ridge regression (Delhi plus upstream heat, no neural network) beats the control LSTM on all days
+    (Tmax 2.104 vs 2.175; WBGT 2.217 vs 2.373). C2 beats it on Tmax and ties it on WBGT. On heatwave
+    days, though, every neural model is far better (e.g. WBGT: C2 2.93 vs ridge 4.37). So the neural
+    models earn their place on extremes, not on ordinary days.
+  - **Heatwave-day scores are mostly bias.** On WBGT heatwave days the control forecasts about 3 °C too
+    cold. A model that simply forecasts warmer looks better there (the "forecaster's dilemma"). So
+    every extreme-day result now comes with its bias split out, and with a version where each model's
+    forecasts are linearly corrected on its own training years (`evaluation_v2/calibration_check.md`).
+    - C2's lead over the control survives the correction (−0.13 °C all days and −0.35 to −0.39 °C on
+      heatwave days, both families). So it is real skill, not just warmth.
+    - The correction helps all days but makes heatwave days *worse*. A single forecast can't be best
+      for both, which is why a probability forecast is the better product for warnings.
+  - **Hot-day probabilities:** Tmax hot days can be forecast with real skill (Brier skill +0.29 to +0.35;
+    C2 best). WBGT hot days cannot yet: skill is about 0 (+0.03 after correction) for every model. This
+    matters for the advisory.
+  - **Backbone rule amended (your decision):** after the tuning round, the final backbone is the most
+    accurate model that is not worse than the control and tuned U1 in both families. C2 is eligible,
+    named honestly as a "regional node model (no edges)". The ridge is shown next to it. **Nothing is
+    final until you approve it.**
+  - **Tuning wasn't fully blind:** 6 of the 8 selection years lie inside 2007–2018. So the backbone
+    tests are also reported on the years never used for selection (2007, 2010, 2013, 2016–18).
+  - **Physics head:** two robustness fixes go in before it runs: skip a training step if the loss
+    becomes NaN, and use smooth limits instead of hard clamps. The design is unchanged.
+  - **Why the edges hurt, found while building a fix:** in our graph the forecast is read from Delhi's
+    node, and news travels one neighbour per day *from the day before*. So the upstream points' most
+    recent day, exactly the day G-D0 found useful, never reaches the forecast. C2 reads every point
+    directly, so it sees that day.
+  - **New arm C3-hop (your decision; added after the results, disclosed):** the same edges, but news
+    travels 4 hops per day (enough to reach Delhi from anywhere in the region), plus one final 4-hop
+    pass from the last input day into Delhi. Tests confirm every point's last day now reaches the
+    forecast. It runs after the tuning round, with tuned C3's settings, and competes under the same
+    backbone rule.
+  - **Test protocol drafted** (`docs/CONFIRMATORY_PROTOCOL.md`): at most 3 hypotheses with a correction
+    for multiple tests, written before the 2019+ years are opened. The test period can detect about
+    0.05 °C on all days but only about 0.3 °C on heatwave days.
 
 **Retrieval ladder (R0 → R4):**
 - **R0** is the RA-v1 design.
@@ -864,4 +903,5 @@ the project's virtual environment (`.venv`); nothing is installed globally.
 | 2026-10-07 | Retrieval information check: analogues add no information beyond the query's own inputs, so tuning the network's use of them won't help. |
 | 2026-10-07 | Rg (regional-pattern retrieval) added after G3: WBGT −2% error on all days and beats random analogues; extreme-day condition missed (p = 0.11), so G3 still none; reviewed. |
 | 2026-10-07 | Physics head chosen (exact formula, per cell at each cell's peak hour); graph runs C2–C4a + U1 started (G-D4 passed); R2–R4 screened: R2 passes, R3/R4 add nothing over Rg. |
+| 2026-10-08 | Independent ML review: ridge baseline, bias split / recalibration / hot-day Brier added; backbone rule amended (C2 eligible, user approves the final pick); physics-head robustness fixes queued; test protocol drafted. |
 | 2026-10-08 | Graph runs done: G-D3 says U1 (graph not worse than U1 for Tmax, 0.08 °C worse for WBGT); edges hurt, the edgeless C2 is best. One tuning round started (C3, U1, and the post-result arm C3-pool); then PH_lstm and R2. |
