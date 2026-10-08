@@ -30,8 +30,16 @@ Config keys (configs/*.json):
     backbone (optional, default "lstm"; pre-registered 2026-10-07): "lstm_upstream" = the same LSTM
         given the 27 upstream points' daily inputs flattened next to Delhi's (U1); "dstgnn" =
         models.dstgnn fed Delhi's inputs plus the upstream nodes (training.graph_data), with
-        graph {"mode": "none" | "static" | "dynamic", "adaptive": bool} (C2 / C3 / C4 / C4a).
+        graph {"mode": "none" | "static" | "dynamic", "adaptive": bool} (C2 / C3 / C4 / C4a),
+        plus optional "readout": "delhi" (default) | "pool" (C3-pool, 2026-10-08).
         Same loss, optimiser, batch, epochs, patience and early stopping as the LSTM.
+    hparams (optional, upstream backbones only; graph tuning round 2026-10-08): {"hidden": int,
+        "lr": float, "dropout": float}. Defaults = the runs before it (U1: hidden 64, dropout 0.2;
+        DSTGNN: hidden 32, dropout 0; lr 1e-3). Absent from earlier configs, so their hashes hold.
+    head (optional; pre-registered 2026-10-07): "physics" = the control LSTM encoder with the
+        exact-formula physics head (models.physics_head), trained by training.physics_train on
+        WBGT + Tmax + 0.1 x per-cell ingredients. WBGT family configs only (target wbgt_lj_max,
+        WBGT labels, anomaly form, inner_2y); writes {fold}.parquet (WBGT) and {fold}_tmax.parquet.
 
 Registry RMSE values of different targets (Tmax vs WBGT) are NOT comparable. Compare runs
 through the skill columns, 1 - RMSE / RMSE_ref, where climatology and persistence are
@@ -72,7 +80,7 @@ import torch
 from torch.utils.data import DataLoader, TensorDataset
 
 from evaluation.predict_v1 import long_frame
-from models.dstgnn import GRAPH_MODES, DSTGNN
+from models.dstgnn import GRAPH_MODES, READOUTS, DSTGNN
 from models.lstm import LSTMForecaster
 from models.retrieval_lstm_v2 import RetrievalAugmentedLSTMv2
 from retrieval.fold_retrieval import MODES as RETRIEVAL_MODES, RANDOM_MODES, UPSTREAM_PATH
@@ -82,6 +90,7 @@ from training.folds import (
     FoldData, SplitArrays, build_fold, inner_split,
 )
 from training.graph_data import N_UP_FEATURES, UpstreamDaily, build_upstream, load_upstream
+from training.physics_train import PEAK_PATH, PER_CELL_PATH, build_physics_fold, predict_physics, train_one_seed_physics
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
 PRED_DIR = REPO_ROOT / "predictions_v2"
@@ -95,6 +104,9 @@ CODE_FILES = [
     "evaluation/stats.py", "retrieval/fold_retrieval.py", "retrieval/features.py", "models/retrieval_lstm_v2.py",
     "pipeline/download_era5_upstream.py",  # its NODES list sets the order of Rg's regional columns
     "training/graph_data.py", "models/dstgnn.py", "pipeline/graph.py",
+    "training/physics_train.py", "models/physics_head.py", "pipeline/wbgt_liljegren_torch.py",
+    "pipeline/wbgt_liljegren.py", "pipeline/build_peak_ingredients.py",
+    "training/tune_backbone.py",
 ]
 BACKBONES = ("lstm", "lstm_upstream", "dstgnn")
 EARLY_STOP = ("inner_2y", "val_block")
@@ -104,7 +116,7 @@ BATCH_SIZE, MAX_EPOCHS, PATIENCE, LR = 64, 100, 10, 1e-3
 REQUIRED_KEYS = {"run_id", "parent", "target", "labels", "anomaly_target", "hot_weight", "early_stop", "seeds", "folds"}
 REGISTRY_FIELDS = [
     "timestamp_utc", "run_id", "parent", "fold", "target", "labels", "anomaly_target", "target_form", "retrieval",
-    "backbone", "hot_weight",
+    "backbone", "head", "hparams", "hot_weight",
     "early_stop", "seeds", "config_sha256", "data_sha256", "code_sha256", "git_commit", "git_dirty",
     "device", "torch_threads", "torch_version", "n_fit_windows", "n_stop_windows", "n_val_windows",
     "val_rmse_all", "val_rmse_extreme", "clim_rmse_all", "clim_rmse_extreme",
@@ -143,11 +155,26 @@ def load_config(path: Path) -> dict:
     g = cfg.get("graph")
     if backbone == "dstgnn":
         if not (isinstance(g, dict) and g.get("mode") in GRAPH_MODES and isinstance(g.get("adaptive"), bool)
-                and set(g) == {"mode", "adaptive"} and not (g["adaptive"] and g["mode"] != "dynamic")):
-            raise ValueError(f'dstgnn needs graph {{"mode": one of {GRAPH_MODES}, "adaptive": bool}} '
-                             '(adaptive only with "dynamic")')
+                and {"mode", "adaptive"} <= set(g) <= {"mode", "adaptive", "readout"}
+                and g.get("readout", "delhi") in READOUTS and not (g["adaptive"] and g["mode"] != "dynamic")):
+            raise ValueError(f'dstgnn needs graph {{"mode": one of {GRAPH_MODES}, "adaptive": bool, '
+                             f'optional "readout": one of {READOUTS}}} (adaptive only with "dynamic")')
     elif g is not None:
         raise ValueError("graph is only valid with backbone 'dstgnn'")
+    hp = cfg.get("hparams")
+    if hp is not None:
+        if backbone == "lstm":
+            raise ValueError("hparams are only for the upstream backbones (the control LSTM is never retuned)")
+        if not (isinstance(hp, dict) and set(hp) == {"hidden", "lr", "dropout"}
+                and isinstance(hp["hidden"], int) and hp["hidden"] > 0 and isinstance(hp["lr"], float)
+                and hp["lr"] > 0 and isinstance(hp["dropout"], (int, float)) and 0 <= hp["dropout"] < 1):
+            raise ValueError('hparams must be {"hidden": positive int, "lr": positive float, "dropout": in [0, 1)}')
+    head = cfg.get("head")
+    if head is not None and not (head == "physics" and backbone == "lstm" and "retrieval" not in cfg
+                                 and cfg["target"] == "wbgt_lj_max" and cfg["labels"] == "wbgt"
+                                 and cfg["target_form"] == "anomaly" and cfg["early_stop"] == "inner_2y"):
+        raise ValueError('head must be "physics", on the plain LSTM, for the WBGT family '
+                         '(wbgt_lj_max, wbgt labels, anomaly form, inner_2y), without retrieval')
     return cfg
 
 
@@ -161,17 +188,23 @@ def weighted_mse(pred, target, hot_mask, hot_weight):  # as training/train_lstm.
     return torch.mean(weight * (pred - target) ** 2)
 
 
-def train_one_seed(seed: int, tr: SplitArrays, va: SplitArrays, hot_weight: float) -> LSTMForecaster:
+def train_one_seed(seed: int, tr: SplitArrays, va: SplitArrays, hot_weight: float,
+                   hp: dict | None = None) -> LSTMForecaster:
     """Mirrors training/train_lstm.py:train_one_seed step for step. The model is fitted on
-    `tr`; `va` only chooses the early-stopping checkpoint."""
+    `tr`; `va` only chooses the early-stopping checkpoint. `hp` (U1 tuning only) overrides
+    hidden size, dropout and learning rate; without it the v1 recipe is used."""
     set_seed(seed)
     ds = TensorDataset(torch.from_numpy(tr.X), torch.from_numpy(tr.y), torch.from_numpy(tr.hot.astype(np.float32)))
     loader = DataLoader(ds, batch_size=BATCH_SIZE, shuffle=True)
     val_X, val_y = torch.from_numpy(va.X), torch.from_numpy(va.y)
     val_hot = torch.from_numpy(va.hot.astype(np.float32))
 
-    model = LSTMForecaster(n_features=tr.X.shape[2])
-    optimizer = torch.optim.Adam(model.parameters(), lr=LR)
+    if hp is None:
+        model, lr = LSTMForecaster(n_features=tr.X.shape[2]), LR
+    else:
+        model = LSTMForecaster(n_features=tr.X.shape[2], hidden_size=hp["hidden"], dropout=float(hp["dropout"]))
+        lr = hp["lr"]
+    optimizer = torch.optim.Adam(model.parameters(), lr=lr)
     best_val, best_state, stale = float("inf"), None, 0
     for _ in range(MAX_EPOCHS):
         model.train()
@@ -255,10 +288,12 @@ def with_upstream(split: SplitArrays, upd: UpstreamDaily) -> SplitArrays:
     return replace(split, X=np.concatenate([split.X, up.reshape(*up.shape[:2], -1)], axis=2))
 
 
-def make_dstgnn(graph: dict, f_delhi: int, upd: UpstreamDaily) -> DSTGNN:
+def make_dstgnn(graph: dict, f_delhi: int, upd: UpstreamDaily, hp: dict | None = None) -> DSTGNN:
     static = torch.from_numpy(upd.static_adj) if graph["mode"] == "static" else None
+    extra = {} if hp is None else {"hidden": hp["hidden"], "dropout": float(hp["dropout"])}
     return DSTGNN(n_nodes=upd.mask.shape[0], f_delhi=f_delhi, f_upstream=N_UP_FEATURES, graph=graph["mode"],
-                  adaptive=graph["adaptive"], static_adj=static, neighbour_mask=torch.from_numpy(upd.mask))
+                  adaptive=graph["adaptive"], static_adj=static, neighbour_mask=torch.from_numpy(upd.mask),
+                  readout=graph.get("readout", "delhi"), **extra)
 
 
 def _graph_batch(upd_x: torch.Tensor, upd_adj: torch.Tensor, pos: torch.Tensor, dynamic: bool):
@@ -280,19 +315,19 @@ def predict_graph(model: DSTGNN, X: np.ndarray, pos: np.ndarray, upd_x: torch.Te
 
 def train_one_seed_graph(seed: int, tr: SplitArrays, va: SplitArrays, hot_weight: float, graph: dict,
                          upd: UpstreamDaily, pos_tr: np.ndarray, pos_va: np.ndarray,
-                         log: dict | None = None) -> DSTGNN:
+                         log: dict | None = None, hp: dict | None = None) -> DSTGNN:
     """train_one_seed for the DSTGNN: same recipe (seed handling, Adam, batch, epochs, patience,
     weighted MSE). `log` (optional) receives the early-stopping loss per epoch and whether every
-    training loss was finite (gate G-D2)."""
+    training loss was finite (gate G-D2). `hp` (tuning only) sets hidden size, dropout and lr."""
     set_seed(seed)
     upd_x, upd_adj = torch.from_numpy(upd.x), torch.from_numpy(upd.adj)
     ds = TensorDataset(torch.from_numpy(tr.X), torch.from_numpy(tr.y), torch.from_numpy(tr.hot.astype(np.float32)),
                        torch.from_numpy(pos_tr))
     loader = DataLoader(ds, batch_size=BATCH_SIZE, shuffle=True)
     val_y, val_hot = torch.from_numpy(va.y), torch.from_numpy(va.hot.astype(np.float32))
-    model = make_dstgnn(graph, tr.X.shape[2], upd)
+    model = make_dstgnn(graph, tr.X.shape[2], upd, hp)
     dynamic = model.graph == "dynamic"
-    optimizer = torch.optim.Adam(model.parameters(), lr=LR)
+    optimizer = torch.optim.Adam(model.parameters(), lr=LR if hp is None else hp["lr"])
     best_val, best_state, stale, finite, val_curve = float("inf"), None, 0, True, []
     for _ in range(MAX_EPOCHS):
         model.train()
@@ -381,21 +416,23 @@ def fit_and_stop_sets(data: FoldData, early_stop: str) -> tuple[SplitArrays, Spl
     return inner_split(data.train, data.train_end, years=2)
 
 
-def _append_registry(row: dict) -> None:
-    """Append one row. If the file was written with an older column set, it is rewritten
-    with the union of columns first (old rows get blanks), so columns never misalign."""
-    REGISTRY.parent.mkdir(parents=True, exist_ok=True)
-    if REGISTRY.exists():
-        with open(REGISTRY, newline="", encoding="utf-8") as f:
+def _append_registry(row: dict, registry: Path | None = None) -> None:
+    """Append one row (to `registry`, default REGISTRY). If the file was written with an older
+    column set, it is rewritten with the union of columns first (old rows get blanks), so
+    columns never misalign."""
+    registry = registry or REGISTRY
+    registry.parent.mkdir(parents=True, exist_ok=True)
+    if registry.exists():
+        with open(registry, newline="", encoding="utf-8") as f:
             header = next(csv.reader(f), [])
         if header != REGISTRY_FIELDS:
-            old = pd.read_csv(REGISTRY, dtype=str, keep_default_na=False)
+            old = pd.read_csv(registry, dtype=str, keep_default_na=False)
             extra = [c for c in old.columns if c not in REGISTRY_FIELDS]
             if extra:
                 raise ValueError(f"registry has unknown columns {extra}; refusing to drop them")
-            old.reindex(columns=REGISTRY_FIELDS, fill_value="").to_csv(REGISTRY, index=False)
-    new = not REGISTRY.exists()
-    with open(REGISTRY, "a", newline="", encoding="utf-8") as f:
+            old.reindex(columns=REGISTRY_FIELDS, fill_value="").to_csv(registry, index=False)
+    new = not registry.exists()
+    with open(registry, "a", newline="", encoding="utf-8") as f:
         w = csv.DictWriter(f, fieldnames=REGISTRY_FIELDS)
         if new:
             w.writeheader()
@@ -404,19 +441,34 @@ def _append_registry(row: dict) -> None:
 
 def run(cfg: dict, folds: list[str] | None = None, seeds: list[int] | None = None,
         out_dir: Path = PRED_DIR, model_dir: Path = MODEL_DIR, write_registry: bool = True,
-        threads: int | None = None) -> dict[str, pd.DataFrame]:
+        threads: int | None = None, score_stop: bool = False, registry: Path | None = None) -> dict[str, pd.DataFrame]:
     """Train every (fold, seed); write predictions, checkpoints and registry rows. Torch
-    threads: `threads`, else the config's "threads", else unchanged; restored afterwards."""
+    threads: `threads`, else the config's "threads", else unchanged; restored afterwards.
+    score_stop (tuning round): also write {fold}_stop.parquet, the forecasts on the inner
+    early-stopping block (the last 2 training years), which tuning selects on.
+    registry: the registry file (default registry/runs.csv)."""
     folds = folds or cfg["folds"]
     seeds = seeds if seeds is not None else cfg["seeds"]
+    if score_stop and (cfg.get("retrieval") or cfg.get("head") or cfg["early_stop"] != "inner_2y"):
+        raise ValueError("score_stop is for the inner_2y backbones without retrieval or a head")
     n_threads = threads or cfg.get("threads")
     prev_threads = torch.get_num_threads()
     if n_threads:
         torch.set_num_threads(n_threads)
     try:
-        return _run(cfg, folds, seeds, out_dir, model_dir, write_registry)
+        return _run(cfg, folds, seeds, out_dir, model_dir, write_registry, score_stop, registry)
     finally:
         torch.set_num_threads(prev_threads)
+
+
+def _sub_to_raw(data: FoldData, y_norm: np.ndarray, sub: SplitArrays) -> np.ndarray:
+    """FoldData.to_raw for a subset of a split (e.g. the inner early-stopping block)."""
+    y = y_norm * data.y_std + data.y_mean
+    if data.target_form == "anomaly":
+        return y + sub.clim_target
+    if data.target_form == "dp_residual":
+        return y + sub.damped
+    return y
 
 
 def _data_files(cfg: dict) -> list[Path]:
@@ -426,15 +478,19 @@ def _data_files(cfg: dict) -> list[Path]:
         files.append(WBGT_LABEL_CONFIG)
     if (cfg.get("retrieval") or {}).get("mode") == "region" or cfg.get("backbone", "lstm") != "lstm":
         files.append(UPSTREAM_PATH)  # Rg and the upstream backbones read the upstream dataset
+    if cfg.get("head") == "physics":
+        files += [PEAK_PATH, PER_CELL_PATH]  # per-cell ingredient targets
     return files
 
 
 def _run(cfg: dict, folds: list[str], seeds: list[int], out_dir: Path, model_dir: Path,
-         write_registry: bool) -> dict[str, pd.DataFrame]:
+         write_registry: bool, score_stop: bool = False, registry: Path | None = None) -> dict[str, pd.DataFrame]:
     cfg_hash = hashlib.sha256(json.dumps(cfg, sort_keys=True).encode()).hexdigest()
     data_hash = hashlib.sha256("".join(_sha256_file(p) for p in _data_files(cfg)).encode()).hexdigest()
     code_hash, commit, dirty = _code_sha256(), _git("rev-parse", "HEAD"), _git_dirty()
     backbone = cfg.get("backbone", "lstm")
+    head = cfg.get("head")
+    hp = cfg.get("hparams")
     up_table = load_upstream() if backbone != "lstm" else None
     results = {}
     for fold in folds:
@@ -442,6 +498,9 @@ def _run(cfg: dict, folds: list[str], seeds: list[int], out_dir: Path, model_dir
         data = build_fold(fold, cfg["target"], cfg["labels"], target_form=cfg["target_form"])
         fit, stop = fit_and_stop_sets(data, cfg["early_stop"])
         val = data.val
+        if head == "physics":
+            pf = build_physics_fold(fold)
+            tmax_frames, gate_log = [], []
         if backbone != "lstm":
             upd = build_upstream(fold, up_table)
             if backbone == "lstm_upstream":
@@ -458,7 +517,7 @@ def _run(cfg: dict, folds: list[str], seeds: list[int], out_dir: Path, model_dir
             pool_X, pool_y = torch.from_numpy(data.train.X), torch.from_numpy(data.train.y)
             pos_fit, pos_stop = _positions(fit, data.train), _positions(stop, data.train)
             fixed = None  # sim / time retrieval does not depend on the seed: compute once
-        frames, an_frames = [], []
+        frames, an_frames, stop_frames = [], [], []
         for seed in seeds:
             ckpt = model_dir / cfg["run_id"] / fold / f"seed_{seed}" / "checkpoint.pt"
             ckpt.parent.mkdir(parents=True, exist_ok=True)
@@ -480,19 +539,34 @@ def _run(cfg: dict, folds: list[str], seeds: list[int], out_dir: Path, model_dir
                     "analogue_query_date": np.where(r_va.idx >= 0, retriever.cand_dates.values[np.maximum(r_va.idx, 0)],
                                                     np.datetime64("NaT")).ravel(),
                     "similarity": r_va.sim.ravel(), "attention": att.ravel()}))
+            elif head == "physics":
+                log = {}
+                model = train_one_seed_physics(seed, pf, float(cfg["hot_weight"]), BATCH_SIZE, MAX_EPOCHS, PATIENCE, LR,
+                                               log=log)
+                torch.save(model.state_dict(), ckpt)
+                pred, pred_tx = predict_physics(model, pf.X["val"])  # deg C, float32
+                tmax_frames.append(long_frame(cfg["run_id"], seed, pf.tx.val.query_dates, pred_tx, pf.tx.val.y_raw,
+                                              pf.tx.val.stratum))
+                gate_log.append({"fold": fold, "seed": seed, **log})
             elif backbone == "dstgnn":
                 log: dict = {}
                 model = train_one_seed_graph(seed, fit, stop, float(cfg["hot_weight"]), cfg["graph"], upd,
-                                             pos_fit, pos_stop, log=log)
+                                             pos_fit, pos_stop, log=log, hp=hp)
                 torch.save(model.state_dict(), ckpt)
                 pred = data.to_raw(predict_graph(model, val.X, pos_val, upd_x, upd_adj), "val")
+                if score_stop:
+                    stop_pred = _sub_to_raw(data, predict_graph(model, stop.X, pos_stop, upd_x, upd_adj), stop)
                 gate_log.append({"fold": fold, "seed": seed, **log})
             else:
-                model = train_one_seed(seed, fit, stop, float(cfg["hot_weight"]))
+                model = train_one_seed(seed, fit, stop, float(cfg["hot_weight"]), hp=hp)
                 torch.save(model.state_dict(), ckpt)
                 model.eval()
                 with torch.no_grad():
                     pred = data.to_raw(model(torch.from_numpy(val.X)).numpy(), "val")  # float32, as v1
+                    if score_stop:
+                        stop_pred = _sub_to_raw(data, model(torch.from_numpy(stop.X)).numpy(), stop)
+            if score_stop:
+                stop_frames.append(long_frame(cfg["run_id"], seed, stop.query_dates, stop_pred, stop.y_raw, stop.stratum))
             frames.append(long_frame(cfg["run_id"], seed, data.val.query_dates, pred, data.val.y_raw, data.val.stratum))
             print(f"  [{cfg['run_id']} {fold}] seed {seed}: val RMSE {np.sqrt(np.mean(frames[-1]['error'] ** 2)):.4f}", flush=True)
         df = pd.concat(frames, ignore_index=True)
@@ -501,9 +575,15 @@ def _run(cfg: dict, folds: list[str], seeds: list[int], out_dir: Path, model_dir
         if an_frames:  # written first, so a complete {fold}.parquet implies its analogues exist
             pd.concat(an_frames, ignore_index=True).to_parquet(out_dir / cfg["run_id"] / f"{fold}_analogues.parquet",
                                                                index=False)
-        if backbone == "dstgnn":  # gate G-D2 evidence, written first for the same reason
+        if head == "physics":  # Tmax forecasts of the same model (Tmax label strata), written first
+            pd.concat(tmax_frames, ignore_index=True).to_parquet(out_dir / cfg["run_id"] / f"{fold}_tmax.parquet",
+                                                                 index=False)
+        if backbone == "dstgnn" or head == "physics":  # training curves, written first for the same reason
             (out_dir / cfg["run_id"] / f"{fold}_training_log.json").write_text(json.dumps(gate_log) + "\n",
                                                                                encoding="utf-8")
+        if stop_frames:  # inner-block forecasts for tuning, written first for the same reason
+            pd.concat(stop_frames, ignore_index=True).to_parquet(out_dir / cfg["run_id"] / f"{fold}_stop.parquet",
+                                                                 index=False)
         df.to_parquet(out_dir / cfg["run_id"] / f"{fold}.parquet", index=False)
         results[fold] = df
 
@@ -522,7 +602,10 @@ def _run(cfg: dict, folds: list[str], seeds: list[int], out_dir: Path, model_dir
                 "labels": cfg["labels"], "anomaly_target": cfg["anomaly_target"], "target_form": cfg["target_form"],
                 "retrieval": f"{ret['mode']} k={ret['k']}" if ret else "",
                 "backbone": backbone if backbone != "dstgnn" else
-                f"dstgnn {cfg['graph']['mode']}{' +adaptive' if cfg['graph']['adaptive'] else ''}",
+                f"dstgnn {cfg['graph']['mode']}{' +adaptive' if cfg['graph']['adaptive'] else ''}"
+                f"{' pool' if cfg['graph'].get('readout') == 'pool' else ''}",
+                "head": head or "",
+                "hparams": "" if hp is None else f"hidden={hp['hidden']} lr={hp['lr']:g} dropout={hp['dropout']:g}",
                 "hot_weight": cfg["hot_weight"],
                 "early_stop": cfg["early_stop"], "seeds": " ".join(map(str, seeds)), "config_sha256": cfg_hash,
                 "data_sha256": data_hash, "code_sha256": code_hash, "git_commit": commit, "git_dirty": dirty,
@@ -532,7 +615,7 @@ def _run(cfg: dict, folds: list[str], seeds: list[int], out_dir: Path, model_dir
                 "val_rmse_all": round(by_seed_all, 6), "val_rmse_extreme": round(by_seed_ext, 6),
                 **{k: round(v, 6) for k, v in {**ref, **skill}.items()},
                 "wall_seconds": round(time.time() - t0, 1),
-            })
+            }, registry)
         print(f"[{cfg['run_id']} {fold}] {len(seeds)} seeds: mean val RMSE {by_seed_all:.4f} "
               f"(extreme {by_seed_ext:.4f}); skill vs clim {skill['skill_clim_all']:+.3f}, "
               f"vs persistence {skill['skill_persist_all']:+.3f}; {time.time() - t0:.0f}s", flush=True)

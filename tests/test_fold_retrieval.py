@@ -229,3 +229,16 @@ def test_anen_forecast_averages_standardised_analogue_outcomes(f1):
     assert np.allclose(out[0], d.loc[days0, "clim_mean_t_max"] + d.loc[days0, "clim_std_t_max"] * zbar0)
     days2 = pd.date_range(q[2], periods=5)
     assert np.allclose(out[2], d.loc[days2, "clim_mean_t_max"])  # no analogue -> climatology
+
+
+def test_region_mmr_mode_matches_the_screened_r2_selection():
+    """The trained R2 picks exactly what the screen evaluated (evaluation/retrieval_ladder_screen.py)."""
+    import evaluation.retrieval_ladder_screen as rls
+
+    fr = FoldRetriever("f1", "v2")
+    q = pd.DatetimeIndex(fr.train_w["query_date"].iloc[-600::30]).append(pd.DatetimeIndex(fr.val_w["query_date"].iloc[::90]))
+    r2 = fr.retrieve(q, "region_mmr")
+    sel = rls.Selector(fr, q)
+    for i in range(len(q)):
+        assert [int(c) for c in r2.idx[i] if c >= 0] == sel.mmr(i)
+    assert np.array_equal(r2.n_eligible, fr.retrieve(q, "region").n_eligible)  # same pool as Rg and R0

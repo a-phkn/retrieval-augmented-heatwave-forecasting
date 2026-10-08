@@ -154,3 +154,32 @@ def test_data_files_include_upstream_only_for_regional_retrieval():
     assert UPSTREAM_PATH not in tu._data_files({**base, "retrieval": {"mode": "sim", "k": 5}})
     assert UPSTREAM_PATH in tu._data_files({**base, "retrieval": {"mode": "region", "k": 5}})
     assert "pipeline/download_era5_upstream.py" in tu.CODE_FILES
+
+
+def test_physics_head_config_trains_end_to_end_and_writes_both_targets(tmp_path, monkeypatch):
+    import json as _json
+
+    monkeypatch.setattr(tu, "MAX_EPOCHS", 1)
+    cfg = {**_json.loads((tu.REPO_ROOT / "configs" / "A2Lr_hw5.json").read_text(encoding="utf-8")),
+           "run_id": "test_ph", "head": "physics"}
+    path = tmp_path / "c.json"
+    path.write_text(_json.dumps(cfg), encoding="utf-8")
+    cfg = tu.load_config(path)
+    res = tu.run(cfg, folds=["f1"], seeds=[0], out_dir=tmp_path / "pred", model_dir=tmp_path / "m",
+                 write_registry=False, threads=2)
+    wb = res["f1"]
+    tx = pd.read_parquet(tmp_path / "pred" / "test_ph" / "f1_tmax.parquet")
+    assert len(wb) == len(tx) and np.isfinite(wb["pred"]).all() and np.isfinite(tx["pred"]).all()
+    # The two files are not swapped: each file's actuals are exactly that target's (Liljegren WBGT, in sun, can
+    # exceed the daily Tmax on humid days, so "Tmax > WBGT" is not a usable check).
+    from training.folds import build_fold
+    for df, target, labels, form in ((tx, "t_max", "v2", "raw"), (wb, "wbgt_lj_max", "wbgt", "anomaly")):
+        truth = build_fold("f1", target, labels, target_form=form).val.y_raw.reshape(-1)
+        np.testing.assert_allclose(df["actual"].to_numpy(), truth, atol=1e-4)
+    log = _json.loads((tmp_path / "pred" / "test_ph" / "f1_training_log.json").read_text(encoding="utf-8"))
+    assert log[0]["finite"]
+    for bad in ({"head": "physics", "target": "t_max", "labels": "v2", "anomaly_target": False, "target_form": "raw"},
+                {"head": "physics", "retrieval": {"mode": "sim", "k": 5}}, {"head": "other"}):
+        path.write_text(_json.dumps({**cfg, **bad}), encoding="utf-8")
+        with pytest.raises(ValueError):
+            tu.load_config(path)

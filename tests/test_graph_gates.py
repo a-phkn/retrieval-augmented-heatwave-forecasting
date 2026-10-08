@@ -38,3 +38,14 @@ def test_backbone_decision_across_families():
     assert gg.backbone_decision({T: {**ok, "a": False}, W: ok})["backbone"] == "control LSTM"
     assert gg.backbone_decision({T: {"candidate": None, "a": None, "b": None}, W: ok})["backbone"] == "control LSTM"
     assert gg.backbone_decision({T: ok, W: {**ok, "b": False}})["backbone"] == "U1"
+
+
+def test_tuned_decision_follows_the_amended_rule():
+    ok = {"g_d2": True, "a": True, "b": True}
+    both = lambda c3, pool: {T: {"C3": c3, "C3pool": pool}, W: {"C3": c3, "C3pool": pool}}  # noqa: E731
+    assert gg.tuned_decision(both(ok, ok))["backbone"] == "graph C3 (tuned)"  # the agreed arm first
+    assert gg.tuned_decision(both({**ok, "b": False}, ok))["backbone"] == "graph C3-pool (tuned)"
+    assert gg.tuned_decision(both({**ok, "b": False}, {**ok, "g_d2": False}))["backbone"] == "U1 (tuned)"
+    assert gg.tuned_decision(both({**ok, "a": False}, {**ok, "b": False}))["backbone"] == "control LSTM"
+    mixed = {T: {"C3": ok, "C3pool": ok}, W: {"C3": {**ok, "b": False}, "C3pool": {**ok, "a": False}}}
+    assert gg.tuned_decision(mixed)["backbone"] == "U1 (tuned)"  # an arm must pass in BOTH families

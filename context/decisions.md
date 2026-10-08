@@ -880,3 +880,35 @@ fold by fold (a background-job cutoff loses at most one fold; finished folds are
      (a) therefore slightly favours the tuned graph, disclosed.
   4. The tuned graph and tuned U1 then run once, 10 seeds x 4 folds, and the same G-D3 rule decides. No second
      tuning round: if the graph still fails, the fallback above applies. Cost ~15-18 h of background compute.
+
+**G-D3 result: U1 (situation 3), 2026-10-08** (`evaluation_v2/graph_gates.md`, code b5e778d6, commit 8749dc6)
+- Candidate C3 in both families (all four graph configs pass G-D2). (a) vs the control LSTM passes in both families;
+  (b) vs U1 passes for Tmax (Δ -0.052 [-0.092, -0.013]) and fails for WBGT (Δ +0.076 [+0.042, +0.110]) -> U1.
+- Edges hurt in both families: C3 / C4 / C4a vs C2 all days +0.08 to +0.10 °C (CIs entirely above 0). The edgeless
+  C2 is the best model (Tmax 2.051 vs control 2.175, U1 2.199; WBGT 2.254 vs control 2.373, U1 2.270), but it is the
+  no-structure control and not eligible under G-D3. No structure claim holds.
+- Likely mechanism (a hypothesis, not tested): with edges, the forecast reads Delhi's node only, so upstream
+  information must pass through Delhi's neighbours one hop a day and is averaged at every hop (over-squashing;
+  Alon & Yahav 2021, ICLR); C2 reads every upstream state directly.
+- The user was told before anything else was run, as agreed.
+
+**Graph tuning round, with one added arm "C3-pool": DECIDED 2026-10-08 (user), AFTER the G-D3 result above**
+- The agreed round runs unchanged (tuned C3 and tuned U1, grids and selection as above). The tuning is done per
+  family (each family selects its own hidden / lr / dropout on its inner blocks); the architecture is what the
+  cross-family rule decides.
+- Added arm, disclosed as decided after seeing the result: C3-pool = C3's static edges + C2's readout (Delhi's state
+  concatenated with the mean of the upstream states), tuned on the same 8-combination graph grid and selected the
+  same way. It tests the over-squashing hypothesis: if edges only hurt because of the readout, C3-pool >= C2.
+- Dropout in the DSTGNN (new; default 0 = the runs so far): applied to the node embeddings before the GRU and to the
+  readout before the head. U1's dropout is the LSTM's existing inter-layer dropout (default 0.2).
+- Decision after the 10-seed runs, applying G-D3 (a) and (b) in both families:
+  1. tuned C3 passes -> backbone graph C3 (the agreed rule);
+  2. else tuned C3-pool passes -> backbone graph C3-pool, reported as chosen after a post-result change; the
+     locked 2019+ test run is its confirmation;
+  3. else the agreed fallback, judged on tuned C3 (the agreed candidate): control LSTM if its (a) fails in either
+     family, otherwise tuned U1. The tuned graph is never compared with an untuned U1.
+  G-D2 is re-checked for each tuned graph arm; an arm failing it does not pass.
+- Also reported: C3-pool vs C2 (all / extreme) -- do edges add anything once the readout sees the upstream nodes?
+  C2 is not retuned, so this comparison favours C3-pool; disclosed.
+- Order: tuning grids for both families (C3, C3-pool, U1) -> 10-seed runs of the 6 selected configs -> PH_lstm and
+  the two R2 runs. ~28-30 h of background compute; safe to pause between folds.

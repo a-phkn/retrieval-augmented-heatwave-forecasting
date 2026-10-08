@@ -32,6 +32,10 @@ attributed to that one change.
 | **G-R\*** | The test of whether the best retrieval step (Rg and/or R2–R4) still helps once it is added to the chosen backbone (the graph, or U1). |
 | **U1** | The flattened-upstream control: the plain LSTM given the same 27 upstream points' daily data as the graph, laid side by side in one input row. If the graph is not better than U1, the gain comes from the data, not the graph. |
 | **C4a** | C4 plus learned "adaptive" connections between neighbouring points (reported next to C4). |
+| **C3-pool** | C3's fixed edges plus C2's way of reading the forecast: Delhi's state *and* the average of all upstream points' states. Added 2026-10-08 after the G-D3 result (disclosed) to test whether the edges only hurt because of how the forecast was read out. |
+| **Over-squashing** | A known weakness of graph networks (Alon & Yahav, ICLR 2021): information from far-away nodes must pass through a few neighbours and gets squeezed and diluted on the way. Our best guess for why adding edges made the graph worse. |
+| **Tuning round** | One agreed search over 8 settings (size, learning rate, dropout) per model, chosen only on each fold's last 2 training years, never on the reported years; run once before any fallback, never repeated. |
+| **Dropout** | Randomly switching off part of the network during training so it can't lean on any one piece; a standard guard against overfitting. Off when forecasting. |
 | **Non-inferiority margin** | How much worse a model may be and still count as "not worse": for G-D3, the upper end of the 95% range of its error difference must stay below +0.05 °C. |
 | **BB\*** | "Best backbone": the architecture finally chosen (DSTGNN, or the physics-guided LSTM if the DSTGNN fails its gates). |
 | **H1** | Optional extra classification head that predicts the yes/no heatwave flag directly. |

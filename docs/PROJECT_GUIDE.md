@@ -536,6 +536,33 @@ worse than both the plain LSTM and U1 (the LSTM given the same upstream data) by
     with yesterday's value, which looks like the large-scale heat pattern rather than air seen
     moving point to point. Whether the graph structure itself adds anything is tested in G-D3,
     against an LSTM given the same upstream data.
+- **G-D3 result (2026-10-08): U1 for now, and the edges hurt.** All 10 graph runs are done
+  (`evaluation_v2/graph_gates.md`). Error on all days, °C (lower is better):
+
+  | Model | Tmax | WBGT |
+  |---|---|---|
+  | Plain LSTM (control) | 2.175 | 2.373 |
+  | U1 (LSTM + flattened upstream data) | 2.199 | 2.270 |
+  | C2 (graph code, **no edges**: the forecast reads every upstream point directly) | **2.051** | **2.254** |
+  | C3 (fixed geographic edges) | 2.147 | 2.346 |
+  | C4 / C4a (wind edges / + learned edges) | 2.142 / 2.138 | 2.338 / 2.334 |
+
+  - Every graph model trains cleanly (G-D2) and beats the plain LSTM.
+  - The chosen graph, C3, is not worse than U1 for Tmax but is 0.08 °C worse for WBGT, past the
+    0.05 margin, so the rule we agreed says **U1**.
+  - Adding edges makes the model about 0.09 °C *worse* than C2 in both families. Our best guess:
+    with edges, the forecast reads only Delhi's node, so upstream information has to squeeze
+    through Delhi's neighbours one hop a day and gets diluted at every hop ("over-squashing").
+    C2 avoids this by reading every upstream point directly.
+- **The tuning round (decided 2026-10-08, running now).** As agreed, one fair tuning round
+  runs before any fallback. Tuning is picked only on each fold's last 2 training years, never the
+  2007–2018 years we report:
+  - tuned **C3** (the agreed candidate) and tuned **U1**, so the comparison stays fair;
+  - one extra arm, **C3-pool**: C3's edges plus C2's direct view of the upstream points. It was
+    added *after* seeing the result, which is disclosed; the locked 2019+ test years would confirm
+    it if it is chosen.
+  - Order of choice: tuned C3 if it passes, else tuned C3-pool, else the agreed fallback.
+  - Check: the first tuning combination equals the original C3 and reproduced its result exactly.
 
 **Retrieval ladder (R0 → R4):**
 - **R0** is the RA-v1 design.
@@ -643,7 +670,7 @@ in brackets is the 95% interval; if it crosses 0, the change is not significant.
 - **R2, varied analogues (MMR):** picks similar past days that are also *different from each other*. It adds a
   little on top of Rg (about −0.01 °C for both Tmax and WBGT), and the 5 analogues are less alike
   (similarity 0.79 → 0.70). **Passes: will be trained** after the graph runs (its code would change the hash
-  the graph runs depend on).
+  the graph runs depend on). Code added 2026-10-08; queued after the graph tuning round.
 - **R3, drift gate:** when the recent weather series looks unstable, use only analogues from the last 15
   years. The gate does switch on (27% of days for Tmax, 12% for WBGT), but it adds nothing over Rg. Not trained.
 - **R4, warming correction:** shifts old analogues' outcomes by the warming trend since then. Adds nothing over
@@ -837,3 +864,4 @@ the project's virtual environment (`.venv`); nothing is installed globally.
 | 2026-10-07 | Retrieval information check: analogues add no information beyond the query's own inputs, so tuning the network's use of them won't help. |
 | 2026-10-07 | Rg (regional-pattern retrieval) added after G3: WBGT −2% error on all days and beats random analogues; extreme-day condition missed (p = 0.11), so G3 still none; reviewed. |
 | 2026-10-07 | Physics head chosen (exact formula, per cell at each cell's peak hour); graph runs C2–C4a + U1 started (G-D4 passed); R2–R4 screened: R2 passes, R3/R4 add nothing over Rg. |
+| 2026-10-08 | Graph runs done: G-D3 says U1 (graph not worse than U1 for Tmax, 0.08 °C worse for WBGT); edges hurt, the edgeless C2 is best. One tuning round started (C3, U1, and the post-result arm C3-pool); then PH_lstm and R2. |

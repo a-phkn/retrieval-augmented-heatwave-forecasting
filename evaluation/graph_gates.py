@@ -25,6 +25,8 @@ Structure claims (descriptive unless significant): C3 / C4 / C4a vs U1 and vs C2
 
 Run from repo root (after the graph queue):  python -m evaluation.graph_gates
 Writes evaluation_v2/graph_gates.{md,json}.
+After the tuning round (decisions.md 2026-10-08):  python -m evaluation.graph_gates --tuned
+Writes evaluation_v2/graph_gates_tuned.{md,json}.
 """
 from __future__ import annotations
 
@@ -145,12 +147,95 @@ def write_report(results: dict, decision: dict) -> None:
     (OUT_DIR / "graph_gates.md").write_text("\n".join(L) + "\n", encoding="utf-8")
 
 
-def main() -> None:
-    results = {fam: evaluate_family(fam) for fam in CONTROLS}
-    decision = backbone_decision({f: {"candidate": r["candidate"], "a": r["a"], "b": r["b"]} for f, r in results.items()})
-    write_report(results, decision)
-    (OUT_DIR / "graph_gates.json").write_text(json.dumps({"results": results, "decision": decision}, indent=2,
-                                                         default=float) + "\n", encoding="utf-8")
+# ------------------------------------------------------------------ after the tuning round
+# decisions.md, 2026-10-08 ("Graph tuning round, with one added arm C3-pool"), written before any
+# tuning result existed. Runs: {control}_C3_tuned, {control}_C3pool_tuned, {control}_U1_tuned.
+
+TUNED_GRAPHS = ("C3", "C3pool")
+
+
+def tuned_decision(fam: dict[str, dict]) -> dict:
+    """fam: per family {arm: {"g_d2": bool, "a": bool, "b": bool}} for arm in TUNED_GRAPHS.
+    1. tuned C3 passes (G-D2, a, b) in both families -> graph C3;
+    2. else tuned C3-pool passes in both -> graph C3-pool (post-result, test run confirms);
+    3. else control LSTM if tuned C3's (a) fails in either family, otherwise tuned U1."""
+    def passes(arm: str) -> bool:
+        return all(r[arm]["g_d2"] and r[arm]["a"] and r[arm]["b"] for r in fam.values())
+
+    if passes("C3"):
+        return {"backbone": "graph C3 (tuned)", "reason": "tuned C3 passed G-D2, (a) and (b) in both families"}
+    if passes("C3pool"):
+        return {"backbone": "graph C3-pool (tuned)",
+                "reason": "tuned C3 failed; tuned C3-pool passed G-D2, (a) and (b) in both families. Chosen after a "
+                          "post-result change (decisions.md 2026-10-08); the locked test run is its confirmation"}
+    if not all(r["C3"]["a"] for r in fam.values()):
+        return {"backbone": "control LSTM", "reason": "no tuned graph arm passed; tuned C3's (a) failed in a family"}
+    return {"backbone": "U1 (tuned)", "reason": "no tuned graph arm passed; tuned C3's (a) passed in both families"}
+
+
+def evaluate_tuned_family(fam: str) -> dict:
+    ctrl_id = CONTROLS[fam]
+    ctrl = load_run(ctrl_id)
+    runs = {a: load_run(f"{ctrl_id}_{a}_tuned") for a in (*TUNED_GRAPHS, "U1")} | {"C2": load_run(f"{ctrl_id}_C2")}
+    missing = [a for a, df in runs.items() if df is None]
+    if missing:
+        raise FileNotFoundError(f"{fam}: runs not complete: {missing}")
+    ctrl_sd = seed_rmses(ctrl)
+    out = {"rmse_all": {a: rmse_by(df) for a, df in runs.items()} | {"control": rmse_by(ctrl)},
+           "rmse_extreme": {a: rmse_by(df[df["stratum"] == "extreme"]) for a, df in runs.items()}
+           | {"control": rmse_by(ctrl[ctrl["stratum"] == "extreme"])},
+           "g_d2": {a: g_d2(load_logs(f"{ctrl_id}_{a}_tuned"), seed_rmses(runs[a]), ctrl_sd) for a in TUNED_GRAPHS}}
+    tests = {}
+    for a in TUNED_GRAPHS:
+        for other, name in ((ctrl, "control"), (runs["U1"], "tuned U1"), (runs["C2"], "C2")):
+            for s in ("all", "extreme"):
+                tests[f"{a} tuned vs {name} ({s})"] = compare(other, runs[a], s)
+    for s in ("all", "extreme"):
+        tests[f"C3pool tuned vs C3 tuned ({s})"] = compare(runs["C3"], runs["C3pool"], s)
+        tests[f"U1 tuned vs control ({s})"] = compare(ctrl, runs["U1"], s)
+    out["tests"] = tests
+    out["arms"] = {a: {"g_d2": out["g_d2"][a]["pass"], "a": non_inferior(tests[f"{a} tuned vs control (all)"]),
+                       "b": non_inferior(tests[f"{a} tuned vs tuned U1 (all)"])} for a in TUNED_GRAPHS}
+    return out
+
+
+def write_tuned_report(results: dict, decision: dict) -> None:
+    L = ["# Graph backbone after the tuning round (decisions.md 2026-10-08)", "",
+         f"**Backbone (BB\\*): {decision['backbone']}** ({decision['reason']}).", "",
+         "Out of fold 2007-2018, 10 seeds x 4 folds; hyperparameters were selected on the inner 2-year blocks only "
+         "(`evaluation_v2/graph_tuning.md`). The control LSTM and C2 are not retuned (comparisons against them favour "
+         f"the tuned models; disclosed). Non-inferiority margin {MARGIN_C} °C on the upper end of the 95% CI.", ""]
+    for fam, r in results.items():
+        L += [f"## {fam} (control `{CONTROLS[fam]}`)", "", "| Arm | G-D2 | (a) vs control | (b) vs tuned U1 |",
+              "|---|---|---|---|"]
+        L += [f"| {a} tuned | {v['g_d2']} | {v['a']} | {v['b']} |" for a, v in r["arms"].items()]
+        L += ["", "| Model | All RMSE | Extreme RMSE |", "|---|---|---|"]
+        L += [f"| {m} | {r['rmse_all'][m]:.3f} | {r['rmse_extreme'][m]:.3f} |" for m in r["rmse_all"]]
+        L += ["", "| Comparison | Δ RMSE (95% CI) | p |", "|---|---|---|"]
+        L += [f"| {k} | {t['delta']:+.3f} {_ci(t)} | {t['p_value']:.3f} |" for k, t in r["tests"].items()]
+        L.append("")
+    (OUT_DIR / "graph_gates_tuned.md").write_text("\n".join(L) + "\n", encoding="utf-8")
+
+
+def main(argv: list[str] | None = None) -> None:
+    import argparse
+
+    ap = argparse.ArgumentParser(description="Graph backbone gates (pre-registered).")
+    ap.add_argument("--tuned", action="store_true", help="evaluate the tuning round's 10-seed runs")
+    args = ap.parse_args(argv)
+    if args.tuned:
+        results = {fam: evaluate_tuned_family(fam) for fam in CONTROLS}
+        decision = tuned_decision({f: r["arms"] for f, r in results.items()})
+        write_tuned_report(results, decision)
+        out = OUT_DIR / "graph_gates_tuned.json"
+    else:
+        results = {fam: evaluate_family(fam) for fam in CONTROLS}
+        decision = backbone_decision({f: {"candidate": r["candidate"], "a": r["a"], "b": r["b"]}
+                                      for f, r in results.items()})
+        write_report(results, decision)
+        out = OUT_DIR / "graph_gates.json"
+    out.write_text(json.dumps({"results": results, "decision": decision}, indent=2, default=float) + "\n",
+                   encoding="utf-8")
     print(decision)
 
 

@@ -30,6 +30,10 @@ Modes (pre-registered 2026-10-06, context/decisions.md):
           upstream points plus Delhi; the WBGT family adds the 27 points' daily mean dew point
           and Delhi's relative humidity (pre-registered 2026-10-07). Same pool, rules and dedup
           as R0, so R0-rand is its random control.
+  "region_mmr"  R2: Rg's pool and similarity, but the K analogues are picked greedily by maximal
+          marginal relevance over the 200 most similar eligible candidates: score = 0.7 sim(query, c)
+          - 0.3 max over chosen s of sim(c, s), dedup rules applied in the greedy pass (pre-registered
+          and screened 2026-10-07). Random control: R0-rand.
 
 Run from repo root (prints a summary for one fold):
     python -m retrieval.fold_retrieval f4 v2
@@ -47,7 +51,9 @@ from pipeline.climatology import apply_climatology, doy_climatology
 from retrieval.features import FEATURE_NAMES
 from training.folds import FOLDS, FORECAST_DAYS, INPUT_DAYS, TEST_START, fold_bounds, fold_daily, fold_windows
 
-MODES = ("sim", "rand", "time", "time_rand", "region")
+MODES = ("sim", "rand", "time", "time_rand", "region", "region_mmr")
+REGION_MODES = ("region", "region_mmr")
+MMR_LAMBDA, MMR_POOL = 0.7, 200
 RANDOM_MODES = ("rand", "time_rand")  # need a seed; draws are fixed per fold and seed
 K_DEFAULT = 5
 BUFFER_DAYS = 19  # v1: candidate_latest_start = query_date - 19 days
@@ -191,7 +197,7 @@ class FoldRetriever:
         if mode in RANDOM_MODES and seed is None:
             raise ValueError(f"mode {mode!r} needs a seed")
         q = pd.DatetimeIndex(query_dates)
-        if mode == "region":
+        if mode in REGION_MODES:
             qv, cand_vectors = self.region_query_vectors(q), self._region_state()[0]
         else:
             qv, cand_vectors = self.query_vectors(q), self.vectors
@@ -223,6 +229,8 @@ class FoldRetriever:
                 if mode in RANDOM_MODES:
                     order = rng.permutation(np.flatnonzero(elig))
                     chosen = self._dedup(order, k)
+                elif mode == "region_mmr":
+                    chosen = self._mmr(elig, row, cand_vectors, k)
                 else:
                     masked = np.where(elig, row, -np.inf)
                     top = min(_TOP_POOL, n_elig[i])
@@ -234,6 +242,35 @@ class FoldRetriever:
                 idx[i, : len(chosen)] = chosen
                 sim[i, : len(chosen)] = row[chosen]
         return Retrieved(idx=idx, sim=sim, n_eligible=n_elig)
+
+    def _mmr(self, elig: np.ndarray, rel: np.ndarray, vectors: np.ndarray, k: int) -> list[int]:
+        """R2: greedy maximal marginal relevance with the v1 dedup rules applied in the pass;
+        the pool widens from the MMR_POOL most similar to all eligible only if dedup leaves < k."""
+        cands = np.flatnonzero(elig)
+        order = cands[np.argsort(-rel[cands], kind="stable")]
+        chosen: list[int] = []
+        for pool in (order[:MMR_POOL], order):
+            chosen, days, counts = [], [], {}
+            redund = np.full(len(pool), -np.inf)
+            free = np.ones(len(pool), dtype=bool)
+            rel_p = rel[pool]
+            while len(chosen) < k and free.any():
+                score = np.where(free, MMR_LAMBDA * rel_p - (1 - MMR_LAMBDA) * np.where(np.isfinite(redund), redund, 0.0),
+                                 -np.inf)
+                j = int(np.argmax(score))
+                free[j] = False
+                c = pool[j]
+                day, ep = self._cand_day[c], self.cand_episode[c]
+                if any(abs(day - x) < MIN_DAYS_APART for x in days) or (ep > 0 and counts.get(ep, 0) >= MAX_PER_EPISODE):
+                    continue
+                chosen.append(int(c))
+                days.append(day)
+                if ep > 0:
+                    counts[ep] = counts.get(ep, 0) + 1
+                redund = np.maximum(redund, vectors[pool] @ vectors[c])
+            if len(chosen) == k or len(pool) == len(order):
+                return chosen
+        return chosen
 
     def _dedup(self, ranked: np.ndarray, k: int) -> list[int]:
         """v1 dedup: max 2 per episode, >= 10 days between any two chosen analogues."""

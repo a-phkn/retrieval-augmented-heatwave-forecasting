@@ -1,0 +1,33 @@
+{
+  "run_id": "A2Lr_hw5_C3_h64_lr1e-3_d0.2",
+  "parent": "A2Lr_hw5",
+  "description": "Graph tuning round (decisions.md 2026-10-07/08): C3 of A2Lr_hw5, hparams {'hidden': 64, 'lr': 0.001, 'dropout': 0.2}; selection on the inner 2-year block only.",
+  "target": "wbgt_lj_max",
+  "labels": "wbgt",
+  "anomaly_target": true,
+  "target_form": "anomaly",
+  "hot_weight": 5,
+  "early_stop": "inner_2y",
+  "seeds": [
+    0,
+    1,
+    2
+  ],
+  "folds": [
+    "f1",
+    "f2",
+    "f3",
+    "f4"
+  ],
+  "threads": 8,
+  "backbone": "dstgnn",
+  "graph": {
+    "mode": "static",
+    "adaptive": false
+  },
+  "hparams": {
+    "hidden": 64,
+    "lr": 0.001,
+    "dropout": 0.2
+  }
+}

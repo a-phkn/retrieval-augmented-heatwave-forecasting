@@ -29,6 +29,12 @@ Graph modes (the plan's controls, docs/GLOSSARY.md C2-C4):
              reported with and without it.
 All edges must be between neighbours (pipeline.graph.neighbour_mask); pass the mask as
 `neighbour_mask` so the adaptive part respects it.
+
+Readout (added 2026-10-08 for the tuning round, context/decisions.md): "delhi" reads Delhi's
+final state only (C3/C4/C4a as run); "pool" reads [Delhi ; mean of upstream states], C2's
+readout, with edges kept ("C3-pool"). Mode "none" always uses "pool".
+Dropout (default 0 = the runs before 2026-10-08, and then skipped entirely so nothing changes):
+on the node embeddings before the GRU and on the readout before the head.
 C1 (plain Delhi LSTM) is the existing control model.
 """
 from __future__ import annotations
@@ -37,15 +43,21 @@ import torch
 from torch import nn
 
 GRAPH_MODES = ("none", "static", "dynamic")
+READOUTS = ("delhi", "pool")
 
 
 class DSTGNN(nn.Module):
     def __init__(self, n_nodes: int, f_delhi: int, f_upstream: int, hidden: int = 32, graph: str = "dynamic",
                  adaptive: bool = False, embed_dim: int = 8, forecast_days: int = 5,
-                 static_adj: torch.Tensor | None = None, neighbour_mask: torch.Tensor | None = None):
+                 static_adj: torch.Tensor | None = None, neighbour_mask: torch.Tensor | None = None,
+                 readout: str = "delhi", dropout: float = 0.0):
         super().__init__()
         if graph not in GRAPH_MODES:
             raise ValueError(f"graph must be one of {GRAPH_MODES}")
+        if readout not in READOUTS:
+            raise ValueError(f"readout must be one of {READOUTS}")
+        if not 0.0 <= dropout < 1.0:
+            raise ValueError("dropout must be in [0, 1)")
         if graph == "static" and static_adj is None:
             raise ValueError("graph 'static' needs static_adj (N, N)")
         if adaptive and graph != "dynamic":
@@ -53,12 +65,14 @@ class DSTGNN(nn.Module):
         if adaptive and neighbour_mask is None:
             raise ValueError("the adaptive adjacency needs neighbour_mask (N, N) to stay local")
         self.n_nodes, self.hidden, self.graph, self.adaptive = n_nodes, hidden, graph, adaptive
+        self.readout = "pool" if graph == "none" else readout
+        self.drop = nn.Dropout(dropout) if dropout > 0 else None  # None: no extra op, the earlier runs unchanged
         self.embed_delhi = nn.Linear(f_delhi, hidden)
         self.embed_up = nn.Linear(f_upstream, hidden)
         self.w_msg = nn.Linear(hidden, hidden, bias=False)
         self.cell = nn.GRUCell(hidden * 2, hidden)
-        readout = hidden * 2 if graph == "none" else hidden
-        self.head = nn.Sequential(nn.Linear(readout, 32), nn.ReLU(), nn.Linear(32, forecast_days))
+        width = hidden * 2 if self.readout == "pool" else hidden
+        self.head = nn.Sequential(nn.Linear(width, 32), nn.ReLU(), nn.Linear(32, forecast_days))
         if static_adj is not None:
             self.register_buffer("static_adj", torch.as_tensor(static_adj, dtype=torch.float32))
         self.register_buffer("neighbour_mask", None if neighbour_mask is None
@@ -103,6 +117,8 @@ class DSTGNN(nn.Module):
         if x_up.shape[2] != self.n_nodes - 1:
             raise ValueError(f"expected {self.n_nodes - 1} upstream nodes, got {x_up.shape[2]}")
         e = torch.cat([self.embed_delhi(x_delhi).unsqueeze(2), self.embed_up(x_up)], dim=2)  # (B, T, N, H)
+        if self.drop is not None:
+            e = self.drop(e)
         a = self.adjacency(adj_dynamic, b, t)
         s = e.new_zeros(b, self.n_nodes, self.hidden)
         states = []
@@ -119,6 +135,7 @@ class DSTGNN(nn.Module):
 
     def forward(self, x_delhi: torch.Tensor, x_up: torch.Tensor, adj_dynamic: torch.Tensor | None = None) -> torch.Tensor:
         last = self.node_states(x_delhi, x_up, adj_dynamic)[:, -1]  # (B, N, H)
-        if self.graph == "none":
-            return self.head(torch.cat([last[:, 0], last[:, 1:].mean(dim=1)], dim=-1))
-        return self.head(last[:, 0])
+        r = torch.cat([last[:, 0], last[:, 1:].mean(dim=1)], dim=-1) if self.readout == "pool" else last[:, 0]
+        if self.drop is not None:
+            r = self.drop(r)
+        return self.head(r)
