@@ -104,6 +104,11 @@ Short, frequently-updated. See `build_plan.md` for full milestone detail.
 - **C3-hop (2026-10-08)**: `models/dstgnn_multihop.py` + 7 tests (not yet in CODE_FILES, so the running queue's hash
   is unchanged). Trainer hook, physics fixes and C3-hop configs are prepared patches in scratchpad `post_queue/`
   (RUNBOOK.md), dry-run tested on a scratch copy of the repo; applied after the tuned runs.
+- **Focused review (2026-10-10)**: no blocker. C3-hop switched to ring averaging (balanced per-hop gradients);
+  physics guard checks gradients and stops at > 1% skipped batches; graph_gates --tuned: C3-hop optional, both
+  decisions, structure claims, ridge rows; in-season Brier. Fresh dry run on a patched scratch copy: 77 tests
+  pass, C3-hop 1-epoch smoke run trains and its checkpoint rebuilds. Stage-2 launcher: scratchpad
+  `week5b_queue.sh` (guarded).
 - **DSTGNN skeleton (2026-10-06)**: `models/dstgnn.py` (graph GRU, modes none/static/dynamic + adaptive),
   `pipeline/graph.py` (Delhi + 27 nodes, geographic and wind-gated advective edges). G-D1: 13 tests pass.
   The plan said `data/graph.py`; it is `pipeline/graph.py` because `data/` holds raw data.

@@ -85,3 +85,23 @@ def test_multi_hop_arm_is_a_candidate_and_needs_g_d2():
     rmse = {"control": 2.37, "U1": 2.27, "C2": 2.254, "C3": 2.30, "C3pool": 2.26, "C3hop": 2.20}
     assert gg.amended_decision(ok, rmse)["model"] == "C3hop"
     assert gg.amended_decision(ok, {**rmse, "C3hop": 2.24})["model"] == "C2"  # within 0.02 of C2 -> simpler
+
+
+def test_c3hop_is_optional_and_both_decisions_are_reported():
+    fam = _fam()
+    no_hop = {k: v for k, v in fam.items() if k != "C3hop"}
+    assert not gg.eligible({T: no_hop, W: no_hop})["C3hop"]  # missing -> not eligible, no crash
+    rmse = {"control": 2.37, "U1": 2.30, "C2": 2.254, "C3": 2.30, "C3pool": 2.28, "C3hop": 2.20}  # U1 > tie margin
+    res = {T: {"models": no_hop, "rmse_all": rmse}, W: {"models": no_hop, "rmse_all": rmse}}
+    d = gg.tuned_decisions(res)
+    assert d["with_C3hop"] is None and d["headline"]["model"] == d["without_C3hop"]["model"] == "C2"
+    res = {T: {"models": fam, "rmse_all": rmse}, W: {"models": fam, "rmse_all": rmse}}
+    d = gg.tuned_decisions(res)
+    assert d["with_C3hop"]["model"] == d["headline"]["model"] == "C3hop" and d["without_C3hop"]["model"] == "C2"
+
+
+def test_structure_claims_need_both_u1_and_c2():
+    t = lambda hi: {"ci_high": hi}  # noqa: E731
+    tests = {"C3 vs U1 (all)": t(-0.01), "C3 vs C2 (all)": t(-0.02), "C3pool vs U1 (all)": t(-0.01),
+             "C3pool vs C2 (all)": t(0.01)}
+    assert gg.structure_claims(tests, ("C3", "C3pool", "C3hop")) == {"C3": True, "C3pool": False}

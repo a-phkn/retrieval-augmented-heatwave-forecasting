@@ -161,13 +161,14 @@ SELECTION_FREE_YEARS = (2007, 2010, 2013, 2016, 2017, 2018)  # never an inner (e
 
 
 def eligible(fam: dict[str, dict]) -> dict[str, bool]:
-    """fam: per family {model: {"g_d2": bool, "a": bool, "b": bool}} for C2 / C3 / C3pool, plus
-    {"U1": {"a": bool}, "control": {"b": bool}}. Eligible = non-inferior to the control (a) and to
-    tuned U1 (b) in BOTH families; graph-code models must also pass G-D2."""
+    """fam: per family {model: {"g_d2": bool, "a": bool, "b": bool}} for the graph-code models present,
+    plus {"U1": {"a": bool}, "control": {"b": bool}}. Eligible = non-inferior to the control (a) and to
+    tuned U1 (b) in BOTH families; graph-code models must also pass G-D2. A model missing in a family
+    is not eligible."""
     ok = {"control": all(r["control"]["b"] for r in fam.values()),
           "U1": all(r["U1"]["a"] for r in fam.values())}
     for m in GRAPH_MODELS:
-        ok[m] = all(r[m]["g_d2"] and r[m]["a"] and r[m]["b"] for r in fam.values())
+        ok[m] = all(m in r and r[m]["g_d2"] and r[m]["a"] and r[m]["b"] for r in fam.values())
     return ok
 
 
@@ -181,7 +182,7 @@ def amended_decision(ok: dict[str, bool], wbgt_rmse: dict[str, float]) -> dict:
     pick = next(m for m in cands if wbgt_rmse[m] - best <= TIE_C)
     names = {"control": "control LSTM", "U1": "U1 (tuned)", "C2": "C2, regional node model (no edges)",
              "C3": "graph C3 (tuned)", "C3pool": "graph C3-pool (tuned; arm added after the G-D3 result)",
-             "C3hop": "graph C3-hop (multi-hop; arm added after the ML review)"}
+             "C3hop": "graph C3-hop (ring multi-hop; arm added after the ML review)"}
     return {"backbone": names[pick], "model": pick, "provisional": True, "eligible": cands,
             "reason": f"lowest WBGT all-days RMSE among the eligible {cands} (ties within {TIE_C} °C to the simpler). "
                       "PROVISIONAL: awaiting the user's approval"}
@@ -192,46 +193,86 @@ def selection_free(df: pd.DataFrame) -> pd.DataFrame:
     return df[pd.DatetimeIndex(df["target_date"]).year.isin(SELECTION_FREE_YEARS)]
 
 
+def structure_claims(tests: dict, models) -> dict[str, bool]:
+    """The structure-claim rule for the edged models: CI entirely below 0 against BOTH U1 and C2 (all days)."""
+    return {m: bool(tests[f"{m} vs U1 (all)"]["ci_high"] < 0 and tests[f"{m} vs C2 (all)"]["ci_high"] < 0)
+            for m in models if f"{m} vs C2 (all)" in tests}
+
+
 def evaluate_tuned_family(fam: str) -> dict:
+    """All candidates of the amended rule. The post-review arm C3-hop is optional (absent until it has run);
+    the ridge baselines are reported if `evaluation.ridge_baselines` has written them."""
     ctrl_id = CONTROLS[fam]
     runs = {"control": load_run(ctrl_id), "C2": load_run(f"{ctrl_id}_C2")}
-    runs |= {m: load_run(f"{ctrl_id}_{m}_tuned") for m in ("U1", *TUNED_GRAPHS)} | {"C3hop": load_run(f"{ctrl_id}_C3hop")}
+    runs |= {m: load_run(f"{ctrl_id}_{m}_tuned") for m in ("U1", *TUNED_GRAPHS)}
     missing = [m for m, df in runs.items() if df is None]
     if missing:
         raise FileNotFoundError(f"{fam}: runs not complete: {missing}")
+    hop = load_run(f"{ctrl_id}_C3hop")
+    if hop is not None:
+        runs["C3hop"] = hop
+    ridges = {}
+    for r in ("ridge", "ridge_hw5"):
+        df = load_run(f"{ctrl_id}_{r}")
+        if df is not None:
+            ridges[r] = df
+    graphs = [m for m in GRAPH_MODELS if m in runs]
     ctrl_sd = seed_rmses(runs["control"])
     logs = {"C2": f"{ctrl_id}_C2", "C3hop": f"{ctrl_id}_C3hop"} | {m: f"{ctrl_id}_{m}_tuned" for m in TUNED_GRAPHS}
-    out = {"rmse_all": {m: rmse_by(df) for m, df in runs.items()},
-           "rmse_extreme": {m: rmse_by(df[df["stratum"] == "extreme"]) for m, df in runs.items()},
-           "g_d2": {m: g_d2(load_logs(r), seed_rmses(runs[m]), ctrl_sd) for m, r in logs.items()}}
+    every = runs | ridges
+    out = {"present": list(runs), "rmse_all": {m: rmse_by(df) for m, df in every.items()},
+           "rmse_extreme": {m: rmse_by(df[df["stratum"] == "extreme"]) for m, df in every.items()},
+           "g_d2": {m: g_d2(load_logs(logs[m]), seed_rmses(runs[m]), ctrl_sd) for m in graphs}}
     tests, free = {}, {}
-    pairs = [(m, o) for m in GRAPH_MODELS for o in ("control", "U1")]
-    pairs += [("U1", "control"), ("control", "U1"), ("C3pool", "C3"), ("C3pool", "C2"), ("C3", "C2"),
-              ("C3hop", "C3"), ("C3hop", "C2")]
+    pairs = [(m, o) for m in graphs for o in ("control", "U1")]
+    pairs += [("U1", "control"), ("control", "U1"), ("C3pool", "C3"), ("C3pool", "C2"), ("C3", "C2")]
+    pairs += [("C3hop", "C3"), ("C3hop", "C2")] if "C3hop" in runs else []
+    pairs += [(m, r) for m in runs for r in ridges]
     for m, o in pairs:
         for s in ("all", "extreme"):
-            tests[f"{m} vs {o} ({s})"] = compare(runs[o], runs[m], s)
-        free[f"{m} vs {o} (all)"] = compare(selection_free(runs[o]), selection_free(runs[m]), "all")
+            tests[f"{m} vs {o} ({s})"] = compare(every[o], every[m], s)
+        free[f"{m} vs {o} (all)"] = compare(selection_free(every[o]), selection_free(every[m]), "all")
     out["tests"], out["tests_selection_free"] = tests, free
     out["models"] = {m: {"g_d2": out["g_d2"][m]["pass"], "a": non_inferior(tests[f"{m} vs control (all)"]),
-                         "b": non_inferior(tests[f"{m} vs U1 (all)"])} for m in GRAPH_MODELS}
+                         "b": non_inferior(tests[f"{m} vs U1 (all)"])} for m in graphs}
     out["models"]["U1"] = {"a": non_inferior(tests["U1 vs control (all)"])}
     out["models"]["control"] = {"b": non_inferior(tests["control vs U1 (all)"])}
+    out["structure_claims"] = structure_claims(tests, ("C3", "C3pool", "C3hop"))
     return out
 
 
-def write_tuned_report(results: dict, decision: dict, ok: dict[str, bool]) -> None:
+def tuned_decisions(results: dict) -> dict:
+    """The amended rule with every candidate present, and (disclosure) without the post-review arm C3-hop."""
+    fam = {f: r["models"] for f, r in results.items()}
+    without = {f: {m: v for m, v in r.items() if m != "C3hop"} for f, r in fam.items()}
+    out = {"eligible": eligible(fam), "with_C3hop": None,
+           "without_C3hop": amended_decision(eligible(without), results[PRIMARY]["rmse_all"])}
+    if all("C3hop" in r for r in fam.values()):
+        out["with_C3hop"] = amended_decision(out["eligible"], results[PRIMARY]["rmse_all"])
+    out["headline"] = out["with_C3hop"] or out["without_C3hop"]
+    return out
+
+
+def write_tuned_report(results: dict, decisions: dict) -> None:
+    head = decisions["headline"]
+    with_hop = decisions["with_C3hop"]["backbone"] if decisions["with_C3hop"] else "C3-hop not run yet"
     L = ["# Backbone after the tuning round (amended rule, decisions.md 2026-10-08)", "",
-         f"**Provisional backbone: {decision['backbone']}** ({decision['reason']}).", "",
+         f"**Provisional backbone: {head['backbone']}** ({head['reason']}).", "",
+         f"With C3-hop: {with_hop}. Without C3-hop (the five candidates declared before the review): "
+         f"{decisions['without_C3hop']['backbone']}.", "",
          "Out of fold 2007-2018, 10 seeds x 4 folds. U1 / C3 / C3-pool: hyperparameters selected on the inner 2-year "
-         "blocks (`evaluation_v2/graph_tuning.md`); the control and C2 are not retuned (comparisons favour the tuned "
-         f"models; disclosed). Non-inferiority margin {MARGIN_C} °C on the upper end of the 95% CI. U1 below = tuned U1.",
-         "", "Eligible in both families: " + ", ".join(f"{m} {'yes' if v else 'no'}" for m, v in ok.items()), ""]
+         "blocks (`evaluation_v2/graph_tuning.md`); C3-hop uses tuned C3's; the control and C2 are not retuned "
+         f"(comparisons favour the tuned models; disclosed). Non-inferiority margin {MARGIN_C} °C on the upper end of the "
+         "95% CI. U1 below = tuned U1. Ridges: `evaluation/ridge_baselines.py` (reported, not eligible).", "",
+         "Eligible in both families: " + ", ".join(f"{m} {'yes' if v else 'no'}" for m, v in decisions["eligible"].items()),
+         ""]
     for fam, r in results.items():
         L += [f"## {fam} (control `{CONTROLS[fam]}`)", "", "| Model | All RMSE | Extreme RMSE | G-D2 |", "|---|---|---|---|"]
         L += [f"| {m} | {r['rmse_all'][m]:.3f} | {r['rmse_extreme'][m]:.3f} | "
               f"{('pass' if r['g_d2'][m]['pass'] else 'FAIL') if m in r['g_d2'] else ''} |" for m in r["rmse_all"]]
-        L += ["", "| Comparison | Δ RMSE (95% CI) | p | Selection-free years: Δ all (95% CI) |", "|---|---|---|---|"]
+        claims = ", ".join(f"{m} {'yes' if v else 'no'}" for m, v in r["structure_claims"].items()) or "n/a"
+        L += ["", f"Structure claim (CI entirely below 0 vs both U1 and C2, all days): {claims}", ""]
+        L += ["| Comparison | Δ RMSE (95% CI) | p | Selection-free years: Δ all (95% CI) |", "|---|---|---|---|"]
         for k, t in r["tests"].items():
             f = r["tests_selection_free"].get(k)
             L.append(f"| {k} | {t['delta']:+.3f} {_ci(t)} | {t['p_value']:.3f} | "
@@ -243,8 +284,6 @@ def write_tuned_report(results: dict, decision: dict, ok: dict[str, bool]) -> No
     (OUT_DIR / "graph_gates_tuned.md").write_text("\n".join(L) + "\n", encoding="utf-8")
 
 
-
-
 def main(argv: list[str] | None = None) -> None:
     import argparse
 
@@ -253,19 +292,20 @@ def main(argv: list[str] | None = None) -> None:
     args = ap.parse_args(argv)
     if args.tuned:
         results = {fam: evaluate_tuned_family(fam) for fam in CONTROLS}
-        ok = eligible({f: r["models"] for f, r in results.items()})
-        decision = amended_decision(ok, results[PRIMARY]["rmse_all"])
-        write_tuned_report(results, decision, ok)
+        decision = tuned_decisions(results)
+        write_tuned_report(results, decision)
         out = OUT_DIR / "graph_gates_tuned.json"
+        shown = decision["headline"]
     else:
         results = {fam: evaluate_family(fam) for fam in CONTROLS}
         decision = backbone_decision({f: {"candidate": r["candidate"], "a": r["a"], "b": r["b"]}
                                       for f, r in results.items()})
         write_report(results, decision)
         out = OUT_DIR / "graph_gates.json"
+        shown = decision
     out.write_text(json.dumps({"results": results, "decision": decision}, indent=2, default=float) + "\n",
                    encoding="utf-8")
-    print(decision)
+    print(shown)
 
 
 if __name__ == "__main__":

@@ -594,11 +594,18 @@ worse than both the plain LSTM and U1 (the LSTM given the same upstream data) by
     node, and news travels one neighbour per day *from the day before*. So the upstream points' most
     recent day, exactly the day G-D0 found useful, never reaches the forecast. C2 reads every point
     directly, so it sees that day.
-  - **New arm C3-hop (your decision; added after the results, disclosed):** the same edges, but news
-    travels 4 hops per day (enough to reach Delhi from anywhere in the region), plus one final 4-hop
-    pass from the last input day into Delhi. Tests confirm every point's last day now reaches the
-    forecast. It runs after the tuning round, with tuned C3's settings, and competes under the same
-    backbone rule.
+  - **New arm C3-hop (your decision; added after the results, disclosed):** news reaches Delhi from up
+    to 4 hops away in one day (enough to cover the whole region), plus one final pass from the last
+    input day into Delhi. Tests confirm every point's last day now reaches the forecast. It runs after
+    the tuning round, with tuned C3's settings, and competes under the same backbone rule.
+  - **A second, focused review (2026-10-10)** checked this new code before it runs. No bugs that would
+    block it, but one design flaw: the first version passed news hop by hop, diluting it at each hop, so
+    a point 4 hops away arrived ~40× weaker than a neighbour, which is exactly the far-away signal we
+    wanted to test. **C3-hop now uses "rings":** Delhi averages all points exactly 1, 2, 3 and 4 hops
+    away, each distance with its own weight, so far points get a fair say. Other fixes: the physics
+    head's NaN guard now also checks gradients and stops the run if bad batches aren't rare; the
+    backbone report works with or without C3-hop and shows both; hot-day probabilities are scored only
+    in season.
   - **Test protocol drafted** (`docs/CONFIRMATORY_PROTOCOL.md`): at most 3 hypotheses with a correction
     for multiple tests, written before the 2019+ years are opened. The test period can detect about
     0.05 °C on all days but only about 0.3 °C on heatwave days.

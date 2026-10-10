@@ -977,3 +977,29 @@ tuning result; disclosed as post-result exploration**
   reported against C3 and C2. Nothing is final without the user's approval.
 - Runs after the tuned runs: the trainer hook (`hops` in the graph config) is a prepared patch applied together
   with the physics-head fixes, because the trainer and model files are hashed by the running tuning queue.
+
+**Focused code review of the new code, and C3-hop changed to ring averaging: DECIDED 2026-10-10 (user), before any
+tuning, tuned or C3-hop result was looked at**
+- A read-only reviewer checked the multi-hop model, the prepared patches (applied to copies: every anchor matched),
+  the tuning hooks and the new evaluation code. No blocker. Findings and what was done:
+  - M1 (verified by the owner): DCRNN-style diffusion shrank a 4-hop point's weight into Delhi ~40x relative to a
+    1-hop neighbour (A_hat^4 into Delhi: 3.1e-2 / 1.4e-2 / 3.6e-3 / 7.9e-4 for hops 1-4), and W_k is shared by every
+    walk of length k, so a C3-hop loss to C2 could not refute "the last-day upstream signal matters". **C3-hop now
+    uses exact-distance ring averaging** (shortest-path message passing, Abboud, Dimitrov & Ceylan 2022): node i
+    receives sum_k W_k mean_{d(j,i)=k} s_j for k = 1..4, in the recurrence and in the final transport into Delhi.
+    Rings come from the static topology (neighbour mask); C3's edge weights are not used. At initialisation the
+    last-day gradient per hop distance is now balanced (0.0017 / 0.0013 / 0.0019 / 0.0027 for hops 1-4; test
+    requires max/min < 5). Disclosed: rings make C3-hop a distance-structured relative of C2's single mean.
+  - M2: the physics NaN guard now also skips a step on any non-finite gradient, and stops the run if more than 1%
+    of an epoch's batches are skipped; behaviour tests replace the source-text test. The reviewer found the WBGT
+    solver returns NaN only at the edge of the head's range (t = 55 °C with p = 850 hPa).
+  - M3: C3-hop is optional in `evaluation/graph_gates.py --tuned`; the decision is reported both with and without it
+    (without = the five candidates declared before the review).
+  - M4: the structure-claim rule is computed for C3 / C3-pool / C3-hop.
+  - Minor: `hops: true` and hops with dynamic edges rejected; a separate guarded launcher for the C3-hop / PH / R2
+    stage (refuses to start before the tuned runs finish or with uncommitted code); ridge rows and ridge tests for
+    every candidate in the tuned report; tuned runs in the ridge and calibration reports; the hot-day Brier now on
+    in-season days only, with in-season sigma (Tmax BSS +0.28 to +0.34, WBGT ~+0.03, unchanged conclusions); the
+    soft clamp is described as approximately identity (deviation ~e^-distance to the bound).
+  - Noted, not changed: tuning selects on the early-stopping block (already disclosed); sqrt-Brier through the RMSE
+    jackknife tests equal Brier but may be anti-conservative with hot days in few clusters (stated in the report).

@@ -34,7 +34,8 @@ from training.folds import FOLDS, FORECAST_DAYS, build_fold, fold_bounds, fold_d
 
 HOT_WEIGHT = 5.0
 FAMILIES = {"Tmax": ("A1prime_hw5", "t_max", "v2"), "WBGT (physical)": ("A2Lr_hw5", "wbgt_lj_max", "wbgt")}
-COMPARE_WITH = ("control", "C2", "U1", "C3")  # trained runs: {control}, {control}_C2, ...
+COMPARE_WITH = ("control", "C2", "U1", "C3",  # trained runs: {control}, {control}_C2, ...; missing ones skipped
+                "U1_tuned", "C3_tuned", "C3pool_tuned", "C3hop")
 
 
 def weighted_ridge(X: np.ndarray, y: np.ndarray, alpha: float, w: np.ndarray) -> tuple[np.ndarray, np.ndarray]:

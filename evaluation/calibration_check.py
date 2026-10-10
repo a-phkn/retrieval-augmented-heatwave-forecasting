@@ -16,9 +16,11 @@ dilemma, Lerch et al. 2017, Statistical Science 32(1)). These checks separate sk
    ensemble mean, sigma = SD of the inner-block residuals of that ensemble mean, per fold and
    lead. The threshold is the label rule itself (Tmax: in season and Tmax >= min(45, max(40,
    climatology + 3)); WBGT: in season and >= the fold's training-years percentile), checked to
-   reproduce the hot labels exactly. Brier score, Brier skill vs the training-years in-season
-   base rate, reliability bins. Brier differences are tested on sqrt(Brier) with the same
-   paired cluster-jackknife (p - o as the "error").
+   reproduce the hot labels exactly. Brier score on IN-SEASON days only (hot days are possible
+   only there), Brier skill vs the training-years in-season base rate, reliability bins. Brier
+   differences are tested on sqrt(Brier) with the same paired cluster-jackknife (p - o as the
+   "error"): a monotone transform, so it tests equal Brier, but the delta is in sqrt-probability
+   units, and with hot days concentrated in few clusters the t(G-1) test may be anti-conservative.
 
 Inner-block forecasts are cached in predictions_v2/inner/<run>/<fold>.parquet. The trained
 models' validation forecasts are re-made for seed 0 and must match the saved ones (checks that
@@ -47,7 +49,8 @@ from training.folds import FOLDS, FORECAST_DAYS, build_fold, fold_bounds, fold_d
 from training.graph_data import build_upstream, load_upstream
 
 FAMILIES = {"Tmax": "A1prime_hw5", "WBGT (physical)": "A2Lr_hw5"}
-DEFAULT_MODELS = ("control", "C2", "U1", "C3", "C4", "C4a")
+DEFAULT_MODELS = ("control", "C2", "U1", "C3", "C4", "C4a",  # runs not yet made are skipped
+                  "U1_tuned", "C3_tuned", "C3pool_tuned", "C3hop")
 INNER_DIR = PRED_DIR / "inner"
 BINS = (0.0, 0.1, 0.3, 0.5, 0.7, 0.9, 1.0001)
 
@@ -153,9 +156,14 @@ def base_rate(fold: str, family: str) -> float:
 
 
 def probability_frames(val_ens: pd.DataFrame, inner_ens: pd.DataFrame, fold: str, family: str) -> pd.DataFrame:
-    """val_ens / inner_ens: one-pseudo-seed ensemble forecasts of one fold. Returns the val rows
-    with p (forecast probability), o (observed hot), p_clim; error = p - o for the paired test."""
-    sigma = inner_ens.groupby("lead")["error"].std(ddof=1)
+    """val_ens / inner_ens: one-pseudo-seed ensemble forecasts of one fold. Returns the IN-SEASON val
+    rows (hot days are possible only there) with p (forecast probability), o (observed hot), p_clim;
+    error = p - o for the paired test. Sigma: SD of the in-season inner-block residuals per lead
+    (focused review: out-of-season zeros only dilute the Brier difference)."""
+    thr_inner = event_thresholds(fold, family, inner_ens["target_date"])
+    sigma = inner_ens[np.isfinite(thr_inner)].groupby("lead")["error"].std(ddof=1)
+    season = np.isfinite(event_thresholds(fold, family, val_ens["target_date"]))
+    val_ens = val_ens[season].reset_index(drop=True)
     thr = event_thresholds(fold, family, val_ens["target_date"])
     o = (val_ens["actual"].to_numpy() >= thr).astype(float)
     hot_label = val_ens["stratum"].isin(["extreme", "unusual"]).to_numpy()  # v2 / WBGT: hot <=> not 'normal'

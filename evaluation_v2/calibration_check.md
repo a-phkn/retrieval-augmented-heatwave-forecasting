@@ -15,37 +15,37 @@ Out of fold 2007-2018. Recalibration: actual = a + b x forecast per fold, seed a
 
 | Model | Brier raw | BSS raw | Brier recal | BSS recal | Hot days |
 |---|---|---|---|---|---|
-| control | 0.0242 | +0.261 | 0.0234 | +0.287 | 790 |
-| C2 | 0.0224 | +0.316 | 0.0214 | +0.348 | 790 |
-| U1 | 0.0246 | +0.248 | 0.0228 | +0.304 | 790 |
-| C3 | 0.0242 | +0.263 | 0.0227 | +0.306 | 790 |
-| C4 | 0.0240 | +0.266 | 0.0228 | +0.305 | 790 |
-| C4a | 0.0238 | +0.274 | 0.0224 | +0.315 | 790 |
+| control | 0.0651 | +0.241 | 0.0616 | +0.282 | 790 |
+| C2 | 0.0605 | +0.295 | 0.0567 | +0.339 | 790 |
+| U1 | 0.0663 | +0.227 | 0.0605 | +0.294 | 790 |
+| C3 | 0.0654 | +0.238 | 0.0602 | +0.298 | 790 |
+| C4 | 0.0650 | +0.243 | 0.0603 | +0.298 | 790 |
+| C4a | 0.0645 | +0.248 | 0.0595 | +0.307 | 790 |
 
 | Comparison | Δ (95% CI) | p |
 |---|---|---|
 | C2 vs control, recalibrated (all) | -0.1310 [-0.161, -0.101] | <0.001 |
 | C2 vs control, recalibrated (extreme) | -0.3898 [-0.526, -0.254] | <0.001 |
-| C2 vs control, sqrt-Brier hot day (raw) | -0.0059 [-0.011, -0.001] | 0.024 |
-| C2 vs control, sqrt-Brier hot day (recal) | -0.0067 [-0.011, -0.002] | 0.004 |
+| C2 vs control, sqrt-Brier hot day (raw) | -0.0092 [-0.017, -0.001] | 0.031 |
+| C2 vs control, sqrt-Brier hot day (recal) | -0.0102 [-0.017, -0.003] | 0.008 |
 | U1 vs control, recalibrated (all) | +0.0100 [-0.031, +0.051] | 0.623 |
 | U1 vs control, recalibrated (extreme) | -0.3692 [-0.550, -0.189] | 0.001 |
-| U1 vs control, sqrt-Brier hot day (raw) | +0.0014 [-0.005, +0.008] | 0.683 |
-| U1 vs control, sqrt-Brier hot day (recal) | -0.0018 [-0.006, +0.002] | 0.357 |
+| U1 vs control, sqrt-Brier hot day (raw) | +0.0023 [-0.009, +0.013] | 0.656 |
+| U1 vs control, sqrt-Brier hot day (recal) | -0.0022 [-0.009, +0.005] | 0.491 |
 | C3 vs control, recalibrated (all) | -0.0318 [-0.051, -0.013] | 0.002 |
 | C3 vs control, recalibrated (extreme) | -0.2194 [-0.358, -0.080] | 0.006 |
-| C3 vs control, sqrt-Brier hot day (raw) | -0.0001 [-0.003, +0.003] | 0.926 |
-| C3 vs control, sqrt-Brier hot day (recal) | -0.0021 [-0.005, +0.001] | 0.113 |
+| C3 vs control, sqrt-Brier hot day (raw) | +0.0005 [-0.005, +0.006] | 0.824 |
+| C3 vs control, sqrt-Brier hot day (recal) | -0.0028 [-0.007, +0.002] | 0.179 |
 | C4 vs control, recalibrated (all) | -0.0351 [-0.053, -0.017] | <0.001 |
 | C4 vs control, recalibrated (extreme) | -0.1671 [-0.337, +0.003] | 0.053 |
-| C4 vs control, sqrt-Brier hot day (raw) | -0.0005 [-0.003, +0.002] | 0.697 |
-| C4 vs control, sqrt-Brier hot day (recal) | -0.0020 [-0.005, +0.001] | 0.152 |
+| C4 vs control, sqrt-Brier hot day (raw) | -0.0003 [-0.005, +0.005] | 0.897 |
+| C4 vs control, sqrt-Brier hot day (recal) | -0.0028 [-0.007, +0.002] | 0.212 |
 | C4a vs control, recalibrated (all) | -0.0419 [-0.063, -0.021] | <0.001 |
 | C4a vs control, recalibrated (extreme) | -0.2575 [-0.396, -0.119] | 0.002 |
-| C4a vs control, sqrt-Brier hot day (raw) | -0.0013 [-0.004, +0.002] | 0.411 |
-| C4a vs control, sqrt-Brier hot day (recal) | -0.0031 [-0.006, +0.000] | 0.057 |
+| C4a vs control, sqrt-Brier hot day (raw) | -0.0013 [-0.007, +0.004] | 0.624 |
+| C4a vs control, sqrt-Brier hot day (recal) | -0.0043 [-0.010, +0.001] | 0.095 |
 
-Reliability, control (recalibrated): 0.0-0.1: n 19405, forecast 0.01, observed 0.01; 0.1-0.3: n 1620, forecast 0.18, observed 0.17; 0.3-0.5: n 609, forecast 0.38, observed 0.41; 0.5-0.7: n 157, forecast 0.58, observed 0.68; 0.7-0.9: n 37, forecast 0.78, observed 0.92; 0.9-1.0: n 7, forecast 0.94, observed 1.00
+Reliability, control (recalibrated): 0.0-0.1: n 5450, forecast 0.02, observed 0.01; 0.1-0.3: n 1955, forecast 0.18, observed 0.15; 0.3-0.5: n 734, forecast 0.38, observed 0.38; 0.5-0.7: n 160, forecast 0.58, observed 0.68; 0.7-0.9: n 35, forecast 0.77, observed 0.91; 0.9-1.0: n 6, forecast 0.93, observed 1.00
 
 ## WBGT (physical)
 
@@ -60,35 +60,35 @@ Reliability, control (recalibrated): 0.0-0.1: n 19405, forecast 0.01, observed 0
 
 | Model | Brier raw | BSS raw | Brier recal | BSS recal | Hot days |
 |---|---|---|---|---|---|
-| control | 0.0358 | -0.108 | 0.0314 | +0.029 | 750 |
-| C2 | 0.0365 | -0.129 | 0.0311 | +0.037 | 750 |
-| U1 | 0.0363 | -0.123 | 0.0314 | +0.026 | 750 |
-| C3 | 0.0357 | -0.105 | 0.0314 | +0.027 | 750 |
-| C4 | 0.0358 | -0.108 | 0.0314 | +0.027 | 750 |
-| C4a | 0.0358 | -0.108 | 0.0314 | +0.028 | 750 |
+| control | 0.0633 | -0.077 | 0.0570 | +0.029 | 750 |
+| C2 | 0.0649 | -0.104 | 0.0565 | +0.039 | 750 |
+| U1 | 0.0649 | -0.105 | 0.0571 | +0.027 | 750 |
+| C3 | 0.0634 | -0.079 | 0.0571 | +0.028 | 750 |
+| C4 | 0.0635 | -0.080 | 0.0571 | +0.028 | 750 |
+| C4a | 0.0635 | -0.081 | 0.0571 | +0.028 | 750 |
 
 | Comparison | Δ (95% CI) | p |
 |---|---|---|
 | C2 vs control, recalibrated (all) | -0.1284 [-0.153, -0.104] | <0.001 |
 | C2 vs control, recalibrated (extreme) | -0.3523 [-0.474, -0.231] | <0.001 |
-| C2 vs control, sqrt-Brier hot day (raw) | +0.0018 [-0.002, +0.006] | 0.320 |
-| C2 vs control, sqrt-Brier hot day (recal) | -0.0008 [-0.002, +0.000] | 0.205 |
+| C2 vs control, sqrt-Brier hot day (raw) | +0.0031 [-0.002, +0.008] | 0.215 |
+| C2 vs control, sqrt-Brier hot day (recal) | -0.0011 [-0.003, +0.001] | 0.188 |
 | U1 vs control, recalibrated (all) | -0.0900 [-0.121, -0.059] | <0.001 |
 | U1 vs control, recalibrated (extreme) | -0.2205 [-0.477, +0.036] | 0.086 |
-| U1 vs control, sqrt-Brier hot day (raw) | +0.0013 [-0.003, +0.005] | 0.483 |
-| U1 vs control, sqrt-Brier hot day (recal) | +0.0002 [-0.001, +0.001] | 0.704 |
+| U1 vs control, sqrt-Brier hot day (raw) | +0.0032 [-0.002, +0.008] | 0.203 |
+| U1 vs control, sqrt-Brier hot day (recal) | +0.0002 [-0.001, +0.002] | 0.755 |
 | C3 vs control, recalibrated (all) | -0.0183 [-0.039, +0.002] | 0.076 |
 | C3 vs control, recalibrated (extreme) | -0.1134 [-0.208, -0.019] | 0.023 |
-| C3 vs control, sqrt-Brier hot day (raw) | -0.0002 [-0.003, +0.002] | 0.845 |
-| C3 vs control, sqrt-Brier hot day (recal) | +0.0002 [-0.001, +0.001] | 0.702 |
+| C3 vs control, sqrt-Brier hot day (raw) | +0.0001 [-0.003, +0.003] | 0.933 |
+| C3 vs control, sqrt-Brier hot day (recal) | +0.0002 [-0.001, +0.001] | 0.764 |
 | C4 vs control, recalibrated (all) | -0.0291 [-0.048, -0.010] | 0.003 |
 | C4 vs control, recalibrated (extreme) | -0.0634 [-0.160, +0.033] | 0.177 |
-| C4 vs control, sqrt-Brier hot day (raw) | +0.0000 [-0.003, +0.003] | 0.993 |
-| C4 vs control, sqrt-Brier hot day (recal) | +0.0001 [-0.001, +0.001] | 0.769 |
+| C4 vs control, sqrt-Brier hot day (raw) | +0.0003 [-0.003, +0.004] | 0.837 |
+| C4 vs control, sqrt-Brier hot day (recal) | +0.0002 [-0.001, +0.001] | 0.708 |
 | C4a vs control, recalibrated (all) | -0.0344 [-0.055, -0.014] | 0.002 |
 | C4a vs control, recalibrated (extreme) | -0.0698 [-0.172, +0.032] | 0.163 |
-| C4a vs control, sqrt-Brier hot day (raw) | +0.0000 [-0.003, +0.003] | 0.987 |
-| C4a vs control, sqrt-Brier hot day (recal) | +0.0001 [-0.001, +0.001] | 0.791 |
+| C4a vs control, sqrt-Brier hot day (raw) | +0.0004 [-0.003, +0.004] | 0.801 |
+| C4a vs control, sqrt-Brier hot day (recal) | +0.0001 [-0.001, +0.001] | 0.767 |
 
-Reliability, control (recalibrated): 0.0-0.1: n 18844, forecast 0.02, observed 0.02; 0.1-0.3: n 2930, forecast 0.15, observed 0.12; 0.3-0.5: n 61, forecast 0.35, observed 0.28
+Reliability, control (recalibrated): 0.0-0.1: n 9550, forecast 0.03, observed 0.05; 0.1-0.3: n 2402, forecast 0.14, observed 0.12; 0.3-0.5: n 48, forecast 0.36, observed 0.31
 
