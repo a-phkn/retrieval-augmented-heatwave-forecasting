@@ -65,3 +65,6 @@ models/v2/
 
 # v2 inner-block forecast cache (regenerable: python -m evaluation.calibration_check)
 predictions_v2/inner/
+
+# tuning runs: 2007-2018 forecasts are regenerable and never used for selection (inner-block *_stop.parquet are kept)
+predictions_v2/tuning/*/f?.parquet

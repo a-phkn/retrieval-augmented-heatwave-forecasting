@@ -109,6 +109,14 @@ Short, frequently-updated. See `build_plan.md` for full milestone detail.
   decisions, structure claims, ridge rows; in-season Brier. Fresh dry run on a patched scratch copy: 77 tests
   pass, C3-hop 1-epoch smoke run trains and its checkpoint rebuilds. Stage-2 launcher: scratchpad
   `week5b_queue.sh` (guarded).
+- **Tuning round + 6 tuned runs DONE 2026-10-11 23:37** (all under code 25995975). Selection:
+  `evaluation_v2/graph_tuning.md`. Provisional backbone WITHOUT C3-hop (`evaluation_v2/graph_gates_tuned.md`):
+  U1 by the 0.02 tie-break (WBGT all days U1 2.247 / C3-pool 2.252 / C2 2.254, tied), but C2 / C3-pool are better
+  on WBGT extremes (-0.27) and Tmax all days (-0.09 / -0.08). Edges add nothing even with the pooled readout
+  (C3-pool vs C2 ~0). Final pick needs the user's approval, after C3-hop.
+- **Stage 2 (2026-10-12)**: post-queue patches applied (code 3b0639c4; 337 tests pass); C3-hop x2, PH_lstm, R2 x2
+  via scratchpad `week5b_queue.sh`, log `week5b.log`. Tuning runs' 2007-2018 forecasts are gitignored
+  (regenerable, never used for selection); their inner-block forecasts + registry are committed.
 - **DSTGNN skeleton (2026-10-06)**: `models/dstgnn.py` (graph GRU, modes none/static/dynamic + adaptive),
   `pipeline/graph.py` (Delhi + 27 nodes, geographic and wind-gated advective edges). G-D1: 13 tests pass.
   The plan said `data/graph.py`; it is `pipeline/graph.py` because `data/` holds raw data.

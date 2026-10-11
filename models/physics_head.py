@@ -15,7 +15,8 @@ day's maximum can never be below any hour's; Tmax = mean of the 9 cells' Tmax_c,
 the Tmax target is defined (each cell's daily maximum, then the cell mean).
 
 Output ranges are physical by construction:
-  t, pressure     fold-training mean + SD x raw, then clamped to a physical range
+  t, pressure     fold-training mean + SD x raw, then smoothly clamped to a physical range
+                  (~identity inside it; gradient shrinks smoothly past the bounds; 2026-10-08, ML review M7)
   rh              100 x sigmoid           (0-100 %)
   wind            softplus                (> 0 m/s)
   cosz            sigmoid                 (0-1)
@@ -42,6 +43,15 @@ GHI_MAX = 1100.0  # W/m2: upper bound per unit cos(zenith), above clear-sky valu
 T_RANGE, P_RANGE = (-10.0, 55.0), (850.0, 1050.0)
 
 
+def soft_clamp(x: torch.Tensor, lo: float, hi: float) -> torch.Tensor:
+    """lo + softplus(x - lo) - softplus(x - hi): approximately x inside [lo, hi] (deviation about
+    e^-(distance to the nearer bound): < 1e-6 more than 14 units inside, ln 2 at a bound) and stays
+    within [lo, hi]. Its gradient is 0.5 at a bound and
+    shrinks smoothly beyond it, instead of dropping to exactly 0 there as torch.clamp's does
+    (which can freeze a unit); far outside (~20 units) it underflows to 0 in float32."""
+    return lo + F.softplus(x - lo) - F.softplus(x - hi)
+
+
 class PhysicsHead(nn.Module):
     def __init__(self, in_dim: int, t_mean: torch.Tensor, t_std: torch.Tensor, p_mean: torch.Tensor,
                  p_std: torch.Tensor, hidden: int = 64, n_cells: int = N_CELLS, forecast_days: int = FORECAST_DAYS):
@@ -59,10 +69,10 @@ class PhysicsHead(nn.Module):
         raw = self.net(h).reshape(h.shape[0], self.forecast_days, self.n_cells, len(INGREDIENTS) + 1)
         r = dict(zip((*INGREDIENTS, "gap"), raw.unbind(-1)))
         cosz = torch.sigmoid(r["cosz"])
-        t = torch.clamp(self.t_mean + self.t_std * r["t"], *T_RANGE)
+        t = soft_clamp(self.t_mean + self.t_std * r["t"], *T_RANGE)
         return {"t": t, "tmax": t + F.softplus(r["gap"]),
                 "rh": 100.0 * torch.sigmoid(r["rh"]),
-                "pressure": torch.clamp(self.p_mean + self.p_std * r["pressure"], *P_RANGE),
+                "pressure": soft_clamp(self.p_mean + self.p_std * r["pressure"], *P_RANGE),
                 "wind": F.softplus(r["wind"]),
                 "ghi": GHI_MAX * cosz * torch.sigmoid(r["ghi"]),
                 "fdir": torch.sigmoid(r["fdir"]),

@@ -1,0 +1,36 @@
+{
+  "run_id": "A2Lr_hw5_U1_tuned",
+  "parent": "A2Lr_hw5",
+  "description": "Tuned U1 of A2Lr_hw5 (graph tuning round, decisions.md 2026-10-07/08): hparams {'hidden': 128, 'lr': 0.001, 'dropout': 0.2} selected on the inner 2-year block, 3 seeds; this run: 10 seeds.",
+  "target": "wbgt_lj_max",
+  "labels": "wbgt",
+  "anomaly_target": true,
+  "target_form": "anomaly",
+  "hot_weight": 5,
+  "early_stop": "inner_2y",
+  "seeds": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9
+  ],
+  "folds": [
+    "f1",
+    "f2",
+    "f3",
+    "f4"
+  ],
+  "threads": 8,
+  "backbone": "lstm_upstream",
+  "hparams": {
+    "hidden": 128,
+    "lr": 0.001,
+    "dropout": 0.2
+  }
+}

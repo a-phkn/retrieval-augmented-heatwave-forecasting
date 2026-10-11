@@ -37,6 +37,7 @@ from training.folds import FORECAST_DAYS, TEST_START, FoldData, build_fold
 
 PER_CELL_PATH = PEAK_PATH.parent / "per_cell_daily.parquet"
 INGREDIENT_WEIGHT = 0.1
+MAX_SKIPPED_SHARE = 0.01  # more skipped (non-finite) batches than this in an epoch stops the run
 WBGT_FAMILY = ("wbgt_lj_max", "wbgt", "anomaly")  # A2Lr_hw5
 TMAX_FAMILY = ("t_max", "v2", "raw")  # A1prime_hw5
 INNER_YEARS = 2
@@ -152,15 +153,28 @@ def train_one_seed_physics(seed: int, pf: PhysicsFold, hot_weight: float, batch_
     cm, cs = torch.from_numpy(pf.cell_mean), torch.from_numpy(pf.cell_std)
     model = LSTMPhysics(n_features=pf.X["train"].shape[2], head_stats=pf.head_stats)
     opt = torch.optim.Adam(model.parameters(), lr=lr)
-    best, best_state, stale, curve, finite = float("inf"), None, 0, [], True
+    best, best_state, stale, curve, finite, skipped = float("inf"), None, 0, [], True, 0
     for _ in range(max_epochs):
         model.train()
+        skipped_epoch = 0
         for b in loader:
             opt.zero_grad()
             loss = physics_loss(model, b, pf, hot_weight, cm, cs)
-            finite &= bool(torch.isfinite(loss))
-            loss.backward()
+            # Never step on a non-finite loss or gradient (e.g. a failed WBGT bracket; ML review M7,
+            # focused review M2); count it, and stop if it is not a rare event.
+            if torch.isfinite(loss):
+                loss.backward()
+                ok = all(torch.isfinite(p.grad).all() for p in model.parameters() if p.grad is not None)
+            else:
+                ok = False
+            if not ok:
+                opt.zero_grad()
+                finite, skipped, skipped_epoch = False, skipped + 1, skipped_epoch + 1
+                continue
             opt.step()
+        if skipped_epoch > MAX_SKIPPED_SHARE * len(loader):
+            raise RuntimeError(f"{skipped_epoch} of {len(loader)} batches had a non-finite loss or gradient "
+                               f"(> {MAX_SKIPPED_SHARE:.0%}): not a rare event, stopping")
         model.eval()
         with torch.no_grad():
             v = sum(physics_loss(model, tuple(t[i:i + 512] for t in stop_t), pf, hot_weight, cm, cs).item()
@@ -174,7 +188,7 @@ def train_one_seed_physics(seed: int, pf: PhysicsFold, hot_weight: float, batch_
             if stale >= patience:
                 break
     if log is not None:
-        log.update(val_curve=curve, finite=finite)
+        log.update(val_curve=curve, finite=finite, skipped_batches=skipped)
     if best_state is None:
         raise RuntimeError("no finite early-stopping loss in any epoch")
     model.load_state_dict(best_state)

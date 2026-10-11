@@ -183,3 +183,66 @@ def test_physics_head_config_trains_end_to_end_and_writes_both_targets(tmp_path,
         path.write_text(_json.dumps({**cfg, **bad}), encoding="utf-8")
         with pytest.raises(ValueError):
             tu.load_config(path)
+
+
+# ------------------------------------------------------------------ appended post-queue 2026-10-08
+# (multi-hop routing and physics-head robustness, decisions.md 2026-10-08)
+
+
+def test_hops_config_routes_to_the_multi_hop_model(tmp_path):
+    import json as _json
+
+    from models.dstgnn_multihop import MultiHopDSTGNN
+    from training.graph_data import build_upstream, load_upstream
+
+    base = _json.loads((tu.REPO_ROOT / "configs" / "A2Lr_hw5_C3.json").read_text(encoding="utf-8"))
+    p = tmp_path / "c.json"
+    p.write_text(_json.dumps({**base, "graph": {**base["graph"], "hops": 4}}), encoding="utf-8")
+    cfg = tu.load_config(p)
+    upd = build_upstream("f1", load_upstream())
+    m = tu.make_dstgnn(cfg["graph"], 17, upd, {"hidden": 16, "lr": 1e-3, "dropout": 0.0})
+    assert isinstance(m, MultiHopDSTGNN) and m.hops == 4 and m.hidden == 16
+    assert not isinstance(tu.make_dstgnn(base["graph"], 17, upd), MultiHopDSTGNN)
+    assert "models/dstgnn_multihop.py" in tu.CODE_FILES
+    for bad in ({"hops": 0}, {"hops": 4, "readout": "pool"}, {"hops": 2.5}, {"hops": True},
+                {"hops": 4, "mode": "dynamic"}):
+        p.write_text(_json.dumps({**base, "graph": {**base["graph"], **bad}}), encoding="utf-8")
+        with pytest.raises(ValueError, match="hops"):
+            tu.load_config(p)
+
+
+def test_physics_soft_clamp():
+    from models.physics_head import P_RANGE, T_RANGE, soft_clamp
+
+    x = torch.tensor([-40.0, 0.0, 35.0, 60.0], requires_grad=True)
+    y = soft_clamp(x, *T_RANGE)
+    assert y[1].item() == pytest.approx(0.0, abs=1e-4)  # 10 units from the bound: deviation e^-10
+    assert y[2].item() == pytest.approx(35.0, abs=1e-5)
+    assert T_RANGE[0] <= y.min().item() and y.max().item() <= T_RANGE[1]
+    y.sum().backward()
+    assert x.grad[3] > 0  # torch.clamp would give exactly 0 here (5 units past the bound)
+    assert soft_clamp(torch.tensor(1000.0), *P_RANGE).item() == pytest.approx(1000.0, abs=1e-5)
+
+
+def test_physics_nan_guard_skips_a_rare_bad_batch_and_stops_on_a_systematic_one(monkeypatch):
+    import training.physics_train as pt
+
+    pf = pt.build_physics_fold("f1")
+    real, calls = pt.physics_loss, {"n": 0}
+
+    def one_nan(model, b, *a, **k):
+        loss = real(model, b, *a, **k)
+        if model.training:
+            calls["n"] += 1
+            if calls["n"] == 1:
+                return loss * float("nan")
+        return loss
+
+    monkeypatch.setattr(pt, "physics_loss", one_nan)
+    log = {}
+    pt.train_one_seed_physics(0, pf, 5.0, 64, 1, 10, 1e-3, log=log)
+    assert log["skipped_batches"] == 1 and not log["finite"]
+    monkeypatch.setattr(pt, "physics_loss",
+                        lambda model, b, *a, **k: real(model, b, *a, **k) * (float("nan") if model.training else 1.0))
+    with pytest.raises(RuntimeError, match="not a rare event"):
+        pt.train_one_seed_physics(0, pf, 5.0, 64, 1, 10, 1e-3, log={})

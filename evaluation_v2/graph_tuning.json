@@ -1,0 +1,114 @@
+{
+  "A1prime_hw5": {
+    "C3": {
+      "scores": {
+        "A1prime_hw5_C3_h32_lr1e-3_d0": 2.1827774013529897,
+        "A1prime_hw5_C3_h32_lr1e-3_d0.2": 2.1660554559336953,
+        "A1prime_hw5_C3_h32_lr3e-4_d0": 2.1699076936678416,
+        "A1prime_hw5_C3_h32_lr3e-4_d0.2": 2.1873792243390136,
+        "A1prime_hw5_C3_h64_lr1e-3_d0": 2.160600710640421,
+        "A1prime_hw5_C3_h64_lr1e-3_d0.2": 2.176962191746625,
+        "A1prime_hw5_C3_h64_lr3e-4_d0": 2.172949572007509,
+        "A1prime_hw5_C3_h64_lr3e-4_d0.2": 2.180908333612282
+      },
+      "selected": "A1prime_hw5_C3_h64_lr1e-3_d0",
+      "hparams": {
+        "hidden": 64,
+        "lr": 0.001,
+        "dropout": 0.0
+      }
+    },
+    "C3pool": {
+      "scores": {
+        "A1prime_hw5_C3pool_h32_lr1e-3_d0": 2.0574794399470218,
+        "A1prime_hw5_C3pool_h32_lr1e-3_d0.2": 2.064250877546579,
+        "A1prime_hw5_C3pool_h32_lr3e-4_d0": 2.059345514325621,
+        "A1prime_hw5_C3pool_h32_lr3e-4_d0.2": 2.093428793512467,
+        "A1prime_hw5_C3pool_h64_lr1e-3_d0": 2.0675643265768553,
+        "A1prime_hw5_C3pool_h64_lr1e-3_d0.2": 2.054725266194565,
+        "A1prime_hw5_C3pool_h64_lr3e-4_d0": 2.0591044193681904,
+        "A1prime_hw5_C3pool_h64_lr3e-4_d0.2": 2.0679326003981244
+      },
+      "selected": "A1prime_hw5_C3pool_h64_lr1e-3_d0.2",
+      "hparams": {
+        "hidden": 64,
+        "lr": 0.001,
+        "dropout": 0.2
+      }
+    },
+    "U1": {
+      "scores": {
+        "A1prime_hw5_U1_h64_lr1e-3_d0": 2.1698579319855655,
+        "A1prime_hw5_U1_h64_lr1e-3_d0.2": 2.2129542182182718,
+        "A1prime_hw5_U1_h64_lr3e-4_d0": 2.250887038833069,
+        "A1prime_hw5_U1_h64_lr3e-4_d0.2": 2.2546736523379054,
+        "A1prime_hw5_U1_h128_lr1e-3_d0": 2.1447464242487913,
+        "A1prime_hw5_U1_h128_lr1e-3_d0.2": 2.1660216799613394,
+        "A1prime_hw5_U1_h128_lr3e-4_d0": 2.2000883962765583,
+        "A1prime_hw5_U1_h128_lr3e-4_d0.2": 2.2440046741071003
+      },
+      "selected": "A1prime_hw5_U1_h128_lr1e-3_d0",
+      "hparams": {
+        "hidden": 128,
+        "lr": 0.001,
+        "dropout": 0.0
+      }
+    }
+  },
+  "A2Lr_hw5": {
+    "C3": {
+      "scores": {
+        "A2Lr_hw5_C3_h32_lr1e-3_d0": 2.3158148836171586,
+        "A2Lr_hw5_C3_h32_lr1e-3_d0.2": 2.339643347139199,
+        "A2Lr_hw5_C3_h32_lr3e-4_d0": 2.3287937454637184,
+        "A2Lr_hw5_C3_h32_lr3e-4_d0.2": 2.3492793445561286,
+        "A2Lr_hw5_C3_h64_lr1e-3_d0": 2.3221211734719445,
+        "A2Lr_hw5_C3_h64_lr1e-3_d0.2": 2.341997402699865,
+        "A2Lr_hw5_C3_h64_lr3e-4_d0": 2.3234179897183243,
+        "A2Lr_hw5_C3_h64_lr3e-4_d0.2": 2.3470813746584107
+      },
+      "selected": "A2Lr_hw5_C3_h32_lr1e-3_d0",
+      "hparams": {
+        "hidden": 32,
+        "lr": 0.001,
+        "dropout": 0.0
+      }
+    },
+    "C3pool": {
+      "scores": {
+        "A2Lr_hw5_C3pool_h32_lr1e-3_d0": 2.219619764161894,
+        "A2Lr_hw5_C3pool_h32_lr1e-3_d0.2": 2.2187349097815243,
+        "A2Lr_hw5_C3pool_h32_lr3e-4_d0": 2.2222637201074043,
+        "A2Lr_hw5_C3pool_h32_lr3e-4_d0.2": 2.2337234486714763,
+        "A2Lr_hw5_C3pool_h64_lr1e-3_d0": 2.2236354676856256,
+        "A2Lr_hw5_C3pool_h64_lr1e-3_d0.2": 2.229488421959783,
+        "A2Lr_hw5_C3pool_h64_lr3e-4_d0": 2.217200082634381,
+        "A2Lr_hw5_C3pool_h64_lr3e-4_d0.2": 2.2374878528812623
+      },
+      "selected": "A2Lr_hw5_C3pool_h64_lr3e-4_d0",
+      "hparams": {
+        "hidden": 64,
+        "lr": 0.0003,
+        "dropout": 0.0
+      }
+    },
+    "U1": {
+      "scores": {
+        "A2Lr_hw5_U1_h64_lr1e-3_d0": 2.2310888003065488,
+        "A2Lr_hw5_U1_h64_lr1e-3_d0.2": 2.2312999854867672,
+        "A2Lr_hw5_U1_h64_lr3e-4_d0": 2.2822155032012024,
+        "A2Lr_hw5_U1_h64_lr3e-4_d0.2": 2.2654150680799248,
+        "A2Lr_hw5_U1_h128_lr1e-3_d0": 2.1973096241543115,
+        "A2Lr_hw5_U1_h128_lr1e-3_d0.2": 2.1956750595511867,
+        "A2Lr_hw5_U1_h128_lr3e-4_d0": 2.235067717626427,
+        "A2Lr_hw5_U1_h128_lr3e-4_d0.2": 2.226486469810332
+      },
+      "selected": "A2Lr_hw5_U1_h128_lr1e-3_d0.2",
+      "hparams": {
+        "hidden": 128,
+        "lr": 0.001,
+        "dropout": 0.2
+      }
+    }
+  }
+}

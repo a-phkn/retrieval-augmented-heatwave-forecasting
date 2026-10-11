@@ -1,0 +1,41 @@
+{
+  "run_id": "A1prime_hw5_C3hop",
+  "parent": "A1prime_hw5",
+  "description": "Multi-hop arm C3-hop of A1prime_hw5 (decisions.md 2026-10-08, added after the ML review; disclosed as post-result): tuned C3 ({'hidden': 64, 'lr': 0.001, 'dropout': 0.0}) with 4 hops per day and a final 4-hop transport of the last day's states into Delhi.",
+  "target": "t_max",
+  "labels": "v2",
+  "anomaly_target": false,
+  "target_form": "raw",
+  "hot_weight": 5,
+  "early_stop": "inner_2y",
+  "seeds": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9
+  ],
+  "folds": [
+    "f1",
+    "f2",
+    "f3",
+    "f4"
+  ],
+  "threads": 8,
+  "backbone": "dstgnn",
+  "graph": {
+    "mode": "static",
+    "adaptive": false,
+    "hops": 4
+  },
+  "hparams": {
+    "hidden": 64,
+    "lr": 0.001,
+    "dropout": 0.0
+  }
+}

@@ -31,7 +31,9 @@ Config keys (configs/*.json):
         given the 27 upstream points' daily inputs flattened next to Delhi's (U1); "dstgnn" =
         models.dstgnn fed Delhi's inputs plus the upstream nodes (training.graph_data), with
         graph {"mode": "none" | "static" | "dynamic", "adaptive": bool} (C2 / C3 / C4 / C4a),
-        plus optional "readout": "delhi" (default) | "pool" (C3-pool, 2026-10-08).
+        plus optional "readout": "delhi" (default) | "pool" (C3-pool, 2026-10-08) and optional
+        "hops": int (C3-hop, models.dstgnn_multihop: exact-distance ring averaging up to K hops
+        per day + a final ring transport into Delhi; static topology, Delhi readout; 2026-10-08/10).
         Same loss, optimiser, batch, epochs, patience and early stopping as the LSTM.
     hparams (optional, upstream backbones only; graph tuning round 2026-10-08): {"hidden": int,
         "lr": float, "dropout": float}. Defaults = the runs before it (U1: hidden 64, dropout 0.2;
@@ -81,6 +83,7 @@ from torch.utils.data import DataLoader, TensorDataset
 
 from evaluation.predict_v1 import long_frame
 from models.dstgnn import GRAPH_MODES, READOUTS, DSTGNN
+from models.dstgnn_multihop import MultiHopDSTGNN
 from models.lstm import LSTMForecaster
 from models.retrieval_lstm_v2 import RetrievalAugmentedLSTMv2
 from retrieval.fold_retrieval import MODES as RETRIEVAL_MODES, RANDOM_MODES, UPSTREAM_PATH
@@ -106,7 +109,7 @@ CODE_FILES = [
     "training/graph_data.py", "models/dstgnn.py", "pipeline/graph.py",
     "training/physics_train.py", "models/physics_head.py", "pipeline/wbgt_liljegren_torch.py",
     "pipeline/wbgt_liljegren.py", "pipeline/build_peak_ingredients.py",
-    "training/tune_backbone.py",
+    "training/tune_backbone.py", "models/dstgnn_multihop.py",
 ]
 BACKBONES = ("lstm", "lstm_upstream", "dstgnn")
 EARLY_STOP = ("inner_2y", "val_block")
@@ -155,10 +158,14 @@ def load_config(path: Path) -> dict:
     g = cfg.get("graph")
     if backbone == "dstgnn":
         if not (isinstance(g, dict) and g.get("mode") in GRAPH_MODES and isinstance(g.get("adaptive"), bool)
-                and {"mode", "adaptive"} <= set(g) <= {"mode", "adaptive", "readout"}
-                and g.get("readout", "delhi") in READOUTS and not (g["adaptive"] and g["mode"] != "dynamic")):
+                and {"mode", "adaptive"} <= set(g) <= {"mode", "adaptive", "readout", "hops"}
+                and g.get("readout", "delhi") in READOUTS and not (g["adaptive"] and g["mode"] != "dynamic")
+                and ("hops" not in g or (isinstance(g["hops"], int) and not isinstance(g["hops"], bool)
+                                         and g["hops"] >= 1 and g["mode"] == "static" and not g["adaptive"]
+                                         and g.get("readout", "delhi") == "delhi"))):
             raise ValueError(f'dstgnn needs graph {{"mode": one of {GRAPH_MODES}, "adaptive": bool, '
-                             f'optional "readout": one of {READOUTS}}} (adaptive only with "dynamic")')
+                             f'optional "readout": one of {READOUTS}, optional "hops": int >= 1}} (adaptive only '
+                             'with "dynamic"; hops only with "static" and the Delhi readout)')
     elif g is not None:
         raise ValueError("graph is only valid with backbone 'dstgnn'")
     hp = cfg.get("hparams")
@@ -291,9 +298,12 @@ def with_upstream(split: SplitArrays, upd: UpstreamDaily) -> SplitArrays:
 def make_dstgnn(graph: dict, f_delhi: int, upd: UpstreamDaily, hp: dict | None = None) -> DSTGNN:
     static = torch.from_numpy(upd.static_adj) if graph["mode"] == "static" else None
     extra = {} if hp is None else {"hidden": hp["hidden"], "dropout": float(hp["dropout"])}
-    return DSTGNN(n_nodes=upd.mask.shape[0], f_delhi=f_delhi, f_upstream=N_UP_FEATURES, graph=graph["mode"],
-                  adaptive=graph["adaptive"], static_adj=static, neighbour_mask=torch.from_numpy(upd.mask),
-                  readout=graph.get("readout", "delhi"), **extra)
+    if "hops" in graph:
+        extra["hops"] = graph["hops"]
+    cls = MultiHopDSTGNN if "hops" in graph else DSTGNN
+    return cls(n_nodes=upd.mask.shape[0], f_delhi=f_delhi, f_upstream=N_UP_FEATURES, graph=graph["mode"],
+               adaptive=graph["adaptive"], static_adj=static, neighbour_mask=torch.from_numpy(upd.mask),
+               readout=graph.get("readout", "delhi"), **extra)
 
 
 def _graph_batch(upd_x: torch.Tensor, upd_adj: torch.Tensor, pos: torch.Tensor, dynamic: bool):
@@ -603,7 +613,8 @@ def _run(cfg: dict, folds: list[str], seeds: list[int], out_dir: Path, model_dir
                 "retrieval": f"{ret['mode']} k={ret['k']}" if ret else "",
                 "backbone": backbone if backbone != "dstgnn" else
                 f"dstgnn {cfg['graph']['mode']}{' +adaptive' if cfg['graph']['adaptive'] else ''}"
-                f"{' pool' if cfg['graph'].get('readout') == 'pool' else ''}",
+                f"{' pool' if cfg['graph'].get('readout') == 'pool' else ''}"
+                f"{' hops=' + str(cfg['graph']['hops']) if 'hops' in cfg['graph'] else ''}",
                 "head": head or "",
                 "hparams": "" if hp is None else f"hidden={hp['hidden']} lr={hp['lr']:g} dropout={hp['dropout']:g}",
                 "hot_weight": cfg["hot_weight"],
