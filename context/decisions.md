@@ -1003,3 +1003,40 @@ tuning, tuned or C3-hop result was looked at**
     soft clamp is described as approximately identity (deviation ~e^-distance to the bound).
   - Noted, not changed: tuning selects on the early-stopping block (already disclosed); sqrt-Brier through the RMSE
     jackknife tests equal Brier but may be anti-conservative with hot days in few clusters (stated in the report).
+
+**Results of the tuning round, C3-hop, the physics head and R2: 2026-10-12** (code 25995975 for tuning + tuned runs,
+commit 0a39fa6 / code 3b0639c4 for C3-hop, PH_lstm, R2; all registry rows clean)
+- Backbone, amended rule (`evaluation_v2/graph_gates_tuned.md`): eligible in both families U1 (tuned), C2, C3-pool,
+  C3-hop; not eligible: control (worse than tuned U1), C3 (tuned; its WBGT selection equals the original C3).
+  WBGT all days: U1 2.247, C3-hop 2.248, C3-pool 2.252, C2 2.254 (all pairwise CIs cross 0) -> **provisional pick U1
+  by the 0.02 °C simplicity tie-break**, with and without C3-hop. Against U1, C2 / C3-pool / C3-hop are better on
+  Tmax all days (-0.09 / -0.08 / -0.08, significant) and on WBGT extreme days (-0.27 / -0.27 / -0.17, significant);
+  U1 is better only on Tmax extreme days (n.s.). Awaiting the user's approval.
+- Graph structure: C3-hop (ring averaging) fixes C3's defect: vs C3 -0.075 (Tmax) / -0.098 (WBGT) all days,
+  significant, confirming that the lost last-day upstream signal was the problem. But C3-hop = C2 (+0.015 / -0.006,
+  n.s.) and C3-pool = C2: no structure claim holds (CI below 0 vs both U1 and C2 for none of C3 / C3-pool / C3-hop).
+  The regional upstream data, read directly, is what helps; graph edges add no measurable skill over pooling.
+  Selection-free years give the same picture.
+- Ridge (reported): C3-hop vs ridge all days -0.039 (Tmax, n.s.) / +0.031 (WBGT, n.s.); extreme days -1.08 / -1.35.
+- Hot-day Brier skill (in season, recalibrated): Tmax C3-hop +0.36, C3-pool +0.34, C2 +0.34, U1 tuned +0.31, control
+  +0.28; WBGT +0.03 to +0.04 for every model.
+- **Physics head: DROPPED by the keep rule** (`evaluation_v2/late_rungs.md`): WBGT vs A2Lr_hw5 +0.041 [+0.001,
+  +0.082]; Tmax vs A1prime_hw5 +0.132 [+0.077, +0.187] (both upper ends >= +0.05). Training was healthy (0 skipped
+  batches, all finite). As agreed: two separate direct models, disclosed.
+- **R2: fails G3 in both families**, like Rg: WBGT all days -0.048 (p < 0.001) but extreme-day CIs vs the control
+  and vs R0-rand cross 0; R2 vs Rg ~0 (-0.004 / -0.007, n.s.). No retrieval rung passes G3.
+
+**Final backbone: C3-hop. DECIDED 2026-10-12 (user), after seeing the results above; disclosed deviation**
+- The amended rule's tie-break gives U1 (four eligible models tied on WBGT all days within 0.02 °C). The user chose
+  C3-hop instead: eligible in both families, statistically tied with the best (C2) on every measure, better than U1
+  on Tmax all days (-0.076) and WBGT extreme days (-0.173), best Tmax hot-day Brier skill, and a genuine graph
+  network (the project's stated backbone preference). Disclosed in the paper as: chosen after results, overriding a
+  simplicity tie-break; C3-hop itself added after the G-D3 result; the 2019+ test run is its confirmation.
+- Claim limits (binding for the paper): no graph-structure claim (C3-hop = C2 within noise); the upstream regional
+  data, read so that every point's last input day reaches the forecast, is what helps. C2 and U1 are reported next
+  to C3-hop everywhere.
+- Not chosen: C4 / C4a (wind-gated edges). Why: G-D3 picked C3 as the candidate (C3 / C4 / C4a within the
+  pre-registered 0.02 °C tie, so the simplest), the tuning round tuned only that candidate, and C3-pool / C3-hop were
+  built on it for a clean comparison; C4 suffered the same last-day defect as C3 and was no better (Tmax 2.142 vs
+  2.147, WBGT 2.338 vs 2.346); and G-D0 found no delay growing with distance (a large-scale pattern, not air
+  advected point to point), so wind gating had little to work with. A wind-weighted ring variant was not tested.

@@ -606,6 +606,38 @@ worse than both the plain LSTM and U1 (the LSTM given the same upstream data) by
     head's NaN guard now also checks gradients and stops the run if bad batches aren't rare; the
     backbone report works with or without C3-hop and shows both; hot-day probabilities are scored only
     in season.
+  - **Results (2026-10-12) and the final backbone: C3-hop (your decision).**
+    - C3-hop fixed the flaw: it beats the old graph C3 by ~0.08–0.10 °C, so the lost "last day" was the
+      problem. But it only *ties* C2 (the same network with no edges). So the honest finding is: the
+      upstream regional data helps a lot, and the graph's edges don't add measurable skill on top.
+    - Four models tied on WBGT ordinary days (U1, C2, C3-pool, C3-hop: 2.247–2.254). The written rule's
+      tie-break would pick U1, but the graph models beat U1 on Tmax ordinary days and on WBGT heatwave
+      days. You chose C3-hop: a genuine GNN, as good as the best, with the best Tmax hot-day warnings.
+      This is disclosed (chosen after results); the 2019+ test years will confirm it.
+    - C3-hop is our own PyTorch model (no graph library), built from two published designs: a recurrent
+      graph network over the 14 days (like DCRNN) and "ring" messages from points 1–4 hops away
+      (shortest-path message passing). About 76k parameters for Tmax, 21k for WBGT (the plain LSTM: 56k).
+    - Why not C4 (wind-based edges)? It scored the same as C3 and had the same flaw; the pre-agreed rule
+      picked C3 as the simplest of the tied graphs; and G-D0 suggested heat arrives as a large-scale
+      pattern, not air moving point to point, so wind direction had little to add.
+    - **Physics head: dropped by its keep rule** (WBGT +0.04 °C, Tmax +0.13 °C worse than the direct
+      models; training was healthy). So WBGT and Tmax come from two separate direct models.
+    - **R2 (varied regional analogues): fails G3**, like Rg: helps WBGT ordinary days a little, not
+      heatwave days, and adds nothing over Rg. Next: G-R*, retrieval on the C3-hop backbone.
+  - **External yardstick: GraphCast, 2018 (for the paper only; not used for any choice).** GraphCast is
+    Google DeepMind's global AI weather model (Lam et al. 2023). WeatherBench 2 publishes its 2018 forecasts,
+    and we compared it with our models on the same 361 forecast windows (Tmax only; GraphCast has no WBGT
+    inputs). It starts 12 UTC the day before, so it knows nothing our models don't in time, but it sees the
+    whole globe's atmosphere. Its 6-hourly values miss the afternoon peak, so a per-month correction fitted
+    on our 1980–2015 hourly data turns them into a daily maximum. That correction alone costs 0.67 °C (the
+    "floor": a perfect 6-hourly forecast would still be off by this much).
+    - **RMSE, all days:** GraphCast 1.15 °C vs C3-hop 1.98, C2 1.99, ridge 2.02, U1 2.09, LSTM control 2.11.
+    - **Day 1:** GraphCast 0.91 vs C3-hop 1.35. **Day 5:** 1.32 vs 2.32.
+    - So a global AI weather model is about 40% better than our local models, and the gap is widest at
+      longer leads. That is expected (it sees the weather systems coming; ours sees 28 points) and says
+      where our work fits: a cheap local model plus heat-stress advice, not a replacement for weather models.
+    - One year = 3 clusters, so descriptive only; only 20 heatwave-day rows, too few to rank anyone there.
+      Report: `evaluation_v2/graphcast_yardstick.md`.
   - **Test protocol drafted** (`docs/CONFIRMATORY_PROTOCOL.md`): at most 3 hypotheses with a correction
     for multiple tests, written before the 2019+ years are opened. The test period can detect about
     0.05 °C on all days but only about 0.3 °C on heatwave days.
@@ -910,5 +942,7 @@ the project's virtual environment (`.venv`); nothing is installed globally.
 | 2026-10-07 | Retrieval information check: analogues add no information beyond the query's own inputs, so tuning the network's use of them won't help. |
 | 2026-10-07 | Rg (regional-pattern retrieval) added after G3: WBGT −2% error on all days and beats random analogues; extreme-day condition missed (p = 0.11), so G3 still none; reviewed. |
 | 2026-10-07 | Physics head chosen (exact formula, per cell at each cell's peak hour); graph runs C2–C4a + U1 started (G-D4 passed); R2–R4 screened: R2 passes, R3/R4 add nothing over Rg. |
+| 2026-10-12 | Tuning round, C3-hop, physics head and R2 done. Final backbone: C3-hop (your choice over the U1 tie-break; disclosed); edges add no skill over pooling; physics head dropped by its keep rule; R2 fails G3. |
+| 2026-10-13 | GraphCast yardstick (2018, Tmax, paper only): GraphCast 1.15 °C vs C3-hop 1.98 °C RMSE; descriptive. |
 | 2026-10-08 | Independent ML review: ridge baseline, bias split / recalibration / hot-day Brier added; backbone rule amended (C2 eligible, user approves the final pick); physics-head robustness fixes queued; test protocol drafted. |
 | 2026-10-08 | Graph runs done: G-D3 says U1 (graph not worse than U1 for Tmax, 0.08 °C worse for WBGT); edges hurt, the edgeless C2 is best. One tuning round started (C3, U1, and the post-result arm C3-pool); then PH_lstm and R2. |

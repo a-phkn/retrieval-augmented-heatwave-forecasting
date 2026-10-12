@@ -117,6 +117,15 @@ Short, frequently-updated. See `build_plan.md` for full milestone detail.
 - **Stage 2 (2026-10-12)**: post-queue patches applied (code 3b0639c4; 337 tests pass); C3-hop x2, PH_lstm, R2 x2
   via scratchpad `week5b_queue.sh`, log `week5b.log`. Tuning runs' 2007-2018 forecasts are gitignored
   (regenerable, never used for selection); their inner-block forecasts + registry are committed.
+  Stage 2 DONE 2026-10-12 23:21 (all under 3b0639c4, clean).
+- **Results 2026-10-12** (decisions.md): backbone = **C3-hop** (user's choice over the U1 tie-break; disclosed);
+  C3-hop = C2 (no structure claim), beats C3 by ~0.08-0.10. Physics head DROPPED by keep rule
+  (`evaluation_v2/late_rungs.md`, new `evaluation/late_rungs.py`). R2 fails G3. Ridge + calibration refreshed.
+  Next: G-R* (retrieval on C3-hop), then freeze the confirmatory protocol.
+- **GraphCast yardstick (2026-10-13, paper only)**: `evaluation/graphcast_yardstick.py` (+6 tests). WB2 GraphCast
+  2018, 0.7°, read chunk-by-chunk over HTTPS (gcsfs hung on Windows); extract `data/external/graphcast_2018_delhi_t2m.parquet`
+  (62 KB). 361 f4 windows, Tmax RMSE: GraphCast 1.154, floor 0.668, C3-hop 1.979, C2 1.993, ridge 2.021,
+  U1 2.091, control 2.105. Descriptive; not used for selection. `evaluation_v2/graphcast_yardstick.md`.
 - **DSTGNN skeleton (2026-10-06)**: `models/dstgnn.py` (graph GRU, modes none/static/dynamic + adaptive),
   `pipeline/graph.py` (Delhi + 27 nodes, geographic and wind-gated advective edges). G-D1: 13 tests pass.
   The plan said `data/graph.py`; it is `pipeline/graph.py` because `data/` holds raw data.
