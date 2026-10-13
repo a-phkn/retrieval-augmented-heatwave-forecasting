@@ -767,7 +767,7 @@ in brackets is the 95% interval; if it crosses 0, the change is not significant.
 - Analogues are 14–17 years old on average in every rung, so correcting for warming (R4) had little to fix.
 - Report: `evaluation_v2/retrieval_mechanisms.md`.
 
-### 9.1 How RAG helps the DSTGNN, and how we prove it (design; results pending)
+### 9.1 How RAG helps the DSTGNN, and how we prove it (built 2026-10-13; results pending)
 
 **What each part contributes:**
 
@@ -823,8 +823,22 @@ alternative explanation gets its own control:
 and with random retrieval, over 10 seeds and 12 validation years with confidence intervals.
 RAG counts as helping only if real retrieval beats both.
 
-*To be added when G-R\* is built:* exactly which spatio-temporal parts of the graph model RAG
-helps (see the change log).
+**G-R\* as built (2026-10-13, rules written down before any run; `models/dstgnn_retrieval.py`):**
+- **Backbone:** the final C3-hop, unchanged. **Retrieval:** Rg (past days whose *regional* pattern matched).
+- **Where they meet:** only at Delhi's final summary (the readout). C3-hop's summary asks "which of these 5 past
+  situations look relevant?" (attention); each analogue is described by its 14 Delhi days plus what really happened
+  in the next 5 days. The graph's message passing never sees the analogues. (Sending each analogue through the
+  whole graph would cost ~6× the training time, and the earlier check showed an analogue's value lies in its
+  outcome.)
+- **Runs:** C3-hop + Rg, and C3-hop + *random* past days through the identical model (the key control), 10 seeds ×
+  4 folds, both families.
+- **Pass rule (G3's three conditions):** not worse than plain C3-hop on all days; better than it on heatwave days;
+  better than the random control on heatwave days. Only then does retrieval count as helping the graph model, and
+  only then does the final test model include it.
+- **Which spatio-temporal part it helps (reported, no claims):** the gain per lead day (*when*); on days when
+  upstream heat is arriving vs not (*where*); whether attention concentrates (*how*); and the 2×2 overlap: is Rg's
+  gain smaller on C3-hop than on the plain LSTM (does the graph already carry that information?).
+- Honest expectation: the heatwave-day test can only see about 0.2 °C, so a null result is quite possible.
 
 **Advisory (Phase 6):**
 - forecast → rule engine → risk tier (GREEN / YELLOW / ORANGE / RED) → LLM writes the
@@ -944,5 +958,6 @@ the project's virtual environment (`.venv`); nothing is installed globally.
 | 2026-10-07 | Physics head chosen (exact formula, per cell at each cell's peak hour); graph runs C2–C4a + U1 started (G-D4 passed); R2–R4 screened: R2 passes, R3/R4 add nothing over Rg. |
 | 2026-10-12 | Tuning round, C3-hop, physics head and R2 done. Final backbone: C3-hop (your choice over the U1 tie-break; disclosed); edges add no skill over pooling; physics head dropped by its keep rule; R2 fails G3. |
 | 2026-10-13 | GraphCast yardstick (2018, Tmax, paper only): GraphCast 1.15 °C vs C3-hop 1.98 °C RMSE; descriptive. |
+| 2026-10-13 | §9.1: G-R* built (C3-hop + Rg at the Delhi readout, random control, G3 pass rule, diagnostics) and pre-registered. |
 | 2026-10-08 | Independent ML review: ridge baseline, bias split / recalibration / hot-day Brier added; backbone rule amended (C2 eligible, user approves the final pick); physics-head robustness fixes queued; test protocol drafted. |
 | 2026-10-08 | Graph runs done: G-D3 says U1 (graph not worse than U1 for Tmax, 0.08 °C worse for WBGT); edges hurt, the edgeless C2 is best. One tuning round started (C3, U1, and the post-result arm C3-pool); then PH_lstm and R2. |

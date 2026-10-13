@@ -211,6 +211,37 @@ def test_hops_config_routes_to_the_multi_hop_model(tmp_path):
             tu.load_config(p)
 
 
+def test_gr_star_config_trains_end_to_end_and_writes_analogues_and_log(tmp_path, monkeypatch):
+    """G-R* (2026-10-13): retrieval on C3-hop only; one epoch, one seed, f1."""
+    import json as _json
+
+    from models.dstgnn_retrieval import RetrievalMultiHopDSTGNN
+
+    cfg = tu.load_config(tu.REPO_ROOT / "configs" / "A2Lr_hw5_C3hop_Rg.json")
+    assert cfg["graph"]["hops"] == 4 and cfg["retrieval"] == {"mode": "region", "k": 5}
+    assert "models/dstgnn_retrieval.py" in tu.CODE_FILES
+    monkeypatch.setattr(tu, "MAX_EPOCHS", 1)
+    made = []
+    orig = tu.make_dstgnn
+    monkeypatch.setattr(tu, "make_dstgnn", lambda *a, **k: made.append(orig(*a, **k)) or made[-1])
+    res = tu.run({**cfg, "run_id": "test_grs"}, folds=["f1"], seeds=[0], out_dir=tmp_path / "pred",
+                 model_dir=tmp_path / "m", write_registry=False, threads=2)
+    assert isinstance(made[0], RetrievalMultiHopDSTGNN)
+    df = res["f1"]
+    assert np.isfinite(df["pred"]).all()
+    an = pd.read_parquet(tmp_path / "pred" / "test_grs" / "f1_analogues.parquet")
+    assert len(an) == len(df) // 5 * 5 and an["attention"].between(0, 1).all()
+    log = _json.loads((tmp_path / "pred" / "test_grs" / "f1_training_log.json").read_text(encoding="utf-8"))
+    assert log[0]["finite"] and len(log[0]["val_curve"]) == 1
+    # retrieval stays off every other upstream backbone
+    p = tmp_path / "c.json"
+    for base in ("A2Lr_hw5_C3", "A2Lr_hw5_U1"):
+        b = _json.loads((tu.REPO_ROOT / "configs" / f"{base}.json").read_text(encoding="utf-8"))
+        p.write_text(_json.dumps({**b, "retrieval": {"mode": "region", "k": 5}}), encoding="utf-8")
+        with pytest.raises(ValueError, match="retrieval"):
+            tu.load_config(p)
+
+
 def test_physics_soft_clamp():
     from models.physics_head import P_RANGE, T_RANGE, soft_clamp
 

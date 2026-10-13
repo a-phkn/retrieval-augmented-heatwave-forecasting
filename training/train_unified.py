@@ -26,7 +26,9 @@ Config keys (configs/*.json):
         models.retrieval_lstm_v2 fed K analogues per window from retrieval.fold_retrieval
         (this fold's training windows only; "rand"/"time_rand" draws are fixed per fold and seed). The
         analogues' outcomes are given in the model's own target units (same target form and
-        scaling). Without it, the plain LSTM path below is used unchanged.
+        scaling). Without it, the plain LSTM path below is used unchanged. With backbone "dstgnn"
+        and graph "hops" (G-R*, 2026-10-13), the model is models.dstgnn_retrieval: C3-hop with the
+        same analogue attention at its Delhi readout.
     backbone (optional, default "lstm"; pre-registered 2026-10-07): "lstm_upstream" = the same LSTM
         given the 27 upstream points' daily inputs flattened next to Delhi's (U1); "dstgnn" =
         models.dstgnn fed Delhi's inputs plus the upstream nodes (training.graph_data), with
@@ -84,6 +86,7 @@ from torch.utils.data import DataLoader, TensorDataset
 from evaluation.predict_v1 import long_frame
 from models.dstgnn import GRAPH_MODES, READOUTS, DSTGNN
 from models.dstgnn_multihop import MultiHopDSTGNN
+from models.dstgnn_retrieval import RetrievalMultiHopDSTGNN
 from models.lstm import LSTMForecaster
 from models.retrieval_lstm_v2 import RetrievalAugmentedLSTMv2
 from retrieval.fold_retrieval import MODES as RETRIEVAL_MODES, RANDOM_MODES, UPSTREAM_PATH
@@ -109,7 +112,7 @@ CODE_FILES = [
     "training/graph_data.py", "models/dstgnn.py", "pipeline/graph.py",
     "training/physics_train.py", "models/physics_head.py", "pipeline/wbgt_liljegren_torch.py",
     "pipeline/wbgt_liljegren.py", "pipeline/build_peak_ingredients.py",
-    "training/tune_backbone.py", "models/dstgnn_multihop.py",
+    "training/tune_backbone.py", "models/dstgnn_multihop.py", "models/dstgnn_retrieval.py",
 ]
 BACKBONES = ("lstm", "lstm_upstream", "dstgnn")
 EARLY_STOP = ("inner_2y", "val_block")
@@ -153,8 +156,8 @@ def load_config(path: Path) -> dict:
     backbone = cfg.get("backbone", "lstm")  # not stored: existing configs keep their hash
     if backbone not in BACKBONES:
         raise ValueError(f"backbone must be one of {BACKBONES}")
-    if backbone != "lstm" and "retrieval" in cfg:
-        raise ValueError("retrieval is only wired to the plain LSTM backbone so far")
+    if "retrieval" in cfg and backbone != "lstm" and not (backbone == "dstgnn" and "hops" in (cfg.get("graph") or {})):
+        raise ValueError("retrieval is wired to the plain LSTM and to C3-hop (dstgnn with graph hops) only")
     g = cfg.get("graph")
     if backbone == "dstgnn":
         if not (isinstance(g, dict) and g.get("mode") in GRAPH_MODES and isinstance(g.get("adaptive"), bool)
@@ -295,12 +298,15 @@ def with_upstream(split: SplitArrays, upd: UpstreamDaily) -> SplitArrays:
     return replace(split, X=np.concatenate([split.X, up.reshape(*up.shape[:2], -1)], axis=2))
 
 
-def make_dstgnn(graph: dict, f_delhi: int, upd: UpstreamDaily, hp: dict | None = None) -> DSTGNN:
+def make_dstgnn(graph: dict, f_delhi: int, upd: UpstreamDaily, hp: dict | None = None,
+                retrieval: bool = False) -> DSTGNN:
     static = torch.from_numpy(upd.static_adj) if graph["mode"] == "static" else None
     extra = {} if hp is None else {"hidden": hp["hidden"], "dropout": float(hp["dropout"])}
     if "hops" in graph:
         extra["hops"] = graph["hops"]
-    cls = MultiHopDSTGNN if "hops" in graph else DSTGNN
+    if retrieval and "hops" not in graph:
+        raise ValueError("retrieval on the graph backbone needs C3-hop (graph hops)")
+    cls = RetrievalMultiHopDSTGNN if retrieval else MultiHopDSTGNN if "hops" in graph else DSTGNN
     return cls(n_nodes=upd.mask.shape[0], f_delhi=f_delhi, f_upstream=N_UP_FEATURES, graph=graph["mode"],
                adaptive=graph["adaptive"], static_adj=static, neighbour_mask=torch.from_numpy(upd.mask),
                readout=graph.get("readout", "delhi"), **extra)
@@ -348,6 +354,63 @@ def train_one_seed_graph(seed: int, tr: SplitArrays, va: SplitArrays, hot_weight
             loss.backward()
             optimizer.step()
         val_pred = predict_graph(model, va.X, pos_va, upd_x, upd_adj)
+        val_loss = weighted_mse(torch.from_numpy(val_pred), val_y, val_hot, hot_weight).item()
+        val_curve.append(val_loss)
+        if val_loss < best_val - 1e-6:
+            best_val, stale = val_loss, 0
+            best_state = {k: v.clone() for k, v in model.state_dict().items()}
+        else:
+            stale += 1
+            if stale >= PATIENCE:
+                break
+    if log is not None:
+        log.update(val_curve=val_curve, finite=finite)
+    if best_state is None:
+        raise RuntimeError("no finite early-stopping loss in any epoch")
+    model.load_state_dict(best_state)
+    return model
+
+
+def predict_graph_ra(model: RetrievalMultiHopDSTGNN, X: np.ndarray, pos: np.ndarray, idx: np.ndarray,
+                     upd_x: torch.Tensor, pool_X: torch.Tensor, pool_y: torch.Tensor,
+                     batch: int = 1024) -> tuple[np.ndarray, np.ndarray]:
+    """G-R*: normalised predictions (N, 5) and attention weights (N, K), in eval mode."""
+    model.eval()
+    preds, atts = [], []
+    with torch.no_grad():
+        for s in range(0, len(X), batch):
+            xa, ya, m = _analogue_batch(pool_X, pool_y, torch.from_numpy(idx[s:s + batch]))
+            p, a = model(torch.from_numpy(X[s:s + batch]), upd_x[torch.from_numpy(pos[s:s + batch])], xa, ya, m)
+            preds.append(p.numpy())
+            atts.append(a.numpy())
+    return np.concatenate(preds), np.concatenate(atts)
+
+
+def train_one_seed_graph_ra(seed: int, tr: SplitArrays, va: SplitArrays, hot_weight: float, graph: dict,
+                            upd: UpstreamDaily, pos_tr: np.ndarray, pos_va: np.ndarray, idx_tr: np.ndarray,
+                            idx_va: np.ndarray, pool_X: torch.Tensor, pool_y: torch.Tensor,
+                            log: dict | None = None, hp: dict | None = None) -> RetrievalMultiHopDSTGNN:
+    """train_one_seed_graph with analogues (G-R*): same recipe; each window carries its upstream
+    input-day positions and the pool positions of its analogues."""
+    set_seed(seed)
+    upd_x = torch.from_numpy(upd.x)
+    ds = TensorDataset(torch.from_numpy(tr.X), torch.from_numpy(tr.y), torch.from_numpy(tr.hot.astype(np.float32)),
+                       torch.from_numpy(pos_tr), torch.from_numpy(idx_tr))
+    loader = DataLoader(ds, batch_size=BATCH_SIZE, shuffle=True)
+    val_y, val_hot = torch.from_numpy(va.y), torch.from_numpy(va.hot.astype(np.float32))
+    model = make_dstgnn(graph, tr.X.shape[2], upd, hp, retrieval=True)
+    optimizer = torch.optim.Adam(model.parameters(), lr=LR if hp is None else hp["lr"])
+    best_val, best_state, stale, finite, val_curve = float("inf"), None, 0, True, []
+    for _ in range(MAX_EPOCHS):
+        model.train()
+        for xb, yb, hb, pb, ib in loader:
+            optimizer.zero_grad()
+            pred, _ = model(xb, upd_x[pb], *_analogue_batch(pool_X, pool_y, ib))
+            loss = weighted_mse(pred, yb, hb, hot_weight)
+            finite &= bool(torch.isfinite(loss))
+            loss.backward()
+            optimizer.step()
+        val_pred, _ = predict_graph_ra(model, va.X, pos_va, idx_va, upd_x, pool_X, pool_y)
         val_loss = weighted_mse(torch.from_numpy(val_pred), val_y, val_hot, hot_weight).item()
         val_curve.append(val_loss)
         if val_loss < best_val - 1e-6:
@@ -525,7 +588,7 @@ def _run(cfg: dict, folds: list[str], seeds: list[int], out_dir: Path, model_dir
             if not pd.DatetimeIndex(retriever.train_w["query_date"]).equals(pd.DatetimeIndex(data.train.query_dates)):
                 raise ValueError("retrieval pool and training windows disagree")
             pool_X, pool_y = torch.from_numpy(data.train.X), torch.from_numpy(data.train.y)
-            pos_fit, pos_stop = _positions(fit, data.train), _positions(stop, data.train)
+            ix_fit, ix_stop = _positions(fit, data.train), _positions(stop, data.train)  # rows in the pool
             fixed = None  # sim / time retrieval does not depend on the seed: compute once
         frames, an_frames, stop_frames = [], [], []
         for seed in seeds:
@@ -537,10 +600,19 @@ def _run(cfg: dict, folds: list[str], seeds: list[int], out_dir: Path, model_dir
                     fixed = (retriever.retrieve(data.train.query_dates, ret["mode"], ret["k"], seed=s),
                              retriever.retrieve(data.val.query_dates, ret["mode"], ret["k"], seed=s))
                 r_tr, r_va = fixed
-                model = train_one_seed_ra(seed, fit, stop, float(cfg["hot_weight"]), r_tr.idx[pos_fit],
-                                          r_tr.idx[pos_stop], pool_X, pool_y)
-                torch.save(model.state_dict(), ckpt)
-                pred_norm, att = predict_ra(model, data.val.X, r_va.idx, pool_X, pool_y)
+                if backbone == "dstgnn":  # G-R*: C3-hop + analogues (val is data.val here)
+                    log = {}
+                    model = train_one_seed_graph_ra(seed, fit, stop, float(cfg["hot_weight"]), cfg["graph"], upd,
+                                                    pos_fit, pos_stop, r_tr.idx[ix_fit], r_tr.idx[ix_stop],
+                                                    pool_X, pool_y, log=log, hp=hp)
+                    torch.save(model.state_dict(), ckpt)
+                    pred_norm, att = predict_graph_ra(model, data.val.X, pos_val, r_va.idx, upd_x, pool_X, pool_y)
+                    gate_log.append({"fold": fold, "seed": seed, **log})
+                else:
+                    model = train_one_seed_ra(seed, fit, stop, float(cfg["hot_weight"]), r_tr.idx[ix_fit],
+                                              r_tr.idx[ix_stop], pool_X, pool_y)
+                    torch.save(model.state_dict(), ckpt)
+                    pred_norm, att = predict_ra(model, data.val.X, r_va.idx, pool_X, pool_y)
                 pred = data.to_raw(pred_norm, "val")
                 k = r_va.idx.shape[1]
                 an_frames.append(pd.DataFrame({

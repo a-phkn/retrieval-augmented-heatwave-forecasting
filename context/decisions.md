@@ -1040,3 +1040,27 @@ commit 0a39fa6 / code 3b0639c4 for C3-hop, PH_lstm, R2; all registry rows clean)
   built on it for a clean comparison; C4 suffered the same last-day defect as C3 and was no better (Tmax 2.142 vs
   2.147, WBGT 2.338 vs 2.346); and G-D0 found no delay growing with distance (a large-scale pattern, not air
   advected point to point), so wind gating had little to work with. A wind-weighted ring variant was not tested.
+
+**G-R*: retrieval on the C3-hop backbone. PRE-REGISTERED 2026-10-13 (user approved the design), before any G-R* run**
+- Rung: Rg (best rung: WBGT all days -2%, beats random analogues; R2 adds ~0.01 and also fails G3, not used).
+- Model (`models/dstgnn_retrieval.py`): the tuned C3-hop of each family, unchanged, plus Rg's attention at the Delhi
+  readout. Query = a linear map of C3-hop's readout [s_T(Delhi) ; ring transport]; keys = a 1-layer LSTM (hidden =
+  the family's C3-hop hidden size) over each analogue's 14 Delhi input days; values = a projection of [key ;
+  the analogue's own 5-day outcome in model-target units]; head on [readout ; context]. Same masking as
+  RetrievalAugmentedLSTMv2 (no eligible analogue -> zero context). Analogues are NOT passed through the graph
+  (6x compute; the information check showed their value is in the outcomes). Same recipe: Adam, the family's lr,
+  batch 64, 100 epochs, patience 10, weighted MSE, inner_2y early stopping, 10 seeds x 4 folds.
+- Runs: `{A1prime_hw5,A2Lr_hw5}_C3hop_Rg` (mode region, K 5) and `{...}_C3hop_rand` (mode rand, K 5: R0-rand, the
+  random control Rg was already judged against).
+- Pass rule per family = G3's three conditions (`evaluation.compare_v2.g3_conditions`): (1) C3hop_Rg vs C3hop, all
+  days: CI not entirely above 0; (2) vs C3hop, extreme days: CI entirely below 0; (3) vs C3hop_rand, extreme days: CI
+  entirely below 0. "Retrieval helps the graph model" in a family only if all three hold; otherwise no claim. Not
+  loosened afterwards. Expected power: extreme-day MDE ~0.2 °C, so a null is likely and will be reported as such.
+- Consequence for the test protocol: the final model of a family is C3-hop + Rg only if G-R* passes in that family,
+  otherwise C3-hop alone.
+- Exploratory diagnostics (no claims; evaluator's question "which spatio-temporal part does RAG help"):
+  (a) per-lead deltas C3hop_Rg - C3hop (temporal); (b) "upstream heat arriving" windows = mean of the 27 upstream
+  points' Tmax anomalies on the last input day (Rg's own anomalies, fold-train climatology) in the top quarter of the
+  fold's training windows; delta inside vs outside (spatial); (c) attention concentration: mean max weight and
+  normalised entropy vs uniform, next to LSTM Rg; (d) 2x2 overlap: (C3hop_Rg - C3hop) - (LSTM_Rg - LSTM) with a
+  cluster-jackknife CI (does the graph already carry Rg's information?). Fusion point stated: Delhi readout only.
