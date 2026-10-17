@@ -767,7 +767,7 @@ in brackets is the 95% interval; if it crosses 0, the change is not significant.
 - Analogues are 14–17 years old on average in every rung, so correcting for warming (R4) had little to fix.
 - Report: `evaluation_v2/retrieval_mechanisms.md`.
 
-### 9.1 How RAG helps the DSTGNN, and how we prove it (built 2026-10-13; results pending)
+### 9.1 How RAG helps the DSTGNN, and how we prove it (result 2026-10-16: it doesn't, and why)
 
 **What each part contributes:**
 
@@ -840,6 +840,27 @@ RAG counts as helping only if real retrieval beats both.
   gain smaller on C3-hop than on the plain LSTM (does the graph already carry that information?).
 - Honest expectation: the heatwave-day test can only see about 0.2 °C, so a null result is quite possible.
 
+**G-R\* result (2026-10-16): retrieval does not help the graph model, in either family.**
+- **The decision:** on all days, C3-hop + Rg is no different from C3-hop alone (Tmax +0.018 °C, WBGT +0.002 °C,
+  both within noise). On heatwave days it is not better than C3-hop or than random past days. Both families fail
+  the rule, so **the final models for the 2019+ test are C3-hop alone**.
+- **The most informative finding: the answer to "how does RAG help the DSTGNN?"** (exploratory, not a claim):
+  - On the plain LSTM, Rg helped WBGT (−0.044 °C all days, −0.16 °C on heatwave days).
+  - On C3-hop that gain disappears, and the difference between the two backbones is clear (about +0.05 °C on
+    all days and +0.14 °C on heatwave days, confidence intervals above zero).
+  - So Rg's earlier gain was very likely the regional information being passed, second-hand, to a model that
+    couldn't see the region. C3-hop sees the 27 upstream points directly, so the analogues have nothing new to
+    add. The graph and the retrieval carry the *same* information; the graph carries it more directly.
+- **Where and when (exploratory):**
+  - Rg doesn't help more on days when upstream heat is arriving.
+  - For Tmax it is slightly *worse* on days 1–2 (+0.02–0.03 °C; weak evidence, since 10 lead tests were run).
+- **How:** the attention is still almost even across the 5 analogues (slightly less even than on the LSTM). The
+  model doesn't find one analogue much more useful than the others.
+- **What this means for the paper:** retrieval helps a model that lacks regional information, and adds nothing
+  once the model has it. That answers the evaluator's question honestly, with evidence. The network part of
+  the analogue approach, though, is not a source of skill for this task.
+- Report: `evaluation_v2/gr_star.md`.
+
 **Advisory (Phase 6):**
 - forecast → rule engine → risk tier (GREEN / YELLOW / ORANGE / RED) → LLM writes the
   advisory;
@@ -847,8 +868,15 @@ RAG counts as helping only if real retrieval beats both.
   from official documents**;
 - **health and energy actions** (energy included by team decision 2026-10-06, since official
   energy sources were found: CEA, BEE and Delhi power-company notices);
-- which alert colour unlocks which action is being sourced by Cowork (Part E,
-  `docs/PHASE6_PART_E_BRIEF.md`); only 12 of 135 actions have a colour from the sources so far;
+- **which alert colour unlocks which action (decided 2026-10-13, after the Part E search):** no Delhi document
+  maps actions to colours, so we use what the sources literally say:
+  - **Colour levels:** IMD's own colour-coded heat warnings. Delhi's plan prints Orange and Red both as ≥ 45 °C, so
+    it can't separate them.
+  - **The 91 actions with no colour in any source:** shown at **any alert (Yellow and up)**, because Delhi's plan
+    lists them for "during a heat alert". Nothing is invented.
+  - **30 actions coloured only by Ahmedabad's plan:** used, but each is marked on the page as "precedent from
+    Ahmedabad, not Delhi policy". The 12 Delhi/NDMA and 2 IMD colours are used as sourced.
+  - An expert can assign levels later (recorded as expert judgement). Stated as a limitation in the paper.
 - **"If this happens"** (decision 2026-10-06): actions triggered by something that has already
   happened (a heat-stroke patient, heat deaths) are kept in their own clearly labelled section,
   never mixed with the forecast actions. Clinical steps sit behind a "for health professionals"
@@ -959,5 +987,7 @@ the project's virtual environment (`.venv`); nothing is installed globally.
 | 2026-10-12 | Tuning round, C3-hop, physics head and R2 done. Final backbone: C3-hop (your choice over the U1 tie-break; disclosed); edges add no skill over pooling; physics head dropped by its keep rule; R2 fails G3. |
 | 2026-10-13 | GraphCast yardstick (2018, Tmax, paper only): GraphCast 1.15 °C vs C3-hop 1.98 °C RMSE; descriptive. |
 | 2026-10-13 | §9.1: G-R* built (C3-hop + Rg at the Delhi readout, random control, G3 pass rule, diagnostics) and pre-registered. |
+| 2026-10-13 | Phase 6 alert colours decided: IMD's levels; uncoloured actions at any alert; Ahmedabad colours marked as precedent. |
+| 2026-10-16 | G-R* fails in both families: final test models are C3-hop alone. Rg's WBGT gain on the LSTM vanishes on C3-hop (the graph already carries the regional information). |
 | 2026-10-08 | Independent ML review: ridge baseline, bias split / recalibration / hot-day Brier added; backbone rule amended (C2 eligible, user approves the final pick); physics-head robustness fixes queued; test protocol drafted. |
 | 2026-10-08 | Graph runs done: G-D3 says U1 (graph not worse than U1 for Tmax, 0.08 °C worse for WBGT); edges hurt, the edgeless C2 is best. One tuning round started (C3, U1, and the post-result arm C3-pool); then PH_lstm and R2. |

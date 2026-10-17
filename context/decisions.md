@@ -1064,3 +1064,31 @@ commit 0a39fa6 / code 3b0639c4 for C3-hop, PH_lstm, R2; all registry rows clean)
   fold's training windows; delta inside vs outside (spatial); (c) attention concentration: mean max weight and
   normalised entropy vs uniform, next to LSTM Rg; (d) 2x2 overlap: (C3hop_Rg - C3hop) - (LSTM_Rg - LSTM) with a
   cluster-jackknife CI (does the graph already carry Rg's information?). Fusion point stated: Delhi readout only.
+
+**Phase 6 alert colours and action tiers. DECIDED 2026-10-13 (user, the recommended fallback after Part E)**
+Part E (`sources/PHASE6_PART_E_RESULT.md`): no Delhi document maps actions to colours beyond the 12 known; Ahmedabad's
+HAP (2019 update) gives 30, IMD's FAQ 2; 91 stay unspecified; Delhi HAP p.10 prints Orange and Red both as >= 45 °C.
+- Colour levels: IMD's colour-coded heat warning definitions (IMD FAQ p.8, including Red = severe heat wave for more
+  than 2 days or more than 6 heat/severe heat wave days). Delhi HAP's p.10 table is not used for levels (it cannot
+  separate Orange from Red). How our forecast maps onto IMD's criteria is designed with the rule engine.
+- The 91 unspecified actions: shown at any alert level (Yellow and above), because Delhi's HAP lists them for
+  "during a heat alert"; tier_basis "delhi_any_alert". No escalation is invented.
+- The 30 Ahmedabad colours: used, each shown as "precedent from Ahmedabad's Heat Action Plan, not Delhi policy"
+  (tier_basis "ahmedabad_precedent"). The 12 Delhi/NDMA and 2 IMD colours as sourced.
+- Optional later: an expert may assign tiers, recorded as expert judgement (name, date).
+- Paper limitation: no Delhi document maps actions to alert colours.
+
+**G-R* result: FAILS in both families. 2026-10-16** (16 folds, code e10914a8 = commit 15f791a, all registry rows clean;
+`evaluation_v2/gr_star.md`, rule above, applied unchanged)
+- Tmax: C3hop_Rg vs C3hop all days +0.018 [-0.006, +0.042]; extreme -0.021 [-0.199, +0.157]; vs random analogues,
+  extreme +0.028 [-0.139, +0.195]. Conditions (True, False, False).
+- WBGT: all days +0.002 [-0.013, +0.017]; extreme -0.018 [-0.106, +0.070]; vs random, extreme -0.036 [-0.117,
+  +0.045]. Conditions (True, False, False). Extreme-day MDE 0.25 (Tmax) / 0.12 °C (WBGT).
+- **Final test models: C3-hop alone** (A1prime_hw5_C3hop, A2Lr_hw5_C3hop).
+- Diagnostics (exploratory, no claims): (d) overlap: Rg's WBGT gain on the Delhi-only LSTM (all days -0.044,
+  extreme -0.160) disappears on C3-hop (+0.002 / -0.018); difference +0.046 [+0.023, +0.069] all days and +0.142
+  [+0.012, +0.272] extreme (jackknife without seed variance; indicative). Consistent with Rg having passed regional
+  information to a model that could not see it; C3-hop reads that information directly. Tmax: no Rg gain on either
+  backbone; on C3-hop Rg is slightly worse at leads 1-2 (+0.026, +0.023, p ~0.04, uncorrected, 10 lead tests).
+  (b) no difference between upstream-heat windows and other windows. (c) attention stays near uniform (normalised
+  entropy 0.96-0.97; mean max weight 0.28-0.29 vs 0.20 uniform), slightly more concentrated than on the LSTM.

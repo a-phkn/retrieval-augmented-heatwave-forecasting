@@ -126,6 +126,14 @@ Short, frequently-updated. See `build_plan.md` for full milestone detail.
   2018, 0.7°, read chunk-by-chunk over HTTPS (gcsfs hung on Windows); extract `data/external/graphcast_2018_delhi_t2m.parquet`
   (62 KB). 361 f4 windows, Tmax RMSE: GraphCast 1.154, floor 0.668, C3-hop 1.979, C2 1.993, ridge 2.021,
   U1 2.091, control 2.105. Descriptive; not used for selection. `evaluation_v2/graphcast_yardstick.md`.
+- **G-R* (2026-10-13)**: pre-registered (decisions.md), built (`models/dstgnn_retrieval.py`, trainer route, 4 configs,
+  tests), commit 15f791a, code e10914a8. Queue launched 22:18 via scratchpad `week6_queue.sh` (log `week6.log`;
+  order: A2Lr C3hop_Rg, A2Lr C3hop_rand, A1prime C3hop_Rg, A1prime C3hop_rand; skips folds whose parquet exists).
+  Evaluation ready: `evaluation/gr_star.py` (+5 tests), run after the queue. Phase 6 tiers decided (decisions.md).
+  PAUSED 2026-10-14 01:33 after A2Lr_hw5_C3hop_rand f2 (clean); RESUMED 2026-10-14 22:34 at f3 (same code e10914a8). PAUSED 2026-10-15 01:37 after A1prime_hw5_C3hop_Rg f2 (clean); next: A1prime_hw5_C3hop_Rg f3. RESUMED 2026-10-15 18:29 at f3.
+  DONE 2026-10-16 00:47 (16 folds clean). **G-R* FAILS in both families** -> final test models C3-hop alone
+  (`evaluation_v2/gr_star.md`). Rg's WBGT gain on the LSTM vanishes on C3-hop (overlap +0.046 / +0.142, exploratory).
+  Next: update + freeze `docs/CONFIRMATORY_PROTOCOL.md` (user OK + tag), then the one-time 2019+ test run.
 - **DSTGNN skeleton (2026-10-06)**: `models/dstgnn.py` (graph GRU, modes none/static/dynamic + adaptive),
   `pipeline/graph.py` (Delhi + 27 nodes, geographic and wind-gated advective edges). G-D1: 13 tests pass.
   The plan said `data/graph.py`; it is `pipeline/graph.py` because `data/` holds raw data.
