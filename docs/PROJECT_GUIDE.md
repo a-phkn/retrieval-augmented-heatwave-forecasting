@@ -861,6 +861,22 @@ RAG counts as helping only if real retrieval beats both.
   the analogue approach, though, is not a source of skill for this task.
 - Report: `evaluation_v2/gr_star.md`.
 
+**One more try: Rz, matching on the weather pattern high up (2026-10-17; extra attempt after G-R\*, disclosed)**
+- **Idea:** both our models see only weather at the ground. Delhi heatwaves are steered by high-pressure systems
+  about 5.5 km up (the "500 hPa" level). That is information neither model has, and the main reason GraphCast is
+  so much better is that it sees the whole atmosphere. So Rz finds past days whose *upper-air pattern* over South
+  Asia (10–45°N, 40–100°E) matched the last 3 days.
+- **Data:** ERA5 500 hPa heights from WeatherBench 2, 1980–2018 only. 16.5 GB were streamed through memory; only a
+  20 MB extract was kept (`data/external/`).
+- **Screen first** (training years only, no network training; rules written before the data was downloaded). Does
+  the pattern add anything *beyond everything C3-hop already sees*?
+  - **WBGT: yes, but only a little.** −0.004 °C on all days, with a confidence interval below zero, and it beats
+    random past days. Rg adds nothing over the same baseline.
+  - **Tmax: no** (−0.002 °C, within noise).
+- **Next:** as written down, only the WBGT model gets trained (C3-hop + Rz, about 2 hours), then it is judged by the
+  same three conditions. Honest expectation: the gain is small, and the heatwave-day test can only see about
+  0.12 °C, so passing is unlikely. Report: `evaluation_v2/synoptic_screen.md`.
+
 **Advisory (Phase 6):**
 - forecast → rule engine → risk tier (GREEN / YELLOW / ORANGE / RED) → LLM writes the
   advisory;
@@ -989,5 +1005,6 @@ the project's virtual environment (`.venv`); nothing is installed globally.
 | 2026-10-13 | §9.1: G-R* built (C3-hop + Rg at the Delhi readout, random control, G3 pass rule, diagnostics) and pre-registered. |
 | 2026-10-13 | Phase 6 alert colours decided: IMD's levels; uncoloured actions at any alert; Ahmedabad colours marked as precedent. |
 | 2026-10-16 | G-R* fails in both families: final test models are C3-hop alone. Rg's WBGT gain on the LSTM vanishes on C3-hop (the graph already carries the regional information). |
+| 2026-10-17 | Rz (500 hPa pattern retrieval): z500 extract streamed; screen passes for WBGT (small), fails for Tmax; WBGT run next. |
 | 2026-10-08 | Independent ML review: ridge baseline, bias split / recalibration / hot-day Brier added; backbone rule amended (C2 eligible, user approves the final pick); physics-head robustness fixes queued; test protocol drafted. |
 | 2026-10-08 | Graph runs done: G-D3 says U1 (graph not worse than U1 for Tmax, 0.08 °C worse for WBGT); edges hurt, the edgeless C2 is best. One tuning round started (C3, U1, and the post-result arm C3-pool); then PH_lstm and R2. |

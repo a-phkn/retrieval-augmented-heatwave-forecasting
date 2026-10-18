@@ -134,6 +134,10 @@ Short, frequently-updated. See `build_plan.md` for full milestone detail.
   DONE 2026-10-16 00:47 (16 folds clean). **G-R* FAILS in both families** -> final test models C3-hop alone
   (`evaluation_v2/gr_star.md`). Rg's WBGT gain on the LSTM vanishes on C3-hop (overlap +0.046 / +0.142, exploratory).
   Next: update + freeze `docs/CONFIRMATORY_PROTOCOL.md` (user OK + tag), then the one-time 2019+ test run.
+- **Post-G-R* retrieval attempts (user, 2026-10-17)**: option 1 Rz (500 hPa pattern) pre-registered; z500 extract
+  streamed (`pipeline/download_era5_z500.py`, 20.5 MB kept); `synoptic` mode in fold_retrieval; screen
+  (`evaluation/synoptic_screen.py`): WBGT PASS (-0.004), Tmax fail. Config `A2Lr_hw5_C3hop_Rz` + queue
+  `configs/week7_rz_queue.txt` ready (needs commit). Then option 2: analog error correction (plan pending OK).
 - **DSTGNN skeleton (2026-10-06)**: `models/dstgnn.py` (graph GRU, modes none/static/dynamic + adaptive),
   `pipeline/graph.py` (Delhi + 27 nodes, geographic and wind-gated advective edges). G-D1: 13 tests pass.
   The plan said `data/graph.py`; it is `pipeline/graph.py` because `data/` holds raw data.

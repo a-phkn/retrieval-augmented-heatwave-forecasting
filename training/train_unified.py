@@ -89,7 +89,7 @@ from models.dstgnn_multihop import MultiHopDSTGNN
 from models.dstgnn_retrieval import RetrievalMultiHopDSTGNN
 from models.lstm import LSTMForecaster
 from models.retrieval_lstm_v2 import RetrievalAugmentedLSTMv2
-from retrieval.fold_retrieval import MODES as RETRIEVAL_MODES, RANDOM_MODES, UPSTREAM_PATH
+from retrieval.fold_retrieval import MODES as RETRIEVAL_MODES, RANDOM_MODES, UPSTREAM_PATH, Z500_PATH
 from retrieval.fold_retrieval import FoldRetriever
 from training.folds import (
     DAILY_V2_PATH, FOLDS, LABEL_VERSIONS, LILJEGREN_DAILY_PATH, TARGET_FORMS, TARGETS, WBGT_LABEL_CONFIG,
@@ -113,6 +113,7 @@ CODE_FILES = [
     "training/physics_train.py", "models/physics_head.py", "pipeline/wbgt_liljegren_torch.py",
     "pipeline/wbgt_liljegren.py", "pipeline/build_peak_ingredients.py",
     "training/tune_backbone.py", "models/dstgnn_multihop.py", "models/dstgnn_retrieval.py",
+    "pipeline/download_era5_z500.py",  # sets the box, level and hour of Rz's z500 extract
 ]
 BACKBONES = ("lstm", "lstm_upstream", "dstgnn")
 EARLY_STOP = ("inner_2y", "val_block")
@@ -551,6 +552,8 @@ def _data_files(cfg: dict) -> list[Path]:
         files.append(WBGT_LABEL_CONFIG)
     if (cfg.get("retrieval") or {}).get("mode") == "region" or cfg.get("backbone", "lstm") != "lstm":
         files.append(UPSTREAM_PATH)  # Rg and the upstream backbones read the upstream dataset
+    if (cfg.get("retrieval") or {}).get("mode") == "synoptic":
+        files.append(Z500_PATH)  # Rz matches on the 500 hPa height extract
     if cfg.get("head") == "physics":
         files += [PEAK_PATH, PER_CELL_PATH]  # per-cell ingredient targets
     return files

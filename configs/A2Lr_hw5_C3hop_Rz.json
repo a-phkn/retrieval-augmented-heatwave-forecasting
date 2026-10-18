@@ -1,0 +1,45 @@
+{
+  "run_id": "A2Lr_hw5_C3hop_Rz",
+  "parent": "A2Lr_hw5_C3hop",
+  "description": "Rz (pre-registered 2026-10-17; passed its screen for WBGT only): A2Lr_hw5_C3hop + 5 analogues matched on the 500 hPa height pattern over South Asia (synoptic mode), attention at the Delhi readout (models.dstgnn_retrieval). Random control: A2Lr_hw5_C3hop_rand.",
+  "target": "wbgt_lj_max",
+  "labels": "wbgt",
+  "anomaly_target": true,
+  "target_form": "anomaly",
+  "hot_weight": 5,
+  "early_stop": "inner_2y",
+  "seeds": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9
+  ],
+  "folds": [
+    "f1",
+    "f2",
+    "f3",
+    "f4"
+  ],
+  "threads": 8,
+  "backbone": "dstgnn",
+  "graph": {
+    "mode": "static",
+    "adaptive": false,
+    "hops": 4
+  },
+  "hparams": {
+    "hidden": 32,
+    "lr": 0.001,
+    "dropout": 0.0
+  },
+  "retrieval": {
+    "mode": "synoptic",
+    "k": 5
+  }
+}

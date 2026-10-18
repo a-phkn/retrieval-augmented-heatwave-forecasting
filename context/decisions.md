@@ -1092,3 +1092,32 @@ HAP (2019 update) gives 30, IMD's FAQ 2; 91 stay unspecified; Delhi HAP p.10 pri
   backbone; on C3-hop Rg is slightly worse at leads 1-2 (+0.026, +0.023, p ~0.04, uncorrected, 10 lead tests).
   (b) no difference between upstream-heat windows and other windows. (c) attention stays near uniform (normalised
   entropy 0.96-0.97; mean max weight 0.28-0.29 vs 0.20 uniform), slightly more concentrated than on the LSTM.
+
+**Rz: retrieval on the large-scale (500 hPa) weather pattern. PRE-REGISTERED 2026-10-17 (user approved; post-G-R*
+exploration, disclosed as such), before any z500 data was downloaded**
+- Why: both backbones see only surface weather; Delhi heatwaves are driven by upper-level anticyclones (Ratnam et
+  al. 2016, Sci. Rep.); the GraphCast yardstick's 40% advantage is largely its view of the whole atmosphere. Rz is the
+  only retrieval option that brings information C3-hop lacks.
+- Data: ERA5 geopotential at 500 hPa, 12 UTC daily, WeatherBench 2 (Rasp et al. 2024) 2.8125° grid
+  (`1959-2022-6h-128x64_equiangular_conservative.zarr`), box 10-45 N x 40-100 E (12 x 21 cells), 1980-2018 only
+  (2019+ not downloaded unless Rz passes). Geopotential height in m. Streamed; only the box extract is kept.
+- Matching ("synoptic" mode): per cell, standardised anomaly vs the fold's training-years day-of-year climatology
+  (as Rg); the last 3 input days (q-1..q-3), each cell weighted by sqrt(cos lat), concatenated; PCA fitted on the
+  fold's training windows, first 20 components (unscaled scores); cosine similarity of the centred scores (pattern
+  correlation of the truncated fields). Same pool, eligibility, episode and spacing rules and K = 5 as R0/Rg; random
+  control R0-rand (the existing C3hop_rand runs are that control for the identical model).
+- Screen (no training, training years only, evaluation.retrieval_information_check's method): baseline =
+  query-only features + Rg's regional readings + C3-hop's own normalised upstream inputs (27 points x all features)
+  on the last input day, i.e. a linear stand-in for what C3-hop already sees. Rz passes in a family only if, on all
+  days, (i) baseline + Rz signal vs baseline and (ii) baseline + Rz signal vs baseline + R0-rand signal both have 95%
+  CIs entirely below 0. Extreme days reported, not used.
+- If it passes in a family: one run `{family}_C3hop_Rz` (C3-hop + Rz at the readout, models.dstgnn_retrieval, 10
+  seeds x 4 folds), judged by G3's three conditions against C3hop and C3hop_rand. Only then can retrieval enter the
+  test protocol. If it fails: stop; report; go to option 2 (analog error correction).
+- **Rz screen result 2026-10-17** (`evaluation_v2/synoptic_screen.md`; extract 14,245 days x 252 cells, 20.5 MB,
+  `data/external/era5_z500_southasia_1980_2018.parquet` + meta): **WBGT PASSES** (Rz vs baseline -0.004 [-0.006,
+  -0.002]; vs R0-rand -0.004 [-0.006, -0.002]); **Tmax fails** (-0.002 [-0.005, +0.001] for both). Over the same
+  C3-hop-like baseline, Rg adds nothing (+/-0.000), consistent with G-R*. Extreme days (descriptive): -0.012 (WBGT),
+  -0.016 (Tmax), CIs cross 0. Rz signal correlation with the truth, lead 1-5: WBGT +0.32..+0.21, Tmax +0.40..+0.19.
+  Per the rule, only `A2Lr_hw5_C3hop_Rz` is trained. Expected: the effect is small (screen -0.004 on all days), and G3
+  needs a significant extreme-day gain (MDE ~0.12 °C), so a G3 pass is unlikely; run as pre-registered.

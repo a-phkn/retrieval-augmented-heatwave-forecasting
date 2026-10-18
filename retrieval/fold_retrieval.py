@@ -30,6 +30,11 @@ Modes (pre-registered 2026-10-06, context/decisions.md):
           upstream points plus Delhi; the WBGT family adds the 27 points' daily mean dew point
           and Delhi's relative humidity (pre-registered 2026-10-07). Same pool, rules and dedup
           as R0, so R0-rand is its random control.
+  "synoptic"  Rz: top-K by pattern correlation of the 500 hPa height anomaly field over South Asia
+          (10-45 N, 40-100 E, ERA5 2.8125 deg, 12 UTC) on the last 3 input days, sqrt(cos lat)
+          weighted and truncated to its first 20 principal components (PCA on the fold's training
+          windows). Same pool, rules and dedup as R0; R0-rand is its random control
+          (pre-registered 2026-10-17; data from pipeline/download_era5_z500.py).
   "region_mmr"  R2: Rg's pool and similarity, but the K analogues are picked greedily by maximal
           marginal relevance over the 200 most similar eligible candidates: score = 0.7 sim(query, c)
           - 0.3 max over chosen s of sim(c, s), dedup rules applied in the greedy pass (pre-registered
@@ -51,7 +56,7 @@ from pipeline.climatology import apply_climatology, doy_climatology
 from retrieval.features import FEATURE_NAMES
 from training.folds import FOLDS, FORECAST_DAYS, INPUT_DAYS, TEST_START, fold_bounds, fold_daily, fold_windows
 
-MODES = ("sim", "rand", "time", "time_rand", "region", "region_mmr")
+MODES = ("sim", "rand", "time", "time_rand", "region", "region_mmr", "synoptic")
 REGION_MODES = ("region", "region_mmr")
 MMR_LAMBDA, MMR_POOL = 0.7, 200
 RANDOM_MODES = ("rand", "time_rand")  # need a seed; draws are fixed per fold and seed
@@ -63,6 +68,8 @@ DOY_WINDOW = 30
 _TOP_POOL = 200  # most-similar candidates screened before dedup (full sort if too few survive)
 REGION_LAGS = 3  # Rg: last 3 input days
 UPSTREAM_PATH = Path(__file__).resolve().parents[1] / "datasets_v2" / "upstream_daily.parquet"
+Z500_PATH = Path(__file__).resolve().parents[1] / "data" / "external" / "era5_z500_southasia_1980_2018.parquet"
+SYNOPTIC_LAGS, SYNOPTIC_PCS = 3, 20  # Rz (pre-registered 2026-10-17)
 
 
 def window_features(d: pd.DataFrame, query_dates) -> np.ndarray:
@@ -128,6 +135,32 @@ def regional_daily(fold: str, d: pd.DataFrame, target: str) -> pd.DataFrame:
     return pd.DataFrame(out, index=up.index)
 
 
+def synoptic_daily(fold: str, d: pd.DataFrame) -> tuple[pd.DataFrame, np.ndarray]:
+    """Rz: (dates, cells) standardised 500 hPa height anomalies, climatology from the fold's training
+    years only, and each cell's weight sqrt(cos lat). Pre-2019 rows only."""
+    z = pd.read_parquet(Z500_PATH)
+    z = z[z.index < TEST_START].reindex(d.index)
+    if z.isna().any().any():
+        raise ValueError("z500 data missing for some days")
+    train_end, _, _ = fold_bounds(fold)
+    train = z.index <= train_end
+    out = {}
+    for c in z.columns:
+        m, sd = apply_climatology(z.index, doy_climatology(z[c], train))
+        out[c] = (z[c].to_numpy() - m) / sd
+    lat = np.array([float(c.split("_")[1].rstrip("N")) for c in z.columns])
+    return pd.DataFrame(out, index=z.index), np.sqrt(np.cos(np.deg2rad(lat)))
+
+
+def synoptic_features(za: pd.DataFrame, weights: np.ndarray, query_dates) -> np.ndarray:
+    """(N, SYNOPTIC_LAGS * cells): weighted anomaly fields on the last SYNOPTIC_LAGS input days."""
+    pos = za.index.get_indexer(pd.DatetimeIndex(query_dates))
+    if (pos < SYNOPTIC_LAGS).any():
+        raise ValueError("window input days missing from the z500 table")
+    v = za.to_numpy(dtype=np.float64) * weights[None, :]
+    return np.concatenate([v[pos - 1 - k] for k in range(SYNOPTIC_LAGS)], axis=1)
+
+
 def region_features(rz: pd.DataFrame, query_dates) -> np.ndarray:
     """(N, REGION_LAGS * columns): each column's anomaly on the last REGION_LAGS input days."""
     pos = rz.index.get_indexer(pd.DatetimeIndex(query_dates))
@@ -159,6 +192,7 @@ class FoldRetriever:
         self.fold = fold
         self.target = target
         self._region = None  # (vectors, mean, std, daily table), built on first Rg request
+        self._synoptic = None  # (vectors, mean, components, anomaly table, weights), built on first Rz request
         # target only selects which climatology channels fold_daily adds; the retrieval
         # features use Tmax channels for every target (the v1 feature set).
         self.d, _ = fold_daily(fold, target, labels)
@@ -191,6 +225,22 @@ class FoldRetriever:
         _, mean, std, rz = self._region_state()
         return _unit((region_features(rz, query_dates) - mean) / std)
 
+    def _synoptic_state(self) -> tuple[np.ndarray, np.ndarray, np.ndarray, pd.DataFrame, np.ndarray]:
+        """Rz: PCA of the training windows' weighted anomaly fields; vectors = unit-norm scores on the
+        first SYNOPTIC_PCS components (cosine = pattern correlation of the truncated fields)."""
+        if self._synoptic is None:
+            za, w = synoptic_daily(self.fold, self.d)
+            raw = synoptic_features(za, w, self.cand_dates)
+            mean = raw.mean(axis=0)  # training windows only
+            _, _, vt = np.linalg.svd(raw - mean, full_matrices=False)
+            comps = vt[:SYNOPTIC_PCS]
+            self._synoptic = (_unit((raw - mean) @ comps.T), mean, comps, za, w)
+        return self._synoptic
+
+    def synoptic_query_vectors(self, query_dates) -> np.ndarray:
+        _, mean, comps, za, w = self._synoptic_state()
+        return _unit((synoptic_features(za, w, query_dates) - mean) @ comps.T)
+
     def retrieve(self, query_dates, mode: str = "sim", k: int = K_DEFAULT, seed: int | None = None) -> Retrieved:
         if mode not in MODES:
             raise ValueError(f"mode must be one of {MODES}")
@@ -199,6 +249,8 @@ class FoldRetriever:
         q = pd.DatetimeIndex(query_dates)
         if mode in REGION_MODES:
             qv, cand_vectors = self.region_query_vectors(q), self._region_state()[0]
+        elif mode == "synoptic":
+            qv, cand_vectors = self.synoptic_query_vectors(q), self._synoptic_state()[0]
         else:
             qv, cand_vectors = self.query_vectors(q), self.vectors
         q_ep = window_episode(self.d, q)
