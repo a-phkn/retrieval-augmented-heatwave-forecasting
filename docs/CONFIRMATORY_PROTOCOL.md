@@ -31,7 +31,7 @@ Proposed; confirmed *[at freeze]*:
 |---|---|---|---|---|
 | H1 | The final backbone forecasts WBGT better than the Delhi-only LSTM | BB\* vs control | all days | Holm-adjusted p < 0.05 and Δ < 0 |
 | H2 | ... and better on heatwave days | BB\* vs control | WBGT extreme days | as H1. The bias / SD split and the hot-day Brier score are reported next to it, because extreme-day RMSE rewards warm bias |
-| H3 | The final backbone adds skill beyond a linear upstream model | BB\* vs `ridge` | WBGT all days | as H1 |
+| H3 | The final backbone beats a linear upstream model on heatwave days | BB\* vs `ridge_hw5` (the ridge weighted like the neural loss, 1 + 4 x hot) | WBGT extreme days | as H1. Changed 2026-10-18 (user, option d) from "vs `ridge`, WBGT all days", where development showed a tie (+0.031, n.s.); that comparison is still reported |
 
 Retrieval (the plan's H-A) failed its development rule (G3: none), so it is not a confirmatory
 hypothesis unless a retrieval rung passes G-R\* before the freeze.

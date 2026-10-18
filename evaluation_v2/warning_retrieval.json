@@ -1,0 +1,586 @@
+{
+  "Tmax": {
+    "scores": {
+      "model-only": {
+        "brier": 0.054412627113941785,
+        "brier_clim": 0.08578337798807206,
+        "bss": 0.36569731351092627,
+        "n_events": 790,
+        "hits_per_season": 24.166666666666668,
+        "false_alarms_per_season": 9.333333333333334,
+        "reliability": [
+          {
+            "bin": "0.0-0.1",
+            "n": 6613,
+            "mean_p": 0.011384357213832892,
+            "observed": 0.02132163919552397
+          },
+          {
+            "bin": "0.1-0.3",
+            "n": 986,
+            "mean_p": 0.17976833536401057,
+            "observed": 0.2099391480730223
+          },
+          {
+            "bin": "0.3-0.5",
+            "n": 339,
+            "mean_p": 0.386174494657857,
+            "observed": 0.44837758112094395
+          },
+          {
+            "bin": "0.5-0.7",
+            "n": 189,
+            "mean_p": 0.591024024894429,
+            "observed": 0.5978835978835979
+          },
+          {
+            "bin": "0.7-0.9",
+            "n": 135,
+            "mean_p": 0.7957192522559057,
+            "observed": 0.7925925925925926
+          },
+          {
+            "bin": "0.9-1.0",
+            "n": 78,
+            "mean_p": 0.9629580917344587,
+            "observed": 0.8974358974358975
+          }
+        ]
+      },
+      "Rg": {
+        "brier": 0.055182462486495575,
+        "brier_clim": 0.08578337798807206,
+        "bss": 0.35672313470602035,
+        "n_events": 790,
+        "hits_per_season": 24.333333333333332,
+        "false_alarms_per_season": 10.166666666666666,
+        "reliability": [
+          {
+            "bin": "0.0-0.1",
+            "n": 6652,
+            "mean_p": 0.011381485572687214,
+            "observed": 0.02164762477450391
+          },
+          {
+            "bin": "0.1-0.3",
+            "n": 957,
+            "mean_p": 0.17764315649918058,
+            "observed": 0.22361546499477533
+          },
+          {
+            "bin": "0.3-0.5",
+            "n": 317,
+            "mean_p": 0.3886986955855901,
+            "observed": 0.4416403785488959
+          },
+          {
+            "bin": "0.5-0.7",
+            "n": 181,
+            "mean_p": 0.5849260238298056,
+            "observed": 0.6132596685082873
+          },
+          {
+            "bin": "0.7-0.9",
+            "n": 144,
+            "mean_p": 0.7911205948461529,
+            "observed": 0.7361111111111112
+          },
+          {
+            "bin": "0.9-1.0",
+            "n": 89,
+            "mean_p": 0.9606656511221381,
+            "observed": 0.8426966292134831
+          }
+        ]
+      },
+      "Rz": {
+        "brier": 0.054953057921570105,
+        "brier_clim": 0.08578337798807206,
+        "bss": 0.35939736566201474,
+        "n_events": 790,
+        "hits_per_season": 24.083333333333332,
+        "false_alarms_per_season": 9.333333333333334,
+        "reliability": [
+          {
+            "bin": "0.0-0.1",
+            "n": 6655,
+            "mean_p": 0.011154183413546934,
+            "observed": 0.02193839218632607
+          },
+          {
+            "bin": "0.1-0.3",
+            "n": 957,
+            "mean_p": 0.17745123788002454,
+            "observed": 0.219435736677116
+          },
+          {
+            "bin": "0.3-0.5",
+            "n": 327,
+            "mean_p": 0.38250009562122894,
+            "observed": 0.4434250764525994
+          },
+          {
+            "bin": "0.5-0.7",
+            "n": 191,
+            "mean_p": 0.5885332585373069,
+            "observed": 0.6073298429319371
+          },
+          {
+            "bin": "0.7-0.9",
+            "n": 128,
+            "mean_p": 0.7993922904154604,
+            "observed": 0.7734375
+          },
+          {
+            "bin": "0.9-1.0",
+            "n": 82,
+            "mean_p": 0.9626521150927043,
+            "observed": 0.9024390243902439
+          }
+        ]
+      },
+      "random": {
+        "brier": 0.05466109894999272,
+        "brier_clim": 0.08578337798807206,
+        "bss": 0.3628008102269743,
+        "n_events": 7900,
+        "hits_per_season": 24.0,
+        "false_alarms_per_season": 9.183333333333334,
+        "reliability": [
+          {
+            "bin": "0.0-0.1",
+            "n": 66239,
+            "mean_p": 0.01132162433203124,
+            "observed": 0.0217394586270928
+          },
+          {
+            "bin": "0.1-0.3",
+            "n": 9754,
+            "mean_p": 0.17981408797171894,
+            "observed": 0.2111954070125077
+          },
+          {
+            "bin": "0.3-0.5",
+            "n": 3425,
+            "mean_p": 0.38636850626089914,
+            "observed": 0.44379562043795623
+          },
+          {
+            "bin": "0.5-0.7",
+            "n": 1888,
+            "mean_p": 0.5947316847499143,
+            "observed": 0.6133474576271186
+          },
+          {
+            "bin": "0.7-0.9",
+            "n": 1315,
+            "mean_p": 0.7999041963359186,
+            "observed": 0.779467680608365
+          },
+          {
+            "bin": "0.9-1.0",
+            "n": 779,
+            "mean_p": 0.9634886032359005,
+            "observed": 0.8947368421052632
+          }
+        ]
+      }
+    },
+    "tests": {
+      "Rg": {
+        "vs_model_only": {
+          "metric": "rmse",
+          "parent": 0.23326514337539117,
+          "child": 0.23490947721727956,
+          "delta": 0.0016443338418883902,
+          "se": 0.0009394810386327766,
+          "ci_low": -0.00042344998232983055,
+          "ci_high": 0.003712117666106611,
+          "ci_level": 0.95,
+          "p_value": 0.10787657501251753,
+          "df": 11,
+          "n_instances": 8340,
+          "n_clusters": 12,
+          "clusters_child_better": 2,
+          "n_seeds_parent": 1,
+          "n_seeds_child": 1,
+          "seed_variance_included": false,
+          "few_clusters": false,
+          "significant": false,
+          "warnings": []
+        },
+        "vs_random": {
+          "metric": "rmse",
+          "parent": 0.23379651773313231,
+          "child": 0.23490947721727956,
+          "delta": 0.0011129594841472468,
+          "se": 0.0008387812972483634,
+          "ci_low": -0.0007331857036588149,
+          "ci_high": 0.0029591046719533087,
+          "ci_level": 0.95,
+          "p_value": 0.2114342995674535,
+          "df": 11,
+          "n_instances": 8340,
+          "n_clusters": 12,
+          "clusters_child_better": 4,
+          "n_seeds_parent": 10,
+          "n_seeds_child": 1,
+          "seed_variance_included": true,
+          "few_clusters": false,
+          "significant": false,
+          "warnings": []
+        }
+      },
+      "Rz": {
+        "vs_model_only": {
+          "metric": "rmse",
+          "parent": 0.23326514337539117,
+          "child": 0.23442068578000985,
+          "delta": 0.0011555424046186813,
+          "se": 0.0016415892613230783,
+          "ci_low": -0.0024575711985192093,
+          "ci_high": 0.004768656007756572,
+          "ci_level": 0.95,
+          "p_value": 0.4961157113339835,
+          "df": 11,
+          "n_instances": 8340,
+          "n_clusters": 12,
+          "clusters_child_better": 6,
+          "n_seeds_parent": 1,
+          "n_seeds_child": 1,
+          "seed_variance_included": false,
+          "few_clusters": false,
+          "significant": false,
+          "warnings": []
+        },
+        "vs_random": {
+          "metric": "rmse",
+          "parent": 0.23379651773313231,
+          "child": 0.23442068578000985,
+          "delta": 0.0006241680468775379,
+          "se": 0.0017072120322804824,
+          "ci_low": -0.0031333803013016918,
+          "ci_high": 0.004381716395056768,
+          "ci_level": 0.95,
+          "p_value": 0.7215919377403449,
+          "df": 11,
+          "n_instances": 8340,
+          "n_clusters": 12,
+          "clusters_child_better": 7,
+          "n_seeds_parent": 10,
+          "n_seeds_child": 1,
+          "seed_variance_included": true,
+          "few_clusters": false,
+          "significant": false,
+          "warnings": []
+        }
+      },
+      "random_vs_model_only": {
+        "metric": "rmse",
+        "parent": 0.23326514337539117,
+        "child": 0.23379651773313231,
+        "delta": 0.0005313743577411434,
+        "se": 0.00023945362592003923,
+        "ci_low": 4.3404805610024796e-06,
+        "ci_high": 0.0010584082349212843,
+        "ci_level": 0.95,
+        "p_value": 0.04844059208088632,
+        "df": 11,
+        "n_instances": 8340,
+        "n_clusters": 12,
+        "clusters_child_better": 2,
+        "n_seeds_parent": 1,
+        "n_seeds_child": 10,
+        "seed_variance_included": true,
+        "few_clusters": false,
+        "significant": true,
+        "warnings": []
+      }
+    },
+    "conditions": {
+      "Rg": [
+        false,
+        false
+      ],
+      "Rz": [
+        false,
+        false
+      ]
+    },
+    "passes": {
+      "Rg": false,
+      "Rz": false
+    }
+  },
+  "WBGT (physical)": {
+    "scores": {
+      "model-only": {
+        "brier": 0.05708593767202853,
+        "brier_clim": 0.05875,
+        "bss": 0.028324465156961076,
+        "n_events": 750,
+        "hits_per_season": 0.08333333333333333,
+        "false_alarms_per_season": 0.5,
+        "reliability": [
+          {
+            "bin": "0.0-0.1",
+            "n": 10125,
+            "mean_p": 0.032764224097387794,
+            "observed": 0.04809876543209877
+          },
+          {
+            "bin": "0.1-0.3",
+            "n": 1780,
+            "mean_p": 0.1510515278333966,
+            "observed": 0.13595505617977527
+          },
+          {
+            "bin": "0.3-0.5",
+            "n": 88,
+            "mean_p": 0.35401308595529,
+            "observed": 0.22727272727272727
+          },
+          {
+            "bin": "0.5-0.7",
+            "n": 7,
+            "mean_p": 0.5485326595180252,
+            "observed": 0.14285714285714285
+          }
+        ]
+      },
+      "Rg": {
+        "brier": 0.05709134024455847,
+        "brier_clim": 0.05875,
+        "bss": 0.028232506475600494,
+        "n_events": 750,
+        "hits_per_season": 0.16666666666666666,
+        "false_alarms_per_season": 0.5,
+        "reliability": [
+          {
+            "bin": "0.0-0.1",
+            "n": 10141,
+            "mean_p": 0.032937694238657146,
+            "observed": 0.04831870624198797
+          },
+          {
+            "bin": "0.1-0.3",
+            "n": 1757,
+            "mean_p": 0.15030132295965176,
+            "observed": 0.13602731929425158
+          },
+          {
+            "bin": "0.3-0.5",
+            "n": 94,
+            "mean_p": 0.3559861544897152,
+            "observed": 0.20212765957446807
+          },
+          {
+            "bin": "0.5-0.7",
+            "n": 8,
+            "mean_p": 0.5597208473196342,
+            "observed": 0.25
+          }
+        ]
+      },
+      "Rz": {
+        "brier": 0.05713426039974866,
+        "brier_clim": 0.05875,
+        "bss": 0.02750195064257599,
+        "n_events": 750,
+        "hits_per_season": 0.0,
+        "false_alarms_per_season": 0.4166666666666667,
+        "reliability": [
+          {
+            "bin": "0.0-0.1",
+            "n": 10147,
+            "mean_p": 0.032809889381299806,
+            "observed": 0.04819158371932591
+          },
+          {
+            "bin": "0.1-0.3",
+            "n": 1770,
+            "mean_p": 0.15266307573413923,
+            "observed": 0.13728813559322034
+          },
+          {
+            "bin": "0.3-0.5",
+            "n": 78,
+            "mean_p": 0.3593847639781768,
+            "observed": 0.23076923076923078
+          },
+          {
+            "bin": "0.5-0.7",
+            "n": 5,
+            "mean_p": 0.5609527807259043,
+            "observed": 0.0
+          }
+        ]
+      },
+      "random": {
+        "brier": 0.0571510899757232,
+        "brier_clim": 0.05875,
+        "bss": 0.027215489774924273,
+        "n_events": 7500,
+        "hits_per_season": 0.11666666666666667,
+        "false_alarms_per_season": 0.4583333333333333,
+        "reliability": [
+          {
+            "bin": "0.0-0.1",
+            "n": 101229,
+            "mean_p": 0.032583652505742446,
+            "observed": 0.04854340159440477
+          },
+          {
+            "bin": "0.1-0.3",
+            "n": 17865,
+            "mean_p": 0.1519671272904008,
+            "observed": 0.13394906241253848
+          },
+          {
+            "bin": "0.3-0.5",
+            "n": 837,
+            "mean_p": 0.3591489372293502,
+            "observed": 0.21385902031063322
+          },
+          {
+            "bin": "0.5-0.7",
+            "n": 67,
+            "mean_p": 0.5533512184194849,
+            "observed": 0.208955223880597
+          },
+          {
+            "bin": "0.7-0.9",
+            "n": 2,
+            "mean_p": 0.7233489214481876,
+            "observed": 0.0
+          }
+        ]
+      }
+    },
+    "tests": {
+      "Rg": {
+        "vs_model_only": {
+          "metric": "rmse",
+          "parent": 0.23892663658962038,
+          "child": 0.2389379422455933,
+          "delta": 1.1305655972931872e-05,
+          "se": 0.00017840126306674497,
+          "ci_low": -0.00035774547457846086,
+          "ci_high": 0.0003803567865243246,
+          "ci_level": 0.95,
+          "p_value": 0.9500177770787985,
+          "df": 23,
+          "n_instances": 12000,
+          "n_clusters": 24,
+          "clusters_child_better": 12,
+          "n_seeds_parent": 1,
+          "n_seeds_child": 1,
+          "seed_variance_included": false,
+          "few_clusters": false,
+          "significant": false,
+          "warnings": []
+        },
+        "vs_random": {
+          "metric": "rmse",
+          "parent": 0.23906292083534839,
+          "child": 0.2389379422455933,
+          "delta": -0.00012497858975507592,
+          "se": 0.00017820136775772828,
+          "ci_low": -0.0004936162053541842,
+          "ci_high": 0.00024365902584403234,
+          "ci_level": 0.95,
+          "p_value": 0.4901308368432296,
+          "df": 23,
+          "n_instances": 12000,
+          "n_clusters": 24,
+          "clusters_child_better": 15,
+          "n_seeds_parent": 10,
+          "n_seeds_child": 1,
+          "seed_variance_included": true,
+          "few_clusters": false,
+          "significant": false,
+          "warnings": []
+        }
+      },
+      "Rz": {
+        "vs_model_only": {
+          "metric": "rmse",
+          "parent": 0.23892663658962038,
+          "child": 0.23902773981224154,
+          "delta": 0.00010110322262116278,
+          "se": 0.00011973209018009668,
+          "ci_low": -0.00014658147694127403,
+          "ci_high": 0.0003487879221835996,
+          "ci_level": 0.95,
+          "p_value": 0.40713701322361046,
+          "df": 23,
+          "n_instances": 12000,
+          "n_clusters": 24,
+          "clusters_child_better": 13,
+          "n_seeds_parent": 1,
+          "n_seeds_child": 1,
+          "seed_variance_included": false,
+          "few_clusters": false,
+          "significant": false,
+          "warnings": []
+        },
+        "vs_random": {
+          "metric": "rmse",
+          "parent": 0.23906292083534839,
+          "child": 0.23902773981224154,
+          "delta": -3.518102310684501e-05,
+          "se": 0.00013326958603021894,
+          "ci_low": -0.00031087016648565353,
+          "ci_high": 0.0002405081202719635,
+          "ci_level": 0.95,
+          "p_value": 0.7941432657276285,
+          "df": 23,
+          "n_instances": 12000,
+          "n_clusters": 24,
+          "clusters_child_better": 15,
+          "n_seeds_parent": 10,
+          "n_seeds_child": 1,
+          "seed_variance_included": true,
+          "few_clusters": false,
+          "significant": false,
+          "warnings": []
+        }
+      },
+      "random_vs_model_only": {
+        "metric": "rmse",
+        "parent": 0.23892663658962038,
+        "child": 0.23906292083534839,
+        "delta": 0.0001362842457280078,
+        "se": 4.567974091142447e-05,
+        "ci_low": 4.178850204961919e-05,
+        "ci_high": 0.0002307799894063964,
+        "ci_level": 0.95,
+        "p_value": 0.006642946174213806,
+        "df": 23,
+        "n_instances": 12000,
+        "n_clusters": 24,
+        "clusters_child_better": 6,
+        "n_seeds_parent": 1,
+        "n_seeds_child": 10,
+        "seed_variance_included": true,
+        "few_clusters": false,
+        "significant": true,
+        "warnings": []
+      }
+    },
+    "conditions": {
+      "Rg": [
+        false,
+        false
+      ],
+      "Rz": [
+        false,
+        false
+      ]
+    },
+    "passes": {
+      "Rg": false,
+      "Rz": false
+    }
+  }
+}

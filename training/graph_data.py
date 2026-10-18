@@ -25,7 +25,8 @@ from pipeline.climatology import apply_climatology, doy_climatology
 from pipeline.download_era5_upstream import NODES, node_id
 from pipeline.graph import advective_weights, geographic_weights, neighbour_mask, node_coords
 from retrieval.fold_retrieval import UPSTREAM_PATH
-from training.folds import INPUT_DAYS, TEST_START, fold_bounds
+from training import test_lock
+from training.folds import INPUT_DAYS, TEST_END, TEST_START, fold_bounds
 
 UPSTREAM_VARS = ("dew_point_2m_mean", "relative_humidity_2m_mean", "shortwave_radiation_sum",
                  "soil_moisture_0_to_7cm_mean", "surface_pressure_mean", "temperature_2m_max",
@@ -34,11 +35,15 @@ NODE_IDS = [node_id(a, o) for a, o in NODES]
 N_UP_FEATURES = len(UPSTREAM_VARS) + 1  # + Tmax standardised anomaly
 
 
-def load_upstream() -> pd.DataFrame:
-    """Daily upstream table, pre-2019 rows only (filtered at read time)."""
+def load_upstream(include_test: bool = False) -> pd.DataFrame:
+    """Daily upstream table, pre-2019 rows only (filtered at read time). include_test (the test fold
+    only): rows up to TEST_END, after training.test_lock.require()."""
+    if include_test:
+        test_lock.require()
+    end = TEST_END + pd.Timedelta(days=1) if include_test else TEST_START
     cols = [f"{v}__{n}" for v in UPSTREAM_VARS for n in NODE_IDS]
-    up = pd.read_parquet(UPSTREAM_PATH, columns=cols, filters=[("date", "<", TEST_START)])
-    up = up[up.index < TEST_START]
+    up = pd.read_parquet(UPSTREAM_PATH, columns=cols, filters=[("date", "<", end)])
+    up = up[up.index < end]
     full = pd.date_range(up.index.min(), up.index.max(), freq="D")
     if not up.index.equals(full) or up.isna().any().any():
         raise ValueError("upstream table must be complete and gap-free")

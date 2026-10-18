@@ -885,6 +885,13 @@ RAG counts as helping only if real retrieval beats both.
   - **Practical limit:** the upper-air files we used stop at the end of 2021. The locked test period runs to
     2026, so Rz could only be tested on 2019–2021 unless we find another source.
   - Report: `evaluation_v2/rz_gate.md`.
+- **Two more tries (2026-10-18), both no:**
+  - **The upper-air pattern given to the model directly** (screen only): clearly better on ordinary days for both
+    WBGT and Tmax, but no gain on WBGT heatwave days.
+  - **Retrieval for heatwave warnings:** "of the 20 most similar past situations, how many became heatwaves?",
+    blended into the warning probability. No improvement for either Tmax or WBGT. (The WBGT warning itself is very
+    weak: it almost never says "more likely than not".)
+  - Still running: the humid-air screen (12 new points east and south-west of Delhi, downloading).
 
 **And a second try: correcting the heatwave cold bias with retrieval (2026-10-18; failed, and why matters)**
 - **Idea:** on real heatwave days our models forecast far too cold (WBGT about 2.7 °C, Tmax about 1.2 °C too low).
@@ -1036,5 +1043,6 @@ the project's virtual environment (`.venv`); nothing is installed globally.
 | 2026-10-17 | Rz (500 hPa pattern retrieval): z500 extract streamed; screen passes for WBGT (small), fails for Tmax; WBGT run next. |
 | 2026-10-18 | Option 2 (analog correction of the cold bias) fails: heatwave days get worse (regression to the mean); explained in §9.1. |
 | 2026-10-18 | Rz on C3-hop (WBGT): fails the rule (no heatwave-day gain) but improves all days by ~1%; upper-air data ends 2021. |
+| 2026-10-18 | Upper-air direct input (screen) and retrieval for warnings: no heatwave-day / warning gain; humid-air screen downloading. |
 | 2026-10-08 | Independent ML review: ridge baseline, bias split / recalibration / hot-day Brier added; backbone rule amended (C2 eligible, user approves the final pick); physics-head robustness fixes queued; test protocol drafted. |
 | 2026-10-08 | Graph runs done: G-D3 says U1 (graph not worse than U1 for Tmax, 0.08 °C worse for WBGT); edges hurt, the edgeless C2 is best. One tuning round started (C3, U1, and the post-result arm C3-pool); then PH_lstm and R2. |

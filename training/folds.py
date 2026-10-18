@@ -4,7 +4,14 @@ Rolling-origin folds and per-fold datasets for LSTM-type models (plan v5, Week 2
 Folds (validation blocks of 3 years; training = every year before the block):
     f1: val 2007-2009    f2: val 2010-2012    f3: val 2013-2015    f4: val 2016-2018
 f4 is the original v1 split (train 1980-2015, val 2016-2018). The test period (2019+) is
-dropped before anything else is computed, so no fold can read it.
+dropped before anything else is computed, so no development fold can read it.
+
+The "test" fold (docs/CONFIRMATORY_PROTOCOL.md, added 2026-10-18): train 1980-2018 (inner_2y early
+stopping then uses 2017-2018), validation = the test period 2019-01-01 .. TEST_END. It is NOT in FOLDS
+(loops over the development folds are unchanged) and every call that touches it first runs
+training.test_lock.require(), which refuses unless the protocol is frozen as the git tag `test-lock`
+and the code is the frozen code. Climatology, labels and normalisation still come from the training
+years only (<= 2018-12-31), so test-period rows never shape any statistic.
 
 Windows come only from the frozen splits/window_index_v1.parquet, assigned with the v1
 convention (prepare_datasets.py): a window belongs to the block containing its query date,
@@ -59,6 +66,7 @@ import json
 
 from pipeline.climatology import apply_climatology, doy_climatology
 from pipeline.labels_v2 import episodes, label_frame, label_frame_wbgt, wbgt_threshold
+from training import test_lock
 from training.data import _load_windows
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
@@ -73,6 +81,8 @@ FOLDS = {
     "f4": (pd.Timestamp("2016-01-01"), pd.Timestamp("2018-12-31")),
 }
 PRIMARY_FOLD = "f4"
+TEST_FOLD = "test"  # deliberately not in FOLDS; unlocked only by training.test_lock
+TEST_END = pd.Timestamp("2026-09-06")  # last day of the v1/v2 data (last ~3 months were ERA5T; disclosed)
 BASE_FEATURES = [
     "t_max", "t_min", "t_mean", "relative_humidity_mean", "wind_speed_mean",
     "surface_pressure_mean", "shortwave_radiation_sum", "doy_sin", "doy_cos", "years_since_1980",
@@ -136,7 +146,10 @@ class FoldData:
 
 
 def fold_bounds(fold: str) -> tuple[pd.Timestamp, pd.Timestamp, pd.Timestamp]:
-    """(train_end, val_start, val_end)."""
+    """(train_end, val_start, val_end). The test fold requires the frozen protocol (test_lock)."""
+    if fold == TEST_FOLD:
+        test_lock.require()
+        return TEST_START - pd.Timedelta(days=1), TEST_START, TEST_END
     if fold not in FOLDS:
         raise ValueError(f"unknown fold {fold!r}; choose from {list(FOLDS)}")
     val_start, val_end = FOLDS[fold]
@@ -147,7 +160,8 @@ def fold_windows(fold: str) -> tuple[pd.DataFrame, pd.DataFrame]:
     """(train windows, val windows) from the frozen index, v1 assignment convention."""
     train_end, val_start, val_end = fold_bounds(fold)
     w = _load_windows()
-    w = w[w["forecast_end"] < TEST_START]
+    if fold != TEST_FOLD:  # development folds: test-period windows are dropped first
+        w = w[w["forecast_end"] < TEST_START]
     train = w[(w["query_date"] <= train_end) & (w["forecast_end"] <= train_end)]
     val = w[(w["query_date"] >= val_start) & (w["query_date"] <= val_end) & (w["forecast_end"] <= val_end)]
     return train.reset_index(drop=True), val.reset_index(drop=True)
@@ -163,14 +177,18 @@ def inner_split(train: SplitArrays, train_end: pd.Timestamp, years: int = 2) -> 
     return train.subset(fit), train.subset(stop)
 
 
-def _load_daily_pre_test() -> pd.DataFrame:
-    # The test period is never loaded into a fold: rows from 2019 on are filtered at read time.
-    filt = [("date", "<", TEST_START)]
+def _load_daily_pre_test(include_test: bool = False) -> pd.DataFrame:
+    # Development folds: the test period is never loaded; rows from 2019 on are filtered at read time.
+    # include_test (the test fold only): rows up to TEST_END, after the test lock has been checked.
+    if include_test:
+        test_lock.require()
+    end = TEST_END + pd.Timedelta(days=1) if include_test else TEST_START
+    filt = [("date", "<", end)]
     daily = pd.read_parquet(DAILY_V2_PATH, filters=filt).set_index("date").sort_index()
     if LILJEGREN_DAILY_PATH.exists():  # physical WBGT (pipeline/build_wbgt_liljegren.py)
         lj = pd.read_parquet(LILJEGREN_DAILY_PATH, filters=filt, columns=["date", "wbgt_lj_max"]).set_index("date")
         daily = daily.join(lj, how="left")
-    return daily[daily.index < TEST_START]
+    return daily[daily.index < end]
 
 
 def wbgt_label_setting() -> tuple[str, float]:
@@ -223,7 +241,7 @@ def fold_daily(fold: str, target: str, labels: str) -> tuple[pd.DataFrame, list[
     if labels not in LABEL_VERSIONS:
         raise ValueError(f"labels must be one of {LABEL_VERSIONS}")
     train_end, _, _ = fold_bounds(fold)
-    d = _load_daily_pre_test().copy()
+    d = (_load_daily_pre_test(include_test=True) if fold == TEST_FOLD else _load_daily_pre_test()).copy()
     train_mask = d.index <= train_end
 
     t_clim = doy_climatology(d["t_max"], train_mask)

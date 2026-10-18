@@ -89,10 +89,10 @@ from models.dstgnn_multihop import MultiHopDSTGNN
 from models.dstgnn_retrieval import RetrievalMultiHopDSTGNN
 from models.lstm import LSTMForecaster
 from models.retrieval_lstm_v2 import RetrievalAugmentedLSTMv2
-from retrieval.fold_retrieval import MODES as RETRIEVAL_MODES, RANDOM_MODES, UPSTREAM_PATH, Z500_PATH
+from retrieval.fold_retrieval import HUMID_PATH, MODES as RETRIEVAL_MODES, RANDOM_MODES, UPSTREAM_PATH, Z500_PATH
 from retrieval.fold_retrieval import FoldRetriever
 from training.folds import (
-    DAILY_V2_PATH, FOLDS, LABEL_VERSIONS, LILJEGREN_DAILY_PATH, TARGET_FORMS, TARGETS, WBGT_LABEL_CONFIG,
+    DAILY_V2_PATH, FOLDS, LABEL_VERSIONS, LILJEGREN_DAILY_PATH, TARGET_FORMS, TARGETS, TEST_FOLD, WBGT_LABEL_CONFIG,
     FoldData, SplitArrays, build_fold, inner_split,
 )
 from training.graph_data import N_UP_FEATURES, UpstreamDaily, build_upstream, load_upstream
@@ -114,6 +114,8 @@ CODE_FILES = [
     "pipeline/wbgt_liljegren.py", "pipeline/build_peak_ingredients.py",
     "training/tune_backbone.py", "models/dstgnn_multihop.py", "models/dstgnn_retrieval.py",
     "pipeline/download_era5_z500.py",  # sets the box, level and hour of Rz's z500 extract
+    "pipeline/download_era5_humid.py",  # its HUMID_NODES order sets the column order Rh matches on
+    "training/test_lock.py",  # decides when the test period may be read
 ]
 BACKBONES = ("lstm", "lstm_upstream", "dstgnn")
 EARLY_STOP = ("inner_2y", "val_block")
@@ -554,6 +556,8 @@ def _data_files(cfg: dict) -> list[Path]:
         files.append(UPSTREAM_PATH)  # Rg and the upstream backbones read the upstream dataset
     if (cfg.get("retrieval") or {}).get("mode") == "synoptic":
         files.append(Z500_PATH)  # Rz matches on the 500 hPa height extract
+    if (cfg.get("retrieval") or {}).get("mode") == "humid":
+        files.append(HUMID_PATH)  # Rh matches on the humid-air points
     if cfg.get("head") == "physics":
         files += [PEAK_PATH, PER_CELL_PATH]  # per-cell ingredient targets
     return files
@@ -567,7 +571,8 @@ def _run(cfg: dict, folds: list[str], seeds: list[int], out_dir: Path, model_dir
     backbone = cfg.get("backbone", "lstm")
     head = cfg.get("head")
     hp = cfg.get("hparams")
-    up_table = load_upstream() if backbone != "lstm" else None
+    # the test fold (training.test_lock) needs the upstream rows of the test period too
+    up_table = load_upstream(include_test=TEST_FOLD in folds) if backbone != "lstm" else None
     results = {}
     for fold in folds:
         t0 = time.time()

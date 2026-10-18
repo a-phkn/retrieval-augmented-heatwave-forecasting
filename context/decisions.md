@@ -1161,3 +1161,71 @@ post-G-R* exploration, disclosed** (Delle Monache et al. 2011, Mon. Wea. Rev. 13
   more selective than Rg (max 0.325 vs 0.276, entropy 0.927 vs 0.967); no heatwave-day gain (extreme bias unchanged,
   -2.69). Data limit for any test use: WeatherBench 2's 2.8° ERA5 ends 2021-12-31 (1.5°: 2023-01-10), so Rz could
   be scored on at most 2019-2021 (2.8°) of the 2019-2026 test period without another data source.
+
+**Test protocol H3 changed. DECIDED 2026-10-18 (user, option d), before the freeze**
+- H3 is now "C3-hop beats ridge_hw5 (the ridge weighted like the neural loss) on WBGT extreme days" (development:
+  -0.847 [-1.056, -0.639]). The old H3 (vs the plain ridge, WBGT all days) tied in development (+0.031 [-0.021,
+  +0.082]) and is still reported, as exploratory. Why: the old H3 tested the one comparison where the backbone has no
+  edge; H3 now asks whether the graph network beats a fair linear model on the days that matter. Extreme-day RMSE
+  rewards warm bias, so the bias / SD split and the hot-day Brier score are reported next to it.
+
+**Heatwave-information screen ("S2"): can new information, delivered directly or by retrieval, improve WBGT
+heatwave days? PRE-REGISTERED 2026-10-18 (user approved the 12 points), before the new data was downloaded;
+post-G-R* exploration, disclosed**
+- Why: on observed WBGT heatwave days C3-hop is ~2.7 °C too cold, mostly limited predictability (AnEn-corr result).
+  Only information the model lacks can help. WBGT heatwaves are humid heat; the 27 upstream points all lie to the
+  north-west (dry advection). Moisture reaches Delhi from the Bay of Bengal / Gangetic plain (east) and the Arabian
+  Sea (south-west), which the model cannot see. Rz showed the 500 hPa pattern carries some information.
+- New data: 12 points on the same 2° ERA5 lattice, same 10 daily variables and source (Open-Meteo ERA5) as the 27,
+  1980-01-01 .. 2026-09-06, all below 600 m: east 28N80E, 26N80E, 26N82E, 26N84E, 26N86E, 24N84E, 24N88E;
+  south-west 22N70E, 22N72E, 22N74E, 22N76E, 20N72E. Raw files gitignored; 2019+ stays locked at read time.
+- Screen method: as evaluation/synoptic_screen.py (training years; each fold's last 2 training years held out;
+  bootstrap over the 8 held-out years; baseline = the C3-hop-like linear model: query-only features + Rg's regional
+  readings + C3-hop's upstream inputs on the last input day), but the ridge is fitted with the neural loss weights
+  1 + 4 x hot (as ridge_hw5), since the question is heatwave days. Arms, each added to the baseline:
+  (A) humid-air direct: the 12 points' standardised anomalies (fold-train doy climatology) of dew point, relative
+      humidity, Tmax and surface pressure on the last 3 input days;
+  (B) Rh retrieval: K = 5 analogues matched (cosine) on (A)'s features, standardised on training windows, Rg's pool
+      and rules; signal = mean of the analogues' next-5-day standardised anomaly; random control R0-rand;
+  (C) heatwave-onset matching: the mean of the top-5 cosine similarities between the query's (Rg regional + (A))
+      vector and the vectors of training windows whose 5 target days contain a WBGT-label episode onset (eligible
+      by the chronological rule, not the query's own episode); control = the same with an equal number of random
+      non-onset windows;
+  (D) upper-air direct: the Rz state's 20 principal-component scores (500 hPa, last 3 input days).
+- Pass rule per arm, WBGT family (Tmax reported, descriptive): (1) WBGT extreme days: baseline + arm vs baseline,
+  95% CI entirely below 0; (2) all days: CI not entirely above 0; and for (B) and (C), (3) extreme days vs their
+  random control: CI entirely below 0.
+- If an arm passes, the follow-up run (pre-specified now): (A) C3-hop with the 12 points added as graph nodes
+  (rings recomputed; 39 nodes); (B) A2Lr_hw5_C3hop_Rh (models.dstgnn_retrieval); (C) the onset score as an extra
+  Delhi input; (D) the 20 PCs as extra Delhi inputs (needs 2019-2026 z500 from another source for the test, e.g.
+  the Copernicus CDS, which needs the user's own account). Judged vs C3-hop: all days not worse; extreme days CI
+  entirely below 0. Nothing that fails is trained.
+- **S2 arm D (upper-air direct) result 2026-10-18: FAILS** (`evaluation_v2/heatwave_info_screen.md`, run with
+  `--arms D` while the humid points download; deterministic, rerun unchanged with all arms later). WBGT extreme days
+  +0.053 [-0.045, +0.140]; all days -0.040 [-0.058, -0.021]. Tmax (descriptive): extreme -0.081 [-0.161, +0.029], all
+  -0.031 [-0.047, -0.015]. Not trained (rule: extreme-day gain). Descriptive note: fed directly, the 500 hPa pattern
+  improves ordinary days in both families, more than via retrieval; it does not reach heatwave days.
+
+**W: retrieval for heatwave WARNINGS (hot-day probability). PRE-REGISTERED 2026-10-18 (user approved), before it was
+run; post-G-R* exploration, disclosed**
+- Question: does "how many of the most similar past situations became hot days" make C3-hop's hot-day probability
+  more reliable? The temperature forecasts are not changed. Scored by the Brier score (a proper score: it cannot be
+  improved by always warning), in season only, as in evaluation/calibration_check.py.
+- Model probability: exactly calibration_check's "recal" probability for C3-hop (10-seed ensemble mean, inner-block
+  linear recalibration, Gaussian with the inner-block residual SD per lead, event = the hot-label rule).
+- Analogue probability: K = 20 analogues per window from the fold's training windows (Rg's pool, eligibility and
+  dedup); p_analog(lead) = share of those analogues whose own outcome day at that lead was a hot day (the family's
+  label). Two arms: Rg ("region", usable for the whole test period) and Rz ("synoptic"; data end 2021).
+- Blend: logistic regression on the fold's inner block (in-season rows, pooled over leads):
+  logit P = a + b logit(p_model) + c p_analog. Controls: model-only logistic (logit P = a + b logit(p_model), same
+  rows; the fair comparison, since the blend includes a recalibration) and the random-analogue blend (p_analog from
+  20 random eligible windows, R0-rand, 10 seeds).
+- Pass rule per arm and family: (1) blend vs model-only, Brier: CI entirely below 0; (2) blend vs random-analogue
+  blend: CI entirely below 0. (Paired cluster-jackknife on sqrt-Brier, as calibration_check; disclosed there as
+  possibly anti-conservative.) Reported: Brier skill vs climatology, reliability, and at P >= 0.5 the hits and
+  false alarms per season. WBGT is the family the user asked about; Tmax judged the same way.
+- If it passes, the blended warning is offered for the advisory (Phase 6) and as an exploratory test check.
+- **W result 2026-10-18: FAILS for both arms in both families** (`evaluation_v2/warning_retrieval.md`). Tmax: Brier
+  model-only 0.0544 (BSS +0.366); Rg 0.0552, Rz 0.0550 (sqrt-Brier deltas +0.0016 / +0.0012, n.s.). WBGT: 0.0571 (BSS
+  +0.028) for model-only, Rg and Rz alike; the WBGT warning almost never reaches P >= 0.5 (~0.1 hits / season).
+  Analogue hot-day shares add nothing beyond C3-hop's own probability. Not offered for the advisory.

@@ -140,7 +140,12 @@ Short, frequently-updated. See `build_plan.md` for full milestone detail.
   `configs/week7_rz_queue.txt`; commit 9ba341a; run started 2026-10-18 13:49 (code 47ca47a6, scratchpad
   week7_queue.sh, log week7.log). Option 2 (`evaluation/analog_correction.py`, +4 tests): FAILS both families
   (extreme +0.73 / +0.90; regression to the mean). Rz run DONE 16:57 (clean): FAILS G3 (`evaluation/rz_gate.py`);
-  all days -0.023 (p 0.012), no extreme gain; final WBGT test model stays C3-hop. Next: protocol freeze decisions.
+  all days -0.023 (p 0.012), no extreme gain; final WBGT test model stays C3-hop.
+- **Screen S2 (2026-10-18)**: pre-registered; 12 humid points downloading (`pipeline/download_era5_humid.py`, log
+  scratchpad humid.log; quota ~1.5 days; rerun after a quota stop). Arm D run: FAILS (WBGT extreme +0.053). After the
+  download: `python -m pipeline.build_humid_daily` then `python -m evaluation.heatwave_info_screen` (all arms).
+  W (warning retrieval, `evaluation/warning_retrieval.py`): FAILS. Exam step 2 built (uncommitted): `training/test_lock.py`
+  + guarded "test" fold in folds.py / graph_data.py / fold_retrieval.py / train_unified.py; 5 tests (synthetic 2019+).
 - **DSTGNN skeleton (2026-10-06)**: `models/dstgnn.py` (graph GRU, modes none/static/dynamic + adaptive),
   `pipeline/graph.py` (Delhi + 27 nodes, geographic and wind-gated advective edges). G-D1: 13 tests pass.
   The plan said `data/graph.py`; it is `pipeline/graph.py` because `data/` holds raw data.

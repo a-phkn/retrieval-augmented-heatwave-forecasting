@@ -35,6 +35,10 @@ Modes (pre-registered 2026-10-06, context/decisions.md):
           weighted and truncated to its first 20 principal components (PCA on the fold's training
           windows). Same pool, rules and dedup as R0; R0-rand is its random control
           (pre-registered 2026-10-17; data from pipeline/download_era5_z500.py).
+  "humid"  Rh: top-K by cosine similarity of the humid-air pattern: standardised anomalies of dew point,
+          relative humidity, Tmax and surface pressure at 12 points east and south-west of Delhi
+          (pipeline/download_era5_humid.py) on the last 3 input days. Same pool, rules and dedup as R0;
+          R0-rand is its random control (screen S2, pre-registered 2026-10-18).
   "region_mmr"  R2: Rg's pool and similarity, but the K analogues are picked greedily by maximal
           marginal relevance over the 200 most similar eligible candidates: score = 0.7 sim(query, c)
           - 0.3 max over chosen s of sim(c, s), dedup rules applied in the greedy pass (pre-registered
@@ -54,9 +58,12 @@ import pandas as pd
 
 from pipeline.climatology import apply_climatology, doy_climatology
 from retrieval.features import FEATURE_NAMES
-from training.folds import FOLDS, FORECAST_DAYS, INPUT_DAYS, TEST_START, fold_bounds, fold_daily, fold_windows
+from training import test_lock
+from training.folds import (
+    FOLDS, FORECAST_DAYS, INPUT_DAYS, TEST_END, TEST_FOLD, TEST_START, fold_bounds, fold_daily, fold_windows,
+)
 
-MODES = ("sim", "rand", "time", "time_rand", "region", "region_mmr", "synoptic")
+MODES = ("sim", "rand", "time", "time_rand", "region", "region_mmr", "synoptic", "humid")
 REGION_MODES = ("region", "region_mmr")
 MMR_LAMBDA, MMR_POOL = 0.7, 200
 RANDOM_MODES = ("rand", "time_rand")  # need a seed; draws are fixed per fold and seed
@@ -70,6 +77,18 @@ REGION_LAGS = 3  # Rg: last 3 input days
 UPSTREAM_PATH = Path(__file__).resolve().parents[1] / "datasets_v2" / "upstream_daily.parquet"
 Z500_PATH = Path(__file__).resolve().parents[1] / "data" / "external" / "era5_z500_southasia_1980_2018.parquet"
 SYNOPTIC_LAGS, SYNOPTIC_PCS = 3, 20  # Rz (pre-registered 2026-10-17)
+HUMID_PATH = Path(__file__).resolve().parents[1] / "datasets_v2" / "humid_daily.parquet"
+HUMID_VARS = ("dew_point_2m_mean", "relative_humidity_2m_mean", "temperature_2m_max", "surface_pressure_mean")
+HUMID_LAGS = 3  # Rh / screen S2 arm A (pre-registered 2026-10-18)
+
+
+def _read_end(fold: str) -> pd.Timestamp:
+    """Exclusive end of the dates a fold may read: 2019-01-01 for development folds; for the test fold
+    (only after training.test_lock.require()) the day after TEST_END."""
+    if fold == TEST_FOLD:
+        test_lock.require()
+        return TEST_END + pd.Timedelta(days=1)
+    return TEST_START
 
 
 def window_features(d: pd.DataFrame, query_dates) -> np.ndarray:
@@ -119,8 +138,9 @@ def regional_daily(fold: str, d: pd.DataFrame, target: str) -> pd.DataFrame:
     nodes = [node_id(a, o) for a, o in NODES]
     vars_ = ["temperature_2m_max"] + (["dew_point_2m_mean"] if target != "t_max" else [])
     cols = [f"{v}__{n}" for v in vars_ for n in nodes]
-    up = pd.read_parquet(UPSTREAM_PATH, columns=cols, filters=[("date", "<", TEST_START)])
-    up = up[up.index < TEST_START].reindex(d.index)
+    end = _read_end(fold)
+    up = pd.read_parquet(UPSTREAM_PATH, columns=cols, filters=[("date", "<", end)])
+    up = up[up.index < end].reindex(d.index)
     up["t_max__delhi"] = d["t_max"]
     if target != "t_max":
         up["relative_humidity_mean__delhi"] = d["relative_humidity_mean"]
@@ -139,7 +159,7 @@ def synoptic_daily(fold: str, d: pd.DataFrame) -> tuple[pd.DataFrame, np.ndarray
     """Rz: (dates, cells) standardised 500 hPa height anomalies, climatology from the fold's training
     years only, and each cell's weight sqrt(cos lat). Pre-2019 rows only."""
     z = pd.read_parquet(Z500_PATH)
-    z = z[z.index < TEST_START].reindex(d.index)
+    z = z[z.index < _read_end(fold)].reindex(d.index)
     if z.isna().any().any():
         raise ValueError("z500 data missing for some days")
     train_end, _, _ = fold_bounds(fold)
@@ -159,6 +179,32 @@ def synoptic_features(za: pd.DataFrame, weights: np.ndarray, query_dates) -> np.
         raise ValueError("window input days missing from the z500 table")
     v = za.to_numpy(dtype=np.float64) * weights[None, :]
     return np.concatenate([v[pos - 1 - k] for k in range(SYNOPTIC_LAGS)], axis=1)
+
+
+def humid_daily(fold: str, d: pd.DataFrame) -> pd.DataFrame:
+    """Rh / S2 arm A: (dates, columns) standardised anomalies of HUMID_VARS at the 12 humid-air points,
+    climatology from the fold's training years only. Pre-2019 rows only."""
+    h = pd.read_parquet(HUMID_PATH)
+    cols = [c for c in h.columns if c.split("__")[0] in HUMID_VARS]
+    h = h[h.index < _read_end(fold)][cols].reindex(d.index)
+    if h.isna().any().any():
+        raise ValueError("humid-air data missing for some days")
+    train_end, _, _ = fold_bounds(fold)
+    train = h.index <= train_end
+    out = {}
+    for c in cols:
+        m, sd = apply_climatology(h.index, doy_climatology(h[c].astype(np.float64), train))
+        out[c] = (h[c].to_numpy(dtype=np.float64) - m) / sd
+    return pd.DataFrame(out, index=h.index)
+
+
+def lagged_features(table: pd.DataFrame, query_dates, lags: int) -> np.ndarray:
+    """(N, lags * columns): each column's value on the last `lags` input days."""
+    pos = table.index.get_indexer(pd.DatetimeIndex(query_dates))
+    if (pos < lags).any():
+        raise ValueError("window input days missing from the table")
+    v = table.to_numpy(dtype=np.float64)
+    return np.concatenate([v[pos - 1 - k] for k in range(lags)], axis=1)
 
 
 def region_features(rz: pd.DataFrame, query_dates) -> np.ndarray:
@@ -183,16 +229,22 @@ class Retrieved:
     n_eligible: np.ndarray  # (N,) eligible candidates before dedup
 
 
+def _fold_number(fold: str) -> int:
+    """Seed component per fold (development folds keep their earlier numbers 0-3; the test fold is 4)."""
+    return len(FOLDS) if fold == TEST_FOLD else list(FOLDS).index(fold)
+
+
 class FoldRetriever:
     """Candidate pool, normalisation and episodes for one fold and label set."""
 
     def __init__(self, fold: str, labels: str, target: str = "t_max"):
-        if fold not in FOLDS:
+        if fold not in FOLDS and fold != TEST_FOLD:
             raise ValueError(f"unknown fold {fold!r}")
         self.fold = fold
         self.target = target
         self._region = None  # (vectors, mean, std, daily table), built on first Rg request
         self._synoptic = None  # (vectors, mean, components, anomaly table, weights), built on first Rz request
+        self._humid = None  # (vectors, mean, std, anomaly table), built on first Rh request
         # target only selects which climatology channels fold_daily adds; the retrieval
         # features use Tmax channels for every target (the v1 feature set).
         self.d, _ = fold_daily(fold, target, labels)
@@ -241,6 +293,20 @@ class FoldRetriever:
         _, mean, comps, za, w = self._synoptic_state()
         return _unit((synoptic_features(za, w, query_dates) - mean) @ comps.T)
 
+    def _humid_state(self) -> tuple[np.ndarray, np.ndarray, np.ndarray, pd.DataFrame]:
+        """Rh: like Rg's state, on the humid-air anomalies (z-scored on training windows, unit norm)."""
+        if self._humid is None:
+            hz = humid_daily(self.fold, self.d)
+            raw = lagged_features(hz, self.cand_dates, HUMID_LAGS)
+            mean, std = raw.mean(axis=0), raw.std(axis=0)
+            std[std == 0] = 1.0
+            self._humid = (_unit((raw - mean) / std), mean, std, hz)
+        return self._humid
+
+    def humid_query_vectors(self, query_dates) -> np.ndarray:
+        _, mean, std, hz = self._humid_state()
+        return _unit((lagged_features(hz, query_dates, HUMID_LAGS) - mean) / std)
+
     def retrieve(self, query_dates, mode: str = "sim", k: int = K_DEFAULT, seed: int | None = None) -> Retrieved:
         if mode not in MODES:
             raise ValueError(f"mode must be one of {MODES}")
@@ -251,12 +317,14 @@ class FoldRetriever:
             qv, cand_vectors = self.region_query_vectors(q), self._region_state()[0]
         elif mode == "synoptic":
             qv, cand_vectors = self.synoptic_query_vectors(q), self._synoptic_state()[0]
+        elif mode == "humid":
+            qv, cand_vectors = self.humid_query_vectors(q), self._humid_state()[0]
         else:
             qv, cand_vectors = self.query_vectors(q), self.vectors
         q_ep = window_episode(self.d, q)
         q_doy = (q - pd.Timedelta(days=1)).dayofyear.to_numpy()
         n_cand = np.searchsorted(self.cand_dates.values, (q - pd.Timedelta(days=BUFFER_DAYS)).values, side="right")
-        rng = np.random.default_rng([list(FOLDS).index(self.fold), seed, 20261006]) if mode in RANDOM_MODES else None
+        rng = np.random.default_rng([_fold_number(self.fold), seed, 20261006]) if mode in RANDOM_MODES else None
 
         n = len(q)
         idx = np.full((n, k), -1, dtype=np.int64)
