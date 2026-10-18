@@ -876,6 +876,34 @@ RAG counts as helping only if real retrieval beats both.
 - **Next:** as written down, only the WBGT model gets trained (C3-hop + Rz, about 2 hours), then it is judged by the
   same three conditions. Honest expectation: the gain is small, and the heatwave-day test can only see about
   0.12 °C, so passing is unlikely. Report: `evaluation_v2/synoptic_screen.md`.
+- **Rz result (2026-10-18): fails the rule, but it is the first retrieval that helps the graph model at all.**
+  - **All days:** WBGT error is about 1% lower (−0.023 °C, confidence interval below zero). It beats random past
+    days and beats Rg, and the gain is largest 2–4 days ahead. The model's attention is also more selective than
+    with Rg. All of this fits: the upper-air pattern is information the model didn't have, and it matters most
+    a few days ahead.
+  - **Heatwave days:** no gain (+0.004 °C). The rule requires one, so the final WBGT test model stays C3-hop alone.
+  - **Practical limit:** the upper-air files we used stop at the end of 2021. The locked test period runs to
+    2026, so Rz could only be tested on 2019–2021 unless we find another source.
+  - Report: `evaluation_v2/rz_gate.md`.
+
+**And a second try: correcting the heatwave cold bias with retrieval (2026-10-18; failed, and why matters)**
+- **Idea:** on real heatwave days our models forecast far too cold (WBGT about 2.7 °C, Tmax about 1.2 °C too low).
+  So for each forecast, find the 20 most similar *past forecasts*, see how wrong the model was on them, and
+  correct by that amount. This is a classic weather-forecasting trick (the analog ensemble).
+- **Result: it makes heatwave days much worse** (+0.7 °C for Tmax, +0.9 °C for WBGT), and it also loses to the
+  simple controls. All days: no change.
+- **Why:**
+  - When the model *forecasts* a hot day, it is usually too *warm*, mostly false alarms. So the past cases that
+    look like today's say "cool it down".
+  - On days that *really were* extreme, the model was already too cold, so cooling it makes them worse.
+  - This is "regression to the mean". A forecast can't be right on average both for days it *predicts* to be hot
+    and for days that *turn out* hot, unless it has new information about which is which.
+- **What we learned:** the heatwave cold bias isn't a fixable mistake in the model. It mostly reflects what can't
+  be known from the inputs. Only genuinely new information can shrink it, which is why Rz (the upper-air pattern)
+  was the right kind of idea.
+- **A useful side effect for the warnings:** the corrections cut false heatwave alarms a lot, and they make the
+  model's hot-day forecasts more accurate when it does forecast heat. This could matter for the advisory (Phase 6),
+  but it is not a retrieval gain. Report: `evaluation_v2/analog_correction.md`.
 
 **Advisory (Phase 6):**
 - forecast → rule engine → risk tier (GREEN / YELLOW / ORANGE / RED) → LLM writes the
@@ -1006,5 +1034,7 @@ the project's virtual environment (`.venv`); nothing is installed globally.
 | 2026-10-13 | Phase 6 alert colours decided: IMD's levels; uncoloured actions at any alert; Ahmedabad colours marked as precedent. |
 | 2026-10-16 | G-R* fails in both families: final test models are C3-hop alone. Rg's WBGT gain on the LSTM vanishes on C3-hop (the graph already carries the regional information). |
 | 2026-10-17 | Rz (500 hPa pattern retrieval): z500 extract streamed; screen passes for WBGT (small), fails for Tmax; WBGT run next. |
+| 2026-10-18 | Option 2 (analog correction of the cold bias) fails: heatwave days get worse (regression to the mean); explained in §9.1. |
+| 2026-10-18 | Rz on C3-hop (WBGT): fails the rule (no heatwave-day gain) but improves all days by ~1%; upper-air data ends 2021. |
 | 2026-10-08 | Independent ML review: ridge baseline, bias split / recalibration / hot-day Brier added; backbone rule amended (C2 eligible, user approves the final pick); physics-head robustness fixes queued; test protocol drafted. |
 | 2026-10-08 | Graph runs done: G-D3 says U1 (graph not worse than U1 for Tmax, 0.08 °C worse for WBGT); edges hurt, the edgeless C2 is best. One tuning round started (C3, U1, and the post-result arm C3-pool); then PH_lstm and R2. |

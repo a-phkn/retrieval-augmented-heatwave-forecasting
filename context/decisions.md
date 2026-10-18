@@ -1121,3 +1121,43 @@ exploration, disclosed as such), before any z500 data was downloaded**
   -0.016 (Tmax), CIs cross 0. Rz signal correlation with the truth, lead 1-5: WBGT +0.32..+0.21, Tmax +0.40..+0.19.
   Per the rule, only `A2Lr_hw5_C3hop_Rz` is trained. Expected: the effect is small (screen -0.004 on all days), and G3
   needs a significant extreme-day gain (MDE ~0.12 °C), so a G3 pass is unlikely; run as pre-registered.
+
+**Option 2, analog error correction ("AnEn-corr"). PRE-REGISTERED 2026-10-18 (user approved), before it was run;
+post-G-R* exploration, disclosed** (Delle Monache et al. 2011, Mon. Wea. Rev. 139: 3554, analog post-processing)
+- Why: on observed heatwave days the final models forecast far too cold (WBGT extreme bias ~-2.7 °C, Tmax ~-1.2 °C);
+  retrieval may correct this state-dependently, without retraining.
+- Corrected model: the final C3-hop of each family (A1prime_hw5_C3hop, A2Lr_hw5_C3hop), every seed separately.
+- Pool of honest past errors for fold k (per seed): fold k's own inner-block forecasts (its 2 early-stopping years;
+  not fitted on) plus the validation forecasts of earlier folds on dates the inner block does not cover; only rows
+  whose target date is before fold k's validation start. (f1: 2 years ... f4: ~9 years.)
+- Matching, per seed and lead: candidates = pool rows of the same lead whose target day of year is within +-45 days
+  (circular); predictors = the forecast at this lead, the mean of the window's 5 lead forecasts, and the last observed
+  value (q-1), all in °C, each standardised by its SD over the candidate pool; Euclidean distance; K = 20 nearest;
+  correction = mean error (forecast - actual) of the K; corrected = forecast - correction.
+- Controls: raw C3-hop; random (K = 20 random candidates from the same +-45-day set, seeded: isolates similarity from
+  season); linear (per seed and lead, OLS actual = a + b x forecast on the whole pool).
+- Pass rule per family: (1) vs raw, all days: CI not entirely above 0; (2) vs raw, extreme days: CI entirely below
+  0; (3) vs random, extreme days: CI entirely below 0; (4) vs linear, extreme days: CI entirely below 0. All four, or
+  no claim. Forecaster's-dilemma checks reported next to it: all-days deltas, extreme bias, and the forecast-
+  conditioned hot days (count per seed, RMSE, bias) for raw vs corrected.
+- If it passes in a family, AnEn-corrected C3-hop is offered as the retrieval hypothesis for the test protocol
+  (user decides); otherwise reported as a null.
+- **AnEn-corr result 2026-10-18: FAILS in both families** (`evaluation_v2/analog_correction.md`, rule applied
+  unchanged). Tmax: vs raw all +0.005 [-0.040, +0.050], extreme **+0.729** [+0.584, +0.874]; WBGT: all -0.032
+  [-0.080, +0.015], extreme **+0.901** [+0.753, +1.050]; it also loses to the random and linear corrections on
+  extreme days. Why: conditional on the FORECAST, C3-hop is too warm when it forecasts heat (forecast-hot-day bias
+  Tmax +0.89, WBGT +1.81 °C; mostly false alarms), so any correction conditioned on forecast information cools those
+  forecasts; conditional on the OBSERVATION, extreme days were already too cold, so they get worse (extreme bias
+  Tmax -1.25 -> -2.09, WBGT -2.69 -> -3.68). Regression to the mean / the forecaster's dilemma (Lerch et al. 2017):
+  the observed-extreme cold bias is mostly limited predictability, not a correctable systematic error; only new
+  information can reduce it. Side results (descriptive): the corrections cut forecast-hot-day error (Tmax RMSE 2.26
+  -> 1.64) and false alarms (forecast hot days per seed 681 -> 306 Tmax, 201 -> 12 WBGT); the plain linear
+  correction improves WBGT all days (-0.074 [-0.113, -0.035]), as the earlier recalibration check found.
+- **Rz result 2026-10-18: FAILS G3 (WBGT)** (`evaluation_v2/rz_gate.md`; 4 folds, code 47ca47a6 = commit 9ba341a, clean
+  rows). Conditions (True, False, False): vs C3hop all days **-0.023 [-0.041, -0.005] (p 0.012)**; extreme +0.004
+  [-0.120, +0.128]; vs random, extreme -0.013 [-0.124, +0.097]. **Final test model stays A2Lr_hw5_C3hop.**
+  Exploratory (no claim under the rule): the first retrieval that improves C3-hop on all days (~1%), vs random -0.020
+  [-0.040, -0.000] (p 0.050), vs Rg -0.026 [-0.045, -0.007]; gains largest at leads 2-4 (-0.025..-0.030); attention
+  more selective than Rg (max 0.325 vs 0.276, entropy 0.927 vs 0.967); no heatwave-day gain (extreme bias unchanged,
+  -2.69). Data limit for any test use: WeatherBench 2's 2.8° ERA5 ends 2021-12-31 (1.5°: 2023-01-10), so Rz could
+  be scored on at most 2019-2021 (2.8°) of the 2019-2026 test period without another data source.

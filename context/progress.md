@@ -137,7 +137,10 @@ Short, frequently-updated. See `build_plan.md` for full milestone detail.
 - **Post-G-R* retrieval attempts (user, 2026-10-17)**: option 1 Rz (500 hPa pattern) pre-registered; z500 extract
   streamed (`pipeline/download_era5_z500.py`, 20.5 MB kept); `synoptic` mode in fold_retrieval; screen
   (`evaluation/synoptic_screen.py`): WBGT PASS (-0.004), Tmax fail. Config `A2Lr_hw5_C3hop_Rz` + queue
-  `configs/week7_rz_queue.txt` ready (needs commit). Then option 2: analog error correction (plan pending OK).
+  `configs/week7_rz_queue.txt`; commit 9ba341a; run started 2026-10-18 13:49 (code 47ca47a6, scratchpad
+  week7_queue.sh, log week7.log). Option 2 (`evaluation/analog_correction.py`, +4 tests): FAILS both families
+  (extreme +0.73 / +0.90; regression to the mean). Rz run DONE 16:57 (clean): FAILS G3 (`evaluation/rz_gate.py`);
+  all days -0.023 (p 0.012), no extreme gain; final WBGT test model stays C3-hop. Next: protocol freeze decisions.
 - **DSTGNN skeleton (2026-10-06)**: `models/dstgnn.py` (graph GRU, modes none/static/dynamic + adaptive),
   `pipeline/graph.py` (Delhi + 27 nodes, geographic and wind-gated advective edges). G-D1: 13 tests pass.
   The plan said `data/graph.py`; it is `pipeline/graph.py` because `data/` holds raw data.

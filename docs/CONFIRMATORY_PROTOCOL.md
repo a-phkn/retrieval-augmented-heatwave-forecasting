@@ -59,6 +59,10 @@ effects, so a null H2 will mostly mean "not detectable".
 - By lead, the bias / SD split, recalibrated scores, hot-day Brier and reliability
   (`evaluation/calibration_check.py`), and the forecast-conditioned stratum.
 - Every other model: U1, C2, the C3 / C4 / C4a / C3-pool graphs, and retrieval rungs.
+- **Rz side-check (user decision 2026-10-18):** C3-hop + Rz (500 hPa pattern retrieval) for WBGT failed its
+  development rule (no heatwave-day gain) but improved all days by 0.023 °C. It is re-checked on the test years
+  as exploratory only, on **2019-2021** (the WeatherBench 2 ERA5 2.8° data ends 2021-12-31). The 2019-2021 z500
+  extract is downloaded only after this protocol is frozen, as part of the test run.
 - Case studies: the 2019, 2022 and 2024 heat events.
 - Graph-structure claims, still under the structure-claim rule (CI below 0 against both U1 and C2).
 

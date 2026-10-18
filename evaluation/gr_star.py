@@ -43,11 +43,11 @@ def _need(run_id: str) -> pd.DataFrame:
     return df
 
 
-def gate_rows() -> dict:
-    """The pre-registered G-R* decision per family."""
+def gate_rows(rung: str = "Rg", families: dict | None = None) -> dict:
+    """The pre-registered G3 decision per family for C3hop_{rung} (G-R*: Rg; Rz reuses it, 2026-10-17)."""
     out = {}
-    for fam, base in FAMILIES.items():
-        ctrl, rg, rand = _need(f"{base}_C3hop"), _need(f"{base}_C3hop_Rg"), _need(f"{base}_C3hop_rand")
+    for fam, base in (families or FAMILIES).items():
+        ctrl, rg, rand = _need(f"{base}_C3hop"), _need(f"{base}_C3hop_{rung}"), _need(f"{base}_C3hop_rand")
         a, e, re = compare(ctrl, rg, "all"), compare(ctrl, rg, "extreme"), compare(rand, rg, "extreme")
         row = {"rmse_all": rmse_by(rg), "rmse_extreme": rmse_by(rg[rg["stratum"] == "extreme"]),
                "ctrl_rmse_all": rmse_by(ctrl), "ctrl_rmse_extreme": rmse_by(ctrl[ctrl["stratum"] == "extreme"]),
@@ -57,7 +57,7 @@ def gate_rows() -> dict:
                "ext_mde": mde80(e), "ext_bias": extreme_bias(rg), "ctrl_ext_bias": extreme_bias(ctrl)}
         row["g3"] = g3_conditions(row)
         row["passes"] = all(row["g3"])
-        row["final_model"] = f"{base}_C3hop_Rg" if row["passes"] else f"{base}_C3hop"
+        row["final_model"] = f"{base}_C3hop_{rung}" if row["passes"] else f"{base}_C3hop"
         out[fam] = row
     return out
 
@@ -65,8 +65,8 @@ def gate_rows() -> dict:
 # ------------------------------------------------------------------ diagnostics
 
 
-def per_lead(base: str) -> list[dict]:
-    ctrl, rg = _need(f"{base}_C3hop"), _need(f"{base}_C3hop_Rg")
+def per_lead(base: str, rung: str = "Rg") -> list[dict]:
+    ctrl, rg = _need(f"{base}_C3hop"), _need(f"{base}_C3hop_{rung}")
     return [compare(ctrl[ctrl["lead"] == L], rg[rg["lead"] == L], "all") for L in range(1, FORECAST_DAYS + 1)]
 
 
