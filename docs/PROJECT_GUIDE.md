@@ -893,6 +893,24 @@ RAG counts as helping only if real retrieval beats both.
     weak: it almost never says "more likely than not".)
   - Still running: the humid-air screen (12 new points east and south-west of Delhi, downloading).
 
+**Two additions that make the graph model's results richer (2026-10-18; descriptive)**
+- **Range forecasts:** besides one number, the model now gives a range, e.g. "likely 34 °C, 1-in-10 chance above
+  37 °C".
+  - On ordinary days the ranges are honest: the 80% range contains the truth about 80% of the time.
+  - C3-hop's ranges beat the Delhi-only model's on all days and on heatwave days, for both Tmax and WBGT.
+  - For Tmax heatwaves the range still works (78%). For WBGT heatwaves it misses (24%), because the cold bias is
+    bigger than the range.
+  - Report: `evaluation_v2/range_forecasts.md`.
+- **What the graph learned:** each upstream point, then whole rings of points, was switched off in turn on all 80
+  trained models.
+  - **No single point matters on ordinary days.** Its neighbours carry the same information, so the network has
+    learned to use the region as a whole.
+  - **Whole rings matter a lot.** For Tmax heatwave days, switching off the farthest rings (600–1000 km away)
+    costs over 1.3 °C.
+  - **On heatwave days the forecast leans most on the far-western desert (Thar, Pakistan),** which is exactly where
+    Delhi's hot, dry air comes from. The graph has learned the physics of where heat comes from.
+  - Map: `evaluation_v2/figures/graph_importance.png`; report: `evaluation_v2/graph_explain.md`.
+
 **And a second try: correcting the heatwave cold bias with retrieval (2026-10-18; failed, and why matters)**
 - **Idea:** on real heatwave days our models forecast far too cold (WBGT about 2.7 °C, Tmax about 1.2 °C too low).
   So for each forecast, find the 20 most similar *past forecasts*, see how wrong the model was on them, and
@@ -1044,5 +1062,6 @@ the project's virtual environment (`.venv`); nothing is installed globally.
 | 2026-10-18 | Option 2 (analog correction of the cold bias) fails: heatwave days get worse (regression to the mean); explained in §9.1. |
 | 2026-10-18 | Rz on C3-hop (WBGT): fails the rule (no heatwave-day gain) but improves all days by ~1%; upper-air data ends 2021. |
 | 2026-10-18 | Upper-air direct input (screen) and retrieval for warnings: no heatwave-day / warning gain; humid-air screen downloading. |
+| 2026-10-18 | Range forecasts and "what the graph learned" (occlusion maps) added; exam code built (test lock, test folds, test run, scoring). |
 | 2026-10-08 | Independent ML review: ridge baseline, bias split / recalibration / hot-day Brier added; backbone rule amended (C2 eligible, user approves the final pick); physics-head robustness fixes queued; test protocol drafted. |
 | 2026-10-08 | Graph runs done: G-D3 says U1 (graph not worse than U1 for Tmax, 0.08 °C worse for WBGT); edges hurt, the edgeless C2 is best. One tuning round started (C3, U1, and the post-result arm C3-pool); then PH_lstm and R2. |

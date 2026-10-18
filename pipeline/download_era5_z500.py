@@ -19,9 +19,13 @@ Layout: data/external/era5_z500_southasia_1980_2018.parquet (index date, one col
 .meta.json beside it. Resumable: finished blocks of chunks are kept in data/external/z500_parts/
 (gitignored) until the final file is written; re-running skips them. Ctrl+C is safe.
 
+Test years (the Rz side-check, docs/CONFIRMATORY_PROTOCOL.md): --test-years streams 2019-01-01 .. 2021-12-31
+(this file's last year is 2021) into OUT_TEST. It refuses unless the test lock is open (training.test_lock).
+
 Run from repo root:
     python -m pipeline.download_era5_z500 --dry-run
     python -m pipeline.download_era5_z500
+    python -m pipeline.download_era5_z500 --test-years      # only after the protocol freeze
 """
 from __future__ import annotations
 
@@ -41,11 +45,13 @@ from training.folds import TEST_START
 REPO_ROOT = Path(__file__).resolve().parents[1]
 URL = "https://storage.googleapis.com/weatherbench2/datasets/era5/1959-2022-6h-128x64_equiangular_conservative.zarr"
 OUT = REPO_ROOT / "data" / "external" / "era5_z500_southasia_1980_2018.parquet"
+OUT_TEST = REPO_ROOT / "data" / "external" / "era5_z500_southasia_2019_2021.parquet"
 PARTS = REPO_ROOT / "data" / "external" / "z500_parts"
 BOX = (10.0, 45.0, 40.0, 100.0)  # lat_min, lat_max, lon_min, lon_max (cell centres)
 LEVEL_HPA = 500
 HOUR_UTC = 12
 START, END = pd.Timestamp("1980-01-01"), pd.Timestamp("2018-12-31")
+START_TEST, END_TEST = pd.Timestamp("2019-01-01"), pd.Timestamp("2021-12-31")
 ORIGIN = pd.Timestamp("1959-01-01")  # the file's "hours since 1959-01-01"
 STEP_HOURS = 6
 G0 = 9.80665
@@ -139,10 +145,18 @@ def columns(lat: np.ndarray, lon: np.ndarray) -> list[str]:
 def main(argv: list[str] | None = None) -> None:
     ap = argparse.ArgumentParser(description="Stream ERA5 z500 over South Asia (Rz).")
     ap.add_argument("--dry-run", action="store_true")
+    ap.add_argument("--test-years", action="store_true", help="2019-2021 for the Rz side-check (needs the test lock)")
     args = ap.parse_args(argv)
-    if END >= TEST_START:
-        raise ValueError("the locked test period must not be read")
-    dates = pd.date_range(START, END, freq="D")
+    if args.test_years:
+        from training import test_lock
+
+        test_lock.require()
+        start, end, out_path, parts = START_TEST, END_TEST, OUT_TEST, PARTS.with_name("z500_parts_test")
+    else:
+        if END >= TEST_START:
+            raise ValueError("the locked test period must not be read")
+        start, end, out_path, parts = START, END, OUT, PARTS
+    dates = pd.date_range(start, end, freq="D")
     store = Store()
     lay = check_layout(store)
     t_idx = time_index(dates)
@@ -156,10 +170,10 @@ def main(argv: list[str] | None = None) -> None:
           f"(lat {lat[0]:.2f}-{lat[-1]:.2f}, lon {lon[0]:.2f}-{lon[-1]:.2f}), level index {lay['ilev']}", flush=True)
     if args.dry_run:
         return
-    PARTS.mkdir(parents=True, exist_ok=True)
+    parts.mkdir(parents=True, exist_ok=True)
     cols = columns(lat, lon)
     for b, block in enumerate(blocks, 1):
-        part = PARTS / f"part_{block[0]:05d}_{block[-1]:05d}.parquet"
+        part = parts / f"part_{block[0]:05d}_{block[-1]:05d}.parquet"
         if part.exists():
             continue
         t0 = time.time()
@@ -174,23 +188,24 @@ def main(argv: list[str] | None = None) -> None:
         print(f"  block {b}/{len(blocks)} ({dates[rows].min().date()} .. {dates[rows].max().date()}): "
               f"{time.time() - t0:.0f}s", flush=True)
 
-    out = pd.concat([pd.read_parquet(p) for p in sorted(PARTS.glob("part_*.parquet"))]).sort_index()
+    out = pd.concat([pd.read_parquet(p) for p in sorted(parts.glob("part_*.parquet"))]).sort_index()
     if not out.index.equals(dates.rename("date")) or out.isna().any().any():
         raise ValueError("extract is incomplete or has missing values")
     if not ((out.to_numpy() > 5000) & (out.to_numpy() < 6200)).all():
         raise ValueError("z500 heights outside a plausible range (5000-6200 m)")
-    OUT.parent.mkdir(parents=True, exist_ok=True)
-    out.to_parquet(OUT)
+    out_path.parent.mkdir(parents=True, exist_ok=True)
+    out.to_parquet(out_path)
     meta = {"source": URL, "variable": "geopotential / 9.80665 (m)", "level_hpa": LEVEL_HPA, "hour_utc": HOUR_UTC,
-            "start": str(START.date()), "end": str(END.date()), "box_cell_centres": BOX,
+            "start": str(start.date()), "end": str(end.date()), "box_cell_centres": BOX,
             "lat": lat.tolist(), "lon": lon.tolist(), "n_days": len(out),
-            "sha256": hashlib.sha256(OUT.read_bytes()).hexdigest(),
+            "sha256": hashlib.sha256(out_path.read_bytes()).hexdigest(),
             "created_utc": datetime.now(timezone.utc).isoformat(timespec="seconds")}
-    OUT.with_suffix(".meta.json").write_text(json.dumps(meta, indent=2) + "\n", encoding="utf-8")
-    for p in PARTS.glob("part_*.parquet"):
+    out_path.with_suffix(".meta.json").write_text(json.dumps(meta, indent=2) + "\n", encoding="utf-8")
+    for p in parts.glob("part_*.parquet"):
         p.unlink()
-    PARTS.rmdir()
-    print(f"wrote {OUT.relative_to(REPO_ROOT)} ({OUT.stat().st_size / 1e6:.1f} MB, {len(out)} days x {out.shape[1]} cells)")
+    parts.rmdir()
+    print(f"wrote {out_path.relative_to(REPO_ROOT)} ({out_path.stat().st_size / 1e6:.1f} MB, {len(out)} days x "
+          f"{out.shape[1]} cells)")
 
 
 if __name__ == "__main__":

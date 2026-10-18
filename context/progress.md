@@ -146,6 +146,9 @@ Short, frequently-updated. See `build_plan.md` for full milestone detail.
   download: `python -m pipeline.build_humid_daily` then `python -m evaluation.heatwave_info_screen` (all arms).
   W (warning retrieval, `evaluation/warning_retrieval.py`): FAILS. Exam step 2 built (uncommitted): `training/test_lock.py`
   + guarded "test" fold in folds.py / graph_data.py / fold_retrieval.py / train_unified.py; 5 tests (synthetic 2019+).
+  Committed 5f9fad4. Then: range forecasts + graph explanation (occlusion maps) done; exam steps 3-4 built
+  (`training/test_run.py`, `evaluation/test_evaluation.py`, test folds "test"/"test2021"). Humid download 386/564,
+  stopped at the daily quota 2026-10-18 21:06: rerun `python -m pipeline.download_era5_humid` next day.
 - **DSTGNN skeleton (2026-10-06)**: `models/dstgnn.py` (graph GRU, modes none/static/dynamic + adaptive),
   `pipeline/graph.py` (Delhi + 27 nodes, geographic and wind-gated advective edges). G-D1: 13 tests pass.
   The plan said `data/graph.py`; it is `pipeline/graph.py` because `data/` holds raw data.

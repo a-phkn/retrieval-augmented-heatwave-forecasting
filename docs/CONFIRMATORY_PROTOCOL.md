@@ -63,7 +63,10 @@ effects, so a null H2 will mostly mean "not detectable".
   development rule (no heatwave-day gain) but improved all days by 0.023 °C. It is re-checked on the test years
   as exploratory only, on **2019-2021** (the WeatherBench 2 ERA5 2.8° data ends 2021-12-31). The 2019-2021 z500
   extract is downloaded only after this protocol is frozen, as part of the test run.
-- Case studies: the 2019, 2022 and 2024 heat events.
+- Case studies: the 2019, 2022 and 2024 heat events, on windows fixed before the test period was opened:
+  2019-05-25 to 2019-06-15, 2022-04-01 to 2022-05-15, 2024-05-15 to 2024-06-20 (10-seed ensemble; RMSE and bias
+  at leads 1, 3 and 5).
+- Range forecasts (CRPS, interval coverage) and hot-day Brier, recalibrated on the early-stopping block (2017-2018).
 - Graph-structure claims, still under the structure-claim rule (CI below 0 against both U1 and C2).
 
 ## 5. Safeguards

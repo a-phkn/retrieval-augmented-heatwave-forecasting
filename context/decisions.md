@@ -1229,3 +1229,45 @@ run; post-G-R* exploration, disclosed**
   model-only 0.0544 (BSS +0.366); Rg 0.0552, Rz 0.0550 (sqrt-Brier deltas +0.0016 / +0.0012, n.s.). WBGT: 0.0571 (BSS
   +0.028) for model-only, Rg and Rz alike; the WBGT warning almost never reaches P >= 0.5 (~0.1 hits / season).
   Analogue hot-day shares add nothing beyond C3-hop's own probability. Not offered for the advisory.
+
+**Range forecasts (option 2) and what the graph learned (option 3). SPECIFIED 2026-10-18 (user approved), before
+either was computed; descriptive (no model choice depends on them); option 1 (upper-air input) dropped by the user**
+- Range forecasts (`evaluation/range_forecasts.py`): for C3-hop and, for comparison, the Delhi-only control, each
+  family: the 10-seed ensemble mean recalibrated on the inner block (as calibration_check), with (a) a Gaussian whose
+  SD is the inner-block residual SD per lead, and (b) the empirical inner-block residuals per lead added to the
+  centre. Scores on 2007-2018 out of fold: CRPS (all days, extreme days), vs a climatology forecast (fold-train
+  day-of-year mean and SD, Gaussian); coverage of the 80% interval (10th-90th percentile) and of the 50% interval.
+  Deliverable for the advisory: the 10th, 50th and 90th percentile per forecast day.
+- What the graph learned (`evaluation/graph_explain.py`): occlusion on the trained C3-hop checkpoints (10 seeds x 4
+  folds, validation windows): replace one upstream point's inputs by its training mean (0 after z-scoring) on all 14
+  input days, and separately on the last input day only; the rise in RMSE (all days, extreme days) is that point's
+  importance. Also per hop distance (all points at distance k occluded together) and Delhi's own inputs. Reported as
+  maps and tables; no claims beyond "the model's forecasts depend on these inputs".
+- **Range-forecast result 2026-10-18** (`evaluation_v2/range_forecasts.md`; descriptive; deliverable quantiles in
+  `predictions_v2/range/`): C3-hop CRPS all days Tmax 1.082 (CRPSS +0.24), WBGT 1.191 (+0.14); better than the control
+  on all and extreme days in both families (sqrt-CRPS, all p <= 0.004). Calibrated on all days (80% interval
+  coverage 0.79-0.82, 50%: 0.49-0.55). Tmax extreme days: 80% coverage 0.78. WBGT extreme days: 80% coverage only
+  0.23-0.25 (the cold bias exceeds the spread), stated as a limitation for the advisory.
+
+**Exam code built (steps 2-4). 2026-10-18 (user approved the plan), before the freeze; nothing from 2019 on was read**
+- `training/test_lock.py`: 2019+ is readable only if the tag `test-lock` exists, HEAD contains it, and no file under
+  training/ models/ pipeline/ retrieval/ evaluation/ configs/ differs from the tag or is uncommitted.
+- Guarded test folds (training/folds.py `TEST_FOLDS`, not in FOLDS): "test" (train <= 2018, inner_2y stopping on
+  2017-2018, validation 2019-01-01 .. 2026-09-06) and "test2021" (validation to 2021-12-31, for the Rz side-check,
+  whose 500 hPa data ends 2021). Readers of 2019+ (folds, graph_data, fold_retrieval, the z500 downloader's
+  --test-years) all call test_lock.require() first. Checked on synthetic test-period rows: every statistic is
+  identical whatever the test rows contain.
+- `training/test_run.py` (one evaluation run; never retrains a model whose test forecasts exist): main = C3-hop and
+  the control, both families (with early-stopping-block forecasts), + both ridges; extra = C2, U1 (tuned), C3-pool
+  (tuned), LSTM + Rg, C3-hop + Rg; rz = 2019-2021 z500 download, then A2Lr_hw5_C3hop_Rz on "test2021".
+- `evaluation/test_evaluation.py`: H1-H3 with Holm; exploratory as listed in the protocol; case-study windows fixed
+  now: 2019-05-25..06-15, 2022-04-01..05-15, 2024-05-15..06-20 (widely reported Delhi heat events).
+- **What-the-graph-learned result 2026-10-18** (`evaluation_v2/graph_explain.md`, map `figures/graph_importance.png`;
+  descriptive; every rebuilt checkpoint reproduced its saved forecasts). Single points are redundant on all days
+  (switching one off changes RMSE by -0.02..+0.002 °C; neighbours carry the same information), but groups matter:
+  Tmax, a whole hop ring switched off costs +0.11..+0.24 °C on all days and +0.88..+1.36 °C on extreme days, the
+  farthest rings (hops 3-4, ~600-1000 km) most; Delhi's own inputs +1.20 / +4.04. On extreme days the far-western
+  desert points (68-72 E: Thar / Pakistan) matter most individually (up to +0.35 Tmax, +0.17 WBGT), consistent with
+  hot dry air arriving from the north-west and with G-D0. WBGT leans on the nearest ring (hop 1, +0.045) on all days;
+  on extreme days on hops 2-4 and Delhi (+0.33..+0.52). Occlusion is an out-of-distribution perturbation; read the
+  numbers as dependence, not causation.

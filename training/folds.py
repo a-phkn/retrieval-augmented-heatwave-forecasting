@@ -83,6 +83,8 @@ FOLDS = {
 PRIMARY_FOLD = "f4"
 TEST_FOLD = "test"  # deliberately not in FOLDS; unlocked only by training.test_lock
 TEST_END = pd.Timestamp("2026-09-06")  # last day of the v1/v2 data (last ~3 months were ERA5T; disclosed)
+# Guarded test folds -> last validation day. "test2021": the Rz side-check (its 500 hPa data ends 2021-12-31).
+TEST_FOLDS = {TEST_FOLD: TEST_END, "test2021": pd.Timestamp("2021-12-31")}
 BASE_FEATURES = [
     "t_max", "t_min", "t_mean", "relative_humidity_mean", "wind_speed_mean",
     "surface_pressure_mean", "shortwave_radiation_sum", "doy_sin", "doy_cos", "years_since_1980",
@@ -147,9 +149,9 @@ class FoldData:
 
 def fold_bounds(fold: str) -> tuple[pd.Timestamp, pd.Timestamp, pd.Timestamp]:
     """(train_end, val_start, val_end). The test fold requires the frozen protocol (test_lock)."""
-    if fold == TEST_FOLD:
+    if fold in TEST_FOLDS:
         test_lock.require()
-        return TEST_START - pd.Timedelta(days=1), TEST_START, TEST_END
+        return TEST_START - pd.Timedelta(days=1), TEST_START, TEST_FOLDS[fold]
     if fold not in FOLDS:
         raise ValueError(f"unknown fold {fold!r}; choose from {list(FOLDS)}")
     val_start, val_end = FOLDS[fold]
@@ -160,7 +162,7 @@ def fold_windows(fold: str) -> tuple[pd.DataFrame, pd.DataFrame]:
     """(train windows, val windows) from the frozen index, v1 assignment convention."""
     train_end, val_start, val_end = fold_bounds(fold)
     w = _load_windows()
-    if fold != TEST_FOLD:  # development folds: test-period windows are dropped first
+    if fold not in TEST_FOLDS:  # development folds: test-period windows are dropped first
         w = w[w["forecast_end"] < TEST_START]
     train = w[(w["query_date"] <= train_end) & (w["forecast_end"] <= train_end)]
     val = w[(w["query_date"] >= val_start) & (w["query_date"] <= val_end) & (w["forecast_end"] <= val_end)]
@@ -177,12 +179,12 @@ def inner_split(train: SplitArrays, train_end: pd.Timestamp, years: int = 2) -> 
     return train.subset(fit), train.subset(stop)
 
 
-def _load_daily_pre_test(include_test: bool = False) -> pd.DataFrame:
+def _load_daily_pre_test(include_test: bool = False, until: pd.Timestamp = TEST_END) -> pd.DataFrame:
     # Development folds: the test period is never loaded; rows from 2019 on are filtered at read time.
-    # include_test (the test fold only): rows up to TEST_END, after the test lock has been checked.
+    # include_test (the test folds only): rows up to `until`, after the test lock has been checked.
     if include_test:
         test_lock.require()
-    end = TEST_END + pd.Timedelta(days=1) if include_test else TEST_START
+    end = until + pd.Timedelta(days=1) if include_test else TEST_START
     filt = [("date", "<", end)]
     daily = pd.read_parquet(DAILY_V2_PATH, filters=filt).set_index("date").sort_index()
     if LILJEGREN_DAILY_PATH.exists():  # physical WBGT (pipeline/build_wbgt_liljegren.py)
@@ -241,7 +243,8 @@ def fold_daily(fold: str, target: str, labels: str) -> tuple[pd.DataFrame, list[
     if labels not in LABEL_VERSIONS:
         raise ValueError(f"labels must be one of {LABEL_VERSIONS}")
     train_end, _, _ = fold_bounds(fold)
-    d = (_load_daily_pre_test(include_test=True) if fold == TEST_FOLD else _load_daily_pre_test()).copy()
+    d = (_load_daily_pre_test(include_test=True, until=TEST_FOLDS[fold]) if fold in TEST_FOLDS
+         else _load_daily_pre_test()).copy()
     train_mask = d.index <= train_end
 
     t_clim = doy_climatology(d["t_max"], train_mask)

@@ -60,7 +60,7 @@ from pipeline.climatology import apply_climatology, doy_climatology
 from retrieval.features import FEATURE_NAMES
 from training import test_lock
 from training.folds import (
-    FOLDS, FORECAST_DAYS, INPUT_DAYS, TEST_END, TEST_FOLD, TEST_START, fold_bounds, fold_daily, fold_windows,
+    FOLDS, FORECAST_DAYS, INPUT_DAYS, TEST_END, TEST_FOLDS, TEST_START, fold_bounds, fold_daily, fold_windows,
 )
 
 MODES = ("sim", "rand", "time", "time_rand", "region", "region_mmr", "synoptic", "humid")
@@ -76,6 +76,7 @@ _TOP_POOL = 200  # most-similar candidates screened before dedup (full sort if t
 REGION_LAGS = 3  # Rg: last 3 input days
 UPSTREAM_PATH = Path(__file__).resolve().parents[1] / "datasets_v2" / "upstream_daily.parquet"
 Z500_PATH = Path(__file__).resolve().parents[1] / "data" / "external" / "era5_z500_southasia_1980_2018.parquet"
+Z500_TEST_PATH = Z500_PATH.with_name("era5_z500_southasia_2019_2021.parquet")  # Rz side-check, after the freeze
 SYNOPTIC_LAGS, SYNOPTIC_PCS = 3, 20  # Rz (pre-registered 2026-10-17)
 HUMID_PATH = Path(__file__).resolve().parents[1] / "datasets_v2" / "humid_daily.parquet"
 HUMID_VARS = ("dew_point_2m_mean", "relative_humidity_2m_mean", "temperature_2m_max", "surface_pressure_mean")
@@ -83,11 +84,11 @@ HUMID_LAGS = 3  # Rh / screen S2 arm A (pre-registered 2026-10-18)
 
 
 def _read_end(fold: str) -> pd.Timestamp:
-    """Exclusive end of the dates a fold may read: 2019-01-01 for development folds; for the test fold
-    (only after training.test_lock.require()) the day after TEST_END."""
-    if fold == TEST_FOLD:
+    """Exclusive end of the dates a fold may read: 2019-01-01 for development folds; for a test fold
+    (only after training.test_lock.require()) the day after its last validation day."""
+    if fold in TEST_FOLDS:
         test_lock.require()
-        return TEST_END + pd.Timedelta(days=1)
+        return TEST_FOLDS[fold] + pd.Timedelta(days=1)
     return TEST_START
 
 
@@ -158,8 +159,11 @@ def regional_daily(fold: str, d: pd.DataFrame, target: str) -> pd.DataFrame:
 def synoptic_daily(fold: str, d: pd.DataFrame) -> tuple[pd.DataFrame, np.ndarray]:
     """Rz: (dates, cells) standardised 500 hPa height anomalies, climatology from the fold's training
     years only, and each cell's weight sqrt(cos lat). Pre-2019 rows only."""
+    end = _read_end(fold)
     z = pd.read_parquet(Z500_PATH)
-    z = z[z.index < _read_end(fold)].reindex(d.index)
+    if fold in TEST_FOLDS and Z500_TEST_PATH.exists():  # end > TEST_START only after test_lock.require()
+        z = pd.concat([z, pd.read_parquet(Z500_TEST_PATH)]).sort_index()
+    z = z[z.index < end].reindex(d.index)
     if z.isna().any().any():
         raise ValueError("z500 data missing for some days")
     train_end, _, _ = fold_bounds(fold)
@@ -230,15 +234,15 @@ class Retrieved:
 
 
 def _fold_number(fold: str) -> int:
-    """Seed component per fold (development folds keep their earlier numbers 0-3; the test fold is 4)."""
-    return len(FOLDS) if fold == TEST_FOLD else list(FOLDS).index(fold)
+    """Seed component per fold (development folds keep their earlier numbers 0-3; test folds 4, 5)."""
+    return len(FOLDS) + list(TEST_FOLDS).index(fold) if fold in TEST_FOLDS else list(FOLDS).index(fold)
 
 
 class FoldRetriever:
     """Candidate pool, normalisation and episodes for one fold and label set."""
 
     def __init__(self, fold: str, labels: str, target: str = "t_max"):
-        if fold not in FOLDS and fold != TEST_FOLD:
+        if fold not in FOLDS and fold not in TEST_FOLDS:
             raise ValueError(f"unknown fold {fold!r}")
         self.fold = fold
         self.target = target

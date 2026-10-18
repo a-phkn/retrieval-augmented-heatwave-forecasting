@@ -71,3 +71,5 @@ predictions_v2/tuning/*/f?.parquet
 
 # Rz z500 download: resumable partial blocks (deleted after the final extract is written)
 data/external/z500_parts/
+data/external/z500_parts_test/
+models/test/

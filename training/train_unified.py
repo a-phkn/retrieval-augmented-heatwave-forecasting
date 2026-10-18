@@ -89,10 +89,12 @@ from models.dstgnn_multihop import MultiHopDSTGNN
 from models.dstgnn_retrieval import RetrievalMultiHopDSTGNN
 from models.lstm import LSTMForecaster
 from models.retrieval_lstm_v2 import RetrievalAugmentedLSTMv2
-from retrieval.fold_retrieval import HUMID_PATH, MODES as RETRIEVAL_MODES, RANDOM_MODES, UPSTREAM_PATH, Z500_PATH
+from retrieval.fold_retrieval import (
+    HUMID_PATH, MODES as RETRIEVAL_MODES, RANDOM_MODES, UPSTREAM_PATH, Z500_PATH, Z500_TEST_PATH,
+)
 from retrieval.fold_retrieval import FoldRetriever
 from training.folds import (
-    DAILY_V2_PATH, FOLDS, LABEL_VERSIONS, LILJEGREN_DAILY_PATH, TARGET_FORMS, TARGETS, TEST_FOLD, WBGT_LABEL_CONFIG,
+    DAILY_V2_PATH, FOLDS, LABEL_VERSIONS, LILJEGREN_DAILY_PATH, TARGET_FORMS, TARGETS, TEST_FOLDS, WBGT_LABEL_CONFIG,
     FoldData, SplitArrays, build_fold, inner_split,
 )
 from training.graph_data import N_UP_FEATURES, UpstreamDaily, build_upstream, load_upstream
@@ -556,6 +558,8 @@ def _data_files(cfg: dict) -> list[Path]:
         files.append(UPSTREAM_PATH)  # Rg and the upstream backbones read the upstream dataset
     if (cfg.get("retrieval") or {}).get("mode") == "synoptic":
         files.append(Z500_PATH)  # Rz matches on the 500 hPa height extract
+        if Z500_TEST_PATH.exists():  # the 2019-2021 extract, present only after the freeze (Rz side-check)
+            files.append(Z500_TEST_PATH)
     if (cfg.get("retrieval") or {}).get("mode") == "humid":
         files.append(HUMID_PATH)  # Rh matches on the humid-air points
     if cfg.get("head") == "physics":
@@ -572,7 +576,7 @@ def _run(cfg: dict, folds: list[str], seeds: list[int], out_dir: Path, model_dir
     head = cfg.get("head")
     hp = cfg.get("hparams")
     # the test fold (training.test_lock) needs the upstream rows of the test period too
-    up_table = load_upstream(include_test=TEST_FOLD in folds) if backbone != "lstm" else None
+    up_table = load_upstream(include_test=any(f in TEST_FOLDS for f in folds)) if backbone != "lstm" else None
     results = {}
     for fold in folds:
         t0 = time.time()
