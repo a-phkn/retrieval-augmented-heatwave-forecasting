@@ -767,6 +767,32 @@ in brackets is the 95% interval; if it crosses 0, the change is not significant.
 - Analogues are 14–17 years old on average in every rung, so correcting for warming (R4) had little to fix.
 - Report: `evaluation_v2/retrieval_mechanisms.md`.
 
+### 9.0 The final test (2019–2026): results (2026-10-19)
+
+The rules were frozen first (tag `test-lock`), every model was trained once on 1980–2016, and the 2019–2026
+forecasts were scored once. Nothing was changed after the results were seen.
+
+| Main claim (WBGT) | Result | Confirmed? |
+|---|---|---|
+| H1: C3-hop beats the Delhi-only LSTM on all days | −0.13 °C (about 5% better), the same as in development | **yes** |
+| H2: … and on heatwave days | −0.08 °C, within noise (the test could only detect ~0.45 °C, stated in advance) | no |
+| H3: C3-hop beats the fair straight-line model on heatwave days | −0.72 °C | **yes** |
+| H4: Rg retrieval improves the Delhi-only LSTM on all days | −0.04 °C, the same size as in development, but not significant after correcting for 4 tests | no |
+
+**What this means, in plain words:**
+- **The graph model is confirmed:** reading the 27 upstream points makes the WBGT forecasts clearly better than a
+  Delhi-only model, and much better than a straight-line formula on heatwave days. For Tmax (not a main claim) the
+  gain is the same, −0.13 °C.
+- **Heatwave days vs the Delhi-only model:** C3-hop is a little better, but the 7 test years are too few to prove
+  it. That was expected.
+- **Retrieval:** Rg's small gain on the Delhi-only model showed up again at the same size (−0.04 °C), but it just
+  misses after the correction for four tests. Retrieval on top of C3-hop (Rg, and Rz on 2019–2021) adds nothing,
+  as in development.
+- **No graph-structure claim:** the graph without edges (C2) is as good as C3-hop again. The upstream data is what
+  helps.
+- Warnings: the Tmax heatwave warning has real skill (+0.28 Brier skill); the WBGT one stays weak (+0.07).
+- Full report: `evaluation_test/test_results.md`.
+
 ### 9.1 How RAG helps the DSTGNN, and how we prove it (result 2026-10-16: it doesn't, and why)
 
 **What each part contributes:**
@@ -1071,5 +1097,6 @@ the project's virtual environment (`.venv`); nothing is installed globally.
 | 2026-10-18 | Upper-air direct input (screen) and retrieval for warnings: no heatwave-day / warning gain; humid-air screen downloading. |
 | 2026-10-18 | Range forecasts and "what the graph learned" (occlusion maps) added; exam code built (test lock, test folds, test run, scoring). |
 | 2026-10-19 | Humid-air screen: no arm helps WBGT heatwave days; final models stay C3-hop; protocol ready for the freeze (H4 decision pending). |
+| 2026-10-19 | Protocol frozen (H1–H4, tag test-lock); the one-time test run: H1 and H3 confirmed, H2 and H4 not (§9.0). |
 | 2026-10-08 | Independent ML review: ridge baseline, bias split / recalibration / hot-day Brier added; backbone rule amended (C2 eligible, user approves the final pick); physics-head robustness fixes queued; test protocol drafted. |
 | 2026-10-08 | Graph runs done: G-D3 says U1 (graph not worse than U1 for Tmax, 0.08 °C worse for WBGT); edges hurt, the edgeless C2 is best. One tuning round started (C3, U1, and the post-result arm C3-pool); then PH_lstm and R2. |

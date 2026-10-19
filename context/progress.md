@@ -150,7 +150,8 @@ Short, frequently-updated. See `build_plan.md` for full milestone detail.
   (`training/test_run.py`, `evaluation/test_evaluation.py`, test folds "test"/"test2021"). Humid download 386/564,
   stopped at the daily quota 2026-10-18 21:06; finished 2026-10-19 (564/564). S2 all arms: FAIL for WBGT.
 - **Protocol FROZEN 2026-10-19** (H1-H4; final models C3-hop + controls + ridges + A2Lr_hw5_Rg for H4), commit
-  tagged `test-lock`. Next: `python -m training.test_run --stage all` (~8-9 h), then `python -m evaluation.test_evaluation`.
+  tagged `test-lock`. Test run DONE 2026-10-19 23:46; scored once: H1 yes, H2 no, H3 yes, H4 no (Holm p 0.066).
+  Next: commit the test outputs; Phase 6 (forecast-to-IMD mapping decision), paper, demo.
 - **DSTGNN skeleton (2026-10-06)**: `models/dstgnn.py` (graph GRU, modes none/static/dynamic + adaptive),
   `pipeline/graph.py` (Delhi + 27 nodes, geographic and wind-gated advective edges). G-D1: 13 tests pass.
   The plan said `data/graph.py`; it is `pipeline/graph.py` because `data/` holds raw data.

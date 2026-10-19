@@ -1289,3 +1289,18 @@ either was computed; descriptive (no model choice depends on them); option 1 (up
   p 0.003; test detectable effect ~0.05 °C). Holm family = H1-H4. A2Lr_hw5_Rg moved into the test run's main stage.
 - Final models: C3-hop (both families), controls, both ridges, A2Lr_hw5_Rg (H4). No retrieval rung or physics head in
   the final models. `docs/CONFIRMATORY_PROTOCOL.md` frozen as the commit tagged `test-lock`.
+
+**TEST RESULTS 2026-10-19 (one evaluation run under the frozen protocol, tag test-lock / commit 53992b4; trained
+11:46-23:46, scored once; no deviation from the protocol)** (`evaluation_test/test_results.md`)
+- H1 SUPPORTED: C3-hop vs the Delhi-only control, WBGT all days -0.127 [-0.180, -0.075], Holm p < 0.001 (development
+  -0.125: replicated).
+- H2 not supported: C3-hop vs control, WBGT extreme days -0.081 [-0.261, +0.100], p 0.337 (development -0.255; below the
+  test's detectable effect ~0.45, as stated in advance).
+- H3 SUPPORTED: C3-hop vs ridge_hw5, WBGT extreme days -0.718 [-0.895, -0.540], Holm p < 0.001 (development -0.847).
+- H4 not supported: LSTM + Rg vs control, WBGT all days -0.042 [-0.080, -0.004], p 0.033, Holm p 0.066 (development
+  -0.044: the effect size replicated, but it is not significant after the multiple-testing correction).
+- Exploratory: Tmax C3-hop vs control all days -0.127 [-0.209, -0.045]; graph structure still no claim (C2 / C3-pool
+  vs C3-hop ~0); C3-hop + Rg ~0 (both families); Rz side-check 2019-2021 -0.004 [-0.040, +0.032] (the development
+  all-days gain did not replicate); LSTM + Rg worse on WBGT extreme days (+0.176, p 0.041); C3-hop gains largest at
+  leads 1-3; hot-day Brier skill Tmax +0.28 (control +0.23), WBGT +0.07 (+0.07); 80% range coverage 0.77-0.78 all
+  days, WBGT extreme 0.29. Test-period maxima: Tmax 45.3 / 44.3 / 46.2 °C (2019 / 2022 / 2024 windows).
