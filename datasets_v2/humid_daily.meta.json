@@ -1,0 +1,40 @@
+{
+  "source": "data/raw/era5_humid (Open-Meteo ERA5, daily, Asia/Kolkata)",
+  "raw_sha256": "305e083c9237f9b656cd8575309437bd18f8c2fbfd28c85115507dd46ba8934b",
+  "nodes": [
+    "n28e080",
+    "n26e080",
+    "n26e082",
+    "n26e084",
+    "n26e086",
+    "n24e084",
+    "n24e088",
+    "n22e070",
+    "n22e072",
+    "n22e074",
+    "n22e076",
+    "n20e072"
+  ],
+  "variables": [
+    "temperature_2m_max",
+    "temperature_2m_min",
+    "temperature_2m_mean",
+    "dew_point_2m_mean",
+    "relative_humidity_2m_mean",
+    "wind_speed_10m_mean",
+    "wind_direction_10m_dominant",
+    "shortwave_radiation_sum",
+    "soil_moisture_0_to_7cm_mean",
+    "surface_pressure_mean",
+    "wind_u_10m",
+    "wind_v_10m"
+  ],
+  "first_date": "1980-01-01",
+  "last_date": "2026-09-06",
+  "n_days": 17051,
+  "cleaning": {
+    "soil_moisture_negative_values_clipped_to_0": 0,
+    "wind_components": "as pipeline/build_upstream_daily.py"
+  },
+  "test_lock": "contains 2019+; consumers must drop dates >= 2019-01-01 before use"
+}

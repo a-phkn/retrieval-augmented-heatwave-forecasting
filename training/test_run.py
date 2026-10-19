@@ -8,7 +8,8 @@ with exactly the recipe and seeds of its development config. A model whose test 
 never retrained (one evaluation run; re-scoring the saved forecasts is allowed).
 
   main    C3-hop and the Delhi-only control for both families (with their early-stopping-block forecasts,
-          used for recalibration, warning probabilities and range forecasts), plus both ridges
+          used for recalibration, warning probabilities and range forecasts), LSTM + Rg for WBGT (H4), plus
+          both ridges
   extra   C2, U1 (tuned), C3-pool (tuned), LSTM + Rg, C3-hop + Rg, both families (exploratory)
   rz      the Rz side-check: 2019-2021 z500 download, then A2Lr_hw5_C3hop_Rz on the "test2021" fold
 
@@ -34,7 +35,9 @@ MODEL_TEST = tu.REPO_ROOT / "models" / "test"
 REGISTRY_TEST = tu.REPO_ROOT / "registry" / "test_runs.csv"
 FAMILIES = {"WBGT (physical)": ("A2Lr_hw5", "wbgt_lj_max", "wbgt"), "Tmax": ("A1prime_hw5", "t_max", "v2")}
 MAIN = ["A2Lr_hw5_C3hop", "A2Lr_hw5", "A1prime_hw5_C3hop", "A1prime_hw5"]
-EXTRA = [f"{c}_{m}" for m in ("C2", "U1_tuned", "C3pool_tuned", "Rg", "C3hop_Rg") for c in ("A2Lr_hw5", "A1prime_hw5")]
+MAIN_RETRIEVAL = ["A2Lr_hw5_Rg"]  # H4 (added 2026-10-19, user)
+EXTRA = [f"{c}_{m}" for m in ("C2", "U1_tuned", "C3pool_tuned", "Rg", "C3hop_Rg") for c in ("A2Lr_hw5", "A1prime_hw5")
+         if f"{c}_{m}" not in MAIN_RETRIEVAL]
 RZ_RUN, RZ_FOLD = "A2Lr_hw5_C3hop_Rz", "test2021"
 
 
@@ -89,6 +92,8 @@ def main(argv: list[str] | None = None) -> None:
     if stage in ("main", "all"):
         for run_id in MAIN:
             train(run_id, stop_forecasts=True)
+        for run_id in MAIN_RETRIEVAL:  # retrieval runs cannot write early-stopping forecasts (score_stop)
+            train(run_id)
         ridges()
     if stage in ("extra", "all"):
         for run_id in EXTRA:

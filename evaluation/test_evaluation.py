@@ -2,11 +2,12 @@
 Scoring of the one-time test run (docs/CONFIRMATORY_PROTOCOL.md). Reads only predictions_test/ (written by
 training.test_run) and training-years label thresholds; refuses unless the test lock is open.
 
-Primary hypotheses (WBGT, Holm correction over the three, family-wise alpha 0.05; "supported" = Holm-adjusted
+Primary hypotheses (WBGT, Holm correction over the four, family-wise alpha 0.05; "supported" = Holm-adjusted
 p < 0.05 and delta < 0), paired cluster-jackknife on year x season clusters as in development:
   H1  C3-hop vs the Delhi-only control (A2Lr_hw5), all days
   H2  C3-hop vs the control, extreme days
   H3  C3-hop vs ridge_hw5, extreme days
+  H4  LSTM + Rg (A2Lr_hw5_Rg) vs the control, all days (added 2026-10-19, user)
 Exploratory (no confirmatory claim): the same for Tmax; C3-hop vs the plain ridge (all days); by lead; bias / SD
 split; hot-day Brier (recalibrated on the early-stopping block 2017-2018); range forecasts (CRPS, coverage);
 forecast-conditioned hot days; C2 / U1 / C3-pool vs C3-hop; LSTM + Rg vs LSTM; C3-hop + Rg vs C3-hop; the Rz
@@ -55,8 +56,9 @@ def holm(pvals: dict[str, float]) -> dict[str, float]:
 
 
 def primary() -> dict:
-    c3, ctrl, rhw = load("A2Lr_hw5_C3hop"), load("A2Lr_hw5"), load("A2Lr_hw5_ridge_hw5")
-    tests = {"H1": compare(ctrl, c3, "all"), "H2": compare(ctrl, c3, "extreme"), "H3": compare(rhw, c3, "extreme")}
+    c3, ctrl, rhw, rg = load("A2Lr_hw5_C3hop"), load("A2Lr_hw5"), load("A2Lr_hw5_ridge_hw5"), load("A2Lr_hw5_Rg")
+    tests = {"H1": compare(ctrl, c3, "all"), "H2": compare(ctrl, c3, "extreme"), "H3": compare(rhw, c3, "extreme"),
+             "H4": compare(ctrl, rg, "all")}
     adj = holm({k: t["p_value"] for k, t in tests.items()})
     for k, t in tests.items():
         t["p_holm"] = adj[k]
@@ -137,7 +139,7 @@ def exploratory() -> dict:
             for m in ("C2", "U1_tuned", "C3pool_tuned"):
                 if m in models:
                     r["tests"][f"{m} vs C3-hop ({s})"] = compare(c3, models[m], s)
-            if "Rg" in models:
+            if "Rg" in models:  # for WBGT, all days is H4 (primary); reported here too
                 r["tests"][f"LSTM + Rg vs control ({s})"] = compare(ctrl, models["Rg"], s)
             if "C3hop_Rg" in models:
                 r["tests"][f"C3-hop + Rg vs C3-hop ({s})"] = compare(c3, models["C3hop_Rg"], s)
@@ -161,10 +163,10 @@ def write_report(prim: dict, expl: dict) -> None:
     L = ["# Test results, 2019-01-01 .. 2026-09-06 (one evaluation run under the frozen protocol)", "",
          "Models trained once on 1980-2016 (early stopping 2017-2018); truth = ERA5 (last ~3 months ERA5T when "
          "downloaded). Δ = first-named minus second (negative = C3-hop better). Paired cluster-jackknife, year x season.", "",
-         "## Primary hypotheses (WBGT; Holm over H1-H3)", "", "| | Comparison | Δ RMSE (95% CI) | p | Holm p | Supported |",
+         "## Primary hypotheses (WBGT; Holm over H1-H4)", "", "| | Comparison | Δ RMSE (95% CI) | p | Holm p | Supported |",
          "|---|---|---|---|---|---|"]
     names = {"H1": "C3-hop vs Delhi-only control, all days", "H2": "C3-hop vs control, heatwave days",
-             "H3": "C3-hop vs ridge_hw5, heatwave days"}
+             "H3": "C3-hop vs ridge_hw5, heatwave days", "H4": "LSTM + Rg vs Delhi-only control, all days"}
     for k, t in prim.items():
         L.append(f"| {k} | {names[k]} | {t['delta']:+.3f} {_ci(t)} | {_fmt_p(t['p_value'])} | {_fmt_p(t['p_holm'])} | "
                  f"{'yes' if t['supported'] else 'no'} |")

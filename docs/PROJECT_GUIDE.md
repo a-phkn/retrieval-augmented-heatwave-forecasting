@@ -891,7 +891,14 @@ RAG counts as helping only if real retrieval beats both.
   - **Retrieval for heatwave warnings:** "of the 20 most similar past situations, how many became heatwaves?",
     blended into the warning probability. No improvement for either Tmax or WBGT. (The WBGT warning itself is very
     weak: it almost never says "more likely than not".)
-  - Still running: the humid-air screen (12 new points east and south-west of Delhi, downloading).
+  - **The humid-air screen (2026-10-19), last try: no.** 12 new points east and south-west of Delhi, where humid air
+    comes from, were tested as direct input, as retrieval (Rh), and by matching past heatwave starts. None
+    improves WBGT heatwave days without hurting ordinary days. (For Tmax, the humid-air points showed a small
+    heatwave-day signal in the screen. That is noted, but it wasn't what the test was set up for, so it isn't
+    followed up.)
+  - **Bottom line of all the extra tries:** no new information, delivered directly or through retrieval, makes WBGT
+    heatwave days better than C3-hop alone. The upper-air pattern helps ordinary days a little. The final models
+    stay C3-hop.
 
 **Two additions that make the graph model's results richer (2026-10-18; descriptive)**
 - **Range forecasts:** besides one number, the model now gives a range, e.g. "likely 34 °C, 1-in-10 chance above
@@ -1063,5 +1070,6 @@ the project's virtual environment (`.venv`); nothing is installed globally.
 | 2026-10-18 | Rz on C3-hop (WBGT): fails the rule (no heatwave-day gain) but improves all days by ~1%; upper-air data ends 2021. |
 | 2026-10-18 | Upper-air direct input (screen) and retrieval for warnings: no heatwave-day / warning gain; humid-air screen downloading. |
 | 2026-10-18 | Range forecasts and "what the graph learned" (occlusion maps) added; exam code built (test lock, test folds, test run, scoring). |
+| 2026-10-19 | Humid-air screen: no arm helps WBGT heatwave days; final models stay C3-hop; protocol ready for the freeze (H4 decision pending). |
 | 2026-10-08 | Independent ML review: ridge baseline, bias split / recalibration / hot-day Brier added; backbone rule amended (C2 eligible, user approves the final pick); physics-head robustness fixes queued; test protocol drafted. |
 | 2026-10-08 | Graph runs done: G-D3 says U1 (graph not worse than U1 for Tmax, 0.08 °C worse for WBGT); edges hurt, the edgeless C2 is best. One tuning round started (C3, U1, and the post-result arm C3-pool); then PH_lstm and R2. |

@@ -29,6 +29,7 @@ def test_holm_adjusts_step_down_and_stays_monotone():
 
 def test_plan_trains_the_protocol_models_with_existing_configs():
     assert tr.MAIN == ["A2Lr_hw5_C3hop", "A2Lr_hw5", "A1prime_hw5_C3hop", "A1prime_hw5"]
-    for run_id in tr.MAIN + tr.EXTRA + [tr.RZ_RUN]:
+    assert tr.MAIN_RETRIEVAL == ["A2Lr_hw5_Rg"] and "A2Lr_hw5_Rg" not in tr.EXTRA
+    for run_id in tr.MAIN + tr.MAIN_RETRIEVAL + tr.EXTRA + [tr.RZ_RUN]:
         assert (tr.tu.REPO_ROOT / "configs" / f"{run_id}.json").exists(), run_id
     assert "test" in tr.tu.TEST_FOLDS and tr.RZ_FOLD in tr.tu.TEST_FOLDS

@@ -1271,3 +1271,21 @@ either was computed; descriptive (no model choice depends on them); option 1 (up
   hot dry air arriving from the north-west and with G-D0. WBGT leans on the nearest ring (hop 1, +0.045) on all days;
   on extreme days on hops 2-4 and Delhi (+0.33..+0.52). Occlusion is an out-of-distribution perturbation; read the
   numbers as dependence, not causation.
+- **S2 result (all arms) 2026-10-19: every arm FAILS for WBGT; nothing is trained** (`evaluation_v2/heatwave_info_screen.md`;
+  humid data 564/564 files verified, `datasets_v2/humid_daily.parquet` 17,051 days x 144 columns). WBGT extreme / all
+  days: A humid direct +0.024 [-0.047, +0.114] / +0.005; B Rh -> +0.004 [-0.003, +0.011] / +0.000 (vs R0-rand
+  +0.003); C onset matching -0.042 [-0.060, -0.023] / **+0.005 [+0.002, +0.007]** (beats its random control
+  -0.028, but significantly worse on all days: the forecaster's-dilemma trade, fails condition 2); D upper-air
+  +0.053 [-0.058, +0.136] / -0.040 [-0.059, -0.021] (the all-arms run requires full analogue sets for B, so D's
+  numbers differ slightly from the D-only run; same decision). Tmax (descriptive, not a decision): A extreme -0.123
+  [-0.286, -0.027], B -0.021 [-0.036, -0.011] (and vs R0-rand -0.021), C -0.022, D -0.079 [-0.159, +0.031]; not
+  followed up (post hoc; effects far below the extreme-day detectable effect of a training run, ~0.25-0.3 °C).
+- **Conclusion of the post-G-R* exploration (2026-10-17..19):** no source of new information, delivered directly or
+  by retrieval, improves WBGT heatwave days beyond C3-hop; the upper-air pattern improves ordinary days. The final
+  models stay C3-hop alone.
+
+**Protocol FROZEN 2026-10-19 (user: "yes add H4 and go ahead with the freeze")**
+- H4 added: LSTM + Rg (A2Lr_hw5_Rg) vs the Delhi-only control, WBGT all days (development -0.044 [-0.071, -0.016],
+  p 0.003; test detectable effect ~0.05 °C). Holm family = H1-H4. A2Lr_hw5_Rg moved into the test run's main stage.
+- Final models: C3-hop (both families), controls, both ridges, A2Lr_hw5_Rg (H4). No retrieval rung or physics head in
+  the final models. `docs/CONFIRMATORY_PROTOCOL.md` frozen as the commit tagged `test-lock`.
