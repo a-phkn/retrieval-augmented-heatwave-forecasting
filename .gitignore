@@ -73,3 +73,6 @@ predictions_v2/tuning/*/f?.parquet
 data/external/z500_parts/
 data/external/z500_parts_test/
 models/test/
+
+# Hugging Face model weights for post-test foundation-model baselines (kept inside the project)
+.hf_cache/

@@ -152,6 +152,8 @@ Short, frequently-updated. See `build_plan.md` for full milestone detail.
 - **Protocol FROZEN 2026-10-19** (H1-H4; final models C3-hop + controls + ridges + A2Lr_hw5_Rg for H4), commit
   tagged `test-lock`. Test run DONE 2026-10-19 23:46; scored once: H1 yes, H2 no, H3 yes, H4 no (Holm p 0.066).
   Next: commit the test outputs; Phase 6 (forecast-to-IMD mapping decision), paper, demo.
+- **Post-test 2026-10-21**: foundation models (`post_test/foundation_baselines.py`): C3-hop beats Chronos-2 and
+  TimesFM 3.0 everywhere (both families, all + heatwave days). Weights 1.7 GB in .hf_cache/ (gitignored, deletable).
 - **DSTGNN skeleton (2026-10-06)**: `models/dstgnn.py` (graph GRU, modes none/static/dynamic + adaptive),
   `pipeline/graph.py` (Delhi + 27 nodes, geographic and wind-gated advective edges). G-D1: 13 tests pass.
   The plan said `data/graph.py`; it is `pipeline/graph.py` because `data/` holds raw data.

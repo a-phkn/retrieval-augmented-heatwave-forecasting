@@ -792,6 +792,12 @@ forecasts were scored once. Nothing was changed after the results were seen.
   helps.
 - Warnings: the Tmax heatwave warning has real skill (+0.28 Brier skill); the WBGT one stays weak (+0.07).
 - Full report: `evaluation_test/test_results.md`.
+- **Extra (after the test): versus pretrained AI forecasters.** Amazon's Chronos-2 and Google's TimesFM 3.0, given
+  Delhi's own history, were tested on the same test days.
+  - **C3-hop beats both clearly**, on all days (by 0.13–0.18 °C) and on heatwave days (by 0.75–0.81 °C), for both
+    WBGT and Tmax.
+  - Even our Delhi-only LSTM ties them on ordinary days and beats them on heatwave days.
+  - Details: `docs/MODELS_EXPLAINED.md` §10b.
 
 ### 9.1 How RAG helps the DSTGNN, and how we prove it (result 2026-10-16: it doesn't, and why)
 
@@ -1098,5 +1104,7 @@ the project's virtual environment (`.venv`); nothing is installed globally.
 | 2026-10-18 | Range forecasts and "what the graph learned" (occlusion maps) added; exam code built (test lock, test folds, test run, scoring). |
 | 2026-10-19 | Humid-air screen: no arm helps WBGT heatwave days; final models stay C3-hop; protocol ready for the freeze (H4 decision pending). |
 | 2026-10-19 | Protocol frozen (H1–H4, tag test-lock); the one-time test run: H1 and H3 confirmed, H2 and H4 not (§9.0). |
+| 2026-10-20 | `docs/MODELS_EXPLAINED.md`: every model and code name in plain English, the metrics, GraphCast, and why retrieval behaves as it does. |
+| 2026-10-21 | Post-test: C3-hop beats Chronos-2 and TimesFM 3.0 on all days and heatwave days, both families. |
 | 2026-10-08 | Independent ML review: ridge baseline, bias split / recalibration / hot-day Brier added; backbone rule amended (C2 eligible, user approves the final pick); physics-head robustness fixes queued; test protocol drafted. |
 | 2026-10-08 | Graph runs done: G-D3 says U1 (graph not worse than U1 for Tmax, 0.08 °C worse for WBGT); edges hurt, the edgeless C2 is best. One tuning round started (C3, U1, and the post-result arm C3-pool); then PH_lstm and R2. |

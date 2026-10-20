@@ -1304,3 +1304,27 @@ either was computed; descriptive (no model choice depends on them); option 1 (up
   all-days gain did not replicate); LSTM + Rg worse on WBGT extreme days (+0.176, p 0.041); C3-hop gains largest at
   leads 1-3; hot-day Brier skill Tmax +0.28 (control +0.23), WBGT +0.07 (+0.07); 80% range coverage 0.77-0.78 all
   days, WBGT extreme 0.29. Test-period maxima: Tmax 45.3 / 44.3 / 46.2 °C (2019 / 2022 / 2024 windows).
+
+**Post-test exploration 1: pretrained time-series foundation models. SPECIFIED 2026-10-20 (user approved), before
+any of them was run; exploratory (the frozen protocol and its one test run are unchanged)**
+- Question: do general-purpose pretrained forecasters (Amazon Chronos, Google TimesFM), used zero-shot on Delhi's
+  own history, beat our models? Reported whatever the outcome.
+- Packages (user approved; venv only, no pip cache): chronos-forecasting 2.3.2, timesfm 3.0.2 (+23 dependencies; no
+  existing package changed). Weights from Hugging Face, cached inside the project (`.hf_cache/`, gitignored).
+- Setting: for every test window of C3-hop (2019-01-01 .. 2026-09-06, both families), the model gets the target's
+  daily series (Tmax, or physical WBGT daily max) for the 1,024 days before the query date, nothing else; it
+  forecasts 5 days; the point forecast is its median (0.5 quantile). The daily series is rebuilt from ERA5 truth
+  already in the committed test outputs (predictions_test/) plus the pre-2019 data, so the lock is not touched;
+  the code lives in `post_test/`, outside the locked directories.
+- Scores: RMSE all days and observed heatwave days (the same strata as C3-hop's test frame), compared with C3-hop
+  and the Delhi-only LSTM (paired cluster-jackknife, year x season; the foundation models are one deterministic
+  run, ours the 10-seed mean of per-seed RMSE), plus bias; climatology / persistence from the test registry.
+- Caveat stated with the results: their pretraining corpora may contain ERA5-derived or other weather series from
+  the test years (cut-off dates not fully documented).
+- **Foundation-model result 2026-10-21** (`evaluation_post_test/foundation_baselines.md`; weights 1.7 GB in .hf_cache/,
+  nothing written to the user's own cache). C3-hop beats both on every comparison, both families: WBGT all days vs
+  Chronos-2 -0.129 [-0.207, -0.051], vs TimesFM 3.0 -0.137 [-0.216, -0.059]; WBGT heatwave days -0.799 / -0.806;
+  Tmax all days -0.175 / -0.177; Tmax heatwave days -0.795 / -0.747 (all p <= 0.002). The Delhi-only LSTM ties them on
+  all days (WBGT -0.002 / -0.010; Tmax -0.048 / -0.050, n.s.) and beats them on heatwave days (WBGT -0.72 / -0.73; Tmax
+  -0.55 / -0.51). RMSE: Chronos-2 WBGT 2.387 / heatwave 3.822, TimesFM 3.0 2.396 / 3.828; Tmax 2.409 / 3.101 and
+  2.411 / 3.053; their heatwave-day cold bias -3.5 (WBGT), -2.5 to -2.7 (Tmax). Exploratory, post-test.
