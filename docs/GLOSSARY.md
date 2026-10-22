@@ -33,7 +33,9 @@ attributed to that one change.
 | **U1** | The flattened-upstream control: the plain LSTM given the same 27 upstream points' daily data as the graph, laid side by side in one input row. If the graph is not better than U1, the gain comes from the data, not the graph. |
 | **C4a** | C4 plus learned "adaptive" connections between neighbouring points (reported next to C4). |
 | **C3-pool** | C3's fixed edges plus C2's way of reading the forecast: Delhi's state *and* the average of all upstream points' states. Added 2026-10-08 after the G-D3 result (disclosed) to test whether the edges only hurt because of how the forecast was read out. |
-| **Over-squashing** | A known weakness of graph networks (Alon & Yahav, ICLR 2021): information from far-away nodes must pass through a few neighbours and gets squeezed and diluted on the way. Our best guess for why adding edges made the graph worse. |
+| **Over-squashing** | A known weakness of graph networks (Alon & Yahav, ICLR 2021): information from far-away nodes must pass through a few neighbours and gets squeezed and diluted on the way. Our first guess for why adding edges made the graph worse; the real cause turned out to be C3's "last day never arrives" flaw (see C3-hop). |
+| **C3-hop** (final model) | Our graph network (`models/dstgnn_multihop.py`). Points are grouped into **rings** by exact distance from each node (ring 1 = neighbours … ring 4); every day each node hears from all 4 rings at once (one weight per ring), and at the end the latest day of every ring is passed into Delhi. Fixes C3's flaw (an upstream point's most recent day never reached the forecast) and keeps distance structure. Shortest-path message passing, Abboud et al. 2022. Chosen 2026-10-12; confirmed on the test 2026-10-19. |
+| **Ring / hop** | Hop = one step between neighbouring points (~220 km); ring k = all points exactly k hops away. All 27 upstream points are within 4 hops of Delhi. |
 | **Tuning round** | One agreed search over 8 settings (size, learning rate, dropout) per model, chosen only on each fold's last 2 training years, never on the reported years; run once before any fallback, never repeated. |
 | **Ridge baseline** | A plain linear regression (with a small penalty on large weights) from Delhi's and the upstream points' recent heat to the next 5 days. No neural network; the yardstick every model must beat to claim it learned something a linear formula can't. |
 | **Forecaster's dilemma** | Scoring only on days that turned out extreme rewards a forecaster who always forecasts warmer (Lerch et al. 2017). That's why extreme-day results come with their bias split out. |
@@ -42,8 +44,9 @@ attributed to that one change.
 | **Selection-free years** | 2007, 2010, 2013 and 2016–18: reported years never used for early stopping or tuning, so a cleaner check of the backbone tests. |
 | **Dropout** | Randomly switching off part of the network during training so it can't lean on any one piece; a standard guard against overfitting. Off when forecasting. |
 | **Non-inferiority margin** | How much worse a model may be and still count as "not worse": for G-D3, the upper end of the 95% range of its error difference must stay below +0.05 °C. |
-| **BB\*** | "Best backbone": the architecture finally chosen (DSTGNN, or the physics-guided LSTM if the DSTGNN fails its gates). |
-| **H1** | Optional extra classification head that predicts the yes/no heatwave flag directly. |
+| **BB\*** | "Best backbone": the architecture finally chosen. **C3-hop** (user decision 2026-10-12). |
+| **H1–H4 (test hypotheses)** | The four claims tested once on 2019–2026 (`docs/CONFIRMATORY_PROTOCOL.md`): H1 C3-hop beats the Delhi-only LSTM on WBGT all days (confirmed); H2 … on WBGT heatwave days (not confirmed); H3 C3-hop beats ridge_hw5 on WBGT heatwave days (confirmed); H4 LSTM + Rg beats the Delhi-only LSTM on WBGT all days (not confirmed after Holm). |
+| **H1 (old plan v5 meaning)** | An optional extra classification head predicting the yes/no heatwave flag directly. Not built; not the same as the test hypothesis H1. |
 | **Physics head (2a)** | The model predicts the weather "ingredients" (temperature, humidity, wind, sunshine) and computes WBGT from them with the exact physical (Liljegren) formula inside the model. Chosen design (2026-10-07): exact formula (A), applied separately in each of Delhi's 9 cells at that cell's own hottest hour, then averaged (D3). |
 
 ## Baselines
@@ -63,12 +66,21 @@ attributed to that one change.
 |---|---|
 | **G0–G6** | Weekly gates: conditions that must hold before moving on. G0 (Week 1) = honest LSTM-vs-retrieval comparison exists; G5 = test-set lock. |
 | **G-D0–G-D4** | DSTGNN feasibility gates: spatial signal exists (D0), code correct (D1), trains stably (D2), not worse than the LSTM (D3), affordable compute (D4). |
-| **Test lock** | The 2019–2026 test data is used exactly once, at the end, after all choices are written down in `docs/PREREGISTRATION.md`. Prevents unconscious tuning to the test set. |
+| **Test lock** | The 2019–2026 test data is used exactly once, at the end, after every choice is written down in `docs/CONFIRMATORY_PROTOCOL.md` and frozen as the git tag `test-lock`. `training/test_lock.py` refuses to read 2019+ data unless HEAD contains that tag and the code under training/ models/ pipeline/ retrieval/ evaluation/ configs/ is unchanged since it. Used once, 2026-10-19. Prevents unconscious tuning to the test set. |
+| **Test fold** | The fold used for the one test run: train 1980–2018 (early stopping on 2017–2018), forecast 2019-01-01 to 2026-09-06. `test2021` = the same ending 2021, for the Rz side-check. Both are guarded by the test lock and kept out of the development fold list. |
+| **Pre-registration** | Writing a rule (what is run, what counts as success) into `context/decisions.md` **before** the result exists, so the result can't shape the rule. |
+| **Post-test exploration** | Any analysis run after the one test evaluation (e.g. the foundation-model comparison). Labelled as such; it cannot change the test's conclusions. Code lives in `post_test/`, outside the locked directories. |
+| **Screen** | A cheap check on training years only, with a linear model and no network training, of whether an idea carries information beyond a baseline (e.g. the retrieval information check, the Rz screen, the heatwave-information screen S2). Only ideas that pass get a full training run. |
 | **Credibility floor** | A minimum standard a model must meet before its heatwave-day gains count: **not significantly worse than damped persistence on all days** (decision 2026-10-04). |
 | **G2** | The Week-3 gate: choose the control models. |
 | **G3** | The gate that picks the best retrieval rung. Pre-registered rule (tightened before results): a rung counts only if it is not worse than its control on all days, significantly better on extreme days, and significantly better than its own random control (R0-rand for R0, R1-rand for R1) on extreme days. |
 | **R1-rand** | Random eligible analogues from within ±30 days of the same time of year: R1's fair random control. In configs its mode is `time_rand`. |
 | **Rg** | Regional-pattern retrieval: past days matched on the heat (and, for WBGT, humidity) pattern at the 27 upstream points over the last 3 days, not on Delhi alone. Its random control is R0-rand (same pool). Added after G3. |
+| **Rz** | Upper-air retrieval: past days matched on the 500 hPa height map over South Asia (10–45°N, 40–100°E), the weather systems ~5.5 km up. Helped C3-hop on WBGT all days in development (−0.023 °C) but failed G3, and did not replicate on 2019–2021. |
+| **Rh** | Humid-air retrieval: past days matched on humidity and temperature at 12 extra points east and south-west of Delhi. Screened only (S2); no gain. |
+| **S2 (heatwave-information screen)** | Screen of four ways to bring new information to WBGT heatwave days: humid-air points as input, Rh retrieval, matching past heatwave starts, the upper-air pattern as input. None passed. |
+| **Analog error correction (AnEn-corr)** | Correcting a forecast by the average error the model made on the 20 most similar past forecasts. Made heatwave days much worse (regression to the mean). |
+| **Regression to the mean** | Extreme values tend to be followed, or matched, by less extreme ones. Here: past situations that looked like today usually turned out milder than a real heatwave, so averaging them pulls heatwave forecasts towards "typical warm". |
 | **Tie margin** | In the control rule, two runs within 0.02 °C all-days RMSE count as tied, and the simpler one (fewer changes) wins. |
 
 ## Statistics and evaluation
@@ -96,6 +108,13 @@ attributed to that one change.
 | **Retention (future-similarity)** | Whether a more similar past window also has a future closer to the truth (from the SARAF paper). |
 | **Seed-noise floor** | The part of the MDE caused by training randomness alone; reduced by more seeds, not more data blocks. |
 | **10-seed ensemble** | The average of the 10 seeds' forecasts. Reported as an extra only; the primary score is the average of the 10 per-seed RMSEs (decision 2026-10-04). |
+| **Holm correction** | When several claims are tested together, each p-value is adjusted upwards (step by step, smallest first) so the chance of any false "win" stays at 5%. Used for H1–H4. |
+| **Bias** | The average error (forecast − truth). Negative = the forecast runs too cold. On real heatwave days all our models are too cold. |
+| **Range forecast** | A forecast given as a distribution, e.g. "likely 34 °C, 1-in-10 chance above 37 °C" (10th / 50th / 90th percentiles; `evaluation/range_forecasts.py`). |
+| **CRPS** | Continuous ranked probability score: the error of a range forecast in °C (lower is better); equals the plain error for a single-number forecast. **CRPSS** = its skill compared with climatology. |
+| **Coverage** | How often the truth falls inside a forecast range; an 80% range should contain it about 80% of the time. |
+| **Hot-day probability / warning** | The forecast chance that a day will be a heatwave day, from the forecast and its usual error; scored with the Brier score. |
+| **Occlusion** | Switching one input off (setting it to its long-term average) and measuring how much the forecast gets worse, to see what a trained model relies on (`evaluation/graph_explain.py`). |
 
 ## Training settings
 
@@ -148,6 +167,11 @@ attributed to that one change.
 | **FAISS** | Library used for fast similarity search over past windows. |
 | **Analogue** | A past 14-day weather window similar to the current one; its following 5 days are the "analogue outcome". |
 | **SARAF** | Stationarity-aware retrieval-augmented forecasting (Zhou et al. 2026); source of the time-alignment, diversity and stationarity ideas. |
+| **500 hPa height (z500)** | The height (≈ 5.5 km) at which air pressure is 500 hPa; its map shows the large weather systems (high-pressure ridges that drive heatwaves). From ERA5 via WeatherBench 2; used by Rz. |
+| **GraphCast** | Google DeepMind's global AI weather model (Lam et al. 2023), a graph network forecasting the whole atmosphere. Used as an outside yardstick on 2018 Tmax: ~40% lower error than our models. |
+| **WeatherBench 2** | Public archive and benchmark of weather forecasts and ERA5 data (Rasp et al. 2024); source of the GraphCast forecasts and the 500 hPa data. |
+| **Foundation model (time series)** | A large network pretrained on millions of time series to forecast any series without extra training. We compared **Chronos-2** (Amazon) and **TimesFM 3.0** (Google) after the test; C3-hop beat both. |
+| **Zero-shot** | Using a pretrained model on new data with no further training. |
 | **MMR** | Maximal marginal relevance: choosing analogues that are relevant and not near-duplicates of each other. |
 | **ADF / KPSS** | Statistical tests for whether a series is stationary (stable over time). |
 | **Sen slope / Mann–Kendall** | Robust trend estimate (per decade) and its significance test. |
@@ -178,3 +202,5 @@ attributed to that one change.
 | **IMD / NDMA / HAP** | India Meteorological Department / National Disaster Management Authority / Heat Action Plan. |
 | **DERC / DISCOM / BEE** | Delhi Electricity Regulatory Commission / electricity distribution company / Bureau of Energy Efficiency. |
 | **Rule engine / verifier** | Phase 6 safety layers: the rule engine sets the risk tier deterministically; the verifier rejects any advisory action without an approved source. |
+| **IMD-style alert mapping (B + D)** | How our forecast becomes an alert colour (decided 2026-10-22): IMD's heat-wave rules with the departure threshold adjusted for area-average data (≥ 3 °C heat wave, ≥ 4.5 °C severe; or ≥ 45 °C), IMD's persistence rules for the colours, plus the hot-day probability shown next to each day. Labelled "not an official IMD warning". |
+| **tier_basis** | Where an action's alert colour comes from: the source itself; `delhi_any_alert` (Delhi's plan says "during a heat alert", so shown at Yellow and up); or `ahmedabad_precedent` (Ahmedabad's plan; not Delhi policy). |

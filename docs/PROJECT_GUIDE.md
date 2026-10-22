@@ -1116,5 +1116,6 @@ Updated 2026-10-22. The forecasting research is complete: the protocol was froze
 | 2026-10-20 | `docs/MODELS_EXPLAINED.md`: every model and code name in plain English, the metrics, GraphCast, and why retrieval behaves as it does. |
 | 2026-10-21 | Post-test: C3-hop beats Chronos-2 and TimesFM 3.0 on all days and heatwave days, both families. |
 | 2026-10-22 | Phase 6 forecast-to-alert mapping decided (B + D; C in reserve); open items refreshed; CI fixed (one test needed local-only raw data). |
+| 2026-10-22 | README added; glossary refreshed (22 new terms, 4 outdated entries fixed); certifi and Pillow upgraded for new security advisories. |
 | 2026-10-08 | Independent ML review: ridge baseline, bias split / recalibration / hot-day Brier added; backbone rule amended (C2 eligible, user approves the final pick); physics-head robustness fixes queued; test protocol drafted. |
 | 2026-10-08 | Graph runs done: G-D3 says U1 (graph not worse than U1 for Tmax, 0.08 °C worse for WBGT); edges hurt, the edgeless C2 is best. One tuning round started (C3, U1, and the post-result arm C3-pool); then PH_lstm and R2. |

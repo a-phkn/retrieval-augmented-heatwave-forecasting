@@ -3,7 +3,7 @@
 accelerate==1.15.0
 annotated-doc==0.0.5
 anyio==4.15.1
-certifi==2026.7.22
+certifi==2026.10.19
 charset-normalizer==3.5.2
 chronos-forecasting==2.3.2
 click==8.5.0
@@ -38,7 +38,7 @@ numpy==2.5.3
 packaging==26.3
 pandas==3.0.6
 patsy==1.0.3
-pillow==12.3.0
+pillow==13.0.0
 pluggy==1.6.0
 psutil==7.2.2
 pyarrow==25.0.1

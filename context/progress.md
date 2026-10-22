@@ -156,6 +156,8 @@ Short, frequently-updated. See `build_plan.md` for full milestone detail.
   TimesFM 3.0 everywhere (both families, all + heatwave days). Weights deleted after the run (user).
 - **2026-10-22**: IMD mapping = B + D (C in reserve). CI had failed since 241955e: test_graphcast_yardstick needed the
   gitignored raw hourly data; now skips without it (reproduced in a CI-like clone: 384 passed, 2 skipped).
+  Then CI security failed on new advisories (certifi < 2026.10.19, pillow < 13.0.0): both upgraded (OSV check:
+  68 packages, 0 known vulnerabilities; 385 tests pass). README.md added; GLOSSARY refreshed. Next: Phase 6.
 - **DSTGNN skeleton (2026-10-06)**: `models/dstgnn.py` (graph GRU, modes none/static/dynamic + adaptive),
   `pipeline/graph.py` (Delhi + 27 nodes, geographic and wind-gated advective edges). G-D1: 13 tests pass.
   The plan said `data/graph.py`; it is `pipeline/graph.py` because `data/` holds raw data.
