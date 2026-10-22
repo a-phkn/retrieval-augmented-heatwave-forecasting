@@ -373,6 +373,33 @@ Report: `evaluation_v2/graphcast_yardstick.md`.
 - They are meant to forecast *any* series without extra training ("zero-shot").
 - They are what many people would try first today.
 
+**Why we chose these two:**
+
+- **They are what people actually reach for first.**
+  - When someone today wants a quick AI forecast of a series like Delhi's temperature, the usual first step is to
+    download one of these and run it with no training.
+  - They are by far the most-used pretrained forecasters on Hugging Face, the main public model hub. Downloads in
+    the last month (Hugging Face's count, checked 2026-10-21):
+    - Chronos-2: about **15.6 million**;
+    - TimesFM 3.0 + 2.5: about **2.6 million**;
+    - Salesforce's Moirai 2.0 (small), the next most popular alternative: about 0.26 million.
+  - So these two answer the question a mentor or reviewer is most likely to ask: *"why build your own model
+    instead of just using Chronos or TimesFM?"*
+- **They come from two different, major teams** (Amazon and Google) with different designs. A result that holds
+  against both is not about one model's quirks.
+- **We used their newest versions,** Chronos-2 and TimesFM 3.0, not older or smaller ones. Beating last year's small
+  versions would be weak evidence; we wanted the strongest opponents available.
+- **They are free, open and run locally on a laptop CPU.** No data leaves the machine, and anyone can reproduce the
+  comparison.
+- **Why not others:**
+  - **TimeGPT** (Nixtla) is a paid online service, and our data would have to be sent to it.
+  - **Moirai** and **Lag-Llama** are much less used; adding them would mean more comparisons without changing the
+    conclusion.
+  - **Weather foundation models** (Pangu-Weather, FuXi, Aurora, GraphCast) are a different kind of model: they need
+    the whole global atmosphere as input and are in GraphCast's class, which we already know is better than ours
+    (section 10). Chronos and TimesFM, like our models, need no global atmosphere, only a local data series, so they
+    are the fair "pretrained alternative" for this project.
+
 **How we compared** (after the main test, as a labelled extra; rules written down first):
 
 - Each model got only the target's own last 1,024 days (about 2.8 years) of Delhi's daily Tmax or WBGT.

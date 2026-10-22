@@ -985,6 +985,18 @@ RAG counts as helping only if real retrieval beats both.
   - **30 actions coloured only by Ahmedabad's plan:** used, but each is marked on the page as "precedent from
     Ahmedabad, not Delhi policy". The 12 Delhi/NDMA and 2 IMD colours are used as sourced.
   - An expert can assign levels later (recorded as expert judgement). Stated as a limitation in the paper.
+- **How our forecast becomes an alert colour (decided 2026-10-22: options B + D):**
+  - **B, IMD-style rules adjusted for area-average data.** A heat-wave day is Tmax ≥ 40 °C and ≥ 3 °C above normal,
+    or ≥ 45 °C. A severe day is ≥ 4.5 °C above normal. This is the same definition the models were tested on.
+  - **The colours follow IMD's rules for how long the heat lasts,** over the last few observed days plus the 5
+    forecast days: Yellow = 2 heat-wave days; Orange = 2 severe days, or 4+ heat-wave days; Red = more than 2
+    severe days, or more than 6 heat-wave days in total.
+  - **Why not IMD's numbers exactly:** our temperature is an area average, which runs cooler at the peaks than a
+    weather station. IMD's "47 °C = severe" could never trigger, and real heatwaves would be missed.
+  - **D:** each day also shows the chance of heat-wave conditions.
+  - Always labelled "IMD-style, adjusted for area-average data; not an official IMD warning".
+  - **In reserve (option C):** convert our forecast to a station-equivalent value using a Delhi station record,
+    then apply IMD's rules exactly.
 - **"If this happens"** (decision 2026-10-06): actions triggered by something that has already
   happened (a heat-stroke patient, heat deaths) are kept in their own clearly labelled section,
   never mixed with the forecast actions. Clinical steps sit behind a "for health professionals"
@@ -1063,15 +1075,12 @@ the project's virtual environment (`.venv`); nothing is installed globally.
 
 ## 12. Open items
 
-- v2 download complete and verified; Liljegren WBGT built and checked (§8.2).
-- ~~Decide whether the WBGT models should forecast the *physical* WBGT~~ Done (2026-10-05): yes.
-- ~~Choose the G2 control models~~ Done (2026-10-06): A1prime_hw5 and A2Lr_hw5 (§8.5).
-- Advisory: map the 123 actions with no alert level onto the colour tiers (team decision pending).
-- Upstream download: run `pipeline/download_era5_upstream.py` (about 3–4 days of free API quota), then the G-D0 check (does upstream heat lead Delhi?).
-- ~~Confirm the 4 acceptance heatwave dates~~ Done (2026-10-05): 3 have IMD regional or
-  sub-division support and 1 (2002) is station-only; none is an IMD Delhi declaration (§8.3).
-- Find official advisory sources (research brief Parts A–B, `docs/PHASE6_SOURCE_RESEARCH_BRIEF.md`).
-- Station humidity cross-check for the humid-heat trend.
+Updated 2026-10-22. The forecasting research is complete: the protocol was frozen and the test run, §9.0.
+- **Phase 6, the heat advisory:** the action-library schema, the rule engine (B + D above), the verifier, and the
+  constrained LLM advisory with its faithfulness evaluation.
+- **The paper, the demo page, and the reproducibility pack** (README with expected numbers, run instructions).
+- Station humidity cross-check for the humid-heat trend (optional; needs station data).
+- Older items are done: v2 data, controls, labels, upstream download, sources (Parts A–E), tier mapping.
 
 ---
 
@@ -1106,5 +1115,6 @@ the project's virtual environment (`.venv`); nothing is installed globally.
 | 2026-10-19 | Protocol frozen (H1–H4, tag test-lock); the one-time test run: H1 and H3 confirmed, H2 and H4 not (§9.0). |
 | 2026-10-20 | `docs/MODELS_EXPLAINED.md`: every model and code name in plain English, the metrics, GraphCast, and why retrieval behaves as it does. |
 | 2026-10-21 | Post-test: C3-hop beats Chronos-2 and TimesFM 3.0 on all days and heatwave days, both families. |
+| 2026-10-22 | Phase 6 forecast-to-alert mapping decided (B + D; C in reserve); open items refreshed; CI fixed (one test needed local-only raw data). |
 | 2026-10-08 | Independent ML review: ridge baseline, bias split / recalibration / hot-day Brier added; backbone rule amended (C2 eligible, user approves the final pick); physics-head robustness fixes queued; test protocol drafted. |
 | 2026-10-08 | Graph runs done: G-D3 says U1 (graph not worse than U1 for Tmax, 0.08 °C worse for WBGT); edges hurt, the edgeless C2 is best. One tuning round started (C3, U1, and the post-result arm C3-pool); then PH_lstm and R2. |

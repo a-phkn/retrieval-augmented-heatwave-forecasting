@@ -1328,3 +1328,17 @@ any of them was run; exploratory (the frozen protocol and its one test run are u
   all days (WBGT -0.002 / -0.010; Tmax -0.048 / -0.050, n.s.) and beats them on heatwave days (WBGT -0.72 / -0.73; Tmax
   -0.55 / -0.51). RMSE: Chronos-2 WBGT 2.387 / heatwave 3.822, TimesFM 3.0 2.396 / 3.828; Tmax 2.409 / 3.101 and
   2.411 / 3.053; their heatwave-day cold bias -3.5 (WBGT), -2.5 to -2.7 (Tmax). Exploratory, post-test.
+
+**Forecast-to-IMD alert mapping: B + D. DECIDED 2026-10-22 (user)**
+- B (IMD-style, adjusted for area-average data): heat-wave day = Tmax >= 40 °C and >= 3.0 °C above the day-of-year normal,
+  or Tmax >= 45 °C; severe day = >= 4.5 °C above normal (the labels-v2 rule the models were trained and tested on).
+  Colours follow IMD's persistence rules (IMD heat-wave FAQ p.8) on the recent observed days + the 5 forecast days:
+  Yellow = heat-wave conditions on 2 days; Orange = severe for 2 days or heat wave for >= 4 days; Red = severe for > 2
+  days or > 6 heat-wave/severe days in total; Green = otherwise. Our single area average stands in for IMD's ">= 2
+  stations". Always labelled "IMD-style, adjusted for area-average data; not an official IMD warning". Why not IMD's
+  numbers as written (A): ERA5's 9-cell mean damps peaks (46-year max 46.6 °C, so IMD's 47 °C severe rule can never
+  fire; IMD's 4.5 °C rule gives 13 spells in 2007-2018 vs 34 with 3.0 °C).
+- D: the calibrated hot-day probability (Tmax Brier skill +0.28 on the test) is shown next to each day's colour.
+- Kept in reserve (C, if mentors want exact IMD equivalence): quantile-map the ERA5 box Tmax to a Delhi station record
+  (NOAA GSOD, Safdarjung), fitted on 1980-2018, then apply IMD's rules verbatim; also usable to check B's alert frequency.
+- WBGT: no IMD WBGT tiers; humid heat stays a separate, labelled note (decision 2026-10-05).

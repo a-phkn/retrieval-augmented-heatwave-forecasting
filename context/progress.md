@@ -153,7 +153,9 @@ Short, frequently-updated. See `build_plan.md` for full milestone detail.
   tagged `test-lock`. Test run DONE 2026-10-19 23:46; scored once: H1 yes, H2 no, H3 yes, H4 no (Holm p 0.066).
   Next: commit the test outputs; Phase 6 (forecast-to-IMD mapping decision), paper, demo.
 - **Post-test 2026-10-21**: foundation models (`post_test/foundation_baselines.py`): C3-hop beats Chronos-2 and
-  TimesFM 3.0 everywhere (both families, all + heatwave days). Weights 1.7 GB in .hf_cache/ (gitignored, deletable).
+  TimesFM 3.0 everywhere (both families, all + heatwave days). Weights deleted after the run (user).
+- **2026-10-22**: IMD mapping = B + D (C in reserve). CI had failed since 241955e: test_graphcast_yardstick needed the
+  gitignored raw hourly data; now skips without it (reproduced in a CI-like clone: 384 passed, 2 skipped).
 - **DSTGNN skeleton (2026-10-06)**: `models/dstgnn.py` (graph GRU, modes none/static/dynamic + adaptive),
   `pipeline/graph.py` (Delhi + 27 nodes, geographic and wind-gated advective edges). G-D1: 13 tests pass.
   The plan said `data/graph.py`; it is `pipeline/graph.py` because `data/` holds raw data.

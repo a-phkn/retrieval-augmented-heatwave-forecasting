@@ -50,6 +50,8 @@ def test_correction_recovers_a_monthly_linear_relation():
     np.testing.assert_allclose(gy.apply_correction(np.array([30.0]), np.array([5]), coef), 2.5 + 30.6)
 
 
+@pytest.mark.skipif(not __import__("pipeline.hourly_features", fromlist=["RAW_DIR"]).RAW_DIR.exists(),
+                    reason="raw ERA5 hourly data not present (gitignored; e.g. on the CI runner)")
 def test_hourly_reconstruction_matches_the_tmax_target():
     """'true' from our hourly files must equal the project's Tmax target (mean of cell maxima)."""
     daily = gy.era5_daily_true_and_sampled()
