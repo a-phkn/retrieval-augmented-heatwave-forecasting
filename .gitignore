@@ -37,9 +37,9 @@ data/raw/
 *.tmp
 *.log
 
-# Python build artifacts
-build/
-dist/
+# Python build artifacts (root only, so sources/build/ scripts are not caught)
+/build/
+/dist/
 *.egg-info/
 
 # Reproducible model checkpoints (deterministic given fixed seeds)
@@ -76,3 +76,14 @@ models/test/
 
 # Hugging Face model weights for post-test foundation-model baselines (kept inside the project)
 .hf_cache/
+
+# Phase 6 source library: the official PDFs, their text extracts, OCR output and page images are large third-party
+# material (re-downloadable from the URLs in sources/PHASE6_SOURCE_RESEARCH_REPORT.md). Only our own catalogues,
+# results and the scripts that built them are tracked.
+/sources/pdfs/
+/sources/txt/
+/sources/txt_raw/
+/sources/ocr_ndma2019*/
+/sources/build/img/
+# NOAA GHCN-Daily station record for Safdarjung and its tidy copy (public data, re-downloadable; see README_DATA.md)
+/sources/data/*.csv

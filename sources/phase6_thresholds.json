@@ -1,0 +1,1102 @@
+[
+  {
+    "quantity": "Tmax (plains station)",
+    "threshold": "≥ 40 °C",
+    "meaning": "Minimum Tmax before a heat wave is considered at a plains station",
+    "wbgt_variant": "n/a (not WBGT)",
+    "doc_id": "IMD_HW_FAQ",
+    "page": 1,
+    "verbatim_excerpt": "Heat wave is considered if maximum temperature of a station reaches at least",
+    "notes": "Value is printed in the source as '40⁰C'; text extraction renders the degree mark as '0', so the numeral is not quoted.",
+    "verified_modes": [
+      "layout",
+      "raw"
+    ],
+    "verification": "VERIFIED (exact text found on cited page)",
+    "also_in": []
+  },
+  {
+    "quantity": "Departure of Tmax from normal",
+    "threshold": "4.5 to 6.4 °C",
+    "meaning": "Heat wave (IMD FAQ)",
+    "wbgt_variant": "n/a (not WBGT)",
+    "doc_id": "IMD_HW_FAQ",
+    "page": 1,
+    "verbatim_excerpt": "Heat Wave: Departure from normal is 4.5",
+    "notes": "The task brief says 4.5/6.5; the IMD FAQ and NDMA slides say 6.4. Degree mark renders as '0' in extraction.",
+    "verified_modes": [
+      "layout",
+      "raw"
+    ],
+    "verification": "VERIFIED (exact text found on cited page)",
+    "also_in": []
+  },
+  {
+    "quantity": "Departure of Tmax from normal",
+    "threshold": "> 6.4 °C",
+    "meaning": "Severe heat wave (IMD FAQ)",
+    "wbgt_variant": "n/a (not WBGT)",
+    "doc_id": "IMD_HW_FAQ",
+    "page": 1,
+    "verbatim_excerpt": "Severe Heat Wave: Departure from normal is >6.4",
+    "notes": "Same note.",
+    "verified_modes": [
+      "layout",
+      "raw"
+    ],
+    "verification": "VERIFIED (exact text found on cited page)",
+    "also_in": []
+  },
+  {
+    "quantity": "Actual Tmax",
+    "threshold": "≥ 45 °C",
+    "meaning": "Heat wave (absolute criterion)",
+    "wbgt_variant": "n/a (not WBGT)",
+    "doc_id": "IMD_HW_FAQ",
+    "page": 1,
+    "verbatim_excerpt": "Heat Wave: When actual maximum temperature ≥ 45",
+    "notes": "Degree mark renders as '0' (e.g. '450C').",
+    "verified_modes": [
+      "layout",
+      "raw"
+    ],
+    "verification": "VERIFIED (exact text found on cited page)",
+    "also_in": []
+  },
+  {
+    "quantity": "Actual Tmax",
+    "threshold": "≥ 47 °C",
+    "meaning": "Severe heat wave (absolute criterion)",
+    "wbgt_variant": "n/a (not WBGT)",
+    "doc_id": "IMD_HW_FAQ",
+    "page": 1,
+    "verbatim_excerpt": "Severe Heat Wave: When actual maximum temperature ≥47",
+    "notes": "Same note.",
+    "verified_modes": [
+      "layout"
+    ],
+    "verification": "VERIFIED (exact text found on cited page)",
+    "also_in": []
+  },
+  {
+    "quantity": "Declaration rule",
+    "threshold": "≥ 2 stations in a met sub-division, ≥ 2 consecutive days",
+    "meaning": "Heat wave is declared on the second day",
+    "wbgt_variant": "n/a (not WBGT)",
+    "doc_id": "IMD_HW_FAQ",
+    "page": 2,
+    "verbatim_excerpt": "If above criteria met at least in 2 stations in a Meteorological sub-division for at least two consecutive days and it declared on the second day.",
+    "notes": "",
+    "verified_modes": [
+      "layout",
+      "raw"
+    ],
+    "verification": "VERIFIED (exact text found on cited page)",
+    "also_in": []
+  },
+  {
+    "quantity": "Coastal stations",
+    "threshold": "Tmax departure ≥ 4.5 °C and actual Tmax ≥ 37 °C",
+    "meaning": "Heat wave may be described (coastal)",
+    "wbgt_variant": "n/a (not WBGT)",
+    "doc_id": "IMD_HW_FAQ",
+    "page": 2,
+    "verbatim_excerpt": "When maximum temperature departure is 4.5",
+    "notes": "Delhi is not coastal; recorded for completeness.",
+    "verified_modes": [
+      "layout",
+      "raw"
+    ],
+    "verification": "VERIFIED (exact text found on cited page)",
+    "also_in": []
+  },
+  {
+    "quantity": "Hot & humid weather",
+    "threshold": "Tmax ≥ 3 °C above normal with above-normal RH",
+    "meaning": "'Hot & Humid Weather' label (IMD)",
+    "wbgt_variant": "n/a (not WBGT)",
+    "doc_id": "IMD_HW_FAQ",
+    "page": 2,
+    "verbatim_excerpt": "it is termed as Hot & Humid Weather over that station.",
+    "notes": "Not a WBGT or heat-index threshold.",
+    "verified_modes": [
+      "layout",
+      "raw"
+    ],
+    "verification": "VERIFIED (exact text found on cited page)",
+    "also_in": []
+  },
+  {
+    "quantity": "Tmin departure (warm night)",
+    "threshold": "4.5 to 6.4 °C (warm); > 6.4 °C (very warm)",
+    "meaning": "Warm night / very warm night; only declared when Tmax ≥ 40 °C",
+    "wbgt_variant": "n/a (not WBGT)",
+    "doc_id": "IMD_HW_FAQ",
+    "page": 2,
+    "verbatim_excerpt": "Warm night: minimum temperature departure is 4.5",
+    "notes": "Degree mark renders as '0' in extraction.",
+    "verified_modes": [
+      "layout",
+      "raw"
+    ],
+    "verification": "VERIFIED (exact text found on cited page)",
+    "also_in": []
+  },
+  {
+    "quantity": "Colour code – Yellow",
+    "threshold": "Heat wave conditions at isolated pockets persist on 2 days",
+    "meaning": "IMD yellow alert (Be updated)",
+    "wbgt_variant": "n/a (not WBGT)",
+    "doc_id": "IMD_HW_FAQ",
+    "page": 8,
+    "verbatim_excerpt": "Heat wave conditions at isolated pockets persists on 2 days",
+    "notes": "",
+    "verified_modes": [
+      "raw"
+    ],
+    "verification": "VERIFIED (exact text found on cited page)",
+    "also_in": []
+  },
+  {
+    "quantity": "Colour code – Orange",
+    "threshold": "(i) Severe heat wave conditions persist for 2 days, or (ii) heat wave persists for 4 days or more",
+    "meaning": "IMD orange alert (Be prepared)",
+    "wbgt_variant": "n/a (not WBGT)",
+    "doc_id": "IMD_HW_FAQ",
+    "page": 8,
+    "verbatim_excerpt": "(i) Severe heat wave conditions persists for 2 days",
+    "notes": "Second condition quoted in notes: '(ii) Through not severe, but heat wave persists for 4 days or more' (source spelling).",
+    "verified_modes": [
+      "raw"
+    ],
+    "verification": "VERIFIED (exact text found on cited page)",
+    "also_in": []
+  },
+  {
+    "quantity": "Colour code – Red",
+    "threshold": "(i) Severe heat wave persists for more than 2 days, or (ii) total heat/severe heat wave days exceed 6",
+    "meaning": "IMD red alert (Take action)",
+    "wbgt_variant": "n/a (not WBGT)",
+    "doc_id": "IMD_HW_FAQ",
+    "page": 8,
+    "verbatim_excerpt": "(ii) Total number of heat/severe heat wave days exceeding 6 days.",
+    "notes": "Condition (i) is 'Severe heat wave persists for more than 2 days' but its words are interleaved with neighbouring table cells in the PDF text, so only condition (ii) is quoted.",
+    "verified_modes": [
+      "raw"
+    ],
+    "verification": "VERIFIED (exact text found on cited page)",
+    "also_in": []
+  },
+  {
+    "quantity": "Tmax – Delhi HAP alert table (Yellow)",
+    "threshold": "≥ 40 °C",
+    "meaning": "'Hot day advisory' (Yellow, Be updated)",
+    "wbgt_variant": "n/a (not WBGT)",
+    "doc_id": "DELHI_HAP_2025",
+    "page": 10,
+    "verbatim_excerpt": "Yellow(Be updated) Hot day advisory >= 40 °C",
+    "notes": "Table caption in the plan: 'Heat Alert Thresholds for Delhi City (source: NDMA)'.",
+    "verified_modes": [
+      "layout"
+    ],
+    "verification": "VERIFIED (exact text found on cited page)",
+    "also_in": []
+  },
+  {
+    "quantity": "Tmax – Delhi HAP alert table (Orange)",
+    "threshold": "≥ 45 °C",
+    "meaning": "'Heat alert day' (Orange, Be prepared)",
+    "wbgt_variant": "n/a (not WBGT)",
+    "doc_id": "DELHI_HAP_2025",
+    "page": 10,
+    "verbatim_excerpt": ">= 45°C",
+    "notes": "The same table gives Red as ≥ 45 °C too, so Orange and Red are not separable by temperature in this plan — see conflicts.",
+    "verified_modes": [
+      "layout",
+      "raw"
+    ],
+    "verification": "VERIFIED (exact text found on cited page)",
+    "also_in": []
+  },
+  {
+    "quantity": "Tmax – Delhi HAP alert table (Red)",
+    "threshold": "≥ 45 °C (as printed)",
+    "meaning": "'Extreme heat alert day' (Red, Take action)",
+    "wbgt_variant": "n/a (not WBGT)",
+    "doc_id": "DELHI_HAP_2025",
+    "page": 10,
+    "verbatim_excerpt": "Red Alert (Take Action) Extreme heat",
+    "notes": "Likely a table error in the plan; recorded as printed.",
+    "verified_modes": [
+      "layout",
+      "raw"
+    ],
+    "verification": "VERIFIED (exact text found on cited page)",
+    "also_in": []
+  },
+  {
+    "quantity": "Normal Tmax ≤ 40 °C – departure criterion",
+    "threshold": "Heat wave 5–6 °C; severe ≥ 7 °C",
+    "meaning": "Older IMD criterion as reproduced in the plan",
+    "wbgt_variant": "n/a (not WBGT)",
+    "doc_id": "DELHI_HAP_2025",
+    "page": 9,
+    "verbatim_excerpt": "When normal maximum temperature of a station is less than or equal to 40°C",
+    "notes": "Differs from the IMD FAQ criterion (4.5/6.4). See conflicts.",
+    "verified_modes": [
+      "layout",
+      "raw"
+    ],
+    "verification": "VERIFIED (exact text found on cited page)",
+    "also_in": []
+  },
+  {
+    "quantity": "Normal Tmax > 40 °C – departure criterion",
+    "threshold": "Heat wave 4–5 °C; severe ≥ 6 °C",
+    "meaning": "Older IMD criterion as reproduced in the plan",
+    "wbgt_variant": "n/a (not WBGT)",
+    "doc_id": "DELHI_HAP_2025",
+    "page": 9,
+    "verbatim_excerpt": "When normal maximum temperature of a station is more than 40°C",
+    "notes": "Differs from the IMD FAQ.",
+    "verified_modes": [
+      "layout",
+      "raw"
+    ],
+    "verification": "VERIFIED (exact text found on cited page)",
+    "also_in": []
+  },
+  {
+    "quantity": "Actual Tmax – declare irrespective of normal",
+    "threshold": "≥ 45 °C",
+    "meaning": "Heat waves should be declared",
+    "wbgt_variant": "n/a (not WBGT)",
+    "doc_id": "DELHI_HAP_2025",
+    "page": 9,
+    "verbatim_excerpt": "When actual maximum temperature remains 45°C or more irrespective of normal maximum temperature, heat waves should be declared.",
+    "notes": "",
+    "verified_modes": [
+      "layout",
+      "raw"
+    ],
+    "verification": "VERIFIED (exact text found on cited page)",
+    "also_in": []
+  },
+  {
+    "quantity": "Percentile thresholds (NDMA recommendation)",
+    "threshold": "75th, 85th, 95th percentile",
+    "meaning": "Recommended local thresholds on Tmax/Tmin/Tmean, Humidex, WBGT, UTCI, heat index",
+    "wbgt_variant": "WBGT is only listed as a candidate variable; no WBGT value or variant is given",
+    "doc_id": "DELHI_HAP_2025",
+    "page": 43,
+    "verbatim_excerpt": "NDMA recommends using the 75th, 85th and 95th percentile for Indian context",
+    "notes": "",
+    "verified_modes": [
+      "layout",
+      "raw"
+    ],
+    "verification": "VERIFIED (exact text found on cited page)",
+    "also_in": []
+  },
+  {
+    "quantity": "Heat index (worked example)",
+    "threshold": "Air 34 °C and RH 75% → heat index 49 °C",
+    "meaning": "Illustrative example, not a threshold",
+    "wbgt_variant": "Heat index (apparent temperature)",
+    "doc_id": "DELHI_HAP_2025",
+    "page": 10,
+    "verbatim_excerpt": "if the air temperature is 34°C and the relative humidity is 75%, the heat index--how hot it feels--is 49°C.",
+    "notes": "",
+    "verified_modes": [
+      "layout",
+      "raw"
+    ],
+    "verification": "VERIFIED (exact text found on cited page)",
+    "also_in": []
+  },
+  {
+    "quantity": "Environmental temperature (body heat gain)",
+    "threshold": "37 °C",
+    "meaning": "Below this, 'no harm to the human body' per the plan",
+    "wbgt_variant": "Air/environmental temperature",
+    "doc_id": "DELHI_HAP_2024_25",
+    "page": 11,
+    "verbatim_excerpt": "There will be no harm to the human body if the environmental temperature remains at 37° C.",
+    "notes": "Statement of the plan, not an operational alert level.",
+    "verified_modes": [
+      "layout",
+      "raw"
+    ],
+    "verification": "VERIFIED (exact text found on cited page)",
+    "also_in": []
+  },
+  {
+    "quantity": "Clinical – body temperature",
+    "threshold": "≥ 40 °C",
+    "meaning": "Heat stroke / start IV rehydration and transport",
+    "wbgt_variant": "Body (core) temperature, not weather",
+    "doc_id": "DELHI_HAP_2025",
+    "page": 66,
+    "verbatim_excerpt": "If temperature is 40°C or above, initiate IV rehydration and immediately transport to emergency department for stabilization.",
+    "notes": "Clinical protocol.",
+    "verified_modes": [
+      "layout",
+      "raw"
+    ],
+    "verification": "VERIFIED (exact text found on cited page)",
+    "also_in": []
+  },
+  {
+    "quantity": "Local mortality-based thresholds",
+    "threshold": "States, districts and cities to set their own thresholds from mortality data",
+    "meaning": "IMD national colour code is not specific to a region",
+    "wbgt_variant": "n/a (not WBGT)",
+    "doc_id": "NDMA_HW_GUIDELINES_2019",
+    "page": 35,
+    "verbatim_excerpt": "The States, districts and cities should, therefore, carry out their respective threshold assessments for mortality and provide the information to IMD",
+    "notes": "Scanned page, image checked. Printed p.15.",
+    "verified_modes": [
+      "ocr"
+    ],
+    "verification": "VERIFIED (scanned page: OCR match and checked against page image)",
+    "printed_page": 15,
+    "also_in": []
+  },
+  {
+    "quantity": "Percentile thresholds on daily Tmax (NDMA 2019)",
+    "threshold": "90th, 95th and 99th percentile",
+    "meaning": "Warning trigger value where health data are unavailable or unreliable",
+    "wbgt_variant": "n/a (not WBGT)",
+    "doc_id": "NDMA_HW_GUIDELINES_2019",
+    "page": 48,
+    "verbatim_excerpt": "could be contemplated as a warning trigger value if climate data is available and health date is not available or reliable.",
+    "notes": "Scanned page, image checked. Printed p.28. The Delhi HAP (DELHI_HAP_2025 p.43) attributes 75th/85th/95th to NDMA — see conflicts. Source typo 'health date' reproduced.",
+    "verified_modes": [
+      "ocr"
+    ],
+    "verification": "VERIFIED (scanned page: OCR match and checked against page image)",
+    "printed_page": 28,
+    "also_in": []
+  },
+  {
+    "quantity": "Work/rest limit, continuous work",
+    "threshold": "Light 30.0 °C; moderate 26.7 °C; heavy 25.0 °C",
+    "meaning": "Permissible heat exposure threshold limit values, continuous work",
+    "wbgt_variant": "WBGT as given in WHO/WMO Box 6 (adapted from OSHA 1999); the box does not say whether values are outdoor-with-solar-load or indoor, or measured or estimated. WBGT is defined on PDF p.33 as a weighted average of globe, natural wet-bulb and shaded air temperature.",
+    "doc_id": "WHO_WMO_HEATWAVES_HEALTH_2015",
+    "page": 71,
+    "verbatim_excerpt": "Continuous work 30.0°C 26.7°C 25.0°C",
+    "notes": "Table is adapted from OSHA (1999), a US source, not Indian. PDF page 71 (printed 55).",
+    "verified_modes": [
+      "layout",
+      "raw"
+    ],
+    "verification": "VERIFIED (exact text found on cited page)",
+    "also_in": []
+  },
+  {
+    "quantity": "Work/rest limit, 75% work / 25% rest each hour",
+    "threshold": "Light 30.6 °C; moderate 28.0 °C; heavy 25.9 °C",
+    "meaning": "Permissible heat exposure threshold limit values",
+    "wbgt_variant": "WBGT as given in WHO/WMO Box 6 (adapted from OSHA 1999); the box does not say whether values are outdoor-with-solar-load or indoor, or measured or estimated. WBGT is defined on PDF p.33 as a weighted average of globe, natural wet-bulb and shaded air temperature.",
+    "doc_id": "WHO_WMO_HEATWAVES_HEALTH_2015",
+    "page": 71,
+    "verbatim_excerpt": "75% work, 25% rest, each hour 30.6°C 28.0°C 25.9°C",
+    "notes": "Same note. PDF page 71.",
+    "verified_modes": [
+      "layout",
+      "raw"
+    ],
+    "verification": "VERIFIED (exact text found on cited page)",
+    "also_in": []
+  },
+  {
+    "quantity": "Work/rest limit, 50% work / 50% rest each hour",
+    "threshold": "Light 31.4 °C; moderate 29.4 °C; heavy 27.9 °C",
+    "meaning": "Permissible heat exposure threshold limit values",
+    "wbgt_variant": "WBGT as given in WHO/WMO Box 6 (adapted from OSHA 1999); the box does not say whether values are outdoor-with-solar-load or indoor, or measured or estimated. WBGT is defined on PDF p.33 as a weighted average of globe, natural wet-bulb and shaded air temperature.",
+    "doc_id": "WHO_WMO_HEATWAVES_HEALTH_2015",
+    "page": 71,
+    "verbatim_excerpt": "50% work, 50% rest, each hour 31.4°C 29.4°C 27.9°C",
+    "notes": "Same note. PDF page 71.",
+    "verified_modes": [
+      "layout",
+      "raw"
+    ],
+    "verification": "VERIFIED (exact text found on cited page)",
+    "also_in": []
+  },
+  {
+    "quantity": "Work/rest limit, 25% work / 75% rest each hour",
+    "threshold": "Light 32.2 °C; moderate 31.1 °C; heavy 30.0 °C",
+    "meaning": "Permissible heat exposure threshold limit values",
+    "wbgt_variant": "WBGT as given in WHO/WMO Box 6 (adapted from OSHA 1999); the box does not say whether values are outdoor-with-solar-load or indoor, or measured or estimated. WBGT is defined on PDF p.33 as a weighted average of globe, natural wet-bulb and shaded air temperature.",
+    "doc_id": "WHO_WMO_HEATWAVES_HEALTH_2015",
+    "page": 71,
+    "verbatim_excerpt": "25% work, 75% rest, each hour 32.2°C 31.1°C 30.0°C",
+    "notes": "Same note. PDF page 71.",
+    "verified_modes": [
+      "layout",
+      "raw"
+    ],
+    "verification": "VERIFIED (exact text found on cited page)",
+    "also_in": []
+  },
+  {
+    "quantity": "Workload table unit",
+    "threshold": "°C WBGT",
+    "meaning": "Confirms the Box 6 values are WBGT",
+    "wbgt_variant": "WBGT as given in WHO/WMO Box 6 (adapted from OSHA 1999); the box does not say whether values are outdoor-with-solar-load or indoor, or measured or estimated. WBGT is defined on PDF p.33 as a weighted average of globe, natural wet-bulb and shaded air temperature.",
+    "doc_id": "WHO_WMO_HEATWAVES_HEALTH_2015",
+    "page": 71,
+    "verbatim_excerpt": "* Values are in °C, wet-bulb globe temperature.",
+    "notes": "PDF page 71.",
+    "verified_modes": [
+      "layout",
+      "raw"
+    ],
+    "verification": "VERIFIED (exact text found on cited page)",
+    "also_in": []
+  },
+  {
+    "quantity": "Core body temperature target for occupational limits",
+    "threshold": "< 38 °C",
+    "meaning": "Basis of ILO and other occupational heat exposure standards, per WHO/WMO",
+    "wbgt_variant": "Body temperature",
+    "doc_id": "WHO_WMO_HEATWAVES_HEALTH_2015",
+    "page": 67,
+    "verbatim_excerpt": "The basis of the regulations is to maintain core body temperature below 38ºC.",
+    "notes": "PDF page 67 (printed 51). No Indian standard was found in these documents.",
+    "verified_modes": [
+      "layout",
+      "raw"
+    ],
+    "verification": "VERIFIED (exact text found on cited page)",
+    "also_in": []
+  },
+  {
+    "quantity": "ISO 7243 (reference only)",
+    "threshold": "not available",
+    "meaning": "WHO/WMO cite the 1989 edition as 'Hot environments – Estimation of the heat stress on working man, based on WBGT-index'",
+    "wbgt_variant": "WBGT",
+    "doc_id": "WHO_WMO_HEATWAVES_HEALTH_2015",
+    "page": 103,
+    "verbatim_excerpt": "Hot environments – Estimation of the heat stress on working man, based on WBGT-index",
+    "notes": "Only the citation was read; the standard itself is not publicly accessible here, so its limits are not recorded. PDF page 103.",
+    "verified_modes": [
+      "layout",
+      "raw"
+    ],
+    "verification": "VERIFIED (exact text found on cited page)",
+    "also_in": []
+  },
+  {
+    "quantity": "Fan use",
+    "threshold": "Dry-bulb temperature > 35 °C",
+    "meaning": "Hot air passing over skin can make a person hotter",
+    "wbgt_variant": "Dry-bulb air temperature",
+    "doc_id": "WHO_WMO_HEATWAVES_HEALTH_2015",
+    "page": 65,
+    "verbatim_excerpt": "If the dry-bulb temperature is higher than 35ºC, the hot air passing over the skin can make an individual hotter.",
+    "notes": "PDF page 65 (printed 49).",
+    "verified_modes": [
+      "layout",
+      "raw"
+    ],
+    "verification": "VERIFIED (exact text found on cited page)",
+    "also_in": []
+  },
+  {
+    "quantity": "Skin temperature and heat transfer",
+    "threshold": "~35 °C",
+    "meaning": "Conduction, convection and evaporation fail to transfer heat effectively above this environmental temperature",
+    "wbgt_variant": "Skin / environmental temperature",
+    "doc_id": "NCDC_EMERGENCY_COOLING_2024",
+    "page": 7,
+    "verbatim_excerpt": "The first three mechanisms fail to transfer heat effectively when environmental temperature exceeds skin temperature (typically 35°C or 95°F).",
+    "notes": "PDF page 7.",
+    "verified_modes": [
+      "layout",
+      "raw"
+    ],
+    "verification": "VERIFIED (exact text found on cited page)",
+    "also_in": []
+  },
+  {
+    "quantity": "Relative humidity and evaporation",
+    "threshold": "75%",
+    "meaning": "Evaporation becomes ineffective beyond this relative humidity",
+    "wbgt_variant": "Relative humidity",
+    "doc_id": "NCDC_EMERGENCY_COOLING_2024",
+    "page": 7,
+    "verbatim_excerpt": "However, it becomes ineffective beyond relative humidity of 75%.",
+    "notes": "PDF page 7.",
+    "verified_modes": [
+      "layout",
+      "raw"
+    ],
+    "verification": "VERIFIED (exact text found on cited page)",
+    "also_in": []
+  },
+  {
+    "quantity": "Core body temperature, heat stroke",
+    "threshold": "≥ 40 °C",
+    "meaning": "Acute CNS and multi-organ dysfunction",
+    "wbgt_variant": "Core body temperature",
+    "doc_id": "NCDC_EMERGENCY_COOLING_2024",
+    "page": 7,
+    "verbatim_excerpt": "Core body temperature of ≥40°C leads to",
+    "notes": "PDF page 7.",
+    "verified_modes": [
+      "layout",
+      "raw"
+    ],
+    "verification": "VERIFIED (exact text found on cited page)",
+    "also_in": []
+  },
+  {
+    "quantity": "Human thermal maximum",
+    "threshold": "42 °C for 45 minutes to 8 hours",
+    "meaning": "Estimated critical thermal maximum",
+    "wbgt_variant": "Core body temperature",
+    "doc_id": "NCDC_EMERGENCY_COOLING_2024",
+    "page": 9,
+    "verbatim_excerpt": "Human thermal maximum is estimated as a core body temperature of 42°C (107.6°F) lasting between 45 minutes and 8 hours.",
+    "notes": "PDF page 9.",
+    "verified_modes": [
+      "layout",
+      "raw"
+    ],
+    "verification": "VERIFIED (exact text found on cited page)",
+    "also_in": []
+  },
+  {
+    "quantity": "Cooling end point",
+    "threshold": "Core body temperature 38–39 °C",
+    "meaning": "Stop active cooling at this range",
+    "wbgt_variant": "Core body temperature",
+    "doc_id": "NCDC_EMERGENCY_COOLING_2024",
+    "page": 10,
+    "verbatim_excerpt": "End point: Core body temperature between 38-39°C, approximate cooling times 9-40min",
+    "notes": "PDF page 10.",
+    "verified_modes": [
+      "layout",
+      "raw"
+    ],
+    "verification": "VERIFIED (exact text found on cited page)",
+    "also_in": []
+  },
+  {
+    "quantity": "NIOSH RAL (unacclimatized workers)",
+    "threshold": "RAL [°C-WBGT] = 59.9 − 14.1 log10 M [W]",
+    "meaning": "Recommended heat stress alert limit as a function of metabolic rate",
+    "wbgt_variant": "Yes: NIOSH WBGT (°C-WBGT), US occupational guidance; not an Indian standard. M = metabolic rate in watts, for a 70 kg 'standard man'.",
+    "doc_id": "NIOSH_2016_106_HEAT",
+    "page": 125,
+    "verbatim_excerpt": "RAL [°C-WBGT] = 59.9 − 14.1 log10 M [W]",
+    "notes": "Printed as the 60-minute-per-hour curve; shorter work periods have higher limits (Figures 8-1, 8-2). Equation typed in the source with U+2212 minus.",
+    "verified_modes": [
+      "layout",
+      "raw"
+    ],
+    "verification": "VERIFIED (exact text found on cited page)",
+    "also_in": []
+  },
+  {
+    "quantity": "NIOSH REL (acclimatized workers)",
+    "threshold": "REL [°C-WBGT] = 56.7 − 11.5 log10 M [W]",
+    "meaning": "Recommended heat stress exposure limit as a function of metabolic rate",
+    "wbgt_variant": "Yes: NIOSH WBGT (°C-WBGT), US occupational guidance; not an Indian standard. M = metabolic rate in watts, for a 70 kg 'standard man'.",
+    "doc_id": "NIOSH_2016_106_HEAT",
+    "page": 125,
+    "verbatim_excerpt": "REL [°C-WBGT] = 56.7 − 11.5 log10 M [W]",
+    "notes": "Equation only; no India-specific values. At the same M the two equations give different limits, so read Figures 8-1 and 8-2 before comparing them.",
+    "verified_modes": [
+      "layout",
+      "raw"
+    ],
+    "verification": "VERIFIED (exact text found on cited page)",
+    "also_in": []
+  },
+  {
+    "quantity": "Worked example: moderate work, acclimatized, 60 min/h",
+    "threshold": "27.8 °C WBGT (82 °F) at about 300 kcal/h (348.9 W)",
+    "meaning": "NIOSH's own worked example of the REL",
+    "wbgt_variant": "Yes: NIOSH WBGT (°C-WBGT), US occupational guidance; not an Indian standard. M = metabolic rate in watts, for a 70 kg 'standard man'.",
+    "doc_id": "NIOSH_2016_106_HEAT",
+    "page": 36,
+    "verbatim_excerpt": "REL curve at a WBGT of 27.8°C",
+    "notes": "Only worked number NIOSH gives in this section. Do not generalise to other workloads.",
+    "verified_modes": [
+      "layout",
+      "raw"
+    ],
+    "verification": "VERIFIED (exact text found on cited page)",
+    "also_in": []
+  },
+  {
+    "quantity": "India occupational WBGT limit",
+    "threshold": "None found: Indian OSH Code sets no actionable heat exposure limits",
+    "meaning": "Gap finding (secondary source)",
+    "wbgt_variant": "n/a (gap)",
+    "doc_id": "springer_paper",
+    "page": 11,
+    "verbatim_excerpt": "fails to set actionable exposure limits or standards",
+    "notes": "Secondary: peer-reviewed review in Discover Public Health (2026), not an official document. Supports the conflict/gap entry that no Indian WBGT limits were located.",
+    "verified_modes": [
+      "layout",
+      "raw"
+    ],
+    "verification": "VERIFIED (exact text found on cited page)",
+    "also_in": []
+  },
+  {
+    "quantity": "Heat wave declaration rule",
+    "threshold": "Criteria met at ≥ 2 stations in a meteorological sub-division for ≥ 2 consecutive days; declared on the second day",
+    "meaning": "How IMD declares a heat wave",
+    "wbgt_variant": "n/a (not WBGT)",
+    "doc_id": "NPCCHH_NAP_HRI",
+    "page": 20,
+    "verbatim_excerpt": "To declare a heatwave, the above criteria should be met for at least two stations in a",
+    "notes": "Printed p.1. Quote is the verbatim first line; the sentence continues on the next line ('Meteorological sub-division for at least two consecutive days. A heatwave will be declared on the second day.'). Also gives 37 °C for coastal and 30 °C for hilly regions.",
+    "verified_modes": [
+      "layout",
+      "raw"
+    ],
+    "verification": "VERIFIED (exact text found on cited page)",
+    "also_in": []
+  },
+  {
+    "quantity": "Heatstroke clinical definition",
+    "threshold": "Core temperature ≥ 40 °C (104 °F) with altered mental status",
+    "meaning": "Clinical case definition, not an ambient threshold",
+    "wbgt_variant": "n/a (not WBGT)",
+    "doc_id": "NPCCHH_NAP_HRI",
+    "page": 21,
+    "verbatim_excerpt": "Core Temp ≥40°C OR ≥104°F",
+    "notes": "Printed p.2. Clinical, not weather.",
+    "verified_modes": [
+      "raw"
+    ],
+    "verification": "VERIFIED (exact text found on cited page)",
+    "also_in": []
+  },
+  {
+    "quantity": "Heat stroke core temperature (manual, section 3)",
+    "threshold": "≥ 40 °C, stated with '(103°F or higher)'",
+    "meaning": "Heat stroke sign",
+    "wbgt_variant": "n/a (not WBGT)",
+    "doc_id": "NPCCHH_TRAINING_MANUAL_MO",
+    "page": 10,
+    "verbatim_excerpt": "core temperature ≥ 40°C, (103°F",
+    "notes": "INTERNAL INCONSISTENCY: 40 °C is 104 °F, and the manual's own treatment protocol (p.13) and algorithm (p.16) use 104 °F / 40 °C. The National Action Plan says ≥40°C or ≥104°F. Treat 103 °F as a source typo; the quote is kept as printed. NPCCHH Training Manual for Medical Officers (PDF page = printed page). ",
+    "verified_modes": [
+      "layout",
+      "raw"
+    ],
+    "verification": "VERIFIED (exact text found on cited page)",
+    "also_in": []
+  },
+  {
+    "quantity": "Cooling target for heat stroke",
+    "threshold": "Core temperature 39 °C or below within 10-40 min, and 38.5 °C or below within 2 hours",
+    "meaning": "Clinical cooling target",
+    "wbgt_variant": "n/a (not WBGT)",
+    "doc_id": "NPCCHH_TRAINING_MANUAL_MO",
+    "page": 15,
+    "verbatim_excerpt": "cool the core temperature to 39°C or below within 10–40 min and to 38.5 °C or below within 2hrs",
+    "notes": "The NAP says not to cool below 38 °C (NAP p.26 PDF). Text layer lacks word spaces; quote matches ignoring spaces. NPCCHH Training Manual for Medical Officers (PDF page = printed page). ",
+    "verified_modes": [
+      "layout",
+      "raw"
+    ],
+    "verification": "VERIFIED (exact text found on cited page)",
+    "also_in": []
+  },
+  {
+    "quantity": "Sickroom temperature during heat stroke cooling",
+    "threshold": "Adjust room temperature to 20–24 °C",
+    "meaning": "Clinical setting for treating heat stroke, not a public advice value",
+    "wbgt_variant": "n/a (not WBGT)",
+    "doc_id": "NPCCHH_TRAINING_MANUAL_MO",
+    "page": 15,
+    "verbatim_excerpt": "Adjust the room temperature to 20°C–24°C",
+    "notes": "Not comparable to the 24/25 °C public AC advice (BEE/CEA 24 °C, Delhi HAP 25 degree). Text layer lacks word spaces. NPCCHH Training Manual for Medical Officers (PDF page = printed page). ",
+    "verified_modes": [
+      "layout",
+      "raw"
+    ],
+    "verification": "VERIFIED (exact text found on cited page)",
+    "also_in": []
+  },
+  {
+    "quantity": "IMD 'Hot & Humid Weather' definition",
+    "threshold": "Station Tmax 3 °C above normal AND above-normal relative humidity (no RH value given)",
+    "meaning": "IMD's only found official hot-and-humid criterion; qualitative on humidity",
+    "wbgt_variant": "n/a (not WBGT)",
+    "doc_id": "IMD_HW_FAQ",
+    "page": 2,
+    "verbatim_excerpt": "When observed maximum temperatures over any station remains 3°C above normal along with the above normal relative humidity, it is termed as Hot & Humid Weather over that station.",
+    "notes": "Part D2. Undated FAQ. Tied to Tmax departure, so it is not an independent wet-bulb or heat-index threshold. No RH threshold, no colour category.",
+    "verified_modes": [
+      "layout",
+      "raw"
+    ],
+    "verification": "VERIFIED (exact text found on cited page)",
+    "also_in": []
+  },
+  {
+    "quantity": "IMD heat index (definition only)",
+    "threshold": "No threshold or category given",
+    "meaning": "FAQ defines heat index as combining air temperature and relative humidity",
+    "wbgt_variant": "n/a (not WBGT)",
+    "doc_id": "IMD_HW_FAQ",
+    "page": 7,
+    "verbatim_excerpt": "The heat index is the combination of air temperature and relative humidity",
+    "notes": "Part D2. The FAQ explains the concept but gives no values, so there is no official IMD heat-index threshold in this document.",
+    "verified_modes": [
+      "layout",
+      "raw"
+    ],
+    "verification": "VERIFIED (exact text found on cited page)",
+    "also_in": []
+  },
+  {
+    "quantity": "IMD heat-wave warning lead time (FAQ)",
+    "threshold": "5 days (1600 hrs IST bulletin)",
+    "meaning": "IMD FAQ: evening special bulletin warns for the next 5 days",
+    "wbgt_variant": "n/a (not WBGT)",
+    "doc_id": "IMD_HW_FAQ",
+    "page": 6,
+    "verbatim_excerpt": "evening bulletin (issued at 1600 hours IST) provides heat wave warning for next 5 days",
+    "notes": "Part D3. Undated FAQ. Conflicts with NDMA 2019 and NCDC 2025 (4 days); see the next two rows.",
+    "verified_modes": [
+      "layout",
+      "raw"
+    ],
+    "verification": "VERIFIED (exact text found on cited page)",
+    "also_in": []
+  },
+  {
+    "quantity": "IMD heat-specific warning lead time (NDMA 2019)",
+    "threshold": "4 days, from 3 April 2017",
+    "meaning": "NDMA 2019 (printed p.14): exclusively heat-related warnings valid for next four days, issued ~1600 hrs IST; general short-to-medium range forecasts valid 5 days",
+    "wbgt_variant": "n/a (not WBGT)",
+    "doc_id": "NDMA_HW_GUIDELINES_2019",
+    "page": 34,
+    "verbatim_excerpt": "These warnings, valid for the next four days, are issued around 1600 hours IST",
+    "notes": "Part D3. Verified visually against the page image. This likely explains the conflict: the 2017 heat-warning system was 4 days, the general forecast 5 days, and the undated FAQ says 5 for the heat bulletin.",
+    "verified_modes": [
+      "ocr"
+    ],
+    "verification": "VERIFIED (scanned page: OCR match and checked against page image)",
+    "printed_page": 14,
+    "also_in": []
+  },
+  {
+    "quantity": "IMD heat-wave warning lead time (NCDC 2025)",
+    "threshold": "4 days",
+    "meaning": "NCDC 2025 state advisory: IMD daily warning after 1600 hrs IST with forecast for next four days",
+    "wbgt_variant": "n/a (not WBGT)",
+    "doc_id": "NCDC_ADVISORY_STATES_2025",
+    "page": 2,
+    "verbatim_excerpt": "daily after 1600 hours IST with a forecast for next four days",
+    "notes": "Part D3. Repeats the 4-day figure; may simply copy the 2017 NDMA wording.",
+    "verified_modes": [
+      "layout",
+      "raw"
+    ],
+    "verification": "VERIFIED (exact text found on cited page)",
+    "also_in": []
+  },
+  {
+    "quantity": "IMD heat-wave warning lead time (PIB 2023)",
+    "threshold": "7 days from July 2023 (5 days before), plus 2-day outlook",
+    "meaning": "IMD colour-coded warnings incl. heat wave issued daily for the next five days; extended to seven days from July 2023",
+    "wbgt_variant": "n/a (not WBGT)",
+    "doc_id": "HEAT_INDEX_PRESS_RELEASE_2023",
+    "page": 1,
+    "verbatim_excerpt": "the forecast and the colour coded warnings for severe weather including heat wave warning are issued on daily basis for next five days (next seven days from July 2023) with outlook for another two days.",
+    "notes": "PIB_26JUL2023_LOKSABHA_REPLY (PIB Delhi, Release ID 1942897, 26 Jul 2023, Ministry of Earth Sciences, screenshot, verified visually). Part D3. Government statement (Lok Sabha reply by the Minister of Earth Sciences). Resolves the conflict: the current figure is 7 days (5 days before July 2023); NDMA 2019 and NCDC 2025 reflect the 2017 four-day heat system.",
+    "verified_modes": [],
+    "verification": "VERIFIED visually against page image (image-only source, no text layer)",
+    "also_in": []
+  },
+  {
+    "quantity": "IMD experimental Heat Index (launch statement)",
+    "threshold": "No thresholds or categories given",
+    "meaning": "IMD launched an experimental Heat Index giving general guidance where apparent temperature (temperature plus humidity) is high",
+    "wbgt_variant": "n/a (not WBGT)",
+    "doc_id": "HEAT_INDEX_PRESS_RELEASE_2_2023",
+    "page": 1,
+    "verbatim_excerpt": "IMD has recently launched experimental Heat Index to provide general guidance for the regions within India where, the apparent temperature/feel like temperature (considering the impact of Humidity along with the temperature) are on higher side causing the discomfort for the human beings.",
+    "notes": "PIB_26JUL2023_LOKSABHA_REPLY (PIB Delhi, Release ID 1942897, 26 Jul 2023, Ministry of Earth Sciences, screenshot, verified visually). Part D2. The release names the product and its purpose only; the heat index thresholds and colour categories were not found in any document read.",
+    "verified_modes": [],
+    "verification": "VERIFIED visually against page image (image-only source, no text layer)",
+    "also_in": []
+  },
+  {
+    "quantity": "IMD heat-wave hazard analysis inputs (PIB 2023)",
+    "threshold": "Maximum temperature, minimum temperature, humidity, wind, frequency",
+    "meaning": "IMD hazard analysis for March-June considers humidity among its inputs",
+    "wbgt_variant": "n/a (not WBGT)",
+    "doc_id": "HEAT_INDEX_PRESS_RELEASE_2_2023",
+    "page": 1,
+    "verbatim_excerpt": "considering the Maximum Temperature, Minimum Temperature, Humidity, Wind and Frequency is being carried out.",
+    "notes": "PIB_26JUL2023_LOKSABHA_REPLY (PIB Delhi, Release ID 1942897, 26 Jul 2023, Ministry of Earth Sciences, screenshot, verified visually). Part D2. Shows IMD treats humidity as an aggravating factor in hazard scoring; no numeric rule given here.",
+    "verified_modes": [],
+    "verification": "VERIFIED visually against page image (image-only source, no text layer)",
+    "also_in": []
+  },
+  {
+    "quantity": "IMD 'hot and humid' wording in current guidance (PIB Apr 2026)",
+    "threshold": "No threshold given",
+    "meaning": "IMD press release of 25 Apr 2026 still uses 'hot and humid' for coastal and eastern regions",
+    "wbgt_variant": "n/a (not WBGT)",
+    "doc_id": "HEATWAVE_GUIDANCE_PRESS_RELEASE_2026",
+    "page": 1,
+    "verbatim_excerpt": "hot and humid conditions are expected over coastal and eastern regions",
+    "notes": "PIB Delhi, Release ID 2255487, 25 Apr 2026, screenshot, verified visually. Part D2. Qualitative use only; Delhi is listed in the same release for heatwave (dry) conditions, not humid heat.",
+    "verified_modes": [],
+    "verification": "VERIFIED visually against page image (image-only source, no text layer)",
+    "also_in": []
+  },
+  {
+    "quantity": "IMD heat-wave outlook horizon (PIB Apr 2026)",
+    "threshold": "7 days (outlook), no warning lead time stated",
+    "meaning": "IMD says heatwave conditions likely to persist over the next 7 days",
+    "wbgt_variant": "n/a (not WBGT)",
+    "doc_id": "HEATWAVE_GUIDANCE_PRESS_RELEASE_2026",
+    "page": 1,
+    "verbatim_excerpt": "heatwave conditions are likely to persist across multiple regions over the next 7 days",
+    "notes": "PIB Delhi, Release ID 2255487, 25 Apr 2026. Part D3. An outlook, not a statement of the formal warning lead time.",
+    "verified_modes": [],
+    "verification": "VERIFIED visually against page image (image-only source, no text layer)",
+    "also_in": []
+  },
+  {
+    "quantity": "Delhi humid-heat risk relative to other metros (IMD-authored paper)",
+    "threshold": "Statement, no threshold",
+    "meaning": "Delhi has lower heat stress than coastal metros because of lower relative humidity, despite higher temperature",
+    "wbgt_variant": "n/a (not WBGT)",
+    "doc_id": "HOT_WEATHER_HAZARD_ANALYSIS_2022",
+    "page": 2,
+    "verbatim_excerpt": "Delhi witnesses lower heat stress because of lower RH although temperature is higher in this region.",
+    "notes": "Authors from IMD (Ministry of Earth Sciences); Scientific Reports 12:19768 (2022). The paper is summarising an earlier study of Delhi, Kolkata, Mumbai and Chennai (1990-2019, its ref 28), so this is a secondary statement. Part D1 context: supports treating Delhi humid-heat events as less common than dry-heat events; does not give dated events.",
+    "verified_modes": [
+      "layout",
+      "raw"
+    ],
+    "verification": "VERIFIED (exact text found on cited page)",
+    "also_in": []
+  },
+  {
+    "quantity": "Delhi vs Chennai heat-stroke risk (same paper)",
+    "threshold": "Statement, no threshold",
+    "meaning": "Delhi has more heat waves but heat-stress and heat-stroke risk is maximum in Chennai because of high temperature with higher RH",
+    "wbgt_variant": "n/a (not WBGT)",
+    "doc_id": "HOT_WEATHER_HAZARD_ANALYSIS_2022",
+    "page": 2,
+    "verbatim_excerpt": "While Delhi experiences more heat waves, the risks of heat stress and dangerous-heat stroke events are maximum in Chennai due to high temperature along with higher RH.",
+    "notes": "Same caveat: secondary summary of the 1990-2019 four-city study. Part D1 context.",
+    "verified_modes": [
+      "layout",
+      "raw"
+    ],
+    "verification": "VERIFIED (exact text found on cited page)",
+    "also_in": []
+  },
+  {
+    "quantity": "Tmax – Ahmedabad alert table (Red)",
+    "threshold": "≥ 45 °C",
+    "meaning": "'Extreme Heat Alert Day' (Red Alert)",
+    "wbgt_variant": "n/a (not WBGT)",
+    "doc_id": "AHMEDABAD_HAP_2018",
+    "page": 3,
+    "verbatim_excerpt": "Red Alert Extreme Heat Alert Day ≥ 45",
+    "notes": "Quote is truncated before the degree sign (the PDF encodes it as a private-use character). Printed page 2 of the document. Ahmedabad (AMC) alert table in the 2019 update; precedent from another city, not Delhi policy. Its temperature bands differ from Delhi's. ",
+    "verified_modes": [
+      "layout",
+      "raw"
+    ],
+    "verification": "VERIFIED (exact text found on cited page)",
+    "also_in": []
+  },
+  {
+    "quantity": "Tmax – Ahmedabad alert table (Orange)",
+    "threshold": "43.1 – 44.9 °C",
+    "meaning": "'Heat Alert Day' (Orange Alert)",
+    "wbgt_variant": "n/a (not WBGT)",
+    "doc_id": "AHMEDABAD_HAP_2018",
+    "page": 3,
+    "verbatim_excerpt": "Orange Alert Heat Alert Day 43.1",
+    "notes": "Quote is truncated before the degree sign (the PDF encodes it as a private-use character). Printed page 2 of the document. Ahmedabad (AMC) alert table in the 2019 update; precedent from another city, not Delhi policy. Its temperature bands differ from Delhi's. ",
+    "verified_modes": [
+      "layout",
+      "raw"
+    ],
+    "verification": "VERIFIED (exact text found on cited page)",
+    "also_in": []
+  },
+  {
+    "quantity": "Tmax – Ahmedabad alert table (Yellow)",
+    "threshold": "41.1 – 43 °C",
+    "meaning": "'Hot Day Advisory' (Yellow Alert)",
+    "wbgt_variant": "n/a (not WBGT)",
+    "doc_id": "AHMEDABAD_HAP_2018",
+    "page": 3,
+    "verbatim_excerpt": "Yellow Alert Hot Day Advisory 41.1",
+    "notes": "Quote is truncated before the degree sign (the PDF encodes it as a private-use character). Printed page 2 of the document. Ahmedabad (AMC) alert table in the 2019 update; precedent from another city, not Delhi policy. Its temperature bands differ from Delhi's. ",
+    "verified_modes": [
+      "layout",
+      "raw"
+    ],
+    "verification": "VERIFIED (exact text found on cited page)",
+    "also_in": []
+  },
+  {
+    "quantity": "Tmax – Ahmedabad alert table (White)",
+    "threshold": "≤ 41 °C",
+    "meaning": "'No Alert' (White)",
+    "wbgt_variant": "n/a (not WBGT)",
+    "doc_id": "AHMEDABAD_HAP_2018",
+    "page": 3,
+    "verbatim_excerpt": "White No Alert ≤41",
+    "notes": "Quote is truncated before the degree sign (the PDF encodes it as a private-use character). Printed page 2 of the document. Ahmedabad (AMC) alert table in the 2019 update; precedent from another city, not Delhi policy. Its temperature bands differ from Delhi's. ",
+    "verified_modes": [
+      "layout",
+      "raw"
+    ],
+    "verification": "VERIFIED (exact text found on cited page)",
+    "also_in": []
+  },
+  {
+    "quantity": "Delhi HAP 'colour signals' – Red (departure basis)",
+    "threshold": "Normal maximum temperature increase of 6 °C or more",
+    "meaning": "'Extreme Heat Alert for the Day' (Red Alert, Severe Condition)",
+    "wbgt_variant": "n/a (not WBGT)",
+    "doc_id": "DELHI_HAP_2025",
+    "page": 45,
+    "verbatim_excerpt": "Red Alert (Severe Condition) Extreme Heat Alert for the Day Normal Maximum Temp increase 6° C to more",
+    "notes": "Delhi HAP 2025 PDF p.45 (printed p.45), section 'Identification of Color Signals for high Alerts'. The table is an image with no text layer; read from the page image and verified visually. A third colour scheme in the same plan, based on departure from normal maximum temperature. ",
+    "verified_modes": [],
+    "verification": "VERIFIED visually against page image (scanned page inside a text PDF, no text layer)",
+    "also_in": []
+  },
+  {
+    "quantity": "Delhi HAP 'colour signals' – Orange (departure basis)",
+    "threshold": "Normal maximum temperature increase of 4 °C to 5 °C",
+    "meaning": "'Heat Alert Day' (Orange Alert, Moderate Condition)",
+    "wbgt_variant": "n/a (not WBGT)",
+    "doc_id": "DELHI_HAP_2025",
+    "page": 45,
+    "verbatim_excerpt": "Orange Alert (Moderate Condition) Heat Alert Day Normal Maximum Temp increase 4° C to 5° C",
+    "notes": "Delhi HAP 2025 PDF p.45 (printed p.45), section 'Identification of Color Signals for high Alerts'. The table is an image with no text layer; read from the page image and verified visually. A third colour scheme in the same plan, based on departure from normal maximum temperature. ",
+    "verified_modes": [],
+    "verification": "VERIFIED visually against page image (scanned page inside a text PDF, no text layer)",
+    "also_in": []
+  },
+  {
+    "quantity": "Delhi HAP 'colour signals' – Yellow (departure basis)",
+    "threshold": "Nearby normal maximum temperature",
+    "meaning": "'Hot Day' (Yellow Alert, Heat-wave Warning)",
+    "wbgt_variant": "n/a (not WBGT)",
+    "doc_id": "DELHI_HAP_2025",
+    "page": 45,
+    "verbatim_excerpt": "Yellow Alert (Heat-wave Warning) Hot Day Nearby Normal Maximum Temp.",
+    "notes": "Delhi HAP 2025 PDF p.45 (printed p.45), section 'Identification of Color Signals for high Alerts'. The table is an image with no text layer; read from the page image and verified visually. A third colour scheme in the same plan, based on departure from normal maximum temperature. Yellow here is labelled 'Heat-wave Warning' yet defined as near-normal temperature, which conflicts with IMD's Yellow (heat wave on 2 days).",
+    "verified_modes": [],
+    "verification": "VERIFIED visually against page image (scanned page inside a text PDF, no text layer)",
+    "also_in": []
+  },
+  {
+    "quantity": "Delhi HAP 'colour signals' – White (departure basis)",
+    "threshold": "Below normal maximum temperature",
+    "meaning": "'Normal Day' (White, Normal)",
+    "wbgt_variant": "n/a (not WBGT)",
+    "doc_id": "DELHI_HAP_2025",
+    "page": 45,
+    "verbatim_excerpt": "White (Normal) Normal Day Below Normal Maximum Temp.",
+    "notes": "Delhi HAP 2025 PDF p.45 (printed p.45), section 'Identification of Color Signals for high Alerts'. The table is an image with no text layer; read from the page image and verified visually. A third colour scheme in the same plan, based on departure from normal maximum temperature. This scheme uses White, where the p.10 table and IMD use Green.",
+    "verified_modes": [],
+    "verification": "VERIFIED visually against page image (scanned page inside a text PDF, no text layer)",
+    "also_in": []
+  },
+  {
+    "quantity": "Delhi HAP alert table – Green (no alert level)",
+    "threshold": "Maximum temperatures are near normal; 'No Action'",
+    "meaning": "'Normal Day' (Green, No Action)",
+    "wbgt_variant": "n/a (not WBGT)",
+    "doc_id": "DELHI_HAP_2025",
+    "page": 10,
+    "verbatim_excerpt": "Green (No Action) Normal Day Maximum temperatures are near",
+    "notes": "Table caption: 'Heat Alert Thresholds for Delhi City (source: NDMA)'. Green carries no actions of its own in either document.",
+    "verified_modes": [
+      "layout"
+    ],
+    "verification": "VERIFIED (exact text found on cited page)",
+    "also_in": []
+  },
+  {
+    "quantity": "Delhi HAP alert table – Red vs Orange check",
+    "threshold": "Both read '>= 45°C'; no second condition",
+    "meaning": "'Extreme heat alert day' (Red) and 'Heat alert day' (Orange)",
+    "wbgt_variant": "n/a (not WBGT)",
+    "doc_id": "DELHI_HAP_2025",
+    "page": 10,
+    "verbatim_excerpt": "Extreme heat alert day",
+    "notes": "Part E, checked against the page image 7 Oct 2026. Page 10 of HAP 2025 and page 11 of HAP 2024-25 print the same table: Orange '>= 45°C' and Red '>= 45°C'; no consecutive-day, heat-index, night-temperature or humidity condition appears in either cell. Treated as a printing duplication; the plans do not say so.",
+    "verified_modes": [
+      "raw"
+    ],
+    "verification": "VERIFIED (exact text found on cited page)",
+    "also_in": []
+  },
+  {
+    "quantity": "IMD colour table – Green (no alert level)",
+    "threshold": "Maximum temperatures near normal; suggested actions 'Nil'",
+    "meaning": "Green (No action): comfortable temperature, no cautionary action required",
+    "wbgt_variant": "n/a (not WBGT)",
+    "doc_id": "IMD_HW_FAQ",
+    "page": 8,
+    "verbatim_excerpt": "Comfortable temperature. No cautionary action required.",
+    "notes": "Part E, checked against the page image 7 Oct 2026. IMD FAQ p.8, colour table; Red condition (i) read from the image as 'Severe heat wave persists for more than 2 days.'",
+    "verified_modes": [
+      "raw"
+    ],
+    "verification": "VERIFIED (exact text found on cited page)",
+    "also_in": []
+  },
+  {
+    "quantity": "Delhi HAP – what activates the plan's heat alert",
+    "threshold": "Department of Meteorology's weather forecast (no colour named)",
+    "meaning": "The Municipal Corporation activates the citywide heat alert and response mechanism based on the forecast",
+    "wbgt_variant": "n/a (not WBGT)",
+    "doc_id": "DELHI_HAP_2025",
+    "page": 79,
+    "verbatim_excerpt": "Activates the citywide heat alert and response mechanism based, on the",
+    "notes": "No sentence says the plan is activated at an IMD or HAP colour. Same wording in DELHI_HAP_2024_25 (printed p.57).",
+    "verified_modes": [
+      "layout",
+      "raw"
+    ],
+    "verification": "VERIFIED (exact text found on cited page)",
+    "also_in": []
+  },
+  {
+    "quantity": "Delhi HAP – 'Heat Alert Severity' cross-reference",
+    "threshold": "Refers to a section that is not in the plan",
+    "meaning": "The plan says to monitor the alert level 'see section Heat Alert Severity'",
+    "wbgt_variant": "n/a (not WBGT)",
+    "doc_id": "DELHI_HAP_2025",
+    "page": 79,
+    "verbatim_excerpt": "Monitors the heat alert level based on the weather temperature severity forecast",
+    "notes": "No section with that title exists in HAP 2025 (searched the full text). The severity levels are only in the tables on pp.10 and 45.",
+    "verified_modes": [
+      "layout",
+      "raw"
+    ],
+    "verification": "VERIFIED (exact text found on cited page)",
+    "also_in": []
+  }
+]

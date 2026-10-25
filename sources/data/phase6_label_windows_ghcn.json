@@ -1,0 +1,70 @@
+{
+ "station_id": "IN022021900",
+ "source_file": "pdfs/SAFDARJUNG_GHCN_DAILY.gz (GHCN-Daily, user-supplied)",
+ "note": "derived from GHCN-Daily, NOT IMD-declared heat-wave dates",
+ "windows": {
+  "1998_IMD_NWI_21-28May": {
+   "window": "19980521-19980528",
+   "days_with_data": 8,
+   "days_expected": 8,
+   "max_tmax": 46.5,
+   "max_date": "19980528",
+   "days_ge40": 8,
+   "days_ge45": 4
+  },
+  "1998_brief_24May-1Jun": {
+   "window": "19980524-19980601",
+   "days_with_data": 9,
+   "days_expected": null,
+   "max_tmax": 46.5,
+   "max_date": "19980528",
+   "days_ge40": 9,
+   "days_ge45": 4
+  },
+  "2002_IMD_NWI_1-8May": {
+   "window": "20020501-20020508",
+   "days_with_data": 8,
+   "days_expected": 8,
+   "max_tmax": 43.0,
+   "max_date": "20020508",
+   "days_ge40": 5,
+   "days_ge45": 0
+  },
+  "2002_brief_10-20May": {
+   "window": "20020510-20020520",
+   "days_with_data": 11,
+   "days_expected": 11,
+   "max_tmax": 46.0,
+   "max_date": "20020518",
+   "days_ge40": 11,
+   "days_ge45": 1
+  },
+  "2010_IMD_NWI_8-20Apr": {
+   "window": "20100408-20100420",
+   "days_with_data": 10,
+   "days_expected": 13,
+   "max_tmax": 42.9,
+   "max_date": "20100416",
+   "days_ge40": 8,
+   "days_ge45": 0
+  },
+  "2010_brief_10-20Apr": {
+   "window": "20100410-20100420",
+   "days_with_data": 8,
+   "days_expected": 11,
+   "max_tmax": 42.9,
+   "max_date": "20100416",
+   "days_ge40": 7,
+   "days_ge45": 0
+  },
+  "2015_brief_22-26May": {
+   "window": "20150522-20150526",
+   "days_with_data": 5,
+   "days_expected": 5,
+   "max_tmax": 45.5,
+   "max_date": "20150525",
+   "days_ge40": 5,
+   "days_ge45": 2
+  }
+ }
+}

@@ -1,0 +1,35 @@
+[
+ {
+  "period_in_brief": "~24 May-1 Jun 1998",
+  "imd_nwi_spell": "21-28 May 1998 (heat wave, 43.4 C, 8 d); 15-28 May 1998 (severe)",
+  "source": "IMD_MONOGRAPH_HEAT_COLD_WAVES Table 4.2 PDF p61; Table 5.1 PDF p77",
+  "delhi_declared_dates": null,
+  "peak_tmax_safdarjung": null,
+  "verdict": "partly supported; dates differ"
+ },
+ {
+  "period_in_brief": "~10-20 May 2002",
+  "imd_nwi_spell": "1-8 May 2002 (severe, Table 5.1 only; absent from Table 4.2)",
+  "source": "IMD_MONOGRAPH_HEAT_COLD_WAVES Table 5.1 PDF p77",
+  "delhi_declared_dates": null,
+  "peak_tmax_safdarjung": null,
+  "verdict": "not supported as stated"
+ },
+ {
+  "period_in_brief": "~10-20 Apr 2010",
+  "imd_nwi_spell": "8-20 Apr 2010 (heat wave, 43.1 C, 13 d); severe 5-11 and 13-19 Apr",
+  "source": "IMD_MONOGRAPH_HEAT_COLD_WAVES Table 4.2 PDF p61; Table 5.1 PDF p77; IMD_CLIMATE_SUMMARY_2010 PDF p21",
+  "delhi_declared_dates": null,
+  "peak_tmax_safdarjung": null,
+  "verdict": "supported at region level"
+ },
+ {
+  "period_in_brief": "~22-26 May 2015",
+  "imd_nwi_spell": "none listed for 2015",
+  "source": "IMD_CLIMATE_SUMMARY_2015 PDF p5 and Table 2 PDF p25 (New Delhi AP annual max 45.5 C on 25 May)",
+  "delhi_declared_dates": null,
+  "peak_tmax_safdarjung": null,
+  "station_note": "'New Delhi AP' is the airport station, not labelled Safdarjung",
+  "verdict": "weakly supported for Delhi"
+ }
+]

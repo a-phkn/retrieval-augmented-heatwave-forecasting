@@ -1,0 +1,35 @@
+# Phase 6 Part D result: humid heat, IMD humid-heat wording, warning lead time
+
+Status 6 Oct 2026 (updated). Verified quotes are in `phase6_thresholds.json` (58 rows, 0 hard failures; `phase6_candidate_actions.json` unchanged at 135). The PIB releases were supplied as screenshots and are marked "verified visually".
+
+## D1. Documented humid-heat events in Delhi before 2019 — NOT FOUND
+No dated Delhi humid-heat event supported by an IMD statement, a peer-reviewed study or a government report was found. Where I looked:
+- IMD Annual Climate Summaries 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017: no "humid", "sultry" or "muggy" wording about Delhi (text search; 2011 is image-only, read by OCR, which is rougher). The 2018 summary is not in the library.
+- IMD monograph, IMD MAUSAM papers (Pai 2004, 2013), IMD FAQ, NDMA 2019, Delhi HAP 2024-25 and 2025, NCDC 2024-25, WHO/WMO 2015: humidity discussed generally, no dated episode.
+- 'Hot weather hazard analysis over India', Scientific Reports 12:19768 (2022), by IMD authors (PDF p.2): says a 1990-2019 study of Delhi, Kolkata, Mumbai and Chennai found 'Delhi witnesses lower heat stress because of lower RH although temperature is higher in this region', and that heat-stress and heat-stroke risk is highest in Chennai. This is a secondary summary and gives no dates. It supports treating Delhi humid-heat as less common than dry heat. Quotes added to the JSON.
+- Ambika, Rajeev and Huber (2024), 'Global warming amplifies outdoor extreme moist heat during the Indian summer monsoon', Earth's Future: monsoon-break WBGT extremes across India (mainly the Indo-Gangetic plain and coasts), 1951-2020. Delhi is not named and no dated Delhi episodes are given. Not usable as an event list.
+- Station data: the GHCN-Daily file holds Tmax, Tmin and rain only, so it cannot show humid heat.
+Not accessible to you (paywalled): Hajat et al. 2005 (Delhi heat deaths), Mishra et al. 2020, and the 2024 Climate Dynamics paper on dry and moist heat discomfort. Those would be the next places to check.
+**Conclusion:** the humid-heat label has no outside event list from official or peer-reviewed sources. That is a valid result. Options: treat the label as validated only by physical reasoning, or check it against reanalysis or IMD hourly humidity data (a data check, not a documented-event check).
+
+## D2. Does IMD define or warn about humid heat? — Yes, qualitatively; no humid-heat thresholds
+- **'Hot and Humid Weather' (IMD heat-wave FAQ, PDF p.2):** 'When observed maximum temperatures over any station remains 3°C above normal along with the above normal relative humidity, it is termed as Hot & Humid Weather over that station.' No RH value, no colour category. It rides on a Tmax departure, so it is not an independent wet-bulb or WBGT threshold.
+- **Heat index (same FAQ, PDF p.7):** defined as air temperature plus relative humidity (also apparent temperature). No thresholds or categories.
+- **Experimental IMD Heat Index (PIB, 26 Jul 2023, Release ID 1942897, read in full from the screenshots, verified visually):** 'IMD has recently launched experimental Heat Index to provide general guidance for the regions within India where, the apparent temperature/feel like temperature (considering the impact of Humidity along with the temperature) are on higher side causing the discomfort for the human beings.' The release names the product and purpose only. Its thresholds and colour categories were not found in any document available; the IMD guidance web page returned a server error.
+- **Humidity in IMD's hazard analysis (same release):** IMD's heat-wave hazard analysis for March-June considers 'Maximum Temperature, Minimum Temperature, Humidity, Wind and Frequency'.
+- **Current wording (PIB, 25 Apr 2026, Release ID 2255487, verified visually):** 'hot and humid conditions are expected over coastal and eastern regions'. Delhi is listed in that release for heatwave (dry) conditions.
+- IMD-authored Sci Rep 2022 (PDF p.2): says heat-index equations based on Steadman are limited to air temperature above 26 C and relative humidity above 40%, and are 'not climatologically found to be valid' over central, north-west and other interior parts of India in summer or pre-monsoon seasons. That is paper wording about validity, not an IMD operational threshold.
+- **How to word the advisory so it does not contradict IMD:** present humid heat as a separate, labelled note from the team's own physical index; do not quote a WBGT or heat-index threshold as IMD's; if useful, borrow IMD's own phrasing 'hot and humid' for the note.
+
+## D3. Current IMD heat-wave warning lead time — resolved: 7 days since July 2023
+- **Conclusion: IMD's colour-coded warnings, including heat wave, have been issued for the next seven days since July 2023** (with a 2-day outlook beyond). PIB, 26 Jul 2023 (Release ID 1942897; Minister of Earth Sciences, Lok Sabha reply; read in full from the screenshots, verified visually): 'the forecast and the colour coded warnings for severe weather including heat wave warning are issued on daily basis for next five days (next seven days from July 2023) with outlook for another two days.' Five days was the figure before July 2023.
+- **Older figures that explain the conflict:** the IMD heat-wave FAQ (undated; PDF p.6) says the 1600 hrs evening bulletin gives 'heat wave warning for next 5 days'. NDMA 2019 (PDF p.34, printed p.14; verified OCR match and page image) says 'These warnings, valid for the next four days, are issued around 1600 hours IST' for the exclusively heat-related system 'introduced with effect from 03 April, 2017'. NCDC 2025 (PDF p.2) repeats 'forecast for next four days'. So 4 days (2017 system) and 5 days (FAQ, pre-July 2023) are both superseded by the 7-day statement.
+- PIB, 25 Apr 2026 (Release ID 2255487; verified visually): 'heatwave conditions are likely to persist across multiple regions over the next 7 days'. This is an outlook, not a lead-time statement, but it is consistent with 7 days.
+- **Suggested wording:** 'IMD issues colour-coded heat-wave warnings up to seven days ahead (PIB, July 2023); older documents (NDMA 2019, NCDC 2025, the IMD FAQ) cite four or five days.' A 5-day model sits inside IMD's current 7-day window. Caveat: the 2023 statement is a government reply covering all severe-weather warnings; I found no IMD bulletin that states the heat-wave warning horizon on its own.
+
+## D4. Housekeeping — done
+Report totals updated to 135 actions and 58 thresholds throughout; the AC 24 C line says the BEE notice (PIB, 6 Jan 2020) was read and checked visually; the section 2 breakdown uses current counts; new section 16 summarises Part D. Verifier re-run: 135 actions, 58 thresholds, 0 hard failures.
+
+## Still missing (optional)
+- IMD Annual Climate Summary 2018: https://www.imdpune.gov.in/cmpg/Product/Annual_Climate_Summary/annual_summary_2018.pdf (unlikely to change D1).
+- Any IMD page or document giving Heat Index categories and thresholds. The mausam.imd.gov.in guidance page returned an error; try again later or look for an IMD 'Heat Index' forecast product page.

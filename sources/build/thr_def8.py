@@ -1,0 +1,22 @@
+# -*- coding: utf-8 -*-
+from thr_def import T
+NA="n/a (not WBGT)"
+H25="DELHI_HAP_2025"; AHD="AHMEDABAD_HAP_2018"; IMD="IMD_HW_FAQ"
+PN="Part E, checked against the page image 7 Oct 2026. "
+AN="Quote is truncated before the degree sign (the PDF encodes it as a private-use character). Printed page 2 of the document. Ahmedabad (AMC) alert table in the 2019 update; precedent from another city, not Delhi policy. Its temperature bands differ from Delhi's. "
+P45="Delhi HAP 2025 PDF p.45 (printed p.45), section 'Identification of Color Signals for high Alerts'. The table is an image with no text layer; read from the page image and verified visually. A third colour scheme in the same plan, based on departure from normal maximum temperature. "
+THR8=[
+T("Tmax – Ahmedabad alert table (Red)","≥ 45 °C","'Extreme Heat Alert Day' (Red Alert)",NA,AHD,3,"Red Alert Extreme Heat Alert Day ≥ 45",AN),
+T("Tmax – Ahmedabad alert table (Orange)","43.1 – 44.9 °C","'Heat Alert Day' (Orange Alert)",NA,AHD,3,"Orange Alert Heat Alert Day 43.1",AN),
+T("Tmax – Ahmedabad alert table (Yellow)","41.1 – 43 °C","'Hot Day Advisory' (Yellow Alert)",NA,AHD,3,"Yellow Alert Hot Day Advisory 41.1",AN),
+T("Tmax – Ahmedabad alert table (White)","≤ 41 °C","'No Alert' (White)",NA,AHD,3,"White No Alert ≤41",AN),
+T("Delhi HAP 'colour signals' – Red (departure basis)","Normal maximum temperature increase of 6 °C or more","'Extreme Heat Alert for the Day' (Red Alert, Severe Condition)",NA,H25,45,"Red Alert (Severe Condition) Extreme Heat Alert for the Day Normal Maximum Temp increase 6° C to more",P45),
+T("Delhi HAP 'colour signals' – Orange (departure basis)","Normal maximum temperature increase of 4 °C to 5 °C","'Heat Alert Day' (Orange Alert, Moderate Condition)",NA,H25,45,"Orange Alert (Moderate Condition) Heat Alert Day Normal Maximum Temp increase 4° C to 5° C",P45),
+T("Delhi HAP 'colour signals' – Yellow (departure basis)","Nearby normal maximum temperature","'Hot Day' (Yellow Alert, Heat-wave Warning)",NA,H25,45,"Yellow Alert (Heat-wave Warning) Hot Day Nearby Normal Maximum Temp.",P45+"Yellow here is labelled 'Heat-wave Warning' yet defined as near-normal temperature, which conflicts with IMD's Yellow (heat wave on 2 days)."),
+T("Delhi HAP 'colour signals' – White (departure basis)","Below normal maximum temperature","'Normal Day' (White, Normal)",NA,H25,45,"White (Normal) Normal Day Below Normal Maximum Temp.",P45+"This scheme uses White, where the p.10 table and IMD use Green."),
+T("Delhi HAP alert table – Green (no alert level)","Maximum temperatures are near normal; 'No Action'","'Normal Day' (Green, No Action)",NA,H25,10,"Green (No Action) Normal Day Maximum temperatures are near","Table caption: 'Heat Alert Thresholds for Delhi City (source: NDMA)'. Green carries no actions of its own in either document."),
+T("Delhi HAP alert table – Red vs Orange check","Both read '>= 45°C'; no second condition","'Extreme heat alert day' (Red) and 'Heat alert day' (Orange)",NA,H25,10,"Extreme heat alert day",PN+"Page 10 of HAP 2025 and page 11 of HAP 2024-25 print the same table: Orange '>= 45°C' and Red '>= 45°C'; no consecutive-day, heat-index, night-temperature or humidity condition appears in either cell. Treated as a printing duplication; the plans do not say so."),
+T("IMD colour table – Green (no alert level)","Maximum temperatures near normal; suggested actions 'Nil'","Green (No action): comfortable temperature, no cautionary action required",NA,IMD,8,"Comfortable temperature. No cautionary action required.",PN+"IMD FAQ p.8, colour table; Red condition (i) read from the image as 'Severe heat wave persists for more than 2 days.'"),
+T("Delhi HAP – what activates the plan's heat alert","Department of Meteorology's weather forecast (no colour named)","The Municipal Corporation activates the citywide heat alert and response mechanism based on the forecast",NA,H25,79,"Activates the citywide heat alert and response mechanism based, on the","No sentence says the plan is activated at an IMD or HAP colour. Same wording in DELHI_HAP_2024_25 (printed p.57)."),
+T("Delhi HAP – 'Heat Alert Severity' cross-reference","Refers to a section that is not in the plan","The plan says to monitor the alert level 'see section Heat Alert Severity'",NA,H25,79,"Monitors the heat alert level based on the weather temperature severity forecast","No section with that title exists in HAP 2025 (searched the full text). The severity levels are only in the tables on pp.10 and 45."),
+]

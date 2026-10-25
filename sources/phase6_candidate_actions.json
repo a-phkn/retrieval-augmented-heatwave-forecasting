@@ -1,0 +1,2865 @@
+[
+  {
+    "action_id": "MUNI_COOLING_CENTRES_ACTIVATE",
+    "text": "Activate cooling centres (temples, public buildings, malls, temporary night shelters) during a heat alert",
+    "audience": "municipal",
+    "tier_min": "RED",
+    "trigger": "A heat alert is in force",
+    "doc_id": "DELHI_HAP_2025",
+    "page": 79,
+    "verbatim_excerpt": "Activates “cooling centres,” such as temples, public buildings, malls, temporary night shelters, etc., during a heat alert.",
+    "confidence": "high",
+    "notes": "Source says 'heat alert' without naming a colour. Same text in DELHI_HAP_2024_25 p.58.",
+    "verified_modes": [
+      "layout",
+      "raw"
+    ],
+    "verification": "VERIFIED (exact text found on cited page)",
+    "also_in": [
+      {
+        "doc_id": "DELHI_HAP_2024_25",
+        "page": 58,
+        "same_text_found": true
+      }
+    ],
+    "trigger_type": "forecast",
+    "tier_source": {
+      "doc_id": "AHMEDABAD_HAP_2018",
+      "page": 14,
+      "quote": "Activate “cooling centers,” such as temples, public buildings, malls, during a heat alert.",
+      "match": "equivalent action (Delhi text also lists night shelters)",
+      "tier_basis": "ahmedabad_precedent",
+      "note": "Precedent from another city (Ahmedabad HAP, 2019 update), not Delhi policy; Ahmedabad's colour temperature thresholds differ from Delhi's."
+    }
+  },
+  {
+    "action_id": "MUNI_NIGHT_SHELTERS_OPEN_ALL_DAY",
+    "text": "Keep night shelters open through the day for migratory/vulnerable populations during a heat alert",
+    "audience": "municipal",
+    "tier_min": "UNSPECIFIED",
+    "trigger": "A heat alert is in force",
+    "doc_id": "DELHI_HAP_2025",
+    "page": 54,
+    "verbatim_excerpt": "confirm that night shelters stay open all day for migratory population during a heat alert.",
+    "confidence": "high",
+    "notes": "Colour level not stated. Also DELHI_HAP_2024_25 p.32.",
+    "verified_modes": [
+      "layout",
+      "raw"
+    ],
+    "verification": "VERIFIED (exact text found on cited page)",
+    "also_in": [
+      {
+        "doc_id": "DELHI_HAP_2024_25",
+        "page": 32,
+        "same_text_found": true
+      }
+    ],
+    "trigger_type": "forecast"
+  },
+  {
+    "action_id": "MUNI_SHADE_ACCESS_VULNERABLE",
+    "text": "Provide access to shaded areas for outdoor workers, slum communities and other vulnerable people",
+    "audience": "municipal",
+    "tier_min": "RED",
+    "trigger": "A heat alert is in force (context sentence block is headed by cooling centres during a heat alert)",
+    "doc_id": "DELHI_HAP_2025",
+    "page": 54,
+    "verbatim_excerpt": "Provide access to shaded areas for outdoor workers, slum communities and other vulnerable population on a large scale.",
+    "confidence": "medium",
+    "notes": "Bullet itself has no explicit trigger; it sits in the 'Phase 2 – During Heat Season' list. Tier not stated.",
+    "verified_modes": [
+      "layout",
+      "raw"
+    ],
+    "verification": "VERIFIED (exact text found on cited page)",
+    "also_in": [],
+    "trigger_type": "forecast",
+    "tier_source": {
+      "doc_id": "AHMEDABAD_HAP_2018",
+      "page": 14,
+      "quote": "Expand access to shaded areas for outdoor workers, slum communities, and other vulnerable populations.",
+      "match": "same action",
+      "tier_basis": "ahmedabad_precedent",
+      "note": "Precedent from another city (Ahmedabad HAP, 2019 update), not Delhi policy; Ahmedabad's colour temperature thresholds differ from Delhi's."
+    }
+  },
+  {
+    "action_id": "MUNI_DRINKING_WATER_DISTRIBUTION",
+    "text": "Increase distribution of fresh drinking water to the public (water points / piau)",
+    "audience": "municipal",
+    "tier_min": "RED",
+    "trigger": "During heat season / heat alert",
+    "doc_id": "DELHI_HAP_2025",
+    "page": 54,
+    "verbatim_excerpt": "Increase efforts to distribute fresh drinking water to the public by opening",
+    "confidence": "high",
+    "notes": "Excerpt is the verbatim start of the bullet; the source then has a mangled quote mark around 'Piaau'. Tier not stated.",
+    "verified_modes": [
+      "layout",
+      "raw"
+    ],
+    "verification": "VERIFIED (exact text found on cited page)",
+    "also_in": [],
+    "trigger_type": "forecast",
+    "tier_source": {
+      "doc_id": "AHMEDABAD_HAP_2018",
+      "page": 14,
+      "quote": "Increase efforts to distribute fresh drinking water to the public.",
+      "match": "same action",
+      "tier_basis": "ahmedabad_precedent",
+      "note": "Precedent from another city (Ahmedabad HAP, 2019 update), not Delhi policy; Ahmedabad's colour temperature thresholds differ from Delhi's."
+    }
+  },
+  {
+    "action_id": "MUNI_WATER_ACCESS_RELIGIOUS_TRANSIT",
+    "text": "Expand potable water access at religious places and transit stations; hand out water pouches in high-risk areas during a heat alert",
+    "audience": "municipal",
+    "tier_min": "UNSPECIFIED",
+    "trigger": "A heat alert is in force",
+    "doc_id": "DELHI_HAP_2025",
+    "page": 80,
+    "verbatim_excerpt": "expands potable water access during a heat alert at religious places, BRTS transit stations, organizes water pouch handouts to the poor and high-risk areas",
+    "confidence": "high",
+    "notes": "Tier not stated.",
+    "verified_modes": [
+      "layout",
+      "raw"
+    ],
+    "verification": "VERIFIED (exact text found on cited page)",
+    "also_in": [],
+    "trigger_type": "forecast"
+  },
+  {
+    "action_id": "MUNI_WATER_TANKERS_SLUMS",
+    "text": "Make water tankers available on call in slums",
+    "audience": "municipal",
+    "tier_min": "ORANGE",
+    "trigger": "Orange or red alert days",
+    "doc_id": "DELHI_HAP_2025",
+    "page": 71,
+    "verbatim_excerpt": "Tankers to be made available on call in slums during orange/red alert days.",
+    "confidence": "high",
+    "notes": "One of few actions explicitly tied to a colour. Listed under 'Short- and Medium-Term Measures'. Same text DELHI_HAP_2024_25 p.49.",
+    "verified_modes": [
+      "layout",
+      "raw"
+    ],
+    "verification": "VERIFIED (exact text found on cited page)",
+    "also_in": [
+      {
+        "doc_id": "DELHI_HAP_2024_25",
+        "page": 49,
+        "same_text_found": true
+      }
+    ],
+    "trigger_type": "forecast",
+    "tier_source": {
+      "doc_id": "DELHI_HAP_2025",
+      "page": 71,
+      "quote": "Tankers to be made available on call in slums during orange/red alert days.",
+      "match": "same action (colour named in the action's own source)",
+      "tier_basis": "delhi_source",
+      "note": ""
+    }
+  },
+  {
+    "action_id": "COMMS_PUBLIC_ANNOUNCE_ORANGE_RED",
+    "text": "Make public announcements (SMS, CAP/Sachet, news, social media) a day before and early on the forecast day",
+    "audience": "public",
+    "tier_min": "ORANGE",
+    "trigger": "Orange and red alert days",
+    "doc_id": "DELHI_HAP_2025",
+    "page": 71,
+    "verbatim_excerpt": "Public announcement during orange and red alert days a day before and early on the forecasted day",
+    "confidence": "high",
+    "notes": "Explicitly tied to orange and red. Also DELHI_HAP_2024_25 p.50.",
+    "verified_modes": [
+      "layout",
+      "raw"
+    ],
+    "verification": "VERIFIED (exact text found on cited page)",
+    "also_in": [
+      {
+        "doc_id": "DELHI_HAP_2024_25",
+        "page": 50,
+        "same_text_found": true
+      }
+    ],
+    "trigger_type": "forecast",
+    "tier_source": {
+      "doc_id": "DELHI_HAP_2025",
+      "page": 71,
+      "quote": "Public announcement during orange and red alert days a day before and early on the forecasted day",
+      "match": "same action (colour named in the action's own source)",
+      "tier_basis": "delhi_source",
+      "note": ""
+    }
+  },
+  {
+    "action_id": "COMMS_ALERT_VIA_WHATSAPP_SMS",
+    "text": "Issue heat alerts via WhatsApp and SMS using telecom mobile databases",
+    "audience": "public",
+    "tier_min": "RED",
+    "trigger": "A heat alert is issued",
+    "doc_id": "DELHI_HAP_2025",
+    "page": 80,
+    "verbatim_excerpt": "Issues heat alerts through WhatsApp and SMS platforms utilizing the centralized mobile databases of private sector telecom companies.",
+    "confidence": "high",
+    "notes": "Tier not stated.",
+    "verified_modes": [
+      "layout",
+      "raw"
+    ],
+    "verification": "VERIFIED (exact text found on cited page)",
+    "also_in": [],
+    "trigger_type": "forecast",
+    "tier_source": {
+      "doc_id": "AHMEDABAD_HAP_2018",
+      "page": 15,
+      "quote": "Circulate warnings via text alerts or WhatsApp mobile messages",
+      "match": "equivalent action",
+      "tier_basis": "ahmedabad_precedent",
+      "note": "Precedent from another city (Ahmedabad HAP, 2019 update), not Delhi policy; Ahmedabad's colour temperature thresholds differ from Delhi's."
+    }
+  },
+  {
+    "action_id": "COMMS_ALERT_TO_HOSPITALS_PRACTITIONERS",
+    "text": "Send direct heat-alert messages to private medical practitioners, public hospitals and UHCs",
+    "audience": "health",
+    "tier_min": "RED",
+    "trigger": "A heat alert is issued",
+    "doc_id": "DELHI_HAP_2025",
+    "page": 80,
+    "verbatim_excerpt": "Sends direct heat alert messages to private medical practitioners, public hospitals and UHCs.",
+    "confidence": "high",
+    "notes": "Tier not stated.",
+    "verified_modes": [
+      "layout",
+      "raw"
+    ],
+    "verification": "VERIFIED (exact text found on cited page)",
+    "also_in": [],
+    "trigger_type": "forecast",
+    "tier_source": {
+      "doc_id": "AHMEDABAD_HAP_2018",
+      "page": 15,
+      "quote": "Develop an SMS alert system to send direct messages to private practitioners in addition to the medical professionals at public hospitals and UHCs.",
+      "match": "same action",
+      "tier_basis": "ahmedabad_precedent",
+      "note": "Precedent from another city (Ahmedabad HAP, 2019 update), not Delhi policy; Ahmedabad's colour temperature thresholds differ from Delhi's."
+    }
+  },
+  {
+    "action_id": "HEALTH_HOSPITAL_SURGE_STAFF",
+    "text": "Increase healthcare staff and doctors at hospitals and UHCs for patient influx during a heat alert",
+    "audience": "health",
+    "tier_min": "RED",
+    "trigger": "A heat alert is in force, if required",
+    "doc_id": "DELHI_HAP_2025",
+    "page": 80,
+    "verbatim_excerpt": "If required, increase the number of healthcare staff and doctors at hospitals and UHCs to attend to the influx of patients during a heat alert.",
+    "confidence": "high",
+    "notes": "Conditional ('if required'). Tier not stated.",
+    "verified_modes": [
+      "layout",
+      "raw"
+    ],
+    "verification": "VERIFIED (exact text found on cited page)",
+    "also_in": [],
+    "trigger_type": "forecast",
+    "tier_source": {
+      "doc_id": "AHMEDABAD_HAP_2018",
+      "page": 16,
+      "quote": "Increase staffing at hospitals and UHCs to attend to the influx of patients during a heat alert, if feasible.",
+      "match": "same action",
+      "tier_basis": "ahmedabad_precedent",
+      "note": "Precedent from another city (Ahmedabad HAP, 2019 update), not Delhi policy; Ahmedabad's colour temperature thresholds differ from Delhi's."
+    }
+  },
+  {
+    "action_id": "HEALTH_HOSPITAL_READINESS",
+    "text": "Keep adequate medical supplies, staff and emergency ward in a state of readiness",
+    "audience": "health",
+    "tier_min": "UNSPECIFIED",
+    "trigger": "During heat season",
+    "doc_id": "DELHI_HAP_2025",
+    "page": 80,
+    "verbatim_excerpt": "Ensure adequate medical supplies, medical staff and emergency ward in the state of readiness.",
+    "confidence": "medium",
+    "notes": "Source sentence is garbled ('Equipped hospitals with Ensure ...'); excerpt is the clean clause. Tier not stated.",
+    "verified_modes": [
+      "layout",
+      "raw"
+    ],
+    "verification": "VERIFIED (exact text found on cited page)",
+    "also_in": [],
+    "trigger_type": "standing"
+  },
+  {
+    "action_id": "HEALTH_HEAT_ILLNESS_PROTOCOLS",
+    "text": "Establish heat-illness treatment and prevention protocols",
+    "audience": "health",
+    "tier_min": "UNSPECIFIED",
+    "trigger": "During heat season",
+    "doc_id": "DELHI_HAP_2025",
+    "page": 80,
+    "verbatim_excerpt": "Establish treatment and prevention protocols of heat related illness and prevention of further exposure.",
+    "confidence": "high",
+    "notes": "Tier not stated.",
+    "verified_modes": [
+      "layout",
+      "raw"
+    ],
+    "verification": "VERIFIED (exact text found on cited page)",
+    "also_in": [],
+    "trigger_type": "standing"
+  },
+  {
+    "action_id": "HEALTH_WEEKLY_IMPACT_REPORT",
+    "text": "Produce a weekly public-health impact report for the Nodal Officer during a heat alert",
+    "audience": "health",
+    "tier_min": "ORANGE",
+    "trigger": "A heat alert is in force",
+    "doc_id": "DELHI_HAP_2025",
+    "page": 80,
+    "verbatim_excerpt": "During a heat alert, produce weekly report of public health impact of heatwave for the Nodal Officer.",
+    "confidence": "high",
+    "notes": "Administrative rather than public-facing. Tier not stated.",
+    "verified_modes": [
+      "layout",
+      "raw"
+    ],
+    "verification": "VERIFIED (exact text found on cited page)",
+    "also_in": [],
+    "trigger_type": "forecast",
+    "tier_source": {
+      "doc_id": "AHMEDABAD_HAP_2018",
+      "page": 16,
+      "quote": "Produce weekly reports of the public health impact for AMC Nodal Officer during a heat alert.",
+      "match": "same action (listed at both Orange and Red; lowest colour used)",
+      "tier_basis": "ahmedabad_precedent",
+      "note": "Precedent from another city (Ahmedabad HAP, 2019 update), not Delhi policy; Ahmedabad's colour temperature thresholds differ from Delhi's."
+    }
+  },
+  {
+    "action_id": "HEALTH_EMS_ICE_PACKS_IV",
+    "text": "Ensure adequate supply of ice packs and IV fluids for 108 emergency service",
+    "audience": "health",
+    "tier_min": "RED",
+    "trigger": "During heat season",
+    "doc_id": "DELHI_HAP_2025",
+    "page": 81,
+    "verbatim_excerpt": "Ensure adequate supply of ice packs and IV fluids.",
+    "confidence": "high",
+    "notes": "Tier not stated.",
+    "verified_modes": [
+      "layout",
+      "raw"
+    ],
+    "verification": "VERIFIED (exact text found on cited page)",
+    "also_in": [],
+    "trigger_type": "standing",
+    "tier_source": {
+      "doc_id": "AHMEDABAD_HAP_2018",
+      "page": 17,
+      "quote": "Ensure adequate supply of ice packs and IV fluids.",
+      "match": "same action",
+      "tier_basis": "ahmedabad_precedent",
+      "note": "Precedent from another city (Ahmedabad HAP, 2019 update), not Delhi policy; Ahmedabad's colour temperature thresholds differ from Delhi's."
+    }
+  },
+  {
+    "action_id": "HEALTH_AMBULANCE_DYNAMIC_DEPLOYMENT",
+    "text": "Activate the Dynamic Strategic Deployment Plan for ambulances",
+    "audience": "health",
+    "tier_min": "UNSPECIFIED",
+    "trigger": "During heat season",
+    "doc_id": "DELHI_HAP_2025",
+    "page": 81,
+    "verbatim_excerpt": "Activates Dynamic Strategic Deployment Plan for the ambulance service",
+    "confidence": "high",
+    "notes": "Tier not stated.",
+    "verified_modes": [
+      "layout",
+      "raw"
+    ],
+    "verification": "VERIFIED (exact text found on cited page)",
+    "also_in": [],
+    "trigger_type": "standing"
+  },
+  {
+    "action_id": "HEALTH_108_SMS_VULNERABLE_AREAS",
+    "text": "Send SMS warnings to residents of vulnerable areas during a heat alert",
+    "audience": "health",
+    "tier_min": "RED",
+    "trigger": "A heat alert is in force",
+    "doc_id": "DELHI_HAP_2025",
+    "page": 81,
+    "verbatim_excerpt": "During a heat alert, disseminate SMS text messages to warn residents in the vulnerable areas.",
+    "confidence": "high",
+    "notes": "Tier not stated.",
+    "verified_modes": [
+      "layout",
+      "raw"
+    ],
+    "verification": "VERIFIED (exact text found on cited page)",
+    "also_in": [],
+    "trigger_type": "forecast",
+    "tier_source": {
+      "doc_id": "AHMEDABAD_HAP_2018",
+      "page": 17,
+      "quote": "Disseminate SMS text messages to warn local residents during a heat alert.",
+      "match": "same action",
+      "tier_basis": "ahmedabad_precedent",
+      "note": "Precedent from another city (Ahmedabad HAP, 2019 update), not Delhi policy; Ahmedabad's colour temperature thresholds differ from Delhi's."
+    }
+  },
+  {
+    "action_id": "HEALTH_MEDICAL_VANS_RED",
+    "text": "Ensure additional medical vans are available",
+    "audience": "health",
+    "tier_min": "RED",
+    "trigger": "Red alerts",
+    "doc_id": "DELHI_HAP_2025",
+    "page": 81,
+    "verbatim_excerpt": "Ensure additional medical vans are available during red alerts",
+    "confidence": "high",
+    "notes": "Explicit red-alert action.",
+    "verified_modes": [
+      "layout",
+      "raw"
+    ],
+    "verification": "VERIFIED (exact text found on cited page)",
+    "also_in": [],
+    "trigger_type": "forecast",
+    "tier_source": {
+      "doc_id": "DELHI_HAP_2025",
+      "page": 81,
+      "quote": "Ensure additional medical vans are available during red alerts",
+      "match": "same action (colour named in the action's own source)",
+      "tier_basis": "delhi_source",
+      "note": ""
+    }
+  },
+  {
+    "action_id": "HEALTH_MEDICAL_CAMPS_RED",
+    "text": "Hold medical camps at hotspots",
+    "audience": "health",
+    "tier_min": "RED",
+    "trigger": "Red alerts",
+    "doc_id": "DELHI_HAP_2025",
+    "page": 72,
+    "verbatim_excerpt": "Medical camps during red alerts at hotspots.",
+    "confidence": "high",
+    "notes": "Explicit red-alert action. Also DELHI_HAP_2024_25 p.50.",
+    "verified_modes": [
+      "layout",
+      "raw"
+    ],
+    "verification": "VERIFIED (exact text found on cited page)",
+    "also_in": [
+      {
+        "doc_id": "DELHI_HAP_2024_25",
+        "page": 50,
+        "same_text_found": true
+      }
+    ],
+    "trigger_type": "forecast",
+    "tier_source": {
+      "doc_id": "DELHI_HAP_2025",
+      "page": 72,
+      "quote": "Medical camps during red alerts at hotspots.",
+      "match": "same action (colour named in the action's own source)",
+      "tier_basis": "delhi_source",
+      "note": ""
+    }
+  },
+  {
+    "action_id": "HEALTH_SURVEILLANCE_HEAT_CASES",
+    "text": "Record ward-wise heat stroke cases, cause of death, daily mortality and daily heat-related hospital admissions",
+    "audience": "health",
+    "tier_min": "YELLOW",
+    "trigger": "During heat season",
+    "doc_id": "DELHI_HAP_2025",
+    "page": 72,
+    "verbatim_excerpt": "Recording ward wise heat stroke cases, proper cause of death and monitoring daily mortality as well as daily hospital admission due to heat-related causes.",
+    "confidence": "high",
+    "notes": "Surveillance, not a public-facing action. Tier not stated.",
+    "verified_modes": [
+      "layout",
+      "raw"
+    ],
+    "verification": "VERIFIED (exact text found on cited page)",
+    "also_in": [],
+    "trigger_type": "standing",
+    "tier_source": {
+      "doc_id": "AHMEDABAD_HAP_2018",
+      "page": 16,
+      "quote": "Hospitals should be instructed to update their admissions and emergency case records to track heat-related morbidity and mortality.",
+      "match": "equivalent action",
+      "tier_basis": "ahmedabad_precedent",
+      "note": "Precedent from another city (Ahmedabad HAP, 2019 update), not Delhi policy; Ahmedabad's colour temperature thresholds differ from Delhi's."
+    }
+  },
+  {
+    "action_id": "HEALTH_AC_WARDS",
+    "text": "Dedicate special AC wards for heat-wave-related eventualities",
+    "audience": "health",
+    "tier_min": "UNSPECIFIED",
+    "trigger": "Heat wave events (state level)",
+    "doc_id": "DELHI_HAP_2025",
+    "page": 69,
+    "verbatim_excerpt": "Special AC wards may be dedicated for addressing any heat wave related eventuality.",
+    "confidence": "medium",
+    "notes": "Permissive ('may be'). Also touches energy demand. Tier not stated.",
+    "verified_modes": [
+      "layout",
+      "raw"
+    ],
+    "verification": "VERIFIED (exact text found on cited page)",
+    "also_in": [],
+    "trigger_type": "standing"
+  },
+  {
+    "action_id": "CLINICAL_REMOVE_FROM_HEAT",
+    "text": "Remove patient from heat exposure and stop physical activity; start passive cooling",
+    "audience": "health",
+    "tier_min": "UNSPECIFIED",
+    "trigger": "Suspected heat illness",
+    "doc_id": "DELHI_HAP_2025",
+    "page": 65,
+    "verbatim_excerpt": "Remove from environmental heat exposure and stop physical activity.",
+    "confidence": "high",
+    "notes": "Clinical protocol step (iii). Not alert-linked.",
+    "verified_modes": [
+      "layout",
+      "raw"
+    ],
+    "verification": "VERIFIED (exact text found on cited page)",
+    "also_in": [],
+    "trigger_type": "observation"
+  },
+  {
+    "action_id": "CLINICAL_40C_IV_TRANSPORT",
+    "text": "If body temperature is 40°C or above, start IV rehydration and transport immediately to an emergency department",
+    "audience": "health",
+    "tier_min": "UNSPECIFIED",
+    "trigger": "Patient temperature ≥ 40°C",
+    "doc_id": "DELHI_HAP_2025",
+    "page": 66,
+    "verbatim_excerpt": "If temperature is 40°C or above, initiate IV rehydration and immediately transport to emergency department for stabilization.",
+    "confidence": "high",
+    "notes": "Clinical protocol step (vi); thresholds refer to patient body temperature, not weather.",
+    "verified_modes": [
+      "layout",
+      "raw"
+    ],
+    "verification": "VERIFIED (exact text found on cited page)",
+    "also_in": [],
+    "trigger_type": "observation"
+  },
+  {
+    "action_id": "PUBLIC_HEAT_STROKE_EMERGENCY",
+    "text": "Treat heat stroke as a medical emergency: call ambulance or go to hospital immediately",
+    "audience": "public",
+    "tier_min": "UNSPECIFIED",
+    "trigger": "Suspected heat stroke",
+    "doc_id": "IMD_HW_FAQ",
+    "page": 13,
+    "verbatim_excerpt": "Heat stroke is a severe medical emergency.",
+    "confidence": "high",
+    "notes": "Source continues with ambulance numbers 108/102 (spacing garbled in the PDF, so not quoted).",
+    "verified_modes": [
+      "layout",
+      "raw"
+    ],
+    "verification": "VERIFIED (exact text found on cited page)",
+    "also_in": [],
+    "trigger_type": "observation"
+  },
+  {
+    "action_id": "PUBLIC_NO_ORAL_FLUIDS_UNCONSCIOUS",
+    "text": "Do not give fluids orally to an unconscious heat-stroke patient",
+    "audience": "public",
+    "tier_min": "UNSPECIFIED",
+    "trigger": "Suspected heat stroke, person unconscious",
+    "doc_id": "IMD_HW_FAQ",
+    "page": 13,
+    "verbatim_excerpt": "DO NOT GIVE FLUIDS ORALLY if the person is not conscious.",
+    "confidence": "high",
+    "notes": "",
+    "verified_modes": [
+      "layout",
+      "raw"
+    ],
+    "verification": "VERIFIED (exact text found on cited page)",
+    "also_in": [],
+    "trigger_type": "observation"
+  },
+  {
+    "action_id": "PUBLIC_AVOID_SUN_12_3",
+    "text": "Avoid going out in the sun between 12 noon and 3 p.m.",
+    "audience": "public",
+    "tier_min": "YELLOW",
+    "trigger": "Heat wave (general advisory)",
+    "doc_id": "IMD_HW_FAQ",
+    "page": 10,
+    "verbatim_excerpt": "Avoid going out in the sun, especially between 12.00 noon and 3.00 p.m.",
+    "confidence": "high",
+    "notes": "General do/don't; not linked to a colour in the do/don't list.",
+    "verified_modes": [
+      "layout",
+      "raw"
+    ],
+    "verification": "VERIFIED (exact text found on cited page)",
+    "also_in": [],
+    "trigger_type": "forecast",
+    "tier_source": {
+      "doc_id": "IMD_HW_FAQ",
+      "page": 8,
+      "quote": "Avoid heat exposure.",
+      "match": "equivalent action (IMD: general; no clock window)",
+      "tier_basis": "national_source",
+      "note": "National IMD colour table; suggested actions column."
+    }
+  },
+  {
+    "action_id": "PUBLIC_DRINK_WATER",
+    "text": "Drink water often, even if not thirsty",
+    "audience": "public",
+    "tier_min": "ORANGE",
+    "trigger": "Heat wave (general advisory)",
+    "doc_id": "IMD_HW_FAQ",
+    "page": 10,
+    "verbatim_excerpt": "Drink sufficient water and as often as possible, even if not thirsty",
+    "confidence": "high",
+    "notes": "Also appears in the Orange row of the colour table (p.8).",
+    "verified_modes": [
+      "layout",
+      "raw"
+    ],
+    "verification": "VERIFIED (exact text found on cited page)",
+    "also_in": [],
+    "trigger_type": "forecast",
+    "tier_source": {
+      "doc_id": "IMD_HW_FAQ",
+      "page": 8,
+      "quote": "Drink sufficient water- even if not thirsty.",
+      "match": "same action",
+      "tier_basis": "national_source",
+      "note": "National IMD colour table; suggested actions column."
+    }
+  },
+  {
+    "action_id": "PUBLIC_CHECK_VULNERABLE_NEIGHBOURS",
+    "text": "Check on vulnerable neighbours during a heat alert",
+    "audience": "public",
+    "tier_min": "RED",
+    "trigger": "A heat alert is in force",
+    "doc_id": "DELHI_HAP_2025",
+    "page": 81,
+    "verbatim_excerpt": "Check on vulnerable neighbours, particularly during a heat alert.",
+    "confidence": "high",
+    "notes": "Tier not stated.",
+    "verified_modes": [
+      "layout",
+      "raw"
+    ],
+    "verification": "VERIFIED (exact text found on cited page)",
+    "also_in": [],
+    "trigger_type": "forecast",
+    "tier_source": {
+      "doc_id": "AHMEDABAD_HAP_2018",
+      "page": 18,
+      "quote": "Check on vulnerable neighbours, particularly during a heat alert.",
+      "match": "same action",
+      "tier_basis": "ahmedabad_precedent",
+      "note": "Precedent from another city (Ahmedabad HAP, 2019 update), not Delhi policy; Ahmedabad's colour temperature thresholds differ from Delhi's."
+    }
+  },
+  {
+    "action_id": "IMD_YELLOW_ADVICE",
+    "text": "Avoid heat exposure; wear lightweight, light-coloured, loose cotton clothes; cover the head",
+    "audience": "public",
+    "tier_min": "YELLOW",
+    "trigger": "IMD yellow alert (heat wave conditions at isolated pockets persist on 2 days)",
+    "doc_id": "IMD_HW_FAQ",
+    "page": 8,
+    "verbatim_excerpt": "(a) Avoid heat exposure. (b) Wear lightweight, light-coloured, loose, cotton clothes. (c) Cover your head: Use a cloth, hat or umbrella",
+    "confidence": "high",
+    "notes": "Row assignment taken from the table layout on p.8; the table is a multi-column layout, so the excerpt was joined from the Suggested Actions cell for the Yellow row.",
+    "verified_modes": [
+      "raw"
+    ],
+    "verification": "VERIFIED (exact text found on cited page)",
+    "also_in": [],
+    "trigger_type": "forecast",
+    "tier_source": {
+      "doc_id": "IMD_HW_FAQ",
+      "page": 8,
+      "quote": "(a) Avoid heat exposure. (b) Wear lightweight, light-coloured, loose, cotton clothes. (c) Cover your head: Use a cloth, hat or umbrella",
+      "match": "same action (colour named in the action's own source)",
+      "tier_basis": "national_source",
+      "note": ""
+    }
+  },
+  {
+    "action_id": "IMD_ORANGE_ADVICE",
+    "text": "Avoid heat exposure and keep cool; avoid dehydration",
+    "audience": "public",
+    "tier_min": "ORANGE",
+    "trigger": "IMD orange alert (severe heat wave 2 days, or heat wave 4+ days)",
+    "doc_id": "IMD_HW_FAQ",
+    "page": 8,
+    "verbatim_excerpt": "(b) Avoid heat exposure– keep cool. Avoid dehydration.",
+    "confidence": "high",
+    "notes": "The source labels this item '(b)' with no '(a)'; reproduced as written.",
+    "verified_modes": [
+      "raw"
+    ],
+    "verification": "VERIFIED (exact text found on cited page)",
+    "also_in": [],
+    "trigger_type": "forecast",
+    "tier_source": {
+      "doc_id": "IMD_HW_FAQ",
+      "page": 8,
+      "quote": "(b) Avoid heat exposure– keep cool. Avoid dehydration.",
+      "match": "same action (colour named in the action's own source)",
+      "tier_basis": "national_source",
+      "note": ""
+    }
+  },
+  {
+    "action_id": "IMD_ORANGE_ORS_FLUIDS",
+    "text": "Drink sufficient water even if not thirsty; use ORS and home drinks",
+    "audience": "public",
+    "tier_min": "ORANGE",
+    "trigger": "IMD orange alert",
+    "doc_id": "IMD_HW_FAQ",
+    "page": 8,
+    "verbatim_excerpt": "(b) Drink sufficient water- even if not thirsty. (c) Use ORS, homemade drinks like lassi, torani (rice water), lemon water, buttermilk, etc. to keep yourself hydrated",
+    "confidence": "high",
+    "notes": "Labelled '(b)/(c)' in source.",
+    "verified_modes": [
+      "raw"
+    ],
+    "verification": "VERIFIED (exact text found on cited page)",
+    "also_in": [],
+    "trigger_type": "forecast",
+    "tier_source": {
+      "doc_id": "IMD_HW_FAQ",
+      "page": 8,
+      "quote": "(b) Drink sufficient water- even if not thirsty. (c) Use ORS, homemade drinks like lassi, torani (rice water), lemon water, buttermilk, etc. to keep yourself hydrated",
+      "match": "same action (colour named in the action's own source)",
+      "tier_basis": "national_source",
+      "note": ""
+    }
+  },
+  {
+    "action_id": "IMD_RED_EXTREME_CARE_VULNERABLE",
+    "text": "Take extreme care of vulnerable people",
+    "audience": "public",
+    "tier_min": "RED",
+    "trigger": "IMD red alert (severe heat wave >2 days, or >6 heat/severe heat wave days)",
+    "doc_id": "IMD_HW_FAQ",
+    "page": 8,
+    "verbatim_excerpt": "Extreme care needed for vulnerable people.",
+    "confidence": "high",
+    "notes": "The only suggested action given for red in this table.",
+    "verified_modes": [
+      "raw"
+    ],
+    "verification": "VERIFIED (exact text found on cited page)",
+    "also_in": [],
+    "trigger_type": "forecast",
+    "tier_source": {
+      "doc_id": "IMD_HW_FAQ",
+      "page": 8,
+      "quote": "Extreme care needed for vulnerable people.",
+      "match": "same action (colour named in the action's own source)",
+      "tier_basis": "national_source",
+      "note": ""
+    }
+  },
+  {
+    "action_id": "WORK_SHIFT_AWAY_1_5PM",
+    "text": "Encourage employers to shift outdoor workers' schedules away from 1–5 pm during a heat alert",
+    "audience": "municipal",
+    "tier_min": "RED",
+    "trigger": "A heat alert is in force",
+    "doc_id": "DELHI_HAP_2025",
+    "page": 81,
+    "verbatim_excerpt": "Encourages employers to shift outdoor workers’ schedules away from the peak afternoon hours (1pm – 5pm) during a heat alert.",
+    "confidence": "high",
+    "notes": "Window 1–5 pm. Tier not stated. The same plan elsewhere gives 'Working Hours 7:00am to 1:00pm, 4:00pm to 6:00pm' (p.56) — see conflicts.",
+    "verified_modes": [
+      "layout",
+      "raw"
+    ],
+    "verification": "VERIFIED (exact text found on cited page)",
+    "also_in": [],
+    "trigger_type": "forecast",
+    "tier_source": {
+      "doc_id": "AHMEDABAD_HAP_2018",
+      "page": 17,
+      "quote": "Encourage employers to shift outdoor workers’ schedules away from peak afternoon hours (1pm – 5pm) during a heat alert.",
+      "match": "same action",
+      "tier_basis": "ahmedabad_precedent",
+      "note": "Precedent from another city (Ahmedabad HAP, 2019 update), not Delhi policy; Ahmedabad's colour temperature thresholds differ from Delhi's."
+    }
+  },
+  {
+    "action_id": "WORK_EMERGENCY_ICE_PACKS_PROTECTION",
+    "text": "Provide emergency ice packs and heat-illness prevention materials to traffic police, transit staff and construction workers",
+    "audience": "municipal",
+    "tier_min": "RED",
+    "trigger": "A heat alert is in force",
+    "doc_id": "DELHI_HAP_2025",
+    "page": 81,
+    "verbatim_excerpt": "Provides emergency ice packs and heat-illness prevention materials to traffic police, BRTS transit staff and construction workers.",
+    "confidence": "high",
+    "notes": "Tier not stated.",
+    "verified_modes": [
+      "layout",
+      "raw"
+    ],
+    "verification": "VERIFIED (exact text found on cited page)",
+    "also_in": [],
+    "trigger_type": "forecast",
+    "tier_source": {
+      "doc_id": "AHMEDABAD_HAP_2018",
+      "page": 17,
+      "quote": "Pilot project to provide emergency ice packs and heat-illness prevention materials to traffic police, BRTS transit staff and construction workers.",
+      "match": "same action",
+      "tier_basis": "ahmedabad_precedent",
+      "note": "Precedent from another city (Ahmedabad HAP, 2019 update), not Delhi policy; Ahmedabad's colour temperature thresholds differ from Delhi's."
+    }
+  },
+  {
+    "action_id": "WORK_WATER_AT_SITES",
+    "text": "Ensure water supply at work sites",
+    "audience": "municipal",
+    "tier_min": "RED",
+    "trigger": "During heat season",
+    "doc_id": "DELHI_HAP_2025",
+    "page": 81,
+    "verbatim_excerpt": "Ensure Water supply at work sites.",
+    "confidence": "high",
+    "notes": "Tier not stated.",
+    "verified_modes": [
+      "layout",
+      "raw"
+    ],
+    "verification": "VERIFIED (exact text found on cited page)",
+    "also_in": [],
+    "trigger_type": "standing",
+    "tier_source": {
+      "doc_id": "AHMEDABAD_HAP_2018",
+      "page": 17,
+      "quote": "Provide sufficient portable drinking water.",
+      "match": "equivalent action",
+      "tier_basis": "ahmedabad_precedent",
+      "note": "Precedent from another city (Ahmedabad HAP, 2019 update), not Delhi policy; Ahmedabad's colour temperature thresholds differ from Delhi's."
+    }
+  },
+  {
+    "action_id": "WORK_RESCHEDULE_PEAK_HOURS_ADVISORY",
+    "text": "Issue an advisory on timing of work to avoid peak heat-wave hours",
+    "audience": "municipal",
+    "tier_min": "RED",
+    "trigger": "Heat wave conditions",
+    "doc_id": "DELHI_HAP_2025",
+    "page": 69,
+    "verbatim_excerpt": "Advisory on timing of work may be issued to avoid peak heat wave hours.",
+    "confidence": "medium",
+    "notes": "Permissive ('may be').",
+    "verified_modes": [
+      "layout",
+      "raw"
+    ],
+    "verification": "VERIFIED (exact text found on cited page)",
+    "also_in": [],
+    "trigger_type": "forecast",
+    "tier_source": {
+      "doc_id": "AHMEDABAD_HAP_2018",
+      "page": 17,
+      "quote": "Change working hours of labourers.",
+      "match": "equivalent action",
+      "tier_basis": "ahmedabad_precedent",
+      "note": "Precedent from another city (Ahmedabad HAP, 2019 update), not Delhi policy; Ahmedabad's colour temperature thresholds differ from Delhi's."
+    }
+  },
+  {
+    "action_id": "WORK_MORE_REST_BREAKS",
+    "text": "Schedule strenuous jobs to cooler times of day and increase frequency and length of rest breaks for outdoor activities",
+    "audience": "public",
+    "tier_min": "UNSPECIFIED",
+    "trigger": "Heat wave (general advisory)",
+    "doc_id": "IMD_HW_FAQ",
+    "page": 14,
+    "verbatim_excerpt": "Increasing the frequency and length of rest breaks for outdoor activities.",
+    "confidence": "high",
+    "notes": "Companion line on same page: 'Schedule strenuous jobs to cooler times of the day.' No WBGT-based limits given.",
+    "verified_modes": [
+      "layout",
+      "raw"
+    ],
+    "verification": "VERIFIED (exact text found on cited page)",
+    "also_in": [],
+    "trigger_type": "forecast"
+  },
+  {
+    "action_id": "SCHOOL_NO_OPERATION_12_4",
+    "text": "Do not run schools during 12 noon–4 pm when a heat wave is declared",
+    "audience": "municipal",
+    "tier_min": "RED",
+    "trigger": "A heat wave is declared",
+    "doc_id": "DELHI_HAP_2025",
+    "page": 58,
+    "verbatim_excerpt": "Ensure that Schools do not function during peak hours (12noon-4pm) when Heat Wave is declared.",
+    "confidence": "high",
+    "notes": "'Heat Wave is declared' likely follows IMD criteria but no colour is stated.",
+    "verified_modes": [
+      "layout",
+      "raw"
+    ],
+    "verification": "VERIFIED (exact text found on cited page)",
+    "also_in": [],
+    "trigger_type": "forecast",
+    "tier_source": {
+      "doc_id": "AHMEDABAD_HAP_2018",
+      "page": 20,
+      "quote": "Ensure that all school and colleges should be closed during heatwave days.",
+      "match": "equivalent action (Ahmedabad closes schools for the whole day; Delhi 12-4 pm)",
+      "tier_basis": "ahmedabad_precedent",
+      "note": "Precedent from another city (Ahmedabad HAP, 2019 update), not Delhi policy; Ahmedabad's colour temperature thresholds differ from Delhi's."
+    }
+  },
+  {
+    "action_id": "SCHOOL_RESCHEDULE_TIMINGS",
+    "text": "Reschedule school timings to avoid midday heat; schools may start early and close before noon",
+    "audience": "municipal",
+    "tier_min": "ORANGE",
+    "trigger": "Heat wave conditions",
+    "doc_id": "DELHI_HAP_2025",
+    "page": 70,
+    "verbatim_excerpt": "School timings should be re-scheduled to avoid peak heat/ midday. Schools may start early and close before noon.",
+    "confidence": "high",
+    "notes": "Tier not stated. Also DELHI_HAP_2024_25 p.47.",
+    "verified_modes": [
+      "layout",
+      "raw"
+    ],
+    "verification": "VERIFIED (exact text found on cited page)",
+    "also_in": [
+      {
+        "doc_id": "DELHI_HAP_2024_25",
+        "page": 47,
+        "same_text_found": true
+      }
+    ],
+    "trigger_type": "forecast",
+    "tier_source": {
+      "doc_id": "AHMEDABAD_HAP_2018",
+      "page": 20,
+      "quote": "Restrict the school timings, if necessary",
+      "match": "equivalent action",
+      "tier_basis": "ahmedabad_precedent",
+      "note": "Precedent from another city (Ahmedabad HAP, 2019 update), not Delhi policy; Ahmedabad's colour temperature thresholds differ from Delhi's."
+    }
+  },
+  {
+    "action_id": "SCHOOL_NO_OPEN_AIR_CLASS",
+    "text": "No open-air classes",
+    "audience": "municipal",
+    "tier_min": "UNSPECIFIED",
+    "trigger": "A heat wave is declared / heat conditions",
+    "doc_id": "DELHI_HAP_2025",
+    "page": 58,
+    "verbatim_excerpt": "No open-air class to be conducted.",
+    "confidence": "medium",
+    "notes": "Sits in the same education-department list as the 12–4 pm rule; trigger inferred from that list.",
+    "verified_modes": [
+      "layout",
+      "raw"
+    ],
+    "verification": "VERIFIED (exact text found on cited page)",
+    "also_in": [],
+    "trigger_type": "forecast"
+  },
+  {
+    "action_id": "SCHOOL_PREMISES_AS_SHELTER",
+    "text": "If school is not functioning, allow school premises to be used as a daytime shelter",
+    "audience": "municipal",
+    "tier_min": "RED",
+    "trigger": "School closed during heat wave",
+    "doc_id": "DELHI_HAP_2025",
+    "page": 58,
+    "verbatim_excerpt": "If school is not functioning, permit use of school premises as shelter during day time",
+    "confidence": "high",
+    "notes": "",
+    "verified_modes": [
+      "layout",
+      "raw"
+    ],
+    "verification": "VERIFIED (exact text found on cited page)",
+    "also_in": [],
+    "trigger_type": "forecast",
+    "tier_source": {
+      "doc_id": "AHMEDABAD_HAP_2018",
+      "page": 20,
+      "quote": "If school is not functioning, permit use of school premises as shelter during day time.",
+      "match": "same action",
+      "tier_basis": "ahmedabad_precedent",
+      "note": "Precedent from another city (Ahmedabad HAP, 2019 update), not Delhi policy; Ahmedabad's colour temperature thresholds differ from Delhi's."
+    }
+  },
+  {
+    "action_id": "TRANSPORT_SHADE_WATER_ORS_STANDS",
+    "text": "Provide shade/shelter, drinking water and ORS at bus and auto stands",
+    "audience": "municipal",
+    "tier_min": "RED",
+    "trigger": "During heat season",
+    "doc_id": "DELHI_HAP_2025",
+    "page": 57,
+    "verbatim_excerpt": "Ensure availability of shade / shelters, drinking water, ORS packets etc., at bus stands, auto stands etc.",
+    "confidence": "high",
+    "notes": "",
+    "verified_modes": [
+      "layout",
+      "raw"
+    ],
+    "verification": "VERIFIED (exact text found on cited page)",
+    "also_in": [],
+    "trigger_type": "standing",
+    "tier_source": {
+      "doc_id": "AHMEDABAD_HAP_2018",
+      "page": 19,
+      "quote": "Ensure availability of shade / shelters, drinking water, ORS packets etc., in bus stands, auto stands etc.",
+      "match": "same action",
+      "tier_basis": "ahmedabad_precedent",
+      "note": "Precedent from another city (Ahmedabad HAP, 2019 update), not Delhi policy; Ahmedabad's colour temperature thresholds differ from Delhi's."
+    }
+  },
+  {
+    "action_id": "MUNI_MASS_GATHERINGS_RESTRICT",
+    "text": "Allow mass gathering events only if no severe heat wave warning is issued",
+    "audience": "municipal",
+    "tier_min": "UNSPECIFIED",
+    "trigger": "A severe heat wave warning exists for the district/city",
+    "doc_id": "DELHI_HAP_2025",
+    "page": 68,
+    "verbatim_excerpt": "Mass gathering events may be allowed only if no sever heat wave warning is issued for the concerned districts / cities.",
+    "confidence": "medium",
+    "notes": "Source typo 'sever' is reproduced. 'Severe heat wave warning' is not mapped to a colour in the document.",
+    "verified_modes": [
+      "layout",
+      "raw"
+    ],
+    "verification": "VERIFIED (exact text found on cited page)",
+    "also_in": [],
+    "trigger_type": "forecast"
+  },
+  {
+    "action_id": "ENERGY_POWER_PRIORITY_CRITICAL_FACILITIES",
+    "text": "Prioritise uninterrupted power to critical facilities (hospitals, dispensaries/UHCs)",
+    "audience": "energy",
+    "tier_min": "RED",
+    "trigger": "Heat alert / heat season",
+    "doc_id": "DELHI_HAP_2025",
+    "page": 54,
+    "verbatim_excerpt": "Inform power supply companies to prioritize maintaining power to critical facilities (such as Hospitals and dispensaries).",
+    "confidence": "high",
+    "notes": "Strongest health–energy bridge in the Delhi HAP. Repeated at p.70 (district level) and p.80 (nodal officer: 'Communicates local utility protocol to prioritize uninterrupted power to critical facilities (such as hospitals and UHCs).'). Tier not stated.",
+    "verified_modes": [
+      "layout",
+      "raw"
+    ],
+    "verification": "VERIFIED (exact text found on cited page)",
+    "also_in": [],
+    "trigger_type": "forecast",
+    "tier_source": {
+      "doc_id": "AHMEDABAD_HAP_2018",
+      "page": 14,
+      "quote": "Communicate the local utility protocol to prioritize maintaining power to critical facilities (such as hospitals and UHCs).",
+      "match": "same action",
+      "tier_basis": "ahmedabad_precedent",
+      "note": "Precedent from another city (Ahmedabad HAP, 2019 update), not Delhi policy; Ahmedabad's colour temperature thresholds differ from Delhi's."
+    }
+  },
+  {
+    "action_id": "ENERGY_DISCOM_HOSPITAL_SUPPLY_CARE",
+    "text": "DISCOMs to take special care of power supply to hospitals, dispensaries and clinics",
+    "audience": "energy",
+    "tier_min": "RED",
+    "trigger": "Pre-season (Phase 1) responsibilities of BSES/TPDDL",
+    "doc_id": "DELHI_HAP_2025",
+    "page": 53,
+    "verbatim_excerpt": "Special care should be taken for power supply in Hospitals, Dispensaries and Clinics.",
+    "confidence": "high",
+    "notes": "Listed as a DISCOM direction in the pre-season phase table, not alert-linked.",
+    "verified_modes": [
+      "layout",
+      "raw"
+    ],
+    "verification": "VERIFIED (exact text found on cited page)",
+    "also_in": [],
+    "trigger_type": "standing",
+    "tier_source": {
+      "doc_id": "AHMEDABAD_HAP_2018",
+      "page": 14,
+      "quote": "Communicate the local utility protocol to prioritize maintaining power to critical facilities (such as hospitals and UHCs).",
+      "match": "equivalent action",
+      "tier_basis": "ahmedabad_precedent",
+      "note": "Precedent from another city (Ahmedabad HAP, 2019 update), not Delhi policy; Ahmedabad's colour temperature thresholds differ from Delhi's."
+    }
+  },
+  {
+    "action_id": "ENERGY_DISCOM_AC_25C_AWARENESS",
+    "text": "DISCOMs to generate awareness about running AC at 25 °C",
+    "audience": "energy",
+    "tier_min": "YELLOW",
+    "trigger": "Pre-season (Phase 1) responsibilities of BSES/TPDDL",
+    "doc_id": "DELHI_HAP_2025",
+    "page": 53,
+    "verbatim_excerpt": "Awareness generation to run the AC at 25degree centigrade,",
+    "confidence": "high",
+    "notes": "Awareness action, not a mandate. 25 °C differs from the 24 °C default in the BEE notification (not yet verified here) — see conflicts.",
+    "verified_modes": [
+      "layout",
+      "raw"
+    ],
+    "verification": "VERIFIED (exact text found on cited page)",
+    "also_in": [],
+    "trigger_type": "standing",
+    "tier_source": {
+      "doc_id": "AHMEDABAD_HAP_2018",
+      "page": 18,
+      "quote": "Create awareness among people on energy conservation.",
+      "match": "equivalent action (general energy-conservation awareness, no AC setting named)",
+      "tier_basis": "ahmedabad_precedent",
+      "note": "Precedent from another city (Ahmedabad HAP, 2019 update), not Delhi policy; Ahmedabad's colour temperature thresholds differ from Delhi's."
+    }
+  },
+  {
+    "action_id": "NDMA_ORANGE_AVOID_EXPOSURE_HYDRATE",
+    "text": "Avoid heat exposure, keep cool, avoid dehydration, wear light clothes, cover head, drink water even if not thirsty",
+    "audience": "public",
+    "tier_min": "ORANGE",
+    "trigger": "NDMA/IMD orange alert (colour-code table, suggested actions)",
+    "doc_id": "NDMA_HW_GUIDELINES_2019",
+    "page": 35,
+    "verbatim_excerpt": "(a) Avoid heat exposure– keep cool. Avoid dehydration (b) Wear lightweight, light-coloured, loose, cotton clothes (c) Cover your head (d) Drink sufficient water- even if not thirsty",
+    "confidence": "high",
+    "notes": "Printed p.15. Scanned document: quote read from OCR and checked against the page image. Printed page = PDF page minus 20. Fuller than the IMD FAQ version (IMD_HW_FAQ p.8).",
+    "verified_modes": [
+      "ocr"
+    ],
+    "verification": "VERIFIED (scanned page: OCR match and checked against page image)",
+    "printed_page": 15,
+    "also_in": [],
+    "trigger_type": "forecast",
+    "tier_source": {
+      "doc_id": "NDMA_HW_GUIDELINES_2019",
+      "page": 35,
+      "quote": "(a) Avoid heat exposure– keep cool. Avoid dehydration (b) Wear lightweight, light-coloured, loose, cotton clothes (c) Cover your head (d) Drink sufficient water- even if not thirsty",
+      "match": "same action (colour named in the action's own source)",
+      "tier_basis": "national_source",
+      "note": ""
+    }
+  },
+  {
+    "action_id": "NDMA_ORANGE_AVOID_ALCOHOL_COLD_BATH",
+    "text": "Avoid alcohol, tea, coffee and carbonated soft drinks; take a cold bath frequently",
+    "audience": "public",
+    "tier_min": "ORANGE",
+    "trigger": "NDMA/IMD orange alert",
+    "doc_id": "NDMA_HW_GUIDELINES_2019",
+    "page": 35,
+    "verbatim_excerpt": "(f) Avoid alcohol, tea, coffee and carbonated soft drinks, which dehydrates the body (g) Take bath in cold water frequently.",
+    "confidence": "high",
+    "notes": "Printed p.15. Scanned document: quote read from OCR and checked against the page image. Printed page = PDF page minus 20.",
+    "verified_modes": [
+      "ocr"
+    ],
+    "verification": "VERIFIED (scanned page: OCR match and checked against page image)",
+    "printed_page": 15,
+    "also_in": [],
+    "trigger_type": "forecast",
+    "tier_source": {
+      "doc_id": "NDMA_HW_GUIDELINES_2019",
+      "page": 35,
+      "quote": "(f) Avoid alcohol, tea, coffee and carbonated soft drinks, which dehydrates the body (g) Take bath in cold water frequently.",
+      "match": "same action (colour named in the action's own source)",
+      "tier_basis": "national_source",
+      "note": ""
+    }
+  },
+  {
+    "action_id": "NDMA_ORANGE_SUNSTROKE_FIRST_AID",
+    "text": "In case of sunstroke, cool the person with a wet cloth and water on the head, and consult a doctor immediately",
+    "audience": "public",
+    "tier_min": "ORANGE",
+    "trigger": "NDMA orange-alert row, 'In case of SUNSTROKE'",
+    "doc_id": "NDMA_HW_GUIDELINES_2019",
+    "page": 35,
+    "verbatim_excerpt": "Wipe her/him with a wet cloth/wash the body frequently. Pour normal temperature water on the head. The main thing is to bring down the body temperature. Consult a Doctor immediately.",
+    "confidence": "high",
+    "notes": "Printed p.15. Scanned document: quote read from OCR and checked against the page image. Printed page = PDF page minus 20.",
+    "verified_modes": [
+      "ocr"
+    ],
+    "verification": "VERIFIED (scanned page: OCR match and checked against page image)",
+    "printed_page": 15,
+    "also_in": [],
+    "trigger_type": "observation",
+    "tier_source": {
+      "doc_id": "NDMA_HW_GUIDELINES_2019",
+      "page": 35,
+      "quote": "Wipe her/him with a wet cloth/wash the body frequently. Pour normal temperature water on the head. The main thing is to bring down the body temperature. Consult a Doctor immediately.",
+      "match": "same action (colour named in the action's own source)",
+      "tier_basis": "national_source",
+      "note": ""
+    }
+  },
+  {
+    "action_id": "NDMA_RED_ORANGE_PLUS_EXTREME_CARE",
+    "text": "Red alert: follow the orange-alert actions and take extreme care of vulnerable people",
+    "audience": "public",
+    "tier_min": "RED",
+    "trigger": "NDMA/IMD red alert",
+    "doc_id": "NDMA_HW_GUIDELINES_2019",
+    "page": 35,
+    "verbatim_excerpt": "Along with suggested action for Orange Alert, Extreme care needed for vulnerable people.",
+    "confidence": "high",
+    "notes": "Printed p.15. The OCR dropped this cell; wording was read from the page image. Scanned document: quote read from OCR and checked against the page image. Printed page = PDF page minus 20. This explains the IMD FAQ's short red entry (IMD_HW_FAQ p.8).",
+    "verified_modes": [],
+    "verification": "VERIFIED visually against page image (OCR did not capture this cell)",
+    "printed_page": 15,
+    "also_in": [],
+    "trigger_type": "forecast",
+    "tier_source": {
+      "doc_id": "NDMA_HW_GUIDELINES_2019",
+      "page": 35,
+      "quote": "Along with suggested action for Orange Alert, Extreme care needed for vulnerable people.",
+      "match": "same action (colour named in the action's own source)",
+      "tier_basis": "national_source",
+      "note": ""
+    }
+  },
+  {
+    "action_id": "NDMA_HEAT_STROKE_EMERGENCY_CALL_108_102",
+    "text": "Heat stroke is a medical emergency: call 108/102 or take the victim to hospital immediately",
+    "audience": "public",
+    "tier_min": "UNSPECIFIED",
+    "trigger": "Suspected heat stroke",
+    "doc_id": "NDMA_HW_GUIDELINES_2019",
+    "page": 36,
+    "verbatim_excerpt": "Heat stroke is a severe medical emergency. Call 108 and 102 for ambulance for emergency medical services or take the victim to a hospital immediately. Delay can be fatal.",
+    "confidence": "high",
+    "notes": "Printed p.16 (Table 4). Scanned document: quote read from OCR and checked against the page image. Printed page = PDF page minus 20.",
+    "verified_modes": [
+      "ocr"
+    ],
+    "verification": "VERIFIED (scanned page: OCR match and checked against page image)",
+    "printed_page": 16,
+    "also_in": [],
+    "trigger_type": "observation"
+  },
+  {
+    "action_id": "NDMA_HEAT_EXHAUSTION_FIRST_AID",
+    "text": "Heat exhaustion: lie down in a cool place, loosen clothing, apply cool wet cloth",
+    "audience": "public",
+    "tier_min": "UNSPECIFIED",
+    "trigger": "Suspected heat exhaustion",
+    "doc_id": "NDMA_HW_GUIDELINES_2019",
+    "page": 36,
+    "verbatim_excerpt": "Get victim to lie down in a cool place. Loosen clothing. Apply cool, wet cloth.",
+    "confidence": "high",
+    "notes": "Printed p.16. Scanned document: quote read from OCR and checked against the page image. Printed page = PDF page minus 20.",
+    "verified_modes": [
+      "ocr"
+    ],
+    "verification": "VERIFIED (scanned page: OCR match and checked against page image)",
+    "printed_page": 16,
+    "also_in": [],
+    "trigger_type": "observation"
+  },
+  {
+    "action_id": "NDMA_HOSP_SURGE_CAPACITY_HEATSTROKE_BEDS",
+    "text": "Identify surge capacity and mark beds for heat stroke; prepare emergency departments for more patients",
+    "audience": "health",
+    "tier_min": "UNSPECIFIED",
+    "trigger": "Hospital preparedness before/during heat season",
+    "doc_id": "NDMA_HW_GUIDELINES_2019",
+    "page": 37,
+    "verbatim_excerpt": "Identify surge capacities and mark the beds dedicated to treat heat stroke victims and enhance emergency department preparedness to handle more patients.",
+    "confidence": "high",
+    "notes": "Printed p.17. Scanned document: quote read from OCR and checked against the page image. Printed page = PDF page minus 20.",
+    "verified_modes": [
+      "ocr"
+    ],
+    "verification": "VERIFIED (scanned page: OCR match and checked against page image)",
+    "printed_page": 17,
+    "also_in": [],
+    "trigger_type": "standing"
+  },
+  {
+    "action_id": "NDMA_HOSP_RAPID_RESPONSE_TEAMS",
+    "text": "Identify Rapid Response Teams to respond to calls outside hospitals",
+    "audience": "health",
+    "tier_min": "UNSPECIFIED",
+    "trigger": "Hospital preparedness",
+    "doc_id": "NDMA_HW_GUIDELINES_2019",
+    "page": 37,
+    "verbatim_excerpt": "Identify RRT (Rapid Response Teams) to respond to any exigency call outside the hospitals.",
+    "confidence": "high",
+    "notes": "Printed p.17. Scanned document: quote read from OCR and checked against the page image. Printed page = PDF page minus 20.",
+    "verified_modes": [
+      "ocr"
+    ],
+    "verification": "VERIFIED (scanned page: OCR match and checked against page image)",
+    "printed_page": 17,
+    "also_in": [],
+    "trigger_type": "standing"
+  },
+  {
+    "action_id": "NDMA_HOSP_SUPPLIES_STAFF_IV_ORS",
+    "text": "Ensure staff, beds, IV fluids, ORS, medicines and equipment for volume depletion and electrolyte imbalance",
+    "audience": "health",
+    "tier_min": "UNSPECIFIED",
+    "trigger": "Hospital preparedness",
+    "doc_id": "NDMA_HW_GUIDELINES_2019",
+    "page": 37,
+    "verbatim_excerpt": "Ensure adequate arrangements of Staff, Beds, IV fluids, ORS, essential medicines and equipment to cater to management of volume depletion and electrolyte imbalance.",
+    "confidence": "high",
+    "notes": "Printed p.17. Scanned document: quote read from OCR and checked against the page image. Printed page = PDF page minus 20.",
+    "verified_modes": [
+      "ocr"
+    ],
+    "verification": "VERIFIED (scanned page: OCR match and checked against page image)",
+    "printed_page": 17,
+    "also_in": [],
+    "trigger_type": "standing"
+  },
+  {
+    "action_id": "NDMA_PHC_STABILISE_BEFORE_REFERRAL",
+    "text": "Primary health centres refer patients to higher facilities only after cooling and hydration",
+    "audience": "health",
+    "tier_min": "UNSPECIFIED",
+    "trigger": "Primary-care management of heat illness",
+    "doc_id": "NDMA_HW_GUIDELINES_2019",
+    "page": 37,
+    "verbatim_excerpt": "Primary health centres must refer the patients to the higher facility only after ensuring adequate stabilization and basic definitive care (cooling and hydration).",
+    "confidence": "high",
+    "notes": "Printed p.17. Scanned document: quote read from OCR and checked against the page image. Printed page = PDF page minus 20. Compare NCDC 'Cool First, Transport Second' (NCDC_EMERGENCY_COOLING_2024 p.10) and Delhi HAP clinical step (p.66) — see conflicts.",
+    "verified_modes": [
+      "ocr"
+    ],
+    "verification": "VERIFIED (scanned page: OCR match and checked against page image)",
+    "printed_page": 17,
+    "also_in": [],
+    "trigger_type": "observation"
+  },
+  {
+    "action_id": "NDMA_HOSP_REPORT_HRI_TO_IDSP",
+    "text": "Report all suspected or confirmed heat-related illness to the district IDSP unit",
+    "audience": "health",
+    "tier_min": "UNSPECIFIED",
+    "trigger": "All heat-related illness cases",
+    "doc_id": "NDMA_HW_GUIDELINES_2019",
+    "page": 37,
+    "verbatim_excerpt": "All cases of heat-related illnesses (suspected or confirmed) should be reported to IDSP (Integrated Disease Surveillance Programme) unit of the district.",
+    "confidence": "high",
+    "notes": "Printed p.17. Scanned document: quote read from OCR and checked against the page image. Printed page = PDF page minus 20.",
+    "verified_modes": [
+      "ocr"
+    ],
+    "verification": "VERIFIED (scanned page: OCR match and checked against page image)",
+    "printed_page": 17,
+    "also_in": [],
+    "trigger_type": "observation"
+  },
+  {
+    "action_id": "NDMA_NEWCOMERS_STAY_INDOORS_ONE_WEEK",
+    "text": "Newcomers from cooler climates should avoid going out in the open for one week",
+    "audience": "public",
+    "tier_min": "UNSPECIFIED",
+    "trigger": "Arrival from a cooler climate during heat wave season",
+    "doc_id": "NDMA_HW_GUIDELINES_2019",
+    "page": 37,
+    "verbatim_excerpt": "They should be advised not to move out in open for a period of one week.",
+    "confidence": "high",
+    "notes": "Printed p.17 (4.3 Acclimatization). Scanned document: quote read from OCR and checked against the page image. Printed page = PDF page minus 20.",
+    "verified_modes": [
+      "ocr"
+    ],
+    "verification": "VERIFIED (scanned page: OCR match and checked against page image)",
+    "printed_page": 17,
+    "also_in": [],
+    "trigger_type": "observation"
+  },
+  {
+    "action_id": "NDMA_ENERGY_UNINTERRUPTED_POWER_BEFORE_DURING_SUMMER",
+    "text": "Power departments/DISCOMs to ensure repair and maintenance for uninterrupted power supply before and during summer",
+    "audience": "energy",
+    "tier_min": "UNSPECIFIED",
+    "trigger": "Before and during summer (not alert-linked)",
+    "doc_id": "NDMA_HW_GUIDELINES_2019",
+    "page": 44,
+    "verbatim_excerpt": "Ensure repair & maintenance work for uninterrupted power supply before and during the summer.",
+    "confidence": "high",
+    "notes": "Printed p.24 (Table 5, Ministry of Power row, state/DISCOM column). The page is a sideways scan; the wording was read from the rotated page image. Scanned document: quote read from OCR and checked against the page image. Printed page = PDF page minus 20.",
+    "verified_modes": [],
+    "verification": "VERIFIED visually against page image (OCR did not capture this cell)",
+    "printed_page": 24,
+    "also_in": [],
+    "trigger_type": "standing"
+  },
+  {
+    "action_id": "NDMA_ENERGY_MOP_ADVISORY_UNINTERRUPTED_SUPPLY",
+    "text": "Ministry of Power to advise states and power utilities, including repair and maintenance for uninterrupted supply",
+    "audience": "energy",
+    "tier_min": "UNSPECIFIED",
+    "trigger": "Before and during summer (not alert-linked)",
+    "doc_id": "NDMA_HW_GUIDELINES_2019",
+    "page": 44,
+    "verbatim_excerpt": "Advisory to all states as well as power generation, transmission, distribution and supply though DISCOM including repair & maintenance work for uninterrupted power supply.",
+    "confidence": "high",
+    "notes": "Printed p.24. Source spelling 'though' reproduced. Scanned document: quote read from OCR and checked against the page image. Printed page = PDF page minus 20.",
+    "verified_modes": [],
+    "verification": "VERIFIED visually against page image (OCR did not capture this cell)",
+    "printed_page": 24,
+    "also_in": [],
+    "trigger_type": "standing"
+  },
+  {
+    "action_id": "NDMA_ENERGY_RESCHEDULE_LOAD_SHEDDING",
+    "text": "Re-schedule load shedding",
+    "audience": "energy",
+    "tier_min": "YELLOW",
+    "trigger": "Not stated",
+    "doc_id": "NDMA_HW_GUIDELINES_2019",
+    "page": 44,
+    "verbatim_excerpt": "Re-scheduling load shedding",
+    "confidence": "medium",
+    "notes": "Printed p.24, listed under Ministry of Power and under Department of Power/DISCOM. The NDMA text gives no criteria (for example, away from peak heat hours or exempting hospitals). The Delhi HAP lists 'Scheduling load shedding' (DELHI_HAP_2025 p.59), which appears to derive from this line. Low specificity: do not turn it into advice without more detail. Scanned document: quote read from OCR and checked against the page image. Printed page = PDF page minus 20.",
+    "verified_modes": [
+      "ocr"
+    ],
+    "verification": "VERIFIED (scanned page: OCR match and checked against page image)",
+    "printed_page": 24,
+    "also_in": [],
+    "trigger_type": "standing",
+    "tier_source": {
+      "doc_id": "AHMEDABAD_HAP_2018",
+      "page": 18,
+      "quote": "Power shedding should be cut down/reduced during severe heat (frequency and timing).",
+      "match": "equivalent action (Ahmedabad Red also says no power cuts)",
+      "tier_basis": "ahmedabad_precedent",
+      "note": "Precedent from another city (Ahmedabad HAP, 2019 update), not Delhi policy; Ahmedabad's colour temperature thresholds differ from Delhi's."
+    }
+  },
+  {
+    "action_id": "NDMA_PUBLIC_USE_FANS_DAMP_CLOTHING",
+    "text": "Use fans, damp clothing and take cold baths frequently",
+    "audience": "public",
+    "tier_min": "UNSPECIFIED",
+    "trigger": "Heat wave (general do's)",
+    "doc_id": "NDMA_HW_GUIDELINES_2019",
+    "page": 51,
+    "verbatim_excerpt": "Use fans, damp clothing and take bath in cold water frequently.",
+    "confidence": "high",
+    "notes": "Printed p.31. WHO/WMO cautions that fans can raise heat stress above about 35 °C (WHO_WMO_HEATWAVES_HEALTH_2015 p.65) — see conflicts. Scanned document: quote read from OCR and checked against the page image. Printed page = PDF page minus 20.",
+    "verified_modes": [
+      "ocr"
+    ],
+    "verification": "VERIFIED (scanned page: OCR match and checked against page image)",
+    "printed_page": 31,
+    "also_in": [],
+    "trigger_type": "forecast"
+  },
+  {
+    "action_id": "NDMA_PUBLIC_LOWER_FLOORS",
+    "text": "Stay indoors as much as possible; try to remain on lower floors",
+    "audience": "public",
+    "tier_min": "UNSPECIFIED",
+    "trigger": "Heat wave (general do's)",
+    "doc_id": "NDMA_HW_GUIDELINES_2019",
+    "page": 51,
+    "verbatim_excerpt": "Try to remain on lower floors.",
+    "confidence": "medium",
+    "notes": "Printed p.31. Preceded by 'Stay indoors as much as possible.' Scanned document: quote read from OCR and checked against the page image. Printed page = PDF page minus 20.",
+    "verified_modes": [
+      "ocr"
+    ],
+    "verification": "VERIFIED (scanned page: OCR match and checked against page image)",
+    "printed_page": 31,
+    "also_in": [],
+    "trigger_type": "forecast"
+  },
+  {
+    "action_id": "NCDC_PUBLIC_COOLING_AND_DRINKING_WATER_FACILITIES",
+    "text": "Consider strategic establishment of public cooling and drinking-water facilities",
+    "audience": "municipal",
+    "tier_min": "UNSPECIFIED",
+    "trigger": "Heat-health action planning",
+    "doc_id": "NCDC_ADVISORY_STATES_2025",
+    "page": 1,
+    "verbatim_excerpt": "Consider the strategic establishment of public cooling and drinking water facilities to prevent heat stress.",
+    "confidence": "high",
+    "notes": "Directed at State/District task forces. Not alert-linked.",
+    "verified_modes": [
+      "layout",
+      "raw"
+    ],
+    "verification": "VERIFIED (exact text found on cited page)",
+    "also_in": [],
+    "trigger_type": "standing"
+  },
+  {
+    "action_id": "NCDC_DISSEMINATE_IMD_WARNING_TO_FACILITIES",
+    "text": "Disseminate IMD heat-wave warnings to health facilities and vulnerable populations",
+    "audience": "health",
+    "tier_min": "UNSPECIFIED",
+    "trigger": "IMD daily heat-wave warning after 1600 hrs IST",
+    "doc_id": "NCDC_ADVISORY_STATES_2025",
+    "page": 2,
+    "verbatim_excerpt": "Dissemination of early warning: of heat waves issued by the India Meteorological Department (IMD) daily after 1600 hours IST with a forecast for next four days should be disseminated to health facilities and vulnerable populations.",
+    "confidence": "high",
+    "notes": "States 'next four days'; IMD FAQ p.6 says five days — see conflicts.",
+    "verified_modes": [
+      "layout",
+      "raw"
+    ],
+    "verification": "VERIFIED (exact text found on cited page)",
+    "also_in": [],
+    "trigger_type": "forecast"
+  },
+  {
+    "action_id": "NCDC_HEATSTROKE_UNITS_EXTERNAL_COOLING",
+    "text": "Establish heatstroke management units in secondary and tertiary facilities with active external cooling",
+    "audience": "health",
+    "tier_min": "UNSPECIFIED",
+    "trigger": "Health facility preparedness",
+    "doc_id": "NCDC_ADVISORY_STATES_2025",
+    "page": 2,
+    "verbatim_excerpt": "Establish Heatstroke management units in secondary and tertiary level health care facilities.",
+    "confidence": "high",
+    "notes": "",
+    "verified_modes": [
+      "layout",
+      "raw"
+    ],
+    "verification": "VERIFIED (exact text found on cited page)",
+    "also_in": [],
+    "trigger_type": "standing"
+  },
+  {
+    "action_id": "NCDC_AMBULANCE_COOL_FIRST_TRANSPORT_SECOND",
+    "text": "Equip primary facilities and ambulances for on-site rapid cooling (Cool First, Transport Second)",
+    "audience": "health",
+    "tier_min": "UNSPECIFIED",
+    "trigger": "Severe heat-related illness",
+    "doc_id": "NCDC_ADVISORY_STATES_2025",
+    "page": 2,
+    "verbatim_excerpt": "to ensure on-site emergency and rapid cooling of severe heat-related illness patients in line with Cool First, Transport Second strategy.",
+    "confidence": "high",
+    "notes": "",
+    "verified_modes": [
+      "layout",
+      "raw"
+    ],
+    "verification": "VERIFIED (exact text found on cited page)",
+    "also_in": [],
+    "trigger_type": "observation"
+  },
+  {
+    "action_id": "NCDC_FACILITY_DRINKING_WATER",
+    "text": "Ensure sufficient drinking water at all health facilities",
+    "audience": "health",
+    "tier_min": "UNSPECIFIED",
+    "trigger": "Health facility preparedness",
+    "doc_id": "NCDC_ADVISORY_STATES_2025",
+    "page": 2,
+    "verbatim_excerpt": "Ensure the availability of sufficient drinking water at all health facilities.",
+    "confidence": "high",
+    "notes": "",
+    "verified_modes": [
+      "layout",
+      "raw"
+    ],
+    "verification": "VERIFIED (exact text found on cited page)",
+    "also_in": [],
+    "trigger_type": "standing"
+  },
+  {
+    "action_id": "NCDC_FACILITY_COOLING_APPLIANCES",
+    "text": "Ensure general cooling appliances work in waiting and treatment areas",
+    "audience": "health",
+    "tier_min": "UNSPECIFIED",
+    "trigger": "Health facility preparedness",
+    "doc_id": "NCDC_ADVISORY_STATES_2025",
+    "page": 2,
+    "verbatim_excerpt": "Ensure sufficient availability of general cooling appliances in waiting and patient treatment area and their functioning.",
+    "confidence": "high",
+    "notes": "Energy-demand relevant.",
+    "verified_modes": [
+      "layout",
+      "raw"
+    ],
+    "verification": "VERIFIED (exact text found on cited page)",
+    "also_in": [],
+    "trigger_type": "standing"
+  },
+  {
+    "action_id": "NCDC_ENERGY_HOSPITAL_UNINTERRUPTED_ELECTRICITY",
+    "text": "Coordinate with the electricity distribution company for uninterrupted supply to hospitals so cooling appliances keep working",
+    "audience": "energy",
+    "tier_min": "UNSPECIFIED",
+    "trigger": "Health facility resiliency to extreme heat (not alert-linked)",
+    "doc_id": "NCDC_ADVISORY_STATES_2025",
+    "page": 3,
+    "verbatim_excerpt": "Coordinate with electricity distribution company/corporation for uninterrupted electricity supply to hospitals for constant functioning of cooling appliances.",
+    "confidence": "high",
+    "notes": "Strongest national-level health–energy link found so far (MoHFW/NCDC, 2025). Directed at State Nodal Officers.",
+    "verified_modes": [
+      "layout",
+      "raw"
+    ],
+    "verification": "VERIFIED (exact text found on cited page)",
+    "also_in": [],
+    "trigger_type": "standing"
+  },
+  {
+    "action_id": "NCDC_ENERGY_HEALTH_FACILITY_LOAD_AUDITS",
+    "text": "Conduct bi-annual electrical load audits in high-demand hospital areas such as ICUs",
+    "audience": "energy",
+    "tier_min": "UNSPECIFIED",
+    "trigger": "Fire safety in health facilities",
+    "doc_id": "NCDC_ADVISORY_STATES_2025",
+    "page": 3,
+    "verbatim_excerpt": "Conduct bi-annual electrical load audits, especially in high-demand areas like ICUs, to ensure power systems meet safety standards.",
+    "confidence": "high",
+    "notes": "Framed as fire safety, not demand response.",
+    "verified_modes": [
+      "layout",
+      "raw"
+    ],
+    "verification": "VERIFIED (exact text found on cited page)",
+    "also_in": [],
+    "trigger_type": "standing"
+  },
+  {
+    "action_id": "NCDC_ENERGY_HEALTH_FACILITY_CONSERVATION",
+    "text": "Reduce indoor heat and conserve energy in health facilities (cool roof, shading, solarization)",
+    "audience": "energy",
+    "tier_min": "UNSPECIFIED",
+    "trigger": "Health facility resiliency to extreme heat",
+    "doc_id": "NCDC_ADVISORY_STATES_2025",
+    "page": 3,
+    "verbatim_excerpt": "Adopt measures to reduce indoor heat and energy conservation in the health facilities like cool roof/green roof, window shading, rainwater harvesting, solarization etc.",
+    "confidence": "high",
+    "notes": "Facility-level conservation; not a grid demand-response measure.",
+    "verified_modes": [
+      "layout",
+      "raw"
+    ],
+    "verification": "VERIFIED (exact text found on cited page)",
+    "also_in": [],
+    "trigger_type": "standing"
+  },
+  {
+    "action_id": "NCDC_EVENTS_AVOID_WARNING_DAYS",
+    "text": "Avoid scheduling mass gatherings on days with active heatwave warnings and high humidity",
+    "audience": "municipal",
+    "tier_min": "UNSPECIFIED",
+    "trigger": "Active heatwave warning / high humidity expected",
+    "doc_id": "NCDC_ADVISORY_STATES_2025",
+    "page": 3,
+    "verbatim_excerpt": "Avoid days when active heatwave warnings and high humidity are expected",
+    "confidence": "high",
+    "notes": "'Active heatwave warnings' not mapped to a colour.",
+    "verified_modes": [
+      "layout",
+      "raw"
+    ],
+    "verification": "VERIFIED (exact text found on cited page)",
+    "also_in": [],
+    "trigger_type": "forecast"
+  },
+  {
+    "action_id": "NCDC_EVENTS_AVOID_12_3",
+    "text": "Avoid planning outdoor events at the hottest time of day (12 PM–3 PM)",
+    "audience": "municipal",
+    "tier_min": "UNSPECIFIED",
+    "trigger": "Summer mass gatherings",
+    "doc_id": "NCDC_ADVISORY_STATES_2025",
+    "page": 3,
+    "verbatim_excerpt": "Avoid planning outdoor events at the hottest time of day (12PM-3PM)",
+    "confidence": "high",
+    "notes": "",
+    "verified_modes": [
+      "layout",
+      "raw"
+    ],
+    "verification": "VERIFIED (exact text found on cited page)",
+    "also_in": [],
+    "trigger_type": "standing"
+  },
+  {
+    "action_id": "NCDC_EVENTS_WATER_OUTLETS",
+    "text": "Provide one water outlet per 500 people at events",
+    "audience": "municipal",
+    "tier_min": "UNSPECIFIED",
+    "trigger": "Mass gathering planning",
+    "doc_id": "NCDC_ADVISORY_STATES_2025",
+    "page": 4,
+    "verbatim_excerpt": "One water outlet per 500 people.",
+    "confidence": "high",
+    "notes": "Companion rule: at least 2 litres free drinking water per person or 500 ml/hour, whichever is greater (same page).",
+    "verified_modes": [
+      "layout",
+      "raw"
+    ],
+    "verification": "VERIFIED (exact text found on cited page)",
+    "also_in": [],
+    "trigger_type": "standing"
+  },
+  {
+    "action_id": "NCDC_COOL_FIRST_TRANSPORT_SECOND",
+    "text": "Begin effective cooling in the field and continue during transport to the nearest emergency department",
+    "audience": "health",
+    "tier_min": "UNSPECIFIED",
+    "trigger": "Severe heat-related illness / heat stroke",
+    "doc_id": "NCDC_EMERGENCY_COOLING_2024",
+    "page": 10,
+    "verbatim_excerpt": "Cool First, Transport Second Immediate, rapid cooling: recognize, begin effective cooling in field/pre-hospital setting continue during transport to nearest emergency department",
+    "confidence": "high",
+    "notes": "Contradicts the Delhi HAP clinical step that says to transport immediately at ≥ 40 °C (DELHI_HAP_2025 p.66). PDF page 10.",
+    "verified_modes": [
+      "layout",
+      "raw"
+    ],
+    "verification": "VERIFIED (exact text found on cited page)",
+    "also_in": [],
+    "trigger_type": "observation"
+  },
+  {
+    "action_id": "NCDC_RAPID_COOLING_WITHIN_30_MIN",
+    "text": "Start rapid cooling as soon as possible and within 30 minutes of presentation",
+    "audience": "health",
+    "tier_min": "UNSPECIFIED",
+    "trigger": "Heat stroke",
+    "doc_id": "NCDC_EMERGENCY_COOLING_2024",
+    "page": 9,
+    "verbatim_excerpt": "Rapid cooling is the most effective strategy for minimizing morbidity and mortality from heat stroke and should be initiated as soon as possible, and within 30 minutes of presentation.",
+    "confidence": "high",
+    "notes": "PDF page 9.",
+    "verified_modes": [
+      "layout",
+      "raw"
+    ],
+    "verification": "VERIFIED (exact text found on cited page)",
+    "also_in": [],
+    "trigger_type": "observation"
+  },
+  {
+    "action_id": "NCDC_DO_NOT_DELAY_COOLING_FOR_CLOTHING",
+    "text": "Do not delay cooling to remove all clothing or equipment",
+    "audience": "health",
+    "tier_min": "UNSPECIFIED",
+    "trigger": "Heat stroke",
+    "doc_id": "NCDC_EMERGENCY_COOLING_2024",
+    "page": 10,
+    "verbatim_excerpt": "Cooling should not be delayed to remove all clothing, uniforms, or equipment.",
+    "confidence": "high",
+    "notes": "PDF page 10.",
+    "verified_modes": [
+      "layout",
+      "raw"
+    ],
+    "verification": "VERIFIED (exact text found on cited page)",
+    "also_in": [],
+    "trigger_type": "observation"
+  },
+  {
+    "action_id": "NCDC_ICE_PACKS_NECK_AXILLA_GROIN_NOT_PRIMARY",
+    "text": "Do not rely on ice packs at neck, armpits and groin as the primary cooling method",
+    "audience": "health",
+    "tier_min": "UNSPECIFIED",
+    "trigger": "Heat stroke",
+    "doc_id": "NCDC_EMERGENCY_COOLING_2024",
+    "page": 10,
+    "verbatim_excerpt": "Evidence is lacking to support the use of cooling blankets or ice packs placed strategically to the neck, axilla, and groin as primary cooling methods.",
+    "confidence": "high",
+    "notes": "Contradicts the Delhi HAP clinical protocol step (iv)(a) (DELHI_HAP_2025 p.65). PDF page 10.",
+    "verified_modes": [
+      "layout",
+      "raw"
+    ],
+    "verification": "VERIFIED (exact text found on cited page)",
+    "also_in": [],
+    "trigger_type": "observation"
+  },
+  {
+    "action_id": "NCDC_AVOID_WARM_WATER_FOR_COOLING",
+    "text": "Avoid warm water for cooling",
+    "audience": "health",
+    "tier_min": "UNSPECIFIED",
+    "trigger": "Heat stroke",
+    "doc_id": "NCDC_EMERGENCY_COOLING_2024",
+    "page": 10,
+    "verbatim_excerpt": "Avoid using warm water whenever possible",
+    "confidence": "high",
+    "notes": "PDF page 10.",
+    "verified_modes": [
+      "layout",
+      "raw"
+    ],
+    "verification": "VERIFIED (exact text found on cited page)",
+    "also_in": [],
+    "trigger_type": "observation"
+  },
+  {
+    "action_id": "NCDC_AC_ROOM_ALONE_INADEQUATE_FOR_HEATSTROKE",
+    "text": "An air-conditioned room alone is not adequate cooling for heat stroke",
+    "audience": "health",
+    "tier_min": "UNSPECIFIED",
+    "trigger": "Heat stroke",
+    "doc_id": "NCDC_EMERGENCY_COOLING_2024",
+    "page": 11,
+    "verbatim_excerpt": "Air-conditioned or temperature-controlled rooms have cooling rates of 0.03–0.06°C/min, which as a standalone cooling method are unacceptable for heat stroke",
+    "confidence": "high",
+    "notes": "PDF page 11.",
+    "verified_modes": [
+      "layout",
+      "raw"
+    ],
+    "verification": "VERIFIED (exact text found on cited page)",
+    "also_in": [],
+    "trigger_type": "observation"
+  },
+  {
+    "action_id": "NCDC_CLASSIC_HEATSTROKE_EVAPORATIVE_COOLING",
+    "text": "In classic (non-exertional) heat stroke, prefer evaporative cooling over conductive cooling",
+    "audience": "health",
+    "tier_min": "UNSPECIFIED",
+    "trigger": "Classic heat stroke (elderly, comorbid)",
+    "doc_id": "NCDC_EMERGENCY_COOLING_2024",
+    "page": 14,
+    "verbatim_excerpt": "In CHS, evaporative cooling is preferred over conductive cooling",
+    "confidence": "high",
+    "notes": "PDF page 14.",
+    "verified_modes": [
+      "layout",
+      "raw"
+    ],
+    "verification": "VERIFIED (exact text found on cited page)",
+    "also_in": [],
+    "trigger_type": "observation"
+  },
+  {
+    "action_id": "WHO_TIE_INTERVENTIONS_TO_WARNING_LEVELS",
+    "text": "Tie the timing of interventions to the warning levels used; give educational messages early",
+    "audience": "municipal",
+    "tier_min": "UNSPECIFIED",
+    "trigger": "Heat-health warning system levels",
+    "doc_id": "WHO_WMO_HEATWAVES_HEALTH_2015",
+    "page": 65,
+    "verbatim_excerpt": "The timing of which interventions to implement should be tied to the levels of warning used in the HHWS, with educational messages provided early on.",
+    "confidence": "high",
+    "notes": "Design principle supporting tiered actions. PDF page 65 (printed 49).",
+    "verified_modes": [
+      "layout",
+      "raw"
+    ],
+    "verification": "VERIFIED (exact text found on cited page)",
+    "also_in": [],
+    "trigger_type": "forecast"
+  },
+  {
+    "action_id": "WHO_FANS_CAUTION_ABOVE_35C",
+    "text": "Be cautious with fans: above 35 °C dry-bulb temperature hot air can make a person hotter",
+    "audience": "public",
+    "tier_min": "UNSPECIFIED",
+    "trigger": "Dry-bulb temperature above 35 °C",
+    "doc_id": "WHO_WMO_HEATWAVES_HEALTH_2015",
+    "page": 65,
+    "verbatim_excerpt": "If the dry-bulb temperature is higher than 35ºC, the hot air passing over the skin can make an individual hotter.",
+    "confidence": "high",
+    "notes": "Conflicts with the Indian do's that say to use fans (NDMA_HW_GUIDELINES_2019 p.51; IMD_HW_FAQ p.10). PDF page 65 (printed 49).",
+    "verified_modes": [
+      "layout",
+      "raw"
+    ],
+    "verification": "VERIFIED (exact text found on cited page)",
+    "also_in": [],
+    "trigger_type": "observation"
+  },
+  {
+    "action_id": "WHO_COOLING_CENTRES_AND_TRANSPORT",
+    "text": "Open cooling centres and provide transport for the most vulnerable",
+    "audience": "municipal",
+    "tier_min": "UNSPECIFIED",
+    "trigger": "Heat-health warning issued",
+    "doc_id": "WHO_WMO_HEATWAVES_HEALTH_2015",
+    "page": 67,
+    "verbatim_excerpt": "Cooling centres can be opened to provide relief and transportation thereto can be provided for the most vulnerable;",
+    "confidence": "high",
+    "notes": "PDF page 67 (printed 51).",
+    "verified_modes": [
+      "layout",
+      "raw"
+    ],
+    "verification": "VERIFIED (exact text found on cited page)",
+    "also_in": [],
+    "trigger_type": "forecast"
+  },
+  {
+    "action_id": "WHO_VISIT_AT_RISK_TWICE_DAILY",
+    "text": "Visit at-risk adults at least twice a day and watch for heat exhaustion or heatstroke",
+    "audience": "public",
+    "tier_min": "UNSPECIFIED",
+    "trigger": "Heatwave",
+    "doc_id": "WHO_WMO_HEATWAVES_HEALTH_2015",
+    "page": 68,
+    "verbatim_excerpt": "Visit adults at risk at least twice a day and watch them closely for signs of heat exhaustion or heatstroke.",
+    "confidence": "high",
+    "notes": "Adapted by WHO/WMO from US CDC advice (Box 2). PDF page 68 (printed 52).",
+    "verified_modes": [
+      "layout",
+      "raw"
+    ],
+    "verification": "VERIFIED (exact text found on cited page)",
+    "also_in": [],
+    "trigger_type": "forecast"
+  },
+  {
+    "action_id": "WHO_WORK_REST_ALTERNATE_COOL_AREA",
+    "text": "Alternate work and rest periods, with rest in a cool area",
+    "audience": "municipal",
+    "tier_min": "UNSPECIFIED",
+    "trigger": "Outdoor work in heat",
+    "doc_id": "WHO_WMO_HEATWAVES_HEALTH_2015",
+    "page": 68,
+    "verbatim_excerpt": "Alternate work and rest periods, with rest periods in a cool area;",
+    "confidence": "high",
+    "notes": "PDF page 68 (printed 52). WBGT-based limits are in the thresholds table (Box 6).",
+    "verified_modes": [
+      "layout",
+      "raw"
+    ],
+    "verification": "VERIFIED (exact text found on cited page)",
+    "also_in": [],
+    "trigger_type": "forecast"
+  },
+  {
+    "action_id": "WHO_WORKERS_DRINK_CUP_EVERY_15_20_MIN",
+    "text": "Encourage workers to drink about one cup of cool water every 15–20 minutes",
+    "audience": "municipal",
+    "tier_min": "UNSPECIFIED",
+    "trigger": "Outdoor work in heat",
+    "doc_id": "WHO_WMO_HEATWAVES_HEALTH_2015",
+    "page": 72,
+    "verbatim_excerpt": "Encourage workers to drink plenty of water – about one cup of cool water every 15 to 20 minutes, even if they are not thirsty",
+    "confidence": "high",
+    "notes": "Adapted from OSHA (Box 7). PDF page 72 (printed 56).",
+    "verified_modes": [
+      "layout",
+      "raw"
+    ],
+    "verification": "VERIFIED (exact text found on cited page)",
+    "also_in": [],
+    "trigger_type": "forecast"
+  },
+  {
+    "action_id": "WHO_ENERGY_UTILITIES_SUSPEND_DISCONNECTIONS",
+    "text": "Utilities suspend electricity disconnections during a heatwave",
+    "audience": "energy",
+    "tier_min": "UNSPECIFIED",
+    "trigger": "Heatwave (international practice)",
+    "doc_id": "WHO_WMO_HEATWAVES_HEALTH_2015",
+    "page": 67,
+    "verbatim_excerpt": "A number of utilities suspend electricity disconnections during a heatwave, thus providing necessary utility service to non-paying customers during the worst of the heatwave.",
+    "confidence": "low",
+    "notes": "International practice described by WHO/WMO, not a Delhi or Indian instruction. Do not present as a Delhi action. PDF page 67 (printed 51).",
+    "verified_modes": [
+      "layout",
+      "raw"
+    ],
+    "verification": "VERIFIED (exact text found on cited page)",
+    "also_in": [],
+    "trigger_type": "forecast"
+  },
+  {
+    "action_id": "WHO_ENERGY_PHILADELPHIA_HALT_SERVICE_SUSPENSIONS",
+    "text": "Utility and water departments halt service suspensions during warning periods",
+    "audience": "energy",
+    "tier_min": "UNSPECIFIED",
+    "trigger": "Heat warning issued (Philadelphia example)",
+    "doc_id": "WHO_WMO_HEATWAVES_HEALTH_2015",
+    "page": 69,
+    "verbatim_excerpt": "The local utility company and water department halt service suspensions during warning periods.",
+    "confidence": "low",
+    "notes": "Example from Philadelphia, USA; not applicable to Delhi without a local instrument. PDF page 69 (printed 53).",
+    "verified_modes": [
+      "layout",
+      "raw"
+    ],
+    "verification": "VERIFIED (exact text found on cited page)",
+    "also_in": [],
+    "trigger_type": "forecast"
+  },
+  {
+    "action_id": "BEE_AC_DEFAULT_24C_MANDATORY",
+    "text": "All BEE star-labelled room air conditioners must have a default temperature setting of 24 °C from 1 Jan 2020",
+    "audience": "energy",
+    "tier_min": "UNSPECIFIED",
+    "trigger": "Standing manufacturer requirement; not tied to any heat alert",
+    "doc_id": "BEE_AC_24C_PIB",
+    "page": 1,
+    "verbatim_excerpt": "default setting has been made mandatory from Jan 1, 2020 for all room air conditioners covered under the ambit of BEE star-labelling program",
+    "confidence": "medium",
+    "notes": "Image-only PDF (no text layer): quote read from the page image and checked by eye. This is a PIB press release (Ministry of Power, 6 Jan 2020) that quotes the BEE notification; it is not the Gazette notification itself. It binds manufacturers/sellers, not consumers, so it is not an advisory to citizens. The release's phrase 'The 24°C default setting' is printed with a superscript degree sign, so the quote starts after it. Conflicts with Delhi HAP 'run the AC at 25 degree' (DELHI_HAP_2025 p.53).",
+    "verified_modes": [],
+    "verification": "VERIFIED visually against page image (image-only source, no text layer)",
+    "also_in": [],
+    "trigger_type": "standing"
+  },
+  {
+    "action_id": "BEE_AC_NOTIFICATION_TEXT_24C",
+    "text": "Notification text: star-labelled room ACs shall ensure a default setting of 24 °C from 1 Jan 2020",
+    "audience": "energy",
+    "tier_min": "UNSPECIFIED",
+    "trigger": "Standing manufacturer requirement",
+    "doc_id": "BEE_AC_24C_PIB",
+    "page": 1,
+    "verbatim_excerpt": "shall ensure default setting of temperature in the room air conditioners at twenty-four degrees Celsius with effect from the 1st January 2020.",
+    "confidence": "high",
+    "notes": "Image-only PDF (no text layer): quote read from the page image and checked by eye. This is a PIB press release (Ministry of Power, 6 Jan 2020) that quotes the BEE notification; it is not the Gazette notification itself. This is the notification's own wording as quoted in the release; prefer it over the release's paraphrase.",
+    "verified_modes": [],
+    "verification": "VERIFIED visually against page image (image-only source, no text layer)",
+    "also_in": [],
+    "trigger_type": "standing"
+  },
+  {
+    "action_id": "NIOSH_MEDICAL_MONITORING_ABOVE_RAL",
+    "text": "Employers should run a medical monitoring programme for all workers exposed to heat stress above the RAL",
+    "audience": "public",
+    "tier_min": "UNSPECIFIED",
+    "trigger": "Worker WBGT/metabolic heat above the RAL",
+    "doc_id": "NIOSH_2016_106_HEAT",
+    "page": 36,
+    "verbatim_excerpt": "The employer should institute a medical monitoring program for all workers who are or may be exposed to heat stress above the RAL",
+    "confidence": "medium",
+    "notes": "US NIOSH recommendation, not Indian guidance. Audience is employers; the library has no 'employer' audience, so 'public' is a placeholder.",
+    "verified_modes": [
+      "raw"
+    ],
+    "verification": "VERIFIED (exact text found on cited page)",
+    "also_in": [],
+    "trigger_type": "observation"
+  },
+  {
+    "action_id": "NAP_PHC_CALL_108_COOL_BEFORE_REFER",
+    "text": "At a PHC: suspected heatstroke victim moves to a cool shaded place, call 108, start cooling, then refer",
+    "audience": "health",
+    "tier_min": "UNSPECIFIED",
+    "trigger": "Suspected heatstroke at primary health centre",
+    "doc_id": "NPCCHH_NAP_HRI",
+    "page": 25,
+    "verbatim_excerpt": "Bring victim to safe, cool and shady environment, take vital signs",
+    "confidence": "high",
+    "notes": "MoHFW/NCDC National Action Plan on Heat-Related Illnesses, July 2021. Printed page = PDF page minus 19. Printed p.6 (Management workflow flowchart). Same flowchart: 'Call 108/ Ask for Medical help'.",
+    "verified_modes": [
+      "layout",
+      "raw"
+    ],
+    "verification": "VERIFIED (exact text found on cited page)",
+    "also_in": [],
+    "trigger_type": "observation"
+  },
+  {
+    "action_id": "NAP_PHC_NO_FLUID_IF_UNCONSCIOUS",
+    "text": "Do not give fluid or food to a heatstroke victim who is unconscious or has altered sensorium",
+    "audience": "health",
+    "tier_min": "UNSPECIFIED",
+    "trigger": "Suspected heatstroke at PHC",
+    "doc_id": "NPCCHH_NAP_HRI",
+    "page": 25,
+    "verbatim_excerpt": "Do not give any fluid or food if person is unconscious or has altered sensorium",
+    "confidence": "high",
+    "notes": "MoHFW/NCDC National Action Plan on Heat-Related Illnesses, July 2021. Printed page = PDF page minus 19. Printed p.6.",
+    "verified_modes": [
+      "layout",
+      "raw"
+    ],
+    "verification": "VERIFIED (exact text found on cited page)",
+    "also_in": [],
+    "trigger_type": "observation"
+  },
+  {
+    "action_id": "NAP_PHC_COLD_COMPRESS_NECK_AXILLA_GROIN",
+    "text": "Apply cold compress or ice packs at the neck, armpit, groin and head",
+    "audience": "health",
+    "tier_min": "UNSPECIFIED",
+    "trigger": "Suspected heatstroke at PHC",
+    "doc_id": "NPCCHH_NAP_HRI",
+    "page": 25,
+    "verbatim_excerpt": "Apply cold compress/ice packs at the neck, axilla, groin and head",
+    "confidence": "high",
+    "notes": "MoHFW/NCDC National Action Plan on Heat-Related Illnesses, July 2021. Printed page = PDF page minus 19. Printed p.6.",
+    "verified_modes": [
+      "layout",
+      "raw"
+    ],
+    "verification": "VERIFIED (exact text found on cited page)",
+    "also_in": [],
+    "trigger_type": "observation"
+  },
+  {
+    "action_id": "NAP_ED_TEMP_MONITOR_DO_NOT_OVERCORRECT",
+    "text": "In the emergency department, check temperature every 15-30 minutes and do not cool below 38 °C",
+    "audience": "health",
+    "tier_min": "UNSPECIFIED",
+    "trigger": "Heatstroke patient in tertiary emergency department",
+    "doc_id": "NPCCHH_NAP_HRI",
+    "page": 26,
+    "verbatim_excerpt": "Temperature every 15-30 minutes (do not overcorrect to less than 38°C)",
+    "confidence": "high",
+    "notes": "MoHFW/NCDC National Action Plan on Heat-Related Illnesses, July 2021. Printed page = PDF page minus 19. Printed p.7. Same page: avoid paracetamol or NSAIDs during active cooling.",
+    "verified_modes": [
+      "layout",
+      "raw"
+    ],
+    "verification": "VERIFIED (exact text found on cited page)",
+    "also_in": [],
+    "trigger_type": "observation"
+  },
+  {
+    "action_id": "NAP_HOSP_DEDICATED_BED_COOLER_AREA",
+    "text": "Provide a dedicated bed for heat-related illness patients in a cooler area of the hospital",
+    "audience": "health",
+    "tier_min": "UNSPECIFIED",
+    "trigger": "Before the heat season (equipment list)",
+    "doc_id": "NPCCHH_NAP_HRI",
+    "page": 36,
+    "verbatim_excerpt": "Dedicated bed for HRI patients in cooler area of hospital,",
+    "confidence": "high",
+    "notes": "MoHFW/NCDC National Action Plan on Heat-Related Illnesses, July 2021. Printed page = PDF page minus 19. Printed p.17.",
+    "verified_modes": [
+      "layout",
+      "raw"
+    ],
+    "verification": "VERIFIED (exact text found on cited page)",
+    "also_in": [],
+    "trigger_type": "standing"
+  },
+  {
+    "action_id": "NAP_HOSP_COOLING_EQUIPMENT_AC_COOLER_FAN",
+    "text": "Hospitals to have cooling equipment (AC, cooler, fan) as required",
+    "audience": "health",
+    "tier_min": "UNSPECIFIED",
+    "trigger": "Before the heat season (equipment list)",
+    "doc_id": "NPCCHH_NAP_HRI",
+    "page": 36,
+    "verbatim_excerpt": "Cooling equipment: AC, cooler, fan as per requirement,",
+    "confidence": "high",
+    "notes": "MoHFW/NCDC National Action Plan on Heat-Related Illnesses, July 2021. Printed page = PDF page minus 19. Printed p.17. Energy-relevant: cooling appliances in hospitals depend on power supply (see NCDC advisory 2025 p.3).",
+    "verified_modes": [
+      "layout",
+      "raw"
+    ],
+    "verification": "VERIFIED (exact text found on cited page)",
+    "also_in": [],
+    "trigger_type": "standing"
+  },
+  {
+    "action_id": "NAP_HOSP_AMBULANCE_ICE_PACKS_COLD_WATER",
+    "text": "Ambulances to carry ice packs and cold water",
+    "audience": "health",
+    "tier_min": "ORANGE",
+    "trigger": "Before the heat season (equipment list)",
+    "doc_id": "NPCCHH_NAP_HRI",
+    "page": 36,
+    "verbatim_excerpt": "Ambulance with ice packs and cold water.",
+    "confidence": "high",
+    "notes": "MoHFW/NCDC National Action Plan on Heat-Related Illnesses, July 2021. Printed page = PDF page minus 19. Printed p.17.",
+    "verified_modes": [
+      "layout",
+      "raw"
+    ],
+    "verification": "VERIFIED (exact text found on cited page)",
+    "also_in": [],
+    "trigger_type": "standing",
+    "tier_source": {
+      "doc_id": "AHMEDABAD_HAP_2018",
+      "page": 17,
+      "quote": "Keep sufficient stocks of reusable soft plastic ice packs for the 108 citywide emergency ambulances.",
+      "match": "equivalent action (ice packs only; no cold water)",
+      "tier_basis": "ahmedabad_precedent",
+      "note": "Precedent from another city (Ahmedabad HAP, 2019 update), not Delhi policy; Ahmedabad's colour temperature thresholds differ from Delhi's."
+    }
+  },
+  {
+    "action_id": "NAP_HOSP_PLAN_ACTIVITIES_PER_IMD_ALERT",
+    "text": "Plan IEC activities as per the heatwave alert issued by IMD",
+    "audience": "health",
+    "tier_min": "UNSPECIFIED",
+    "trigger": "IMD heatwave alert (no colour named)",
+    "doc_id": "NPCCHH_NAP_HRI",
+    "page": 34,
+    "verbatim_excerpt": "Plan activities as per the",
+    "confidence": "medium",
+    "notes": "MoHFW/NCDC National Action Plan on Heat-Related Illnesses, July 2021. Printed page = PDF page minus 19. Printed p.15 (Table 2, heat season, IEC column). The sentence runs across table lines: 'Plan activities as per the / Heatwave alert issued / by IMD'; the quote is the verbatim first line only. No colour is named, so tier_min is UNSPECIFIED.",
+    "verified_modes": [
+      "layout",
+      "raw"
+    ],
+    "verification": "VERIFIED (exact text found on cited page)",
+    "also_in": [],
+    "trigger_type": "forecast"
+  },
+  {
+    "action_id": "NAP_HOSP_INCREASE_OUTREACH_DURING_HEAT_ALERT",
+    "text": "Increase ASHA/ANM/MPHW outreach in at-risk villages during a heat alert, if feasible",
+    "audience": "health",
+    "tier_min": "UNSPECIFIED",
+    "trigger": "A heat alert is in force (no colour named)",
+    "doc_id": "NPCCHH_NAP_HRI",
+    "page": 34,
+    "verbatim_excerpt": "outreach in at-risk villages",
+    "confidence": "medium",
+    "notes": "MoHFW/NCDC National Action Plan on Heat-Related Illnesses, July 2021. Printed page = PDF page minus 19. Printed p.15 (Table 2). Table cell wraps: 'Increase ASHA/ANM/MPHW outreach in at-risk villages during a heat alert, if feasible.' The quote is a verbatim fragment on one line.",
+    "verified_modes": [
+      "raw"
+    ],
+    "verification": "VERIFIED (exact text found on cited page)",
+    "also_in": [],
+    "trigger_type": "forecast"
+  },
+  {
+    "action_id": "CEA_CONSUMERS_LOAD_WITHIN_SANCTIONED",
+    "text": "Consumers keep connected load within the sanctioned limit, report increases to the DISCOM, and ensure wiring is suitably rated",
+    "audience": "public",
+    "tier_min": "UNSPECIFIED",
+    "trigger": "IMD forecast of above-normal temperatures (El Nino); prolonged AC use raises electrical load",
+    "doc_id": "CEA_ELNINO_ADVISORY",
+    "page": 1,
+    "verbatim_excerpt": "Consumers should keep their connected load within the sanctioned limit, report any increase to the concerned DISCOM, and ensure that internal wiring is suitably rated to prevent overheating and fire hazards.",
+    "confidence": "high",
+    "notes": "Image-only PDF (no text layer): quote read from the page image and checked by eye. CEA Chief Electrical Inspectorate Division advisory addressed to 'MDs of all DISCOMs / All Electricity Consumers', subject 'Advisory on safe and judicious use of electricity in view of El Nino conditions or otherwise'. No date is visible on the scanned pages. National, not Delhi-specific, but it names fire/AC-blast incidents in Delhi. Framed as electrical safety under IMD's above-normal-temperature forecast; not tied to any IMD colour. ",
+    "verified_modes": [],
+    "verification": "VERIFIED visually against page image (image-only source, no text layer)",
+    "also_in": [],
+    "trigger_type": "standing"
+  },
+  {
+    "action_id": "CEA_DISCOMS_MONITOR_EQUIPMENT_LOADING",
+    "text": "DISCOMs monitor loading of transformers and wires and plan replacement before the threshold limit is reached",
+    "audience": "energy",
+    "tier_min": "UNSPECIFIED",
+    "trigger": "IMD forecast of above-normal temperatures (El Nino); prolonged AC use raises electrical load",
+    "doc_id": "CEA_ELNINO_ADVISORY",
+    "page": 1,
+    "verbatim_excerpt": "Discoms to also monitor the loading of the equipment (say Transformers, Wires etc) and plan replacement before it reaches the threshold limit.",
+    "confidence": "high",
+    "notes": "Image-only PDF (no text layer): quote read from the page image and checked by eye. CEA Chief Electrical Inspectorate Division advisory addressed to 'MDs of all DISCOMs / All Electricity Consumers', subject 'Advisory on safe and judicious use of electricity in view of El Nino conditions or otherwise'. No date is visible on the scanned pages. National, not Delhi-specific, but it names fire/AC-blast incidents in Delhi. Framed as electrical safety under IMD's above-normal-temperature forecast; not tied to any IMD colour. ",
+    "verified_modes": [],
+    "verification": "VERIFIED visually against page image (image-only source, no text layer)",
+    "also_in": [],
+    "trigger_type": "standing"
+  },
+  {
+    "action_id": "CEA_SWITCH_OFF_UNNEEDED_LOADS",
+    "text": "Use electricity optimally: use only necessary load and switch off loads not needed",
+    "audience": "public",
+    "tier_min": "UNSPECIFIED",
+    "trigger": "IMD forecast of above-normal temperatures (El Nino); prolonged AC use raises electrical load",
+    "doc_id": "CEA_ELNINO_ADVISORY",
+    "page": 1,
+    "verbatim_excerpt": "Electricity needs to be utilized optimally by using selective, necessary load and switch off the loads not needed.",
+    "confidence": "high",
+    "notes": "Image-only PDF (no text layer): quote read from the page image and checked by eye. CEA Chief Electrical Inspectorate Division advisory addressed to 'MDs of all DISCOMs / All Electricity Consumers', subject 'Advisory on safe and judicious use of electricity in view of El Nino conditions or otherwise'. No date is visible on the scanned pages. National, not Delhi-specific, but it names fire/AC-blast incidents in Delhi. Framed as electrical safety under IMD's above-normal-temperature forecast; not tied to any IMD colour. ",
+    "verified_modes": [],
+    "verification": "VERIFIED visually against page image (image-only source, no text layer)",
+    "also_in": [],
+    "trigger_type": "standing"
+  },
+  {
+    "action_id": "CEA_AC_NOT_CONTINUOUS_24C",
+    "text": "Avoid running ACs continuously; switch off when the room is comfortable or unoccupied; preferably keep 24 °C as recommended by BEE",
+    "audience": "public",
+    "tier_min": "UNSPECIFIED",
+    "trigger": "IMD forecast of above-normal temperatures (El Nino); prolonged AC use raises electrical load",
+    "doc_id": "CEA_ELNINO_ADVISORY",
+    "page": 1,
+    "verbatim_excerpt": "Avoid running air conditioners continuously. Switch them off once the room is comfortable or when unoccupied, and preferably maintain the temperature at",
+    "confidence": "high",
+    "notes": "Image-only PDF (no text layer): quote read from the page image and checked by eye. CEA Chief Electrical Inspectorate Division advisory addressed to 'MDs of all DISCOMs / All Electricity Consumers', subject 'Advisory on safe and judicious use of electricity in view of El Nino conditions or otherwise'. No date is visible on the scanned pages. National, not Delhi-specific, but it names fire/AC-blast incidents in Delhi. Framed as electrical safety under IMD's above-normal-temperature forecast; not tied to any IMD colour. The sentence continues '24°C, as recommended by BEE, for comfort, energy efficiency and safety'; the degree sign is typeset in bold so the quote stops before it. Conflicts with the Delhi HAP's 25 degree advice (DELHI_HAP_2025 p.53); agrees with the BEE default (BEE_AC_24C_PIB p.1).",
+    "verified_modes": [],
+    "verification": "VERIFIED visually against page image (image-only source, no text layer)",
+    "also_in": [],
+    "trigger_type": "standing"
+  },
+  {
+    "action_id": "CEA_SERVICE_AC_REGULARLY",
+    "text": "Get ACs and electrical appliances serviced regularly by a qualified technician; clean air filters and the outdoor unit",
+    "audience": "public",
+    "tier_min": "UNSPECIFIED",
+    "trigger": "IMD forecast of above-normal temperatures (El Nino); prolonged AC use raises electrical load",
+    "doc_id": "CEA_ELNINO_ADVISORY",
+    "page": 1,
+    "verbatim_excerpt": "Get your air conditioner and electrical appliances serviced regularly from qualified and skilled technician.",
+    "confidence": "high",
+    "notes": "Image-only PDF (no text layer): quote read from the page image and checked by eye. CEA Chief Electrical Inspectorate Division advisory addressed to 'MDs of all DISCOMs / All Electricity Consumers', subject 'Advisory on safe and judicious use of electricity in view of El Nino conditions or otherwise'. No date is visible on the scanned pages. National, not Delhi-specific, but it names fire/AC-blast incidents in Delhi. Framed as electrical safety under IMD's above-normal-temperature forecast; not tied to any IMD colour. ",
+    "verified_modes": [],
+    "verification": "VERIFIED visually against page image (image-only source, no text layer)",
+    "also_in": [],
+    "trigger_type": "standing"
+  },
+  {
+    "action_id": "CEA_NO_MULTIPLE_APPLIANCES_ONE_SOCKET",
+    "text": "Avoid operating multiple appliances from the same socket or extension board",
+    "audience": "public",
+    "tier_min": "UNSPECIFIED",
+    "trigger": "IMD forecast of above-normal temperatures (El Nino); prolonged AC use raises electrical load",
+    "doc_id": "CEA_ELNINO_ADVISORY",
+    "page": 1,
+    "verbatim_excerpt": "Avoid operating multiple appliances from the same socket or extension board.",
+    "confidence": "high",
+    "notes": "Image-only PDF (no text layer): quote read from the page image and checked by eye. CEA Chief Electrical Inspectorate Division advisory addressed to 'MDs of all DISCOMs / All Electricity Consumers', subject 'Advisory on safe and judicious use of electricity in view of El Nino conditions or otherwise'. No date is visible on the scanned pages. National, not Delhi-specific, but it names fire/AC-blast incidents in Delhi. Framed as electrical safety under IMD's above-normal-temperature forecast; not tied to any IMD colour. ",
+    "verified_modes": [],
+    "verification": "VERIFIED visually against page image (image-only source, no text layer)",
+    "also_in": [],
+    "trigger_type": "standing"
+  },
+  {
+    "action_id": "CEA_DISCOMS_DISSEMINATE_TO_CONSUMERS",
+    "text": "DISCOMs to disseminate this information widely among electricity consumers",
+    "audience": "energy",
+    "tier_min": "UNSPECIFIED",
+    "trigger": "Same advisory (El Nino / extreme heat)",
+    "doc_id": "CEA_ELNINO_ADVISORY",
+    "page": 2,
+    "verbatim_excerpt": "Discoms are also requested to disseminate this information widely among the electricity consumers.",
+    "confidence": "high",
+    "notes": "Image-only PDF (no text layer): quote read from the page image and checked by eye. CEA Chief Electrical Inspectorate Division advisory addressed to 'MDs of all DISCOMs / All Electricity Consumers', subject 'Advisory on safe and judicious use of electricity in view of El Nino conditions or otherwise'. No date is visible on the scanned pages. National, not Delhi-specific, but it names fire/AC-blast incidents in Delhi. Framed as electrical safety under IMD's above-normal-temperature forecast; not tied to any IMD colour. Page 2 also says: 'safeguard your home and work place during periods of extreme heat or any other extreme conditions.'",
+    "verified_modes": [],
+    "verification": "VERIFIED visually against page image (image-only source, no text layer)",
+    "also_in": [],
+    "trigger_type": "standing"
+  },
+  {
+    "action_id": "MOLE_RESCHEDULE_WORKING_HOURS",
+    "text": "Allow re-scheduling of working hours for employees and workers in different sectors",
+    "audience": "public",
+    "tier_min": "RED",
+    "trigger": "Extreme heat / rising temperatures (not tied to an IMD colour)",
+    "doc_id": "PIB_LABOUR_ADVISORY_2026_SCREENSHOT",
+    "page": 1,
+    "verbatim_excerpt": "Allowing re-scheduling of working hours for employees / workers in different sectors",
+    "confidence": "high",
+    "notes": "Source is a screenshot of the PIB release 'Ministry of Labour & Employment Issues Nationwide Heatwave Advisory to Protect Workers and Labourers' (28 Apr 2026, Release ID 2256186); no text layer, quote read from the image. It is a PIB summary of a Ministry letter to Chief Secretaries/Administrators of all States/UTs, not the letter itself. Names no IMD colour and gives no WBGT or temperature limits. Similar measures appear in the PIB release of 22 Apr 2025 (MOLE_ADVISORY_2025 p.1). Directed at employers/occupiers via States/UTs.",
+    "verified_modes": [],
+    "verification": "VERIFIED visually against page image (image-only source, no text layer)",
+    "also_in": [],
+    "trigger_type": "forecast",
+    "tier_source": {
+      "doc_id": "AHMEDABAD_HAP_2018",
+      "page": 17,
+      "quote": "Change working hours of labourers.",
+      "match": "equivalent action",
+      "tier_basis": "ahmedabad_precedent",
+      "note": "Precedent from another city (Ahmedabad HAP, 2019 update), not Delhi policy; Ahmedabad's colour temperature thresholds differ from Delhi's."
+    }
+  },
+  {
+    "action_id": "MOLE_WATER_REST_AREAS_COOLING_WORKPLACES",
+    "text": "Ensure adequate drinking water, rest areas and cooling of work places",
+    "audience": "public",
+    "tier_min": "UNSPECIFIED",
+    "trigger": "Extreme heat / rising temperatures (not tied to an IMD colour)",
+    "doc_id": "PIB_LABOUR_ADVISORY_2026_SCREENSHOT",
+    "page": 1,
+    "verbatim_excerpt": "Ensuring adequate drinking water facilities and making provision for rest areas and cooling of work places",
+    "confidence": "high",
+    "notes": "Source is a screenshot of the PIB release 'Ministry of Labour & Employment Issues Nationwide Heatwave Advisory to Protect Workers and Labourers' (28 Apr 2026, Release ID 2256186); no text layer, quote read from the image. It is a PIB summary of a Ministry letter to Chief Secretaries/Administrators of all States/UTs, not the letter itself. Names no IMD colour and gives no WBGT or temperature limits. Similar measures appear in the PIB release of 22 Apr 2025 (MOLE_ADVISORY_2025 p.1). ",
+    "verified_modes": [],
+    "verification": "VERIFIED visually against page image (image-only source, no text layer)",
+    "also_in": [],
+    "trigger_type": "forecast"
+  },
+  {
+    "action_id": "MOLE_EMERGENCY_ICE_PACKS_HEAT_ILLNESS_MATERIAL",
+    "text": "Provide emergency ice packs and heat illness prevention material where working conditions require it, including construction work",
+    "audience": "public",
+    "tier_min": "RED",
+    "trigger": "Extreme heat / rising temperatures (not tied to an IMD colour)",
+    "doc_id": "PIB_LABOUR_ADVISORY_2026_SCREENSHOT",
+    "page": 1,
+    "verbatim_excerpt": "Making provision for emergency ice packs and heat illness prevention material for working conditions requiring such facilities including for construction work",
+    "confidence": "high",
+    "notes": "Source is a screenshot of the PIB release 'Ministry of Labour & Employment Issues Nationwide Heatwave Advisory to Protect Workers and Labourers' (28 Apr 2026, Release ID 2256186); no text layer, quote read from the image. It is a PIB summary of a Ministry letter to Chief Secretaries/Administrators of all States/UTs, not the letter itself. Names no IMD colour and gives no WBGT or temperature limits. Similar measures appear in the PIB release of 22 Apr 2025 (MOLE_ADVISORY_2025 p.1). ",
+    "verified_modes": [],
+    "verification": "VERIFIED visually against page image (image-only source, no text layer)",
+    "also_in": [],
+    "trigger_type": "forecast",
+    "tier_source": {
+      "doc_id": "AHMEDABAD_HAP_2018",
+      "page": 17,
+      "quote": "Pilot project to provide emergency ice packs and heat-illness prevention materials to traffic police, BRTS transit staff and construction workers.",
+      "match": "equivalent action",
+      "tier_basis": "ahmedabad_precedent",
+      "note": "Precedent from another city (Ahmedabad HAP, 2019 update), not Delhi policy; Ahmedabad's colour temperature thresholds differ from Delhi's."
+    }
+  },
+  {
+    "action_id": "MOLE_FACTORY_MINE_SLOW_PACE_TWO_PERSON_CREWS",
+    "text": "Factories and mines: slow the pace of work in extreme heat, use two-person crews where continuous work is unavoidable, provide rest areas, ventilation and cooling",
+    "audience": "public",
+    "tier_min": "UNSPECIFIED",
+    "trigger": "Periods of extreme heat",
+    "doc_id": "PIB_LABOUR_ADVISORY_2026_SCREENSHOT",
+    "page": 1,
+    "verbatim_excerpt": "slowing the pace of work during periods of extreme heat, assigning two-person crews where continuous work is unavoidable, providing rest areas and ensuring sufficient ventilation and cooling arrangements.",
+    "confidence": "high",
+    "notes": "Source is a screenshot of the PIB release 'Ministry of Labour & Employment Issues Nationwide Heatwave Advisory to Protect Workers and Labourers' (28 Apr 2026, Release ID 2256186); no text layer, quote read from the image. It is a PIB summary of a Ministry letter to Chief Secretaries/Administrators of all States/UTs, not the letter itself. Names no IMD colour and gives no WBGT or temperature limits. Similar measures appear in the PIB release of 22 Apr 2025 (MOLE_ADVISORY_2025 p.1). ",
+    "verified_modes": [],
+    "verification": "VERIFIED visually against page image (image-only source, no text layer)",
+    "also_in": [],
+    "trigger_type": "forecast"
+  },
+  {
+    "action_id": "MOLE_ESIC_DGLW_HEATSTROKE_HELP_DESKS",
+    "text": "ESIC and DGLW hospitals and dispensaries to set up dedicated heat-stroke help desks with adequate ORS and ice packs",
+    "audience": "health",
+    "tier_min": "UNSPECIFIED",
+    "trigger": "Extreme heat / rising temperatures (not tied to an IMD colour)",
+    "doc_id": "PIB_LABOUR_ADVISORY_2026_SCREENSHOT",
+    "page": 1,
+    "verbatim_excerpt": "have been asked to establish dedicated help desks for heat stroke cases and ensure adequate stocks of ORS, ice packs and other heat illness prevention materials.",
+    "confidence": "high",
+    "notes": "Source is a screenshot of the PIB release 'Ministry of Labour & Employment Issues Nationwide Heatwave Advisory to Protect Workers and Labourers' (28 Apr 2026, Release ID 2256186); no text layer, quote read from the image. It is a PIB summary of a Ministry letter to Chief Secretaries/Administrators of all States/UTs, not the letter itself. Names no IMD colour and gives no WBGT or temperature limits. Similar measures appear in the PIB release of 22 Apr 2025 (MOLE_ADVISORY_2025 p.1). ",
+    "verified_modes": [],
+    "verification": "VERIFIED visually against page image (image-only source, no text layer)",
+    "also_in": [],
+    "trigger_type": "standing"
+  },
+  {
+    "action_id": "MOLE_AWARENESS_LABOUR_CHOWKS",
+    "text": "States/UTs to run awareness campaigns at labour chowks and public places with heatwave safety posters and emergency contacts",
+    "audience": "municipal",
+    "tier_min": "UNSPECIFIED",
+    "trigger": "Extreme heat / rising temperatures (not tied to an IMD colour)",
+    "doc_id": "PIB_LABOUR_ADVISORY_2026_SCREENSHOT",
+    "page": 1,
+    "verbatim_excerpt": "undertake awareness campaigns at labour chowks and public places, along with display of posters and banners carrying heatwave safety messages and emergency contact details.",
+    "confidence": "high",
+    "notes": "Source is a screenshot of the PIB release 'Ministry of Labour & Employment Issues Nationwide Heatwave Advisory to Protect Workers and Labourers' (28 Apr 2026, Release ID 2256186); no text layer, quote read from the image. It is a PIB summary of a Ministry letter to Chief Secretaries/Administrators of all States/UTs, not the letter itself. Names no IMD colour and gives no WBGT or temperature limits. Similar measures appear in the PIB release of 22 Apr 2025 (MOLE_ADVISORY_2025 p.1). ",
+    "verified_modes": [],
+    "verification": "VERIFIED visually against page image (image-only source, no text layer)",
+    "also_in": [],
+    "trigger_type": "standing"
+  },
+  {
+    "action_id": "NCDC_CLUSTER_DEATHS_DISTRICT_TASK_FORCE_MEETING",
+    "text": "On a cluster of more than 5 heat-linked deaths in a day, hold an urgent District Task Force meeting for evaluation and response support",
+    "audience": "health",
+    "tier_min": "UNSPECIFIED",
+    "trigger": "Cluster of more than 5 deaths in a day in surveillance or linked to ambient heat by media scanning",
+    "doc_id": "NPCCHH_REPORT_2024",
+    "page": 20,
+    "verbatim_excerpt": "Hold an urgent meeting of the District Task Force for evaluation of the situation",
+    "confidence": "medium",
+    "notes": "NPCCHH Report of Heat Related Activities 2024, printed section 6 'Enhanced Heat-Health Monitoring' (PDF p.20). The PDF's text layer drops characters in places ('odal icer', 'rovide'), so only this clean line is quoted. The same list says the task force response should 'ensure shelter, power, water, transport' (wording garbled in the text layer, so not quoted): a power link, but no detail. Operational directive from NCDC to States/UTs, not an IMD-colour-linked action.",
+    "verified_modes": [
+      "layout",
+      "raw"
+    ],
+    "verification": "VERIFIED (exact text found on cited page)",
+    "also_in": [],
+    "trigger_type": "observation"
+  },
+  {
+    "action_id": "MAN_HEATEXH_REMOVE_FROM_HEAT_STOP_ACTIVITY",
+    "text": "Heat exhaustion: remove from heat exposure and stop physical activity, then start passive cooling",
+    "audience": "health",
+    "tier_min": "UNSPECIFIED",
+    "trigger": "Suspected heat exhaustion",
+    "doc_id": "NPCCHH_TRAINING_MANUAL_MO",
+    "page": 13,
+    "verbatim_excerpt": "Remove from the environmental heat exposure and stop physical activity",
+    "confidence": "high",
+    "notes": "NPCCHH Training Manual for Medical Officers on Prevention and Management of Heat-Related Illnesses. PDF page = printed page. No date on the cover. Section 4 treatment protocol, step 1; step 2 is passive cooling (cool-wet towels or ice packs to axillae, groin and neck; fan on moist skin).",
+    "verified_modes": [
+      "layout",
+      "raw"
+    ],
+    "verification": "VERIFIED (exact text found on cited page)",
+    "also_in": [],
+    "trigger_type": "observation"
+  },
+  {
+    "action_id": "MAN_HEATEXH_BELOW_104F_REASSESS_5MIN",
+    "text": "Heat exhaustion with temperature below 104 °F: reassess every 5 minutes; if improving, give oral fluids and observe",
+    "audience": "health",
+    "tier_min": "UNSPECIFIED",
+    "trigger": "Suspected heat exhaustion, temperature below 104 °F",
+    "doc_id": "NPCCHH_TRAINING_MANUAL_MO",
+    "page": 13,
+    "verbatim_excerpt": "If temperature is lower than 104 °F, repeat assessment every 5 minutes.",
+    "confidence": "high",
+    "notes": "NPCCHH Training Manual for Medical Officers on Prevention and Management of Heat-Related Illnesses. PDF page = printed page. No date on the cover. Section 4, step 3.",
+    "verified_modes": [
+      "layout",
+      "raw"
+    ],
+    "verification": "VERIFIED (exact text found on cited page)",
+    "also_in": [],
+    "trigger_type": "observation"
+  },
+  {
+    "action_id": "MAN_HEATEXH_104F_IV_TRANSPORT_ED",
+    "text": "Temperature 104 °F or above: start IV rehydration and transport immediately to the emergency department",
+    "audience": "health",
+    "tier_min": "UNSPECIFIED",
+    "trigger": "Temperature at or above 104 °F (40 °C)",
+    "doc_id": "NPCCHH_TRAINING_MANUAL_MO",
+    "page": 13,
+    "verbatim_excerpt": "If temperature is 104 °F or above, initiate IV rehydration and immediately transport to the emergency department for stabilization.",
+    "confidence": "high",
+    "notes": "NPCCHH Training Manual for Medical Officers on Prevention and Management of Heat-Related Illnesses. PDF page = printed page. No date on the cover. Section 4, step 4. Compare NDMA/NCDC 'cool first, transport second' (NCDC_EMERGENCY_COOLING_2024 p.10): this step transports first and cools in transit; see conflicts.",
+    "verified_modes": [
+      "layout",
+      "raw"
+    ],
+    "verification": "VERIFIED (exact text found on cited page)",
+    "also_in": [],
+    "trigger_type": "observation"
+  },
+  {
+    "action_id": "MAN_HEATSTROKE_ONSITE_COOLING_SHADY_PLACE",
+    "text": "Heat stroke on-site cooling: move to a shady breezy place, lie the patient down, remove clothing, wipe with cold water, fan",
+    "audience": "health",
+    "tier_min": "UNSPECIFIED",
+    "trigger": "Heat stroke",
+    "doc_id": "NPCCHH_TRAINING_MANUAL_MO",
+    "page": 15,
+    "verbatim_excerpt": "Quickly move the patient from a hot and humid environment to a shady and breezy place, make the patient lie down, and remove all the clothing",
+    "confidence": "medium",
+    "notes": "NPCCHH Training Manual for Medical Officers on Prevention and Management of Heat-Related Illnesses. PDF page = printed page. No date on the cover. Page 15 on-site cooling list. The text layer lost its word spaces, so the quote is the readable form of that text and matches it ignoring spaces. Medium confidence for that reason.",
+    "verified_modes": [
+      "layout",
+      "raw"
+    ],
+    "verification": "VERIFIED (exact text found on cited page)",
+    "also_in": [],
+    "trigger_type": "observation"
+  },
+  {
+    "action_id": "MAN_HEATSTROKE_AMBULANCE_AC_OR_WINDOWS",
+    "text": "During ambulance transport, turn on the ambulance air conditioning or open the windows and wipe the body with cold water",
+    "audience": "health",
+    "tier_min": "UNSPECIFIED",
+    "trigger": "Heat stroke in transit",
+    "doc_id": "NPCCHH_TRAINING_MANUAL_MO",
+    "page": 15,
+    "verbatim_excerpt": "Turn on the air conditioning in the ambulance or open the windows",
+    "confidence": "medium",
+    "notes": "NPCCHH Training Manual for Medical Officers on Prevention and Management of Heat-Related Illnesses. PDF page = printed page. No date on the cover. Page 15 'cooling en route'. Text layer lost word spaces (see MAN_HEATSTROKE_ONSITE_COOLING_SHADY_PLACE).",
+    "verified_modes": [
+      "layout",
+      "raw"
+    ],
+    "verification": "VERIFIED (exact text found on cited page)",
+    "also_in": [],
+    "trigger_type": "observation"
+  },
+  {
+    "action_id": "MAN_WORKERS_CHANGE_SHIFT_TIME_HOURS",
+    "text": "For outdoor and manual labour workers: change shift time and working hours",
+    "audience": "public",
+    "tier_min": "RED",
+    "trigger": "Heat wave (workers)",
+    "doc_id": "NPCCHH_TRAINING_MANUAL_MO",
+    "page": 21,
+    "verbatim_excerpt": "Change in shift time and working hours",
+    "confidence": "high",
+    "notes": "NPCCHH Training Manual for Medical Officers on Prevention and Management of Heat-Related Illnesses. PDF page = printed page. No date on the cover. Section 6, outdoor and manual labour workers. Same theme as the Labour Ministry advisory (PIB_LABOUR_ADVISORY_2026_SCREENSHOT).",
+    "verified_modes": [
+      "layout",
+      "raw"
+    ],
+    "verification": "VERIFIED (exact text found on cited page)",
+    "also_in": [],
+    "trigger_type": "forecast",
+    "tier_source": {
+      "doc_id": "AHMEDABAD_HAP_2018",
+      "page": 17,
+      "quote": "Change working hours of labourers.",
+      "match": "equivalent action",
+      "tier_basis": "ahmedabad_precedent",
+      "note": "Precedent from another city (Ahmedabad HAP, 2019 update), not Delhi policy; Ahmedabad's colour temperature thresholds differ from Delhi's."
+    }
+  },
+  {
+    "action_id": "MAN_LOW_SES_PUBLIC_ACCESS_COOL_PLACES",
+    "text": "For low socio-economic groups: public access to cool places and to potable water",
+    "audience": "municipal",
+    "tier_min": "UNSPECIFIED",
+    "trigger": "Heat wave (low socio-economic groups)",
+    "doc_id": "NPCCHH_TRAINING_MANUAL_MO",
+    "page": 21,
+    "verbatim_excerpt": "Public access to cool places",
+    "confidence": "high",
+    "notes": "NPCCHH Training Manual for Medical Officers on Prevention and Management of Heat-Related Illnesses. PDF page = printed page. No date on the cover. Section 6. Next bullet: 'Accessibility to pure potable water'.",
+    "verified_modes": [
+      "layout",
+      "raw"
+    ],
+    "verification": "VERIFIED (exact text found on cited page)",
+    "also_in": [],
+    "trigger_type": "standing"
+  },
+  {
+    "action_id": "DELHI_LABOUR_SHIFT_AVOID_12_4PM",
+    "text": "Change the shift of work as far as possible to avoid peak hours (12-4 PM)",
+    "audience": "public",
+    "tier_min": "RED",
+    "trigger": "IMD forecast of above-normal temperatures in Delhi, April-June 2025 (not tied to a colour)",
+    "doc_id": "DELHI_HAP_2025",
+    "page": 155,
+    "verbatim_excerpt": "Change the shift of work as far as possible, to avoid peak hours (12 - 4 PM).",
+    "confidence": "high",
+    "notes": "Delhi Heat Action Plan 2025, Annexure 3 (printed pp.11-14 of the annexure; PDF pp.155-158): Circular F.No.15(11)/Lab/2019/282-285 dated 16/04/2025 from the Office of the Commissioner (Labour), Labour Department, GNCTD, signed by the Joint Labour Commissioner. These PDF pages are scanned images (no text layer): quote read from the page image at 120 dpi and checked by eye. The circular says IMD predicted above-normal temperatures in Delhi and Northern Plains for April to June 2025; it names no IMD colour. Addressed to establishments, factories, shops and construction sites; the Director of Industrial Safety, Electrical Inspectorate and all District In-charges are told to ensure strict compliance. Source spelling and typos reproduced. Only source in the library that gives a clock window for avoiding outdoor work in Delhi.",
+    "verified_modes": [],
+    "verification": "VERIFIED visually against page image (scanned page inside a text PDF, no text layer)",
+    "also_in": [],
+    "trigger_type": "forecast",
+    "tier_source": {
+      "doc_id": "AHMEDABAD_HAP_2018",
+      "page": 17,
+      "quote": "Change working hours of labourers.",
+      "match": "equivalent action",
+      "tier_basis": "ahmedabad_precedent",
+      "note": "Precedent from another city (Ahmedabad HAP, 2019 update), not Delhi policy; Ahmedabad's colour temperature thresholds differ from Delhi's."
+    }
+  },
+  {
+    "action_id": "DELHI_LABOUR_DRINKING_WATER_WORKPLACE",
+    "text": "Ensure adequate clean drinking water at the work place",
+    "audience": "public",
+    "tier_min": "RED",
+    "trigger": "IMD forecast of above-normal temperatures in Delhi, April-June 2025 (not tied to a colour)",
+    "doc_id": "DELHI_HAP_2025",
+    "page": 155,
+    "verbatim_excerpt": "Ensure adequate clean drinking water availability at the work place.",
+    "confidence": "high",
+    "notes": "Delhi Heat Action Plan 2025, Annexure 3 (printed pp.11-14 of the annexure; PDF pp.155-158): Circular F.No.15(11)/Lab/2019/282-285 dated 16/04/2025 from the Office of the Commissioner (Labour), Labour Department, GNCTD, signed by the Joint Labour Commissioner. These PDF pages are scanned images (no text layer): quote read from the page image at 120 dpi and checked by eye. The circular says IMD predicted above-normal temperatures in Delhi and Northern Plains for April to June 2025; it names no IMD colour. Addressed to establishments, factories, shops and construction sites; the Director of Industrial Safety, Electrical Inspectorate and all District In-charges are told to ensure strict compliance. Source spelling and typos reproduced. ",
+    "verified_modes": [],
+    "verification": "VERIFIED visually against page image (scanned page inside a text PDF, no text layer)",
+    "also_in": [],
+    "trigger_type": "forecast",
+    "tier_source": {
+      "doc_id": "AHMEDABAD_HAP_2018",
+      "page": 17,
+      "quote": "Provide sufficient portable drinking water.",
+      "match": "equivalent action",
+      "tier_basis": "ahmedabad_precedent",
+      "note": "Precedent from another city (Ahmedabad HAP, 2019 update), not Delhi policy; Ahmedabad's colour temperature thresholds differ from Delhi's."
+    }
+  },
+  {
+    "action_id": "DELHI_LABOUR_COOLER_FANS_WORKPLACE",
+    "text": "Ensure availability of coolers/fans at the work place",
+    "audience": "public",
+    "tier_min": "UNSPECIFIED",
+    "trigger": "IMD forecast of above-normal temperatures in Delhi, April-June 2025 (not tied to a colour)",
+    "doc_id": "DELHI_HAP_2025",
+    "page": 155,
+    "verbatim_excerpt": "Ensure availability of cooler/fans at the work place.",
+    "confidence": "high",
+    "notes": "Delhi Heat Action Plan 2025, Annexure 3 (printed pp.11-14 of the annexure; PDF pp.155-158): Circular F.No.15(11)/Lab/2019/282-285 dated 16/04/2025 from the Office of the Commissioner (Labour), Labour Department, GNCTD, signed by the Joint Labour Commissioner. These PDF pages are scanned images (no text layer): quote read from the page image at 120 dpi and checked by eye. The circular says IMD predicted above-normal temperatures in Delhi and Northern Plains for April to June 2025; it names no IMD colour. Addressed to establishments, factories, shops and construction sites; the Director of Industrial Safety, Electrical Inspectorate and all District In-charges are told to ensure strict compliance. Source spelling and typos reproduced. ",
+    "verified_modes": [],
+    "verification": "VERIFIED visually against page image (scanned page inside a text PDF, no text layer)",
+    "also_in": [],
+    "trigger_type": "forecast"
+  },
+  {
+    "action_id": "DELHI_LABOUR_EMERGENCY_KIT_CONSTRUCTION",
+    "text": "Make an emergency kit (ice packs, ORS etc.) for construction workers and employees",
+    "audience": "public",
+    "tier_min": "RED",
+    "trigger": "IMD forecast of above-normal temperatures in Delhi, April-June 2025 (not tied to a colour)",
+    "doc_id": "DELHI_HAP_2025",
+    "page": 155,
+    "verbatim_excerpt": "Make emergency kit (Ice packs, ORS, etc.) for the construction workers/employees.",
+    "confidence": "high",
+    "notes": "Delhi Heat Action Plan 2025, Annexure 3 (printed pp.11-14 of the annexure; PDF pp.155-158): Circular F.No.15(11)/Lab/2019/282-285 dated 16/04/2025 from the Office of the Commissioner (Labour), Labour Department, GNCTD, signed by the Joint Labour Commissioner. These PDF pages are scanned images (no text layer): quote read from the page image at 120 dpi and checked by eye. The circular says IMD predicted above-normal temperatures in Delhi and Northern Plains for April to June 2025; it names no IMD colour. Addressed to establishments, factories, shops and construction sites; the Director of Industrial Safety, Electrical Inspectorate and all District In-charges are told to ensure strict compliance. Source spelling and typos reproduced. ",
+    "verified_modes": [],
+    "verification": "VERIFIED visually against page image (scanned page inside a text PDF, no text layer)",
+    "also_in": [],
+    "trigger_type": "forecast",
+    "tier_source": {
+      "doc_id": "AHMEDABAD_HAP_2018",
+      "page": 17,
+      "quote": "Pilot project to provide emergency ice packs and heat-illness prevention materials to traffic police, BRTS transit staff and construction workers.",
+      "match": "equivalent action",
+      "tier_basis": "ahmedabad_precedent",
+      "note": "Precedent from another city (Ahmedabad HAP, 2019 update), not Delhi policy; Ahmedabad's colour temperature thresholds differ from Delhi's."
+    }
+  },
+  {
+    "action_id": "DELHI_LABOUR_SLOW_PACE_HEAT_STRAIN",
+    "text": "Slow down the pace of work, especially if workers feel even slight heat strain",
+    "audience": "public",
+    "tier_min": "UNSPECIFIED",
+    "trigger": "IMD forecast of above-normal temperatures in Delhi, April-June 2025 (not tied to a colour)",
+    "doc_id": "DELHI_HAP_2025",
+    "page": 155,
+    "verbatim_excerpt": "Slowing down the pace of work, especially if the workers feels even slight heat strain.",
+    "confidence": "high",
+    "notes": "Delhi Heat Action Plan 2025, Annexure 3 (printed pp.11-14 of the annexure; PDF pp.155-158): Circular F.No.15(11)/Lab/2019/282-285 dated 16/04/2025 from the Office of the Commissioner (Labour), Labour Department, GNCTD, signed by the Joint Labour Commissioner. These PDF pages are scanned images (no text layer): quote read from the page image at 120 dpi and checked by eye. The circular says IMD predicted above-normal temperatures in Delhi and Northern Plains for April to June 2025; it names no IMD colour. Addressed to establishments, factories, shops and construction sites; the Director of Industrial Safety, Electrical Inspectorate and all District In-charges are told to ensure strict compliance. Source spelling and typos reproduced. ",
+    "verified_modes": [],
+    "verification": "VERIFIED visually against page image (scanned page inside a text PDF, no text layer)",
+    "also_in": [],
+    "trigger_type": "forecast"
+  },
+  {
+    "action_id": "DELHI_LABOUR_TWO_PERSON_CREW",
+    "text": "Reschedule rest timings to avoid work in high temperatures; where not possible, assign a two-person crew",
+    "audience": "public",
+    "tier_min": "UNSPECIFIED",
+    "trigger": "IMD forecast of above-normal temperatures in Delhi, April-June 2025 (not tied to a colour)",
+    "doc_id": "DELHI_HAP_2025",
+    "page": 155,
+    "verbatim_excerpt": "a two-person crew should be assigned to perform work during extremely hot temperatures.",
+    "confidence": "high",
+    "notes": "Delhi Heat Action Plan 2025, Annexure 3 (printed pp.11-14 of the annexure; PDF pp.155-158): Circular F.No.15(11)/Lab/2019/282-285 dated 16/04/2025 from the Office of the Commissioner (Labour), Labour Department, GNCTD, signed by the Joint Labour Commissioner. These PDF pages are scanned images (no text layer): quote read from the page image at 120 dpi and checked by eye. The circular says IMD predicted above-normal temperatures in Delhi and Northern Plains for April to June 2025; it names no IMD colour. Addressed to establishments, factories, shops and construction sites; the Director of Industrial Safety, Electrical Inspectorate and all District In-charges are told to ensure strict compliance. Source spelling and typos reproduced. Item 10; the sentence starts 'Rescheduling rest timings to avoid work during high/ extreamly hot temperatures, where this is not possible,' (source spelling 'extreamly'). The quote is the verbatim end of the sentence.",
+    "verified_modes": [],
+    "verification": "VERIFIED visually against page image (scanned page inside a text PDF, no text layer)",
+    "also_in": [],
+    "trigger_type": "forecast"
+  },
+  {
+    "action_id": "DELHI_LABOUR_NO_DIRECT_SUNLIGHT_WORK",
+    "text": "No worker should be allowed to work in direct exposure of sunlight",
+    "audience": "public",
+    "tier_min": "UNSPECIFIED",
+    "trigger": "IMD forecast of above-normal temperatures in Delhi, April-June 2025 (not tied to a colour)",
+    "doc_id": "DELHI_HAP_2025",
+    "page": 156,
+    "verbatim_excerpt": "No worker should be allowed to work in the direct exposure of sunlight.",
+    "confidence": "high",
+    "notes": "Delhi Heat Action Plan 2025, Annexure 3 (printed pp.11-14 of the annexure; PDF pp.155-158): Circular F.No.15(11)/Lab/2019/282-285 dated 16/04/2025 from the Office of the Commissioner (Labour), Labour Department, GNCTD, signed by the Joint Labour Commissioner. These PDF pages are scanned images (no text layer): quote read from the page image at 120 dpi and checked by eye. The circular says IMD predicted above-normal temperatures in Delhi and Northern Plains for April to June 2025; it names no IMD colour. Addressed to establishments, factories, shops and construction sites; the Director of Industrial Safety, Electrical Inspectorate and all District In-charges are told to ensure strict compliance. Source spelling and typos reproduced. Item 18.",
+    "verified_modes": [],
+    "verification": "VERIFIED visually against page image (scanned page inside a text PDF, no text layer)",
+    "also_in": [],
+    "trigger_type": "forecast"
+  },
+  {
+    "action_id": "DELHI_LABOUR_SWITCH_OFF_ELECTRICAL_EQUIPMENT",
+    "text": "Switch off all electrical equipment when not in use",
+    "audience": "energy",
+    "tier_min": "UNSPECIFIED",
+    "trigger": "IMD forecast of above-normal temperatures in Delhi, April-June 2025 (not tied to a colour)",
+    "doc_id": "DELHI_HAP_2025",
+    "page": 156,
+    "verbatim_excerpt": "All Electrical equipment should be switched off when they are not in use.",
+    "confidence": "high",
+    "notes": "Delhi Heat Action Plan 2025, Annexure 3 (printed pp.11-14 of the annexure; PDF pp.155-158): Circular F.No.15(11)/Lab/2019/282-285 dated 16/04/2025 from the Office of the Commissioner (Labour), Labour Department, GNCTD, signed by the Joint Labour Commissioner. These PDF pages are scanned images (no text layer): quote read from the page image at 120 dpi and checked by eye. The circular says IMD predicted above-normal temperatures in Delhi and Northern Plains for April to June 2025; it names no IMD colour. Addressed to establishments, factories, shops and construction sites; the Director of Industrial Safety, Electrical Inspectorate and all District In-charges are told to ensure strict compliance. Source spelling and typos reproduced. Item 19. One of the few Delhi-specific electricity-use lines; a demand-side measure, but framed as workplace safety, with no load figure.",
+    "verified_modes": [],
+    "verification": "VERIFIED visually against page image (scanned page inside a text PDF, no text layer)",
+    "also_in": [],
+    "trigger_type": "standing"
+  },
+  {
+    "action_id": "DELHI_LABOUR_RCD_FOR_2KW_AND_ABOVE",
+    "text": "Installations of 2 kW and above must be controlled by a Residual Current Device against electric leakage",
+    "audience": "energy",
+    "tier_min": "UNSPECIFIED",
+    "trigger": "IMD forecast of above-normal temperatures in Delhi, April-June 2025 (not tied to a colour)",
+    "doc_id": "DELHI_HAP_2025",
+    "page": 157,
+    "verbatim_excerpt": "The supply of electricity to all electrical installations of 2 KW and above shall be controlled by a Residual Current Device (RCD) for providing protection against electric leakage.",
+    "confidence": "high",
+    "notes": "Delhi Heat Action Plan 2025, Annexure 3 (printed pp.11-14 of the annexure; PDF pp.155-158): Circular F.No.15(11)/Lab/2019/282-285 dated 16/04/2025 from the Office of the Commissioner (Labour), Labour Department, GNCTD, signed by the Joint Labour Commissioner. These PDF pages are scanned images (no text layer): quote read from the page image at 120 dpi and checked by eye. The circular says IMD predicted above-normal temperatures in Delhi and Northern Plains for April to June 2025; it names no IMD colour. Addressed to establishments, factories, shops and construction sites; the Director of Industrial Safety, Electrical Inspectorate and all District In-charges are told to ensure strict compliance. Source spelling and typos reproduced. Item 25; electrical safety, not tied to heat beyond the circular's heat-wave framing.",
+    "verified_modes": [],
+    "verification": "VERIFIED visually against page image (scanned page inside a text PDF, no text layer)",
+    "also_in": [],
+    "trigger_type": "standing"
+  },
+  {
+    "action_id": "DELHI_LABOUR_ELECTRICAL_SAFETY_OFFICER_250KW",
+    "text": "Owners of installations above 250 kW connected load must designate an electrical safety officer",
+    "audience": "energy",
+    "tier_min": "UNSPECIFIED",
+    "trigger": "IMD forecast of above-normal temperatures in Delhi, April-June 2025 (not tied to a colour)",
+    "doc_id": "DELHI_HAP_2025",
+    "page": 157,
+    "verbatim_excerpt": "The owner of the electrical installation with more than 250 KW connected load shall designate electrical safety officer",
+    "confidence": "high",
+    "notes": "Delhi Heat Action Plan 2025, Annexure 3 (printed pp.11-14 of the annexure; PDF pp.155-158): Circular F.No.15(11)/Lab/2019/282-285 dated 16/04/2025 from the Office of the Commissioner (Labour), Labour Department, GNCTD, signed by the Joint Labour Commissioner. These PDF pages are scanned images (no text layer): quote read from the page image at 120 dpi and checked by eye. The circular says IMD predicted above-normal temperatures in Delhi and Northern Plains for April to June 2025; it names no IMD colour. Addressed to establishments, factories, shops and construction sites; the Director of Industrial Safety, Electrical Inspectorate and all District In-charges are told to ensure strict compliance. Source spelling and typos reproduced. Item 31.",
+    "verified_modes": [],
+    "verification": "VERIFIED visually against page image (scanned page inside a text PDF, no text layer)",
+    "also_in": [],
+    "trigger_type": "standing"
+  },
+  {
+    "action_id": "DELHI_LABOUR_FIRE_SWITCH_OFF_SUPPLY",
+    "text": "In case of fire, switch off the electric supply immediately",
+    "audience": "energy",
+    "tier_min": "UNSPECIFIED",
+    "trigger": "IMD forecast of above-normal temperatures in Delhi, April-June 2025 (not tied to a colour)",
+    "doc_id": "DELHI_HAP_2025",
+    "page": 158,
+    "verbatim_excerpt": "In case of fire, the electric supply needs to be immediately switched off.",
+    "confidence": "high",
+    "notes": "Delhi Heat Action Plan 2025, Annexure 3 (printed pp.11-14 of the annexure; PDF pp.155-158): Circular F.No.15(11)/Lab/2019/282-285 dated 16/04/2025 from the Office of the Commissioner (Labour), Labour Department, GNCTD, signed by the Joint Labour Commissioner. These PDF pages are scanned images (no text layer): quote read from the page image at 120 dpi and checked by eye. The circular says IMD predicted above-normal temperatures in Delhi and Northern Plains for April to June 2025; it names no IMD colour. Addressed to establishments, factories, shops and construction sites; the Director of Industrial Safety, Electrical Inspectorate and all District In-charges are told to ensure strict compliance. Source spelling and typos reproduced. Item 35.",
+    "verified_modes": [],
+    "verification": "VERIFIED visually against page image (scanned page inside a text PDF, no text layer)",
+    "also_in": [],
+    "trigger_type": "standing"
+  },
+  {
+    "action_id": "HAP25_ELECTRICITY_VULNERABILITY_ANALYSIS",
+    "text": "Analyse physical electricity-sector vulnerabilities to heat, especially at community distribution level, and plan infrastructure upgrades to prevent failures and fires in a heat wave",
+    "audience": "energy",
+    "tier_min": "UNSPECIFIED",
+    "trigger": "Planned action (no alert tier or timeline stated)",
+    "doc_id": "DELHI_HAP_2025",
+    "page": 129,
+    "verbatim_excerpt": "vulnerabilities, especially at the community distribution level, to heat and infrastructure upgrades to prevent failures and fires during a heat wave.",
+    "confidence": "high",
+    "notes": "Delhi HAP 2025 Annexure 1 (Delhi Heat Action Implementation template), 'Preparedness / Infrastructure' table, row 20 'Electricity resilience programme (CDRI)'. Implementing agencies listed: CDRI, DDMA, Delhi Transco Limited, Concerned KP. Printed Annexure-1 page 18 (PDF p.129). This is a planned action in a template, with no timeline or funds stated in this row. Text layer. The cell begins 'Conduct analysis of physical electricity sector', but the first lines interleave with the neighbouring column in extraction, so the quote starts at 'vulnerabilities'. This is the clearest Delhi-specific grid-vulnerability action found, but it is a planned analysis, not an operating rule.",
+    "verified_modes": [
+      "layout",
+      "raw"
+    ],
+    "verification": "VERIFIED (exact text found on cited page)",
+    "also_in": [],
+    "trigger_type": "standing"
+  },
+  {
+    "action_id": "HAP25_POWER_DEMAND_HEAT_RISK_MAP",
+    "text": "Develop a digital heat-risk map of buildings and wards to plan for power demand",
+    "audience": "energy",
+    "tier_min": "UNSPECIFIED",
+    "trigger": "Planned action (no alert tier or timeline stated)",
+    "doc_id": "DELHI_HAP_2025",
+    "page": 129,
+    "verbatim_excerpt": "Develop Digital heat-risk map of building and ward to plan for power demand based on built-environment and spatial analytics",
+    "confidence": "high",
+    "notes": "Delhi HAP 2025 Annexure 1 (Delhi Heat Action Implementation template), 'Preparedness / Infrastructure' table, row 20 'Electricity resilience programme (CDRI)'. Implementing agencies listed: CDRI, DDMA, Delhi Transco Limited, Concerned KP. Printed Annexure-1 page 18 (PDF p.129). This is a planned action in a template, with no timeline or funds stated in this row. ",
+    "verified_modes": [
+      "layout",
+      "raw"
+    ],
+    "verification": "VERIFIED (exact text found on cited page)",
+    "also_in": [],
+    "trigger_type": "standing"
+  }
+]

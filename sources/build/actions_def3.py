@@ -1,0 +1,9 @@
+# -*- coding: utf-8 -*-
+from actions_def import A, U
+BE="BEE_AC_24C_PIB"; NI="NIOSH_2016_106_HEAT"
+IMG="Image-only PDF (no text layer): quote read from the page image and checked by eye. This is a PIB press release (Ministry of Power, 6 Jan 2020) that quotes the BEE notification; it is not the Gazette notification itself. "
+ACTIONS3=[
+A("BEE_AC_DEFAULT_24C_MANDATORY","All BEE star-labelled room air conditioners must have a default temperature setting of 24 °C from 1 Jan 2020","energy",U,"Standing manufacturer requirement; not tied to any heat alert",BE,1,"default setting has been made mandatory from Jan 1, 2020 for all room air conditioners covered under the ambit of BEE star-labelling program","medium",IMG+"It binds manufacturers/sellers, not consumers, so it is not an advisory to citizens. The release's phrase 'The 24°C default setting' is printed with a superscript degree sign, so the quote starts after it. Conflicts with Delhi HAP 'run the AC at 25 degree' (DELHI_HAP_2025 p.53)."),
+A("BEE_AC_NOTIFICATION_TEXT_24C","Notification text: star-labelled room ACs shall ensure a default setting of 24 °C from 1 Jan 2020","energy",U,"Standing manufacturer requirement",BE,1,"shall ensure default setting of temperature in the room air conditioners at twenty-four degrees Celsius with effect from the 1st January 2020.","high",IMG+"This is the notification's own wording as quoted in the release; prefer it over the release's paraphrase."),
+A("NIOSH_MEDICAL_MONITORING_ABOVE_RAL","Employers should run a medical monitoring programme for all workers exposed to heat stress above the RAL","public",U,"Worker WBGT/metabolic heat above the RAL",NI,36,"The employer should institute a medical monitoring program for all workers who are or may be exposed to heat stress above the RAL","medium","US NIOSH recommendation, not Indian guidance. Audience is employers; the library has no 'employer' audience, so 'public' is a placeholder."),
+]
