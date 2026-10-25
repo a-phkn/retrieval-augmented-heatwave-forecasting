@@ -1,5 +1,8 @@
 # Data Documentation
 
+> **Historical (v1, September to early October 2026).** Describes the v1 data, which is still valid; the v2 data is
+> described in `docs/PROJECT_GUIDE.md`. Kept because the frozen code refers to this file.
+
 All paths relative to repo root. All verified directly (schema/shape read
 from the actual parquet files), not copied from docs.
 

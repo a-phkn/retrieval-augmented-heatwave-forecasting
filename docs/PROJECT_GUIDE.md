@@ -3,10 +3,27 @@
 > **Living document.** Read this first. It explains the whole project in plain language:
 > what we build, how every part works, what the results are so far, and what comes next.
 > It is updated whenever a result, a design decision or the plan changes. See the change
-> log at the end. Short forms are explained in [`GLOSSARY.md`](GLOSSARY.md); the full
-> plan is in [`PLAN_REVIEW_v5.md`](PLAN_REVIEW_v5.md).
+> log at the end. Short forms are explained in [`GLOSSARY.md`](GLOSSARY.md); the original
+> plan is in [`PLAN_REVIEW_v5.md`](PLAN_REVIEW_v5.md) (historical).
 >
-> **Last updated:** 2026-10-06 (Week 3: retrieval runs started, DSTGNN skeleton)
+> **Last updated:** 2026-10-25 (review fixes; forecasting research complete, Phase 6 in progress)
+
+## Final state at a glance (2026-10-25)
+
+- **Final model:** C3-hop, a graph network over Delhi and 27 upstream points, with fixed distance rings (not wind
+  edges). Controls: the Delhi-only LSTM and two ridge regressions. Tested once on 2019-01-01 to 2026-09-06.
+- **Confirmed:** H1 (beats the Delhi-only LSTM on WBGT all days, −0.13 °C) and H3 (beats the hot-day-weighted ridge
+  on WBGT heatwave days, −0.72 °C, mostly a smaller cold bias; that ridge sees fewer inputs).
+- **Not confirmed:** H2 (heatwave days vs the LSTM, −0.08 °C; the test could detect ~0.25 °C, so the development gain
+  did not reproduce) and H4 (retrieval on the LSTM, −0.04 °C, Holm p 0.066).
+- **Ties:** C3-hop ties the plain ridge on all days; the graph without edges (C2) ties C3-hop, so no claim that the
+  graph structure helps.
+- **Heatwave days are the weak spot:** all models forecast them too cold; the 80% ranges hold the truth only 29%
+  (WBGT) and 54% (Tmax) of the time there, and a yes/no WBGT warning catches about 9% of heatwave days.
+- **Retrieval** was never adopted: no variant beat its random control on heatwave days.
+- **Known issues** in the frozen code and protocol: [`KNOWN_DEVIATIONS.md`](KNOWN_DEVIATIONS.md).
+- §8 and §9 below record the work **as it happened**, week by week; text there written in the future tense is
+  historical. The current results are §9.0 and the README.
 
 ---
 
@@ -44,7 +61,7 @@ on heatwave days. The project then grows in two directions:
 | Time | Hourly, **1980-01-01 to 2026-09-06**, local time (IST). 17,051 days. |
 | v1 variables (already downloaded) | Hourly temperature, relative humidity, wind speed and surface pressure. Daily values (max/min/mean T, mean RH, ...) are computed from these. |
 | v2 variables (downloaded and verified, 2026-10-05) | Dew point, wind direction, solar radiation (total, direct, diffuse), cloud cover and soil moisture. See §8.2 for why. |
-| Upstream points (download ready to run) | **Daily** values at 27 points on a 2° grid over north-west India and Pakistan (24–32 °N, 68–78 °E; 3 mountain points above 1,000 m dropped): max/min/mean temperature, dew point, humidity, wind speed and direction, sunshine, soil moisture, pressure. These are the nodes of the regional graph model (§9). Script: `pipeline/download_era5_upstream.py`. |
+| Upstream points (downloaded and verified) | **Daily** values at 27 points on a 2° grid over north-west India and Pakistan (24–32 °N, 68–78 °E; 3 mountain points above 1,000 m dropped): max/min/mean temperature, dew point, humidity, wind speed and direction, sunshine, soil moisture, pressure. These are the nodes of the regional graph model (§9). Script: `pipeline/download_era5_upstream.py`. |
 | Daily table | `datasets/all_daily.parquet` (v1) and `datasets_v2/all_daily_v2.parquet` (v2, adds heat-stress measures). Values are the **average over the 9 cells**. |
 
 **Training examples ("windows").** Each example has:
@@ -63,7 +80,7 @@ exact same examples.
 | Validation (val) | 2016–2018 | 1,092 |
 | Test | 2019 onwards | 2,802 |
 
-The **test split is locked**: nobody looks at it until the very end (Week 7). That is the
+The **test split is locked**: it was opened once, on 2026-10-19, after the evaluation rules were frozen. That is the
 only way the final numbers are honest.
 
 ---
@@ -410,7 +427,8 @@ RMSE in °C; Δ is model minus baseline, so negative = model better.
 - **Two conditions:**
   - Official alert tiers stay Tmax-based. Humid heat is a separate, clearly labelled heat-stress
     note, never an official "heatwave" declaration.
-  - The final model must output both Tmax and WBGT (the physics head does this: see §9).
+  - The final model must output both Tmax and WBGT. (Planned via the physics head, §9; the head was dropped on
+    2026-10-12 by its keep rule, so two direct models, one per target, meet this condition.)
 - **Pre-registered improvement runs** (15 runs, all finished 2026-10-06):
   - Tmax anomaly target (A1prime_r);
   - learning a correction to damped persistence (A1prime_dp, A2L_dp);
@@ -452,7 +470,11 @@ forecasts.
 
 ---
 
-## 9. What comes next
+## 9. The plan and how it went (history; current results in §9.0)
+
+> The week plan below was written in early October 2026 and is kept as the record. What actually happened: the final model
+> is C3-hop (not the full wind-edge DSTGNN), the physics head was dropped, no retrieval step was adopted, and the
+> test was run once on 2026-10-19.
 
 | Week | P1: data and labels | P2: models | P3: retrieval | P4: advisory and demo |
 |---|---|---|---|---|
@@ -468,7 +490,8 @@ forecasts.
   are 27 points over north-west India and Pakistan, plus Delhi. Delhi's heatwaves are often
   hot dry air blown in from the north-west over 1–3 days, so a graph that follows the wind
   can see them coming.
-- **Physics head (the output layer, on top of the backbone; design fixed 2026-10-07):**
+- **Physics head (the output layer, on top of the backbone; design fixed 2026-10-07; run 2026-10-12 and DROPPED by
+  the keep rule below, so the final models predict WBGT and Tmax directly):**
   - For each forecast day and each of Delhi's 9 grid cells, the model predicts the weather
     "ingredients" at that cell's hottest hour: temperature, humidity, pressure, wind, sunshine,
     the share of direct sun, and the sun's angle.
@@ -640,7 +663,8 @@ worse than both the plain LSTM and U1 (the LSTM given the same upstream data) by
       Report: `evaluation_v2/graphcast_yardstick.md`.
   - **Test protocol drafted** (`docs/CONFIRMATORY_PROTOCOL.md`): at most 3 hypotheses with a correction
     for multiple tests, written before the 2019+ years are opened. The test period can detect about
-    0.05 °C on all days but only about 0.3 °C on heatwave days.
+    0.05 °C on all days but only about 0.3 °C on heatwave days. (Draft figures. The frozen protocol has four
+    hypotheses and estimated ~0.45 °C on heatwave days; the test itself achieved ~0.25 °C.)
 
 **Retrieval ladder (R0 → R4):**
 - **R0** is the RA-v1 design.
@@ -775,28 +799,40 @@ forecasts were scored once. Nothing was changed after the results were seen.
 | Main claim (WBGT) | Result | Confirmed? |
 |---|---|---|
 | H1: C3-hop beats the Delhi-only LSTM on all days | −0.13 °C (about 5% better), the same as in development | **yes** |
-| H2: … and on heatwave days | −0.08 °C, within noise (the test could only detect ~0.45 °C, stated in advance) | no |
-| H3: C3-hop beats the fair straight-line model on heatwave days | −0.72 °C | **yes** |
+| H2: … and on heatwave days | −0.08 °C, within noise. The test could detect ~0.25 °C (the pre-test estimate was ~0.45), and the development gain was −0.26 °C | no |
+| H3: C3-hop beats the hot-day-weighted straight-line model (ridge_hw5) on heatwave days | −0.72 °C, about 96% of it a smaller cold bias; the ridge sees only Tmax at the upstream points | **yes** |
 | H4: Rg retrieval improves the Delhi-only LSTM on all days | −0.04 °C, the same size as in development, but not significant after correcting for 4 tests | no |
 
 **What this means, in plain words:**
 - **The graph model is confirmed:** reading the 27 upstream points makes the WBGT forecasts clearly better than a
-  Delhi-only model, and much better than a straight-line formula on heatwave days. For Tmax (not a main claim) the
-  gain is the same, −0.13 °C.
-- **Heatwave days vs the Delhi-only model:** C3-hop is a little better, but the 7 test years are too few to prove
-  it. That was expected.
+  Delhi-only model, and better than the straight-line formula on heatwave days. For Tmax (not a main claim) the
+  gain is the same, −0.13 °C. Caveat: C3-hop's settings were tuned in development, the Delhi-only LSTM's were not;
+  the untuned C2 gets the same gain.
+- **Versus the plain straight-line formula on all days, it is a tie** (WBGT −0.04, Tmax −0.04 °C, not
+  significant), as in development. The advantage over the straight-line models is on heatwave days, and it is
+  mostly a smaller cold bias (H3).
+- **Heatwave days vs the Delhi-only model:** no detectable difference. The test was precise enough to see the
+  development-sized gain (−0.26 °C) and found a third of it, so development probably overstated it.
 - **Retrieval:** Rg's small gain on the Delhi-only model showed up again at the same size (−0.04 °C), but it just
-  misses after the correction for four tests. Retrieval on top of C3-hop (Rg, and Rz on 2019–2021) adds nothing,
-  as in development.
+  misses after the correction for four tests, and about half of it is a cooler average forecast. Retrieval on top
+  of C3-hop adds nothing (Rg on the test; Rz on 2019–2021, although Rz had helped a little in development).
 - **No graph-structure claim:** the graph without edges (C2) is as good as C3-hop again. The upstream data is what
   helps.
-- Warnings: the Tmax heatwave warning has real skill (+0.28 Brier skill); the WBGT one stays weak (+0.07).
-- Full report: `evaluation_test/test_results.md`.
+- Warnings: the Tmax heatwave warning has real skill (+0.28 Brier skill); the WBGT one stays weak (+0.07). As a
+  yes/no warning, C3-hop catches 27% of Tmax heatwave days but only 9% of WBGT ones.
+- Ranges: the 80% range holds the truth 77–78% of the time on all days, but only 54% (Tmax) and 29% (WBGT) on
+  heatwave days.
+- Full report: `evaluation_test/test_results.md`; post-test extras (10-run average, warning scores, bias split,
+  without the ERA5T months): `evaluation_post_test/test_period_extras.md`. The 2019, 2022 and 2024 case studies are
+  in the full report: at a 1-day lead C3-hop was slightly *worse* than the Delhi-only model in all three events
+  (WBGT 1.89 / 1.82 / 1.83 vs 1.85 / 1.77 / 1.72 °C).
 - **Extra (after the test): versus pretrained AI forecasters.** Amazon's Chronos-2 and Google's TimesFM 3.0, given
   Delhi's own history, were tested on the same test days.
   - **C3-hop beats both clearly**, on all days (by 0.13–0.18 °C) and on heatwave days (by 0.75–0.81 °C), for both
     WBGT and Tmax.
-  - Even our Delhi-only LSTM ties them on ordinary days and beats them on heatwave days.
+  - Even our Delhi-only LSTM ties them on ordinary days and beats them on heatwave days (clearly for WBGT; for Tmax
+    only borderline, p 0.04–0.05).
+  - Not like-for-like: they were given one series each, while our models see many variables.
   - Details: `docs/MODELS_EXPLAINED.md` §10b.
 
 ### 9.1 How RAG helps the DSTGNN, and how we prove it (result 2026-10-16: it doesn't, and why)
@@ -805,7 +841,7 @@ forecasts were scored once. Nothing was changed after the results were seen.
 
 | Part | What it sees | What it contributes |
 |---|---|---|
-| **DSTGNN** (graph model) | The last 14 days of weather at Delhi and 27 upstream points (Rajasthan, Thar, Punjab, Pakistan) | **What is happening now, and where heat is coming from.** Graph edges follow the wind, so it can see hot air 1–3 days before it reaches Delhi. |
+| **DSTGNN** (graph model) | The last 14 days of weather at Delhi and 27 upstream points (Rajasthan, Thar, Punjab, Pakistan) | **What is happening now across the region.** The final C3-hop links points by fixed distance rings (the wind-following C4 was dropped), and the upstream check found no delay that grows with distance, so "it sees hot air arriving 1–3 days ahead" is the idea, not a demonstrated mechanism. |
 | **RAG** (analogue retrieval) | Every past 14-day period since 1980 (training years only) | **What happened the last times things looked like this:** the most similar past situations and their *real* next 5 days. |
 
 **Why combine them:** neural networks learn from averages, so they under-forecast rare
@@ -841,10 +877,11 @@ alternative explanation gets its own control:
 
 **Fairness rules:**
 - "With RAG" and "without RAG" differ only in retrieval: same data, folds, seeds and training recipe.
-- Pre-registered as primary hypothesis **H-A**, and checked once on the locked 2019+ test years.
+- Planned as primary hypothesis **H-A**. H-A was dropped before the test because no retrieval step passed G3 or
+  G-R*; the test's retrieval claim became H4 (retrieval on the Delhi-only LSTM, all days), not confirmed.
 - Every result is reported, including a null result.
 
-**Where we stand (2026-10-05):**
+**Where we stood on 2026-10-05 (history; the outcome is in §9.0):**
 - The analogues carry information: averaging them alone beats climatology on hot days, mostly
   at leads 1–2.
 - The first RAG model (RA-v1) did **not** clearly beat the plain LSTM: −0.09 °C on extreme
@@ -937,8 +974,8 @@ RAG counts as helping only if real retrieval beats both.
   37 °C".
   - On ordinary days the ranges are honest: the 80% range contains the truth about 80% of the time.
   - C3-hop's ranges beat the Delhi-only model's on all days and on heatwave days, for both Tmax and WBGT.
-  - For Tmax heatwaves the range still works (78%). For WBGT heatwaves it misses (24%), because the cold bias is
-    bigger than the range.
+  - In development, Tmax heatwave ranges still worked (78%); WBGT heatwave ranges missed (24%), because the cold
+    bias is bigger than the range. **On the test both missed: 54% (Tmax) and 29% (WBGT).**
   - Report: `evaluation_v2/range_forecasts.md`.
 - **What the graph learned:** each upstream point, then whole rings of points, was switched off in turn on all 80
   trained models.
@@ -947,7 +984,8 @@ RAG counts as helping only if real retrieval beats both.
   - **Whole rings matter a lot.** For Tmax heatwave days, switching off the farthest rings (600–1000 km away)
     costs over 1.3 °C.
   - **On heatwave days the forecast leans most on the far-western desert (Thar, Pakistan),** which is exactly where
-    Delhi's hot, dry air comes from. The graph has learned the physics of where heat comes from.
+    Delhi's hot, dry air comes from. That is consistent with the physics, but not proof of it: switching an input
+    to its average creates unrealistic weather maps, and the edge-free C2 was not checked the same way.
   - Map: `evaluation_v2/figures/graph_importance.png`; report: `evaluation_v2/graph_explain.md`.
 
 **And a second try: correcting the heatwave cold bias with retrieval (2026-10-18; failed, and why matters)**
@@ -1026,23 +1064,25 @@ against the saved documents; details in `sources/PHASE6_PART_D_RESULT.md`):
 
 ## 10. Ground rules (why the results can be trusted)
 
-1. **Test lock:** nobody evaluates on 2019+ until Week 7. Even the tests in the code never
-   read 2019+ data.
+1. **Test lock:** the 2019+ test period was scored once, on 2026-10-19, after the protocol was frozen as the git
+   tag `test-lock`. `training/test_lock.py` refuses to read 2019+ data unless the code is exactly the frozen code.
+   The automated tests use synthetic test-period rows, check every refusal condition on a throwaway repo, and
+   re-derive H1–H4 from the committed test forecasts; `data/TEST_MANIFEST.json` fingerprints the test outputs.
 2. **Frozen v1:** data, window index and v1 models are fingerprinted
    (`data/MANIFEST.json`, git tags `v1-frozen`, `v1-frozen-ra`).
    `scripts/make_manifest.py --check` must say "Manifest OK".
 3. **One change per run:** every run differs from its parent in one thing, so any gain
    has one cause.
-4. **Beat the simple baselines first:** every model must beat damped persistence over all
-   days, not just on heatwave days.
+4. **Hold up against the simple baselines first:** a control must not be significantly worse than damped
+   persistence over all days (the G2 floor), not just look good on heatwave days.
 5. **10 seeds and proper statistics** for every decision, with cluster-based tests and
    rolling folds.
 6. **Every run is logged** in `registry/runs.csv`: config, data and code fingerprints, git
    commit, seeds, threads, and skill against climatology and persistence on the same
    target.
 7. **Automatic checks on every push (CI)** (`.github/workflows/ci.yml`). GitHub runs:
-   - the full test suite and the frozen-v1 check, on Windows with the exact pinned
-     package versions;
+   - the full test suite, the frozen-v1 and test-run manifest checks, and the test lock, on Windows with the
+     exact pinned package versions;
    - a scan of the whole git history for leaked secrets (gitleaks);
    - a check of the pinned packages for known vulnerabilities (pip-audit).
 
@@ -1063,23 +1103,31 @@ against the saved documents; details in `sources/PHASE6_PART_D_RESULT.md`):
 | `training/` | v1 training scripts (unchanged), `folds.py`, `train_unified.py` (v2) |
 | `evaluation/`, `evaluation_v2/` | Statistics, baselines, comparison reports |
 | `configs/` | One JSON file per v2 run |
-| `tests/` | 145 automated checks (`.venv\Scripts\python.exe -m pytest -q`) |
-| `context/` | Running notes: progress, decisions, run commands |
-| `docs/` | This guide, the glossary, the plan, the reproducibility log |
-| `.github/workflows/` | CI: automatic tests and security checks on every push |
+| `predictions_test/`, `evaluation_test/` | The one test run's forecasts and its report |
+| `post_test/`, `predictions_post_test/`, `evaluation_post_test/` | Analyses run after the test (foundation models, extras) |
+| `registry/` | Every run: development (`runs.csv`), tuning, and the test (`test_runs.csv`) |
+| `sources/` | Phase 6 source research: our catalogues and results (the official PDFs are not committed) |
+| `tests/` | About 400 automated checks (`.venv\Scripts\python.exe -m pytest -q`) |
+| `context/` | Running notes: progress, decisions (some older files are marked historical) |
+| `docs/` | This guide, the models explainer, the protocol, known deviations, the glossary, the plan |
+| `.github/` | CI (automatic tests and security checks on every push) and Dependabot |
 
-Setup and commands: `context/environment.md` and `context/RUN_COMMANDS.md`. Always use
-the project's virtual environment (`.venv`); nothing is installed globally.
+Setup and commands: the README (`../README.md`). Always use the project's virtual environment (`.venv`); nothing
+is installed globally.
 
 ---
 
 ## 12. Open items
 
-Updated 2026-10-22. The forecasting research is complete: the protocol was frozen and the test run, §9.0.
+Updated 2026-10-25. The forecasting research is complete: the protocol was frozen and the test run, §9.0. The
+critical reviews of 2026-10-22 were addressed: claims corrected, frozen-code issues disclosed in
+`KNOWN_DEVIATIONS.md`, and the test lock and test outputs now checked automatically.
 - **Phase 6, the heat advisory:** the action-library schema, the rule engine (B + D above), the verifier, and the
   constrained LLM advisory with its faithfulness evaluation.
-- **The paper, the demo page, and the reproducibility pack** (README with expected numbers, run instructions).
-- Station humidity cross-check for the humid-heat trend (optional; needs station data).
+- **The paper and the demo page.** The README now has the results, run instructions and data notes.
+- Optional, each needs a decision: a station check against Safdarjung (needs a data download); a tuned Delhi-only
+  LSTM (to remove the tuned-vs-untuned caveat on H1); a ridge on C3-hop's full inputs (a like-for-like H3 check);
+  Chronos-2 with Delhi's other variables as inputs.
 - Older items are done: v2 data, controls, labels, upstream download, sources (Parts A–E), tier mapping.
 
 ---
@@ -1101,6 +1149,8 @@ Updated 2026-10-22. The forecasting research is complete: the protocol was froze
 | 2026-10-07 | Retrieval information check: analogues add no information beyond the query's own inputs, so tuning the network's use of them won't help. |
 | 2026-10-07 | Rg (regional-pattern retrieval) added after G3: WBGT −2% error on all days and beats random analogues; extreme-day condition missed (p = 0.11), so G3 still none; reviewed. |
 | 2026-10-07 | Physics head chosen (exact formula, per cell at each cell's peak hour); graph runs C2–C4a + U1 started (G-D4 passed); R2–R4 screened: R2 passes, R3/R4 add nothing over Rg. |
+| 2026-10-08 | Independent ML review: ridge baseline, bias split / recalibration / hot-day Brier added; backbone rule amended (C2 eligible, user approves the final pick); physics-head robustness fixes queued; test protocol drafted. |
+| 2026-10-08 | Graph runs done: G-D3 says U1 (graph not worse than U1 for Tmax, 0.08 °C worse for WBGT); edges hurt, the edgeless C2 is best. One tuning round started (C3, U1, and the post-result arm C3-pool); then PH_lstm and R2. |
 | 2026-10-12 | Tuning round, C3-hop, physics head and R2 done. Final backbone: C3-hop (your choice over the U1 tie-break; disclosed); edges add no skill over pooling; physics head dropped by its keep rule; R2 fails G3. |
 | 2026-10-13 | GraphCast yardstick (2018, Tmax, paper only): GraphCast 1.15 °C vs C3-hop 1.98 °C RMSE; descriptive. |
 | 2026-10-13 | §9.1: G-R* built (C3-hop + Rg at the Delhi readout, random control, G3 pass rule, diagnostics) and pre-registered. |
@@ -1117,5 +1167,4 @@ Updated 2026-10-22. The forecasting research is complete: the protocol was froze
 | 2026-10-21 | Post-test: C3-hop beats Chronos-2 and TimesFM 3.0 on all days and heatwave days, both families. |
 | 2026-10-22 | Phase 6 forecast-to-alert mapping decided (B + D; C in reserve); open items refreshed; CI fixed (one test needed local-only raw data). |
 | 2026-10-22 | README added; glossary refreshed (22 new terms, 4 outdated entries fixed); certifi and Pillow upgraded for new security advisories. |
-| 2026-10-08 | Independent ML review: ridge baseline, bias split / recalibration / hot-day Brier added; backbone rule amended (C2 eligible, user approves the final pick); physics-head robustness fixes queued; test protocol drafted. |
-| 2026-10-08 | Graph runs done: G-D3 says U1 (graph not worse than U1 for Tmax, 0.08 °C worse for WBGT); edges hurt, the edgeless C2 is best. One tuning round started (C3, U1, and the post-result arm C3-pool); then PH_lstm and R2. |
+| 2026-10-25 | Critical-review fixes: final-state summary at the top; corrected claims (H2 is not a power problem, H3 is mostly bias against a ridge with fewer inputs, C3-hop ties the plain ridge on all days, ranges and warnings fail on heatwave days, retrieval and graph wording); post-test extras; `KNOWN_DEVIATIONS.md`; test lock tested and enforced in CI; test outputs fingerprinted. |

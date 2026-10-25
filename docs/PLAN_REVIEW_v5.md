@@ -1,5 +1,10 @@
 # Review of Execution Plan v4 + Migration Guide + Updated Methodology — and a revised 8-week plan
 
+> **Historical plan (committed 2026-10-04).** Kept as the record of what was planned. Some things changed later: the
+> final model is C3-hop, the physics head was dropped, the test protocol is `docs/CONFIRMATORY_PROTOCOL.md` (the
+> `docs/PREREGISTRATION.md` named below was never created), and "H1" here means something different from the test's
+> H1. For the current state read `docs/PROJECT_GUIDE.md`.
+
 ## Context
 
 You asked for a critical feasibility review of three documents (Updated Methodology, Execution Plan v4, Migration & File-Reuse Guide) against the actual repo, plus improvements and a full list of setbacks. Constraints you gave: **2 people (roles P1–P4 still assigned), 8-week deadline, output = paper + capstone**, DSTGNN preferred but open to an alternative ("physics-based" welcome) pending a team discussion.

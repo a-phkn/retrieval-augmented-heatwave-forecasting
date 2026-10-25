@@ -1,5 +1,8 @@
 # Build Plan
 
+> **Historical (v1, September to early October 2026).** Kept unchanged because the frozen code refers to it. For the
+> current state read `docs/PROJECT_GUIDE.md`, `context/progress.md` and `context/decisions.md`.
+
 Milestones mapped from `Execution_Pipeline.md`. Status values: NOT STARTED /
 IN PROGRESS / COMPLETED / BLOCKED. Never mark COMPLETED without having
 actually run and verified the thing.

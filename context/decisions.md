@@ -1342,3 +1342,22 @@ any of them was run; exploratory (the frozen protocol and its one test run are u
 - Kept in reserve (C, if mentors want exact IMD equivalence): quantile-map the ERA5 box Tmax to a Delhi station record
   (NOAA GSOD, Safdarjung), fitted on 1980-2018, then apply IMD's rules verbatim; also usable to check B's alert frequency.
 - WBGT: no IMD WBGT tiers; humid heat stays a separate, labelled note (decision 2026-10-05).
+
+**Critical reviews and fixes: 2026-10-22 reviews, fixes APPROVED and applied 2026-10-25 (user: "go ahead with all from a to d")**
+- Four read-only reviews (methodology, docs/reproducibility, code quality/tests, hygiene/security) found no critical
+  problem, no leakage and sound statistics; H1-H4 recompute exactly from the committed forecasts.
+- Nothing under the six locked folders was changed (the test lock still opens). Issues there are disclosed in
+  `docs/KNOWN_DEVIATIONS.md` instead of fixed.
+- Claims corrected in the README, `docs/PROJECT_GUIDE.md`, `docs/MODELS_EXPLAINED.md` and the glossary: H2's null is
+  not only a power problem (realised detectable effect ~0.25 °C vs the development gain -0.26); H3 is ~96% a smaller
+  cold bias against a ridge with fewer inputs; C3-hop ties the plain ridge on all days; ranges and warnings fail on
+  heatwave days (80% range holds 29% WBGT / 54% Tmax; WBGT yes/no warning hit rate 9%); H4's gain is ~50% bias;
+  H1 compares tuned vs untuned; the graph and foundation-model wording softened.
+- New post-test, descriptive only and written after the test (not pre-registered): `post_test/test_period_extras.py`
+  (10-seed ensemble, hit rate / false-alarm ratio / ETS, H2 realised MDE, bias shares, H1/H3/H4 without ERA5T).
+  It cannot change the confirmatory result.
+- Safeguards added outside the locked folders: tests of all four lock conditions on a throwaway repo (the refusal
+  tests no longer skip when the tag exists); `data/TEST_MANIFEST.json` + tests fingerprint the test outputs and the
+  data they read; CI fetches tags and runs `test_lock.require()`.
+- Dependencies: post-test packages moved to `requirements-post-test{,.lock}.txt` (no version changed); Hugging Face
+  revisions pinned to the commits used on 2026-10-21 (both repos unchanged since before then).

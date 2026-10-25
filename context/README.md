@@ -7,29 +7,31 @@ already been made.
 
 ## What each file contains
 
-- `project_overview.md` — what the project is, architecture, datasets, current state, at a glance.
-- `build_plan.md` — the roadmap broken into milestones with status tracking (NOT STARTED / IN PROGRESS / COMPLETED / BLOCKED).
-- `progress.md` — short, frequently-updated running tracker of what's done/in-progress/next.
-- `architecture.md` — what the code actually does (directory structure, data flow, interfaces), not an idealized design.
-- `data.md` — dataset-by-dataset documentation of every file under `data/`, `datasets/`, `events/`.
-- `ml_notes.md` — accumulated ML knowledge: models tried, hyperparameters, seeds, actual results.
-- `decisions.md` — architectural/ML decision log, including flagged issues and how they were resolved.
-- `environment.md` — how to reproduce the dev environment locally and on Colab.
-- **Start here:** `../docs/PROJECT_GUIDE.md` (plain-language guide to the whole project, kept current).
-- Also see `../docs/GLOSSARY.md` (every short form: A1, A2, G0, MDE, AnEn, ...),
-  `../docs/PLAN_REVIEW_v5.md` (current plan) and `../docs/REPRODUCIBILITY_LOG.md`.
+**Current (kept up to date):**
+- `progress.md`: the running tracker of what's done, in progress and next.
+- `decisions.md`: the dated decision log. Every experiment's rule is written here before it is run.
+- `environment.md`: how to reproduce the environment (project venv, Python 3.13).
+
+**Historical (v1, September to early October 2026; kept because the frozen code refers to them):**
+`project_overview.md`, `build_plan.md`, `architecture.md`, `data.md`, `ml_notes.md`, `RUN_COMMANDS.md`.
+Each one starts with a note saying so.
+
+**Start here instead:** `../docs/PROJECT_GUIDE.md` (the plain-language guide to the whole project, kept current),
+`../docs/MODELS_EXPLAINED.md` (every model and metric), `../docs/CONFIRMATORY_PROTOCOL.md` (the frozen test
+protocol) and `../docs/GLOSSARY.md` (every short form).
 
 ## Future Session Protocol
 
 At the start of a new session, read in this order:
 
 1. `context/README.md` (this file)
-2. `context/project_overview.md`
+2. `docs/PROJECT_GUIDE.md`
 3. `context/progress.md`
-4. `context/build_plan.md`
-5. Any specialized context file relevant to the task at hand (`data.md`, `ml_notes.md`, `architecture.md`, `decisions.md`, `environment.md`)
-6. Then inspect the actual source code relevant to the task — **do not trust this folder blindly**. If code and context disagree, the code is the source of truth; fix the context file.
+4. `context/decisions.md`, for the part relevant to the task
+5. Then inspect the actual source code relevant to the task. **Don't trust these notes blindly**: if code and notes
+   disagree, the code is the source of truth, and the notes get fixed.
 
 ## Maintenance rule
 
-Update the relevant file(s) whenever a meaningful implementation milestone completes or a decision is made. Never mark something COMPLETED in `build_plan.md` without having actually run and verified it.
+Update `progress.md`, `decisions.md` and `docs/PROJECT_GUIDE.md` whenever a meaningful milestone completes or a
+decision is made. The historical files are not updated.

@@ -74,7 +74,7 @@ Every model makes a forecast for each of the next 5 days. For each forecast day 
 
 | Period | Used for |
 |---|---|
-| 1980–2006 and onwards | Training (each fold trains on everything before its validation block) |
+| 1980 up to each validation block | Training: everything before each fold's block (1980–2006 for the first fold, 1980–2015 for the last, 1980–2018 for the test). The last 2 of those years are held back to decide when to stop training, so the models are fitted on the rest (the test models on 1980–2016). |
 | **2007–2018, development** | Four rolling blocks of 3 years. Every model choice was made here. |
 | **2019-01-01 to 2026-09-06, the test** | Locked until the protocol was frozen (git tag `test-lock`), then used **once**. |
 
@@ -105,7 +105,7 @@ Every model makes a forecast for each of the next 5 days. For each forecast day 
 | `A1prime` (A1′) | the same LSTM with the new (v2) heatwave labels |
 | `A2` / `A2r` | WBGT models using the Australian Bureau of Meteorology's simple WBGT formula (raw / anomaly target) |
 | `A2L` / `A2Lr` | WBGT models using the physical (Liljegren) WBGT; `r` = the model predicts the anomaly (difference from normal) |
-| `_hw5` | hot days count **5×** in training (the "hot weight"); chosen in development over 1, 10 and 20 |
+| `_hw5` | hot days count **5×** in training (the "hot weight"). The pre-registered sweep rule picked 1; we fixed 5 instead, as a disclosed deviation (`context/decisions.md`), because weight 1 gave up the heatwave-day skill |
 | `_dp` | the model predicts a correction to "damped persistence" (an early experiment) |
 | `_tuned` | settings (size, learning rate, dropout) picked in the tuning round |
 | `_C2`, `_C3`, `_C3hop`, `_C4` … | the upstream graph models (section 5) |
@@ -206,8 +206,8 @@ C3-hop is our own PyTorch code, not a ready-made library model.
 
 | Code | What it is |
 |---|---|
-| `ridge` | A fixed weighted sum. For each forecast day: weight × Delhi's last departure from normal + weights × the 27 upstream points' Tmax departures over the last 3 days. Fitted by ordinary least squares with a small penalty against huge weights. It sees the same upstream region as the graph, but can only combine the inputs linearly. |
-| `ridge_hw5` | The same formula, fitted with hot days counted 5×, like our neural networks. **The fair comparison.** |
+| `ridge` | A fixed weighted sum. For each forecast day: weight × Delhi's last departure from normal + weights × the 27 upstream points' Tmax departures over the last 3 days. Fitted by ordinary least squares with a small penalty against huge weights. It sees the same 27 upstream points as the graph, but only their Tmax departures (no humidity or other variables), and can only combine them linearly. |
+| `ridge_hw5` | The same formula, fitted with hot days counted 5×, like our neural networks. The comparison pre-registered for H3: the closest simple model, but **not like-for-like**. It has fewer inputs, and about 96% of C3-hop's heatwave-day advantage over it is a smaller cold bias. |
 
 The plain ridge plays safe: it forecasts close to normal, so it is good on ordinary days and very cold on heatwaves.
 
@@ -285,13 +285,16 @@ models run cold on real heatwave days. Section 11 explains why.
 | Claim | Difference in RMSE (°C), 95% interval | Confirmed? |
 |---|---|---|
 | H1: C3-hop beats the Delhi-only LSTM, all days | −0.127 (−0.180 to −0.075) | **yes** |
-| H2: … on heatwave days | −0.081 (−0.261 to +0.100) | no (smaller than the test could detect, ~0.45; stated in advance) |
-| H3: C3-hop beats the fair ridge on heatwave days | −0.718 (−0.895 to −0.540) | **yes** |
+| H2: … on heatwave days | −0.081 (−0.261 to +0.100) | no. The test could detect about 0.25 °C (the pre-test estimate was ~0.45), so the development gain (−0.26) did not reproduce |
+| H3: C3-hop beats the hot-day-weighted ridge on heatwave days | −0.718 (−0.895 to −0.540) | **yes**, mostly through a smaller cold bias |
 | H4: LSTM + Rg beats the Delhi-only LSTM, all days | −0.042 (−0.080 to −0.004) | no (raw p 0.033, Holm-adjusted 0.066) |
 
 **Warnings:** the Tmax heatwave warning has Brier skill +0.28 (Delhi-only LSTM +0.23). For WBGT it is +0.07 (weak).
+As a yes/no warning, the averaged C3-hop forecast catches 27% of Tmax heatwave days (37% of its warnings are false
+alarms) but only 9% of WBGT heatwave days (68% false alarms) (`evaluation_post_test/test_period_extras.md`).
 
-**Range forecasts:** the 80% range contains the truth 77–78% of the time on all days.
+**Range forecasts:** the 80% range contains the truth 77–78% of the time on all days, but only 29% (WBGT) and 54%
+(Tmax) of the time on heatwave days: there the forecasts are too cold and the ranges too narrow.
 
 ---
 
@@ -357,7 +360,8 @@ See `evaluation_v2/figures/graph_importance.png`.
 
 - a cheap, transparent local model that runs on a laptop;
 - WBGT heat stress, which GraphCast does not produce;
-- calibrated ranges and warnings;
+- ranges and warnings that are calibrated on ordinary days (on heatwave days they are too cold and too narrow;
+  section 8);
 - a heat-advisory system built on top.
 
 Report: `evaluation_v2/graphcast_yardstick.md`.
@@ -398,7 +402,8 @@ Report: `evaluation_v2/graphcast_yardstick.md`.
   - **Weather foundation models** (Pangu-Weather, FuXi, Aurora, GraphCast) are a different kind of model: they need
     the whole global atmosphere as input and are in GraphCast's class, which we already know is better than ours
     (section 10). Chronos and TimesFM, like our models, need no global atmosphere, only a local data series, so they
-    are the fair "pretrained alternative" for this project.
+    are the natural ready-made alternative for this project. It is not a like-for-like contest: we gave them one
+    series each (Chronos-2 could also take extra input series), while our models see many variables.
 
 **How we compared** (after the main test, as a labelled extra; rules written down first):
 
@@ -418,7 +423,8 @@ Report: `evaluation_v2/graphcast_yardstick.md`.
 
 - **C3-hop beats both on all days** (by 0.13–0.18 °C) **and on heatwave days** (by 0.75–0.81 °C), for WBGT and Tmax.
   Every one of these differences is statistically clear (p ≤ 0.002).
-- **Even our Delhi-only LSTM** ties them on ordinary days and beats them clearly on heatwave days.
+- **Even our Delhi-only LSTM** ties them on ordinary days and beats them on heatwave days: clearly for WBGT
+  (−0.72 °C, p ≤ 0.002), less clearly for Tmax (−0.55 °C, p 0.039, vs Chronos-2; −0.51 °C, p 0.051, vs TimesFM).
 - **Why:** they only see the history of one number and extrapolate its patterns. Our models also see the other
   weather variables, the day-of-year climatology, and (C3-hop) the upstream region the heat comes from. On heatwave
   days the foundation models are about 3.5 °C too cold for WBGT, more than ours (2.7 °C).
@@ -428,7 +434,7 @@ Report: `evaluation_post_test/foundation_baselines.md`.
 
 ---
 
-## 11. Why retrieval helps ordinary days but hurts heatwave days
+## 11. Why retrieval helps ordinary days a little but not heatwave days
 
 **What retrieval does:** it finds the 5 past situations that looked most like today and hands the model what
 happened next in each. The model mostly **averages** those 5 outcomes; its attention stayed almost even across them.
@@ -437,7 +443,9 @@ happened next in each. The model mostly **averages** those 5 outcomes; its atten
 
 - The 5 past situations carry a hint of the wider **regional** weather, which a Delhi-only model cannot see.
 - Averaging 5 outcomes cancels their individual quirks.
-- Result: about **−0.04 °C** on all days, the same in development (−0.044) and on the test (−0.042).
+- Result: about **−0.04 °C** on all days, the same in development (−0.044) and on the test (−0.042). On the test
+  this was **not confirmed** after correcting for the four claims (H4, Holm-adjusted p 0.066), and about half of it
+  is simply a cooler average forecast: the Delhi-only LSTM runs slightly warm, and retrieval cools it.
 
 **On heatwave days, the same averaging hurts:**
 
@@ -450,16 +458,18 @@ happened next in each. The model mostly **averages** those 5 outcomes; its atten
    episodes exist in the training years. The model weighs all 5 analogues almost equally, so the ordinary ones dilute
    any truly matching extreme one.
 4. **Likely but not proven: the analogues come from a cooler climate.** They are 14–17 years old on average, and humid
-   heat (WBGT) has been rising, about +0.45 °C per decade in our data. Our warming-correction variant (R4) did not
+   heat (WBGT) has been rising, about +0.32 °C per decade over 1980–2018 (95% range +0.16 to +0.48). Our
+   warming-correction variant (R4) did not
    help in screening, though, so this is not demonstrated.
 
 **The same mechanism explains the analog-correction failure.** When C3-hop *forecasts* a hot day, it is usually too
 *warm* (mostly false alarms). Corrections learned from similar past forecasts therefore cool it down, and that makes
 the days that really were extreme even colder.
 
-**Honesty point:** in development, Rg slightly *helped* heatwave days (by shrinking the cold bias); on the test it
-*hurt* them (+0.18 °C, p 0.04). The heatwave-day effect is small and unstable either way. Only the ordinary-day gain
-was consistent.
+**Honesty point:** in development, Rg slightly *helped* heatwave days (−0.16 °C, by shrinking the cold bias) but
+never beat its own random-retrieval control there; on the test it *hurt* them (+0.18 °C, p 0.04, one exploratory
+comparison among many, uncorrected). The heatwave-day effect is small and unstable either way. Only the ordinary-day
+gain was consistent in size, and even that was not confirmed on the test.
 
 **In one sentence:** retrieval averages past situations, which smooths ordinary forecasts, but drags heatwave
 forecasts towards "typical warm" exactly when they need to be more extreme. Only information the model doesn't

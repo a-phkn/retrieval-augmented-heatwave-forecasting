@@ -1,5 +1,8 @@
 # ML Notes
 
+> **Historical (v1, September to early October 2026).** Kept unchanged because the frozen code refers to it. For the
+> current models and results read `docs/MODELS_EXPLAINED.md`, `docs/PROJECT_GUIDE.md` and `context/decisions.md`.
+
 Accumulated ML knowledge — models tried, hyperparameters, seeds, and actual
 (not projected) results. Update after every training run.
 

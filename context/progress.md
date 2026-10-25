@@ -1,8 +1,21 @@
 # Progress Tracker
 
-Short, frequently-updated. See `build_plan.md` for full milestone detail.
+Short, frequently-updated. The sections below the current status are a dated history, newest results in
+"Week 3 results" onwards; the September "Done / Next" lists are historical (`build_plan.md` is v1-era).
 
-## Done
+## Current status (2026-10-25)
+- **Forecasting research complete.** Protocol frozen 2026-10-19 (tag `test-lock`); test run once: H1 and H3
+  confirmed, H2 and H4 not (`evaluation_test/test_results.md`). Post-test: foundation models (C3-hop beats both),
+  extras (ensemble, warning scores, bias split, without ERA5T: `evaluation_post_test/`).
+- **Critical reviews (2026-10-22) addressed 2026-10-25:** docs corrected; frozen-code issues disclosed in
+  `docs/KNOWN_DEVIATIONS.md`; test lock now tested on a throwaway repo and checked in CI; test outputs and inputs
+  fingerprinted (`data/TEST_MANIFEST.json`); post-test packages split out of the core lock; HF model revisions
+  pinned; Dependabot added; workspace cleaned (duplicate PDF, caches, `git gc`; `sources/` results tracked, PDFs
+  ignored).
+- **Next:** Phase 6 (action-library schema, rule engine B + D, verifier, constrained LLM advisory, faithfulness
+  evaluation, demo page), then the paper. Decisions needed: which LLM and where it runs; who the 2 raters are.
+
+## Done (September 2026, v1; historical)
 - P1 data pipeline fully verified.
 - P2 (baseline forecaster) closed — canonical weighted-MSE LSTM beats
   persistence on all 3 severity strata; stratified RMSE established as the

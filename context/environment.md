@@ -11,22 +11,26 @@
 ```powershell
 py -3.13 -m venv .venv
 .venv\Scripts\python.exe -m pip install --upgrade pip
-.venv\Scripts\python.exe -m pip install -r requirements.txt
-.venv\Scripts\python.exe -m retrieval.build_index   # gitignored index needed by 6 tests
-.venv\Scripts\python.exe -m pytest -q               # expect 135 passed (see RUN_COMMANDS.md)
+.venv\Scripts\python.exe -m pip install -r requirements.lock.txt
+.venv\Scripts\python.exe -m retrieval.build_index            # gitignored index needed by some tests
+.venv\Scripts\python.exe -m retrieval.precompute_analogues
+.venv\Scripts\python.exe -m pytest -q                        # about 400 tests, ~6 min; a few skip without raw data
 ```
+Optional, for the post-test foundation-model comparison only:
+`.venv\Scripts\python.exe -m pip install -r requirements-post-test.lock.txt` (weights, ~1.8 GB, go to `.hf_cache/`).
 Call the venv interpreter directly (`.venv\Scripts\python.exe ...`) or activate it
 first (`.venv\Scripts\Activate.ps1`). Never run `pip install` without one of these.
 
 ## Dependency files
 - `requirements.txt`: direct dependencies, pinned to the verified versions.
   Add new packages here (and only after agreeing on them).
-- `requirements.lock.txt`: full `pip freeze` of the working environment.
-  Regenerate after any change:
-  `.venv\Scripts\python.exe -m pip freeze > requirements.lock.txt` (keep the 2 header lines).
+- `requirements.lock.txt`: the exact core environment (everything the code, the tests and CI need).
+- `requirements-post-test.txt` / `requirements-post-test.lock.txt`: Chronos-2, TimesFM 3.0 and their
+  dependencies, for `post_test/foundation_baselines.py` only.
+- Regenerate after an upgrade: `pip freeze`, then put the packages only the post-test models need into the
+  post-test lock (split on 2026-10-25 from the installed metadata: 43 core, 25 post-test packages).
 
-Phase-specific packages (thermofeel, pymannkendall, earthengine-api, LLM stack) are
-**not** installed yet. They are added when their phase starts.
+Phase-specific packages (e.g. the Phase 6 LLM stack) are added when their phase starts, after agreeing on them.
 
 ## Run commands (always from repo root, as modules)
 Cross-imports between `training/`, `models/`, `retrieval/` require `-m`:
@@ -51,8 +55,8 @@ downloads for cells 1–6 and is not used by any code.
 The current downloader uses `date.today()`, so the end date drifts on re-download;
 the v2 downloader fixes `END_DATE = 2026-09-06` (see `docs/PLAN_REVIEW_v5.md`).
 
-## Verified state (2026-10-04)
-- venv created; `pytest` → 135 passed (after freeze + stats work; 9 before).
+## Verified state (2026-10-04; see the README for the current state)
+- venv created; `pytest` → 135 passed at the time (after freeze + stats work; 9 before).
 - `retrieval.build_index` rebuilt the index; `feature_normalization_stats.json`
   reproduced byte-identically (no git diff).
 

@@ -1,5 +1,8 @@
 # Run Commands
 
+> **Historical (v1 commands).** These still work for the v1 scripts. For the v2 pipeline and the test run see the
+> "How to run things" table in `README.md`. Kept because the frozen code refers to this file.
+
 Every command below is run from the repo root. Python packages that
 cross-import each other (`training/`, `models/`, `retrieval/`) must be run
 with `python -m`, not `python path/to/file.py` directly — the latter fails

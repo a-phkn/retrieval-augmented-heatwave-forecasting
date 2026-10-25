@@ -1,5 +1,8 @@
 # Architecture
 
+> **Historical (v1, September to early October 2026).** Kept unchanged because the frozen code refers to it. For the
+> current state read `docs/PROJECT_GUIDE.md`, `docs/MODELS_EXPLAINED.md` and `context/decisions.md`.
+
 Describes what the code actually does, kept in sync with reality — if this
 disagrees with the code, the code wins and this file needs fixing.
 

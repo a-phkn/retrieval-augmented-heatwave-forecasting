@@ -1,5 +1,8 @@
 # Backbone after the tuning round (amended rule, decisions.md 2026-10-08)
 
+> **Note added 2026-10-25:** this report predates the final choice. The user chose **C3-hop** over the provisional U1
+> on 2026-10-12 (`context/decisions.md`), and C3-hop was the model tested on 2019–2026.
+
 **Provisional backbone: U1 (tuned)** (lowest WBGT all-days RMSE among the eligible ['U1', 'C2', 'C3pool', 'C3hop'] (ties within 0.02 °C to the simpler). PROVISIONAL: awaiting the user's approval).
 
 With C3-hop: U1 (tuned). Without C3-hop (the five candidates declared before the review): U1 (tuned).

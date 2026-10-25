@@ -1,5 +1,8 @@
 # Project Overview
 
+> **Historical (v1, September to early October 2026).** Kept unchanged because the frozen code refers to it. For the
+> current state read `docs/PROJECT_GUIDE.md`, `context/progress.md` and `context/decisions.md`.
+
 ## Project name
 Retrieval-Augmented Heatwave Forecasting
 
