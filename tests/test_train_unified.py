@@ -42,6 +42,7 @@ def test_shipped_configs_are_valid(name):
 @pytest.mark.skipif(os.environ.get("GITHUB_ACTIONS") == "true",
                     reason="bit-exact float training holds only on the CPU type it was frozen on; "
                            "GitHub runners vary (CI runs 7523bd6, ba6659b), so this runs locally")
+@pytest.mark.slow
 def test_reproduces_frozen_a1_seed0_bit_for_bit(tmp_path):
     """Configured as v1 A1 (8 threads, as frozen), seed 0 must give the frozen A1 weights
     exactly and the archived seed-0 predictions."""

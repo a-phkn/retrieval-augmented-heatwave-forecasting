@@ -1,5 +1,6 @@
 """The test lock (training/test_lock.py) and the "test" fold. No real 2019+ value is read here: the unlocked
 path is checked on SYNTHETIC test-period rows (copies of 2011-2018 rows shifted forward, plus an offset)."""
+import os
 import subprocess
 
 import numpy as np
@@ -10,14 +11,12 @@ import training.folds as folds
 import training.graph_data as gd
 from training import test_lock
 
-TAG_EXISTS = subprocess.run(["git", "rev-parse", "--verify", "--quiet", f"refs/tags/{test_lock.TAG}"],
-                            cwd=test_lock.REPO_ROOT, capture_output=True).returncode == 0
 
-
-@pytest.mark.skipif(TAG_EXISTS, reason="the protocol is frozen; the locked state no longer applies")
 def test_everything_refuses_the_test_period_while_locked(monkeypatch):
     from retrieval.fold_retrieval import FoldRetriever
 
+    # Simulate "not frozen yet" by pointing the lock at a tag that does not exist (works with or without the real tag)
+    monkeypatch.setattr(test_lock, "TAG", "no-such-tag-for-this-test")
     monkeypatch.setattr(test_lock, "_unlocked", False)
     for call in (test_lock.require, lambda: folds.fold_bounds("test"), lambda: folds.fold_windows("test"),
                  lambda: folds.build_fold("test", "t_max", "v2"), lambda: gd.load_upstream(include_test=True),
@@ -25,6 +24,81 @@ def test_everything_refuses_the_test_period_while_locked(monkeypatch):
         with pytest.raises(test_lock.TestLocked):
             call()
     assert "test" not in folds.FOLDS  # loops over development folds never include it
+
+
+# ---- the four lock conditions, on a throwaway git repo (not this repo) ----
+
+def _git(repo, *args):
+    # Isolated from the user's and the system git config (no signing hooks, no aliases); this repo is thrown away.
+    env = {**os.environ, "GIT_CONFIG_GLOBAL": os.devnull, "GIT_CONFIG_NOSYSTEM": "1"}
+    subprocess.run(["git", "-c", "user.name=lock-test", "-c", "user.email=lock-test@example.invalid", *args],
+                   cwd=repo, env=env, check=True, capture_output=True)
+
+
+@pytest.fixture
+def frozen_repo(tmp_path, monkeypatch):
+    """A repo with one locked file, committed and tagged; test_lock is pointed at it."""
+    (tmp_path / "training").mkdir()
+    (tmp_path / "training" / "code.py").write_text("x = 1\n", encoding="utf-8")
+    (tmp_path / "README.md").write_text("notes\n", encoding="utf-8")
+    _git(tmp_path, "init", "-q")
+    _git(tmp_path, "add", "-A")
+    _git(tmp_path, "commit", "-q", "-m", "frozen")
+    _git(tmp_path, "tag", test_lock.TAG)  # lightweight tag: no tag message or signature involved
+    monkeypatch.setattr(test_lock, "REPO_ROOT", tmp_path)
+    monkeypatch.setattr(test_lock, "_unlocked", False)
+    return tmp_path
+
+
+def test_lock_opens_on_the_tagged_commit_and_after_later_non_code_commits(frozen_repo):
+    test_lock.require()
+    (frozen_repo / "README.md").write_text("results added\n", encoding="utf-8")
+    _git(frozen_repo, "commit", "-q", "-am", "results")
+    test_lock._unlocked = False
+    test_lock.require()  # later commits outside the locked folders are allowed
+    (frozen_repo / "training" / "results.parquet").write_bytes(b"")  # ignored files do not count ...
+    (frozen_repo / ".gitignore").write_text("*.parquet\n", encoding="utf-8")
+    test_lock._unlocked = False
+    test_lock.require()
+
+
+def test_lock_refuses_a_committed_code_change(frozen_repo):
+    (frozen_repo / "training" / "code.py").write_text("x = 2\n", encoding="utf-8")
+    _git(frozen_repo, "commit", "-q", "-am", "edit frozen code")
+    with pytest.raises(test_lock.TestLocked, match="changed after"):
+        test_lock.require()
+
+
+def test_lock_refuses_an_uncommitted_code_change(frozen_repo):
+    (frozen_repo / "training" / "code.py").write_text("x = 3\n", encoding="utf-8")
+    with pytest.raises(test_lock.TestLocked, match="uncommitted"):
+        test_lock.require()
+
+
+def test_lock_refuses_an_untracked_file_in_a_locked_folder(frozen_repo):
+    (frozen_repo / "training" / "new_module.py").write_text("y = 1\n", encoding="utf-8")
+    with pytest.raises(test_lock.TestLocked, match="uncommitted"):
+        test_lock.require()
+
+
+def test_lock_refuses_when_head_does_not_contain_the_tag(frozen_repo):
+    _git(frozen_repo, "checkout", "-q", "--orphan", "elsewhere")
+    _git(frozen_repo, "commit", "-q", "-m", "unrelated history")
+    with pytest.raises(test_lock.TestLocked, match="does not contain"):
+        test_lock.require()
+
+
+def test_lock_refuses_without_the_tag(frozen_repo):
+    _git(frozen_repo, "tag", "-d", test_lock.TAG)
+    with pytest.raises(test_lock.TestLocked, match="does not exist"):
+        test_lock.require()
+
+
+def test_failed_check_is_not_cached(frozen_repo):
+    (frozen_repo / "training" / "code.py").write_text("x = 4\n", encoding="utf-8")
+    with pytest.raises(test_lock.TestLocked):
+        test_lock.require()
+    assert test_lock._unlocked is False
 
 
 def test_development_folds_never_consult_the_lock(monkeypatch):

@@ -29,10 +29,7 @@ matplotlib==3.11.2
 # External yardstick only (evaluation/graphcast_yardstick.py: decodes WeatherBench 2 zarr chunks)
 numcodecs==0.17.0
 
-# Post-test comparison only (post_test/foundation_baselines.py: pretrained time-series foundation models;
-# weights are cached in .hf_cache/ inside the project)
-chronos-forecasting==2.3.2
-timesfm==3.0.2
+# Post-test foundation-model comparison only: see requirements-post-test.txt (not needed for the tests or CI)
 
 # Tests
 pytest==9.1.1

@@ -1,7 +1,6 @@
 """pipeline/wbgt_liljegren_torch.py: same values as the numpy reference, and correct gradients
 (the physics head's exact formula, decision 2026-10-07)."""
 import numpy as np
-import pytest
 import torch
 
 from pipeline import wbgt_liljegren as ref

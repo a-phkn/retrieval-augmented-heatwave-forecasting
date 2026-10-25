@@ -8,7 +8,6 @@ import pytest
 
 import pipeline.build_upstream_daily as bu
 from pipeline.download_era5_upstream import DAILY_VARIABLES, NODES
-from scripts.make_manifest import REPO_ROOT
 
 
 def _raw(direction, speed=5.0, soil=0.1):

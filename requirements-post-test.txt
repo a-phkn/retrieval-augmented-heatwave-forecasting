@@ -1,0 +1,9 @@
+# Direct dependencies of the post-test foundation-model comparison only (post_test/foundation_baselines.py:
+# pretrained time-series foundation models; weights, ~1.8 GB, are cached in .hf_cache/ inside the project).
+# Install on top of the core environment, into the project venv:
+#
+#   .venv\Scripts\python.exe -m pip install -r requirements-post-test.lock.txt
+#
+# Exact transitive versions are recorded in requirements-post-test.lock.txt.
+chronos-forecasting==2.3.2
+timesfm==3.0.2

@@ -1,0 +1,7 @@
+{
+  "model": "google/timesfm-3.0-pytorch",
+  "revision": "43046b85ec22d584a13f8098c2ed39c889e129c2",
+  "context_days": 1024,
+  "forecast_days": 5,
+  "point_forecast": "median"
+}

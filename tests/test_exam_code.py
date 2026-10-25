@@ -1,20 +1,18 @@
 """training/test_run.py and evaluation/test_evaluation.py: refusal while locked, Holm, plan contents.
 No test-period data is read."""
-import subprocess
-
 import pytest
 
 import evaluation.test_evaluation as te
 import training.test_run as tr
 from training import test_lock
 
-TAG_EXISTS = subprocess.run(["git", "rev-parse", "--verify", "--quiet", f"refs/tags/{test_lock.TAG}"],
-                            cwd=test_lock.REPO_ROOT, capture_output=True).returncode == 0
 
-
-@pytest.mark.skipif(TAG_EXISTS, reason="the protocol is frozen")
 def test_test_run_and_scoring_refuse_while_locked(monkeypatch):
+    # Simulate "not frozen yet" by pointing the lock at a tag that does not exist (works with or without the real tag)
+    monkeypatch.setattr(test_lock, "TAG", "no-such-tag-for-this-test")
     monkeypatch.setattr(test_lock, "_unlocked", False)
+    with pytest.raises(test_lock.TestLocked):  # guard first: if this did not raise, the mains below would train/score
+        test_lock.require()
     with pytest.raises(test_lock.TestLocked):
         tr.main(["--stage", "main"])
     with pytest.raises(test_lock.TestLocked):
@@ -23,8 +21,12 @@ def test_test_run_and_scoring_refuse_while_locked(monkeypatch):
 
 def test_holm_adjusts_step_down_and_stays_monotone():
     adj = te.holm({"H1": 0.01, "H2": 0.04, "H3": 0.03})
-    assert adj["H1"] == pytest.approx(0.03) and adj["H3"] == pytest.approx(0.06) and adj["H2"] == pytest.approx(0.06)
-    assert te.holm({"a": 0.5, "b": 0.6})["b"] == pytest.approx(1.0) or te.holm({"a": 0.5, "b": 0.6})["b"] <= 1.0
+    assert adj == pytest.approx({"H1": 0.03, "H2": 0.06, "H3": 0.06})
+    assert te.holm({"a": 0.5, "b": 0.6}) == pytest.approx({"a": 1.0, "b": 1.0})  # 2 * 0.5 = 1.0; b kept monotone
+    assert te.holm({"a": 0.6, "b": 0.7}) == pytest.approx({"a": 1.0, "b": 1.0})  # capped at 1
+    assert te.holm({"a": 0.02, "b": 0.02}) == pytest.approx({"a": 0.04, "b": 0.04})  # ties
+    assert te.holm({"only": 0.03}) == pytest.approx({"only": 0.03})  # one test: unchanged
+    assert te.holm({}) == {}
 
 
 def test_plan_trains_the_protocol_models_with_existing_configs():

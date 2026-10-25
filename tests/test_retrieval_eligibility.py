@@ -16,7 +16,7 @@ from pathlib import Path
 import pandas as pd
 import pytest
 
-from retrieval.query import query_analogues, eligibility_mask, _load
+from retrieval.query import query_analogues, _load
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
 

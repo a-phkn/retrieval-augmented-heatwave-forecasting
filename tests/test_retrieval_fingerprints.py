@@ -34,5 +34,6 @@ def check(all_entries: bool = False) -> list[str]:
     return bad
 
 
+@pytest.mark.slow
 def test_queue_analogue_lists_are_unchanged():
     assert check() == []
