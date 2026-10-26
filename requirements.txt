@@ -10,7 +10,7 @@
 # its own CUDA torch. Notebooks install only what is missing (e.g. faiss-cpu).
 
 # Data
-numpy==2.5.3
+numpy==2.5.4
 pandas==3.0.6
 pyarrow==25.0.1
 requests==2.34.2          # download_era5.py (Open-Meteo API)
