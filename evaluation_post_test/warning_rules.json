@@ -1,0 +1,1100 @@
+{
+  "WBGT (physical)": {
+    "choices": {
+      "C3-hop R-shift": {
+        "delta_C": 1.2,
+        "dev_ets": 0.07169038734603574,
+        "dev_ets_r_point": 0.029909164758880436
+      },
+      "Delhi-only LSTM R-shift": {
+        "delta_C": 1.2,
+        "dev_ets": 0.06031970325885366,
+        "dev_ets_r_point": 0.013654358891492285
+      },
+      "C2 R-shift": {
+        "delta_C": 1.5,
+        "dev_ets": 0.07845841378099846,
+        "dev_ets_r_point": 0.027624309392265192
+      },
+      "U1_tuned R-shift": {
+        "delta_C": 1.35,
+        "dev_ets": 0.06967200748317794,
+        "dev_ets_r_point": 0.01278772378516624
+      },
+      "C3pool_tuned R-shift": {
+        "delta_C": 1.2,
+        "dev_ets": 0.07818720341412147,
+        "dev_ets_r_point": 0.026953154657960672
+      },
+      "ridge R-shift": {
+        "delta_C": 2.5,
+        "dev_ets": 0.055531263664188896,
+        "dev_ets_r_point": 0.000828225940036442
+      },
+      "ridge_hw5 R-shift": {
+        "delta_C": 2.1,
+        "dev_ets": 0.0620619344972601,
+        "dev_ets_r_point": 0.015089820359281437
+      },
+      "C3-hop R-prob": {
+        "p_star": 0.13,
+        "dev_ets": 0.07307837940174176
+      },
+      "Delhi-only LSTM R-prob": {
+        "p_star": 0.12,
+        "dev_ets": 0.05579971509107993
+      }
+    },
+    "test": {
+      "C3-hop R-point": {
+        "hits": 38,
+        "misses": 602,
+        "false_alarms": 68,
+        "n": 7870,
+        "hit_rate": 0.059375,
+        "false_alarm_ratio": 0.6415094339622641,
+        "ets": 0.0420085317907313,
+        "frequency_bias": 0.165625
+      },
+      "C3-hop R-shift": {
+        "hits": 242,
+        "misses": 398,
+        "false_alarms": 916,
+        "n": 7870,
+        "hit_rate": 0.378125,
+        "false_alarm_ratio": 0.7910189982728842,
+        "ets": 0.10112650591937138,
+        "frequency_bias": 1.809375
+      },
+      "Delhi-only LSTM R-point": {
+        "hits": 25,
+        "misses": 615,
+        "false_alarms": 53,
+        "n": 7870,
+        "hit_rate": 0.0390625,
+        "false_alarm_ratio": 0.6794871794871795,
+        "ets": 0.0271706646385356,
+        "frequency_bias": 0.121875
+      },
+      "Delhi-only LSTM R-shift": {
+        "hits": 224,
+        "misses": 416,
+        "false_alarms": 929,
+        "n": 7870,
+        "hit_rate": 0.35,
+        "false_alarm_ratio": 0.805724197745013,
+        "ets": 0.08828167864042633,
+        "frequency_bias": 1.8015625
+      },
+      "C2 R-point": {
+        "hits": 36,
+        "misses": 604,
+        "false_alarms": 56,
+        "n": 7870,
+        "hit_rate": 0.05625,
+        "false_alarm_ratio": 0.6086956521739131,
+        "ets": 0.041419987303087116,
+        "frequency_bias": 0.14375
+      },
+      "C2 R-shift": {
+        "hits": 277,
+        "misses": 363,
+        "false_alarms": 1099,
+        "n": 7870,
+        "hit_rate": 0.4328125,
+        "false_alarm_ratio": 0.7986918604651163,
+        "ets": 0.10146978319116554,
+        "frequency_bias": 2.15
+      },
+      "U1_tuned R-point": {
+        "hits": 41,
+        "misses": 599,
+        "false_alarms": 61,
+        "n": 7870,
+        "hit_rate": 0.0640625,
+        "false_alarm_ratio": 0.5980392156862745,
+        "ets": 0.047213748649476577,
+        "frequency_bias": 0.159375
+      },
+      "U1_tuned R-shift": {
+        "hits": 269,
+        "misses": 371,
+        "false_alarms": 1063,
+        "n": 7870,
+        "hit_rate": 0.4203125,
+        "false_alarm_ratio": 0.7980480480480481,
+        "ets": 0.10075991244712205,
+        "frequency_bias": 2.08125
+      },
+      "C3pool_tuned R-point": {
+        "hits": 34,
+        "misses": 606,
+        "false_alarms": 59,
+        "n": 7870,
+        "hit_rate": 0.053125,
+        "false_alarm_ratio": 0.6344086021505376,
+        "ets": 0.038235007653984764,
+        "frequency_bias": 0.1453125
+      },
+      "C3pool_tuned R-shift": {
+        "hits": 216,
+        "misses": 424,
+        "false_alarms": 743,
+        "n": 7870,
+        "hit_rate": 0.3375,
+        "false_alarm_ratio": 0.7747653806047967,
+        "ets": 0.10575583348344035,
+        "frequency_bias": 1.4984375
+      },
+      "ridge R-point": {
+        "hits": 1,
+        "misses": 639,
+        "false_alarms": 4,
+        "n": 7870,
+        "hit_rate": 0.0015625,
+        "false_alarm_ratio": 0.8,
+        "ets": 0.0009219992576622681,
+        "frequency_bias": 0.0078125
+      },
+      "ridge R-shift": {
+        "hits": 239,
+        "misses": 401,
+        "false_alarms": 1106,
+        "n": 7870,
+        "hit_rate": 0.3734375,
+        "false_alarm_ratio": 0.8223048327137547,
+        "ets": 0.07920128693453996,
+        "frequency_bias": 2.1015625
+      },
+      "ridge_hw5 R-point": {
+        "hits": 17,
+        "misses": 623,
+        "false_alarms": 22,
+        "n": 7870,
+        "hit_rate": 0.0265625,
+        "false_alarm_ratio": 0.5641025641025641,
+        "ets": 0.020989473440591863,
+        "frequency_bias": 0.0609375
+      },
+      "ridge_hw5 R-shift": {
+        "hits": 249,
+        "misses": 391,
+        "false_alarms": 1198,
+        "n": 7870,
+        "hit_rate": 0.3890625,
+        "false_alarm_ratio": 0.8279198341395991,
+        "ets": 0.07633883793313825,
+        "frequency_bias": 2.2609375
+      },
+      "C3-hop R-prob": {
+        "hits": 299,
+        "misses": 341,
+        "false_alarms": 1328,
+        "n": 7870,
+        "hit_rate": 0.4671875,
+        "false_alarm_ratio": 0.8162261831591887,
+        "ets": 0.09080507348299424,
+        "frequency_bias": 2.5421875
+      },
+      "Delhi-only LSTM R-prob": {
+        "hits": 345,
+        "misses": 295,
+        "false_alarms": 1663,
+        "n": 7870,
+        "hit_rate": 0.5390625,
+        "false_alarm_ratio": 0.828187250996016,
+        "ets": 0.08492121792287058,
+        "frequency_bias": 3.1375
+      },
+      "persistence": {
+        "hits": 123,
+        "misses": 517,
+        "false_alarms": 516,
+        "n": 7870,
+        "hit_rate": 0.1921875,
+        "false_alarm_ratio": 0.8075117370892019,
+        "ets": 0.06434174726888532,
+        "frequency_bias": 0.9984375
+      }
+    },
+    "bootstrap": {
+      "rules": {
+        "C3-hop R-point": {
+          "ets_ci": [
+            0.019069108704324825,
+            0.06063568722759678
+          ],
+          "hit_rate_ci": [
+            0.029221649484536084,
+            0.08243376851427699
+          ]
+        },
+        "C3-hop R-shift": {
+          "ets_ci": [
+            0.05928423915672728,
+            0.14576462193089326
+          ],
+          "hit_rate_ci": [
+            0.24930067917577992,
+            0.47051285185443875
+          ]
+        },
+        "Delhi-only LSTM R-point": {
+          "ets_ci": [
+            0.010078826834343189,
+            0.043968837562503145
+          ],
+          "hit_rate_ci": [
+            0.017087719298245617,
+            0.05906215348701487
+          ]
+        },
+        "Delhi-only LSTM R-shift": {
+          "ets_ci": [
+            0.05495728223763515,
+            0.1191614961671571
+          ],
+          "hit_rate_ci": [
+            0.23437421085858587,
+            0.42223057644110273
+          ]
+        },
+        "C2 R-point": {
+          "ets_ci": [
+            0.016056307241252232,
+            0.05991276519633689
+          ],
+          "hit_rate_ci": [
+            0.023652751423149904,
+            0.08028194715739694
+          ]
+        },
+        "C2 R-shift": {
+          "ets_ci": [
+            0.06346072063473798,
+            0.1428626333141191
+          ],
+          "hit_rate_ci": [
+            0.2959140251845419,
+            0.5250129310344827
+          ]
+        },
+        "U1_tuned R-point": {
+          "ets_ci": [
+            0.017898598075026535,
+            0.07549206761980178
+          ],
+          "hit_rate_ci": [
+            0.02526264690853347,
+            0.10420533430763608
+          ]
+        },
+        "U1_tuned R-shift": {
+          "ets_ci": [
+            0.055989246020913284,
+            0.14764612916066402
+          ],
+          "hit_rate_ci": [
+            0.27953160809778455,
+            0.5203131589035842
+          ]
+        },
+        "C3pool_tuned R-point": {
+          "ets_ci": [
+            0.01577367133633116,
+            0.05569363132308524
+          ],
+          "hit_rate_ci": [
+            0.02424075924075924,
+            0.07590383431536364
+          ]
+        },
+        "C3pool_tuned R-shift": {
+          "ets_ci": [
+            0.06451291790071657,
+            0.1488318131349716
+          ],
+          "hit_rate_ci": [
+            0.22378950695322378,
+            0.4263022561380224
+          ]
+        },
+        "ridge R-point": {
+          "ets_ci": [
+            -0.0009445454237253227,
+            0.00405161244136721
+          ],
+          "hit_rate_ci": [
+            0.0,
+            0.004651162790697674
+          ]
+        },
+        "ridge R-shift": {
+          "ets_ci": [
+            0.042586959592831285,
+            0.10826555409732372
+          ],
+          "hit_rate_ci": [
+            0.26110714285714287,
+            0.4522779658284977
+          ]
+        },
+        "ridge_hw5 R-point": {
+          "ets_ci": [
+            0.005383044731579111,
+            0.03360658857458846
+          ],
+          "hit_rate_ci": [
+            0.00816326530612245,
+            0.04190652557319223
+          ]
+        },
+        "ridge_hw5 R-shift": {
+          "ets_ci": [
+            0.03786697302856869,
+            0.10636218486645281
+          ],
+          "hit_rate_ci": [
+            0.26944220430107524,
+            0.4797900703499573
+          ]
+        },
+        "C3-hop R-prob": {
+          "ets_ci": [
+            0.05249818950399979,
+            0.1291253369071124
+          ],
+          "hit_rate_ci": [
+            0.32134831460674157,
+            0.566171597633136
+          ]
+        },
+        "Delhi-only LSTM R-prob": {
+          "ets_ci": [
+            0.052021860105285866,
+            0.11447555280955783
+          ],
+          "hit_rate_ci": [
+            0.3575088019792559,
+            0.6466949685534589
+          ]
+        },
+        "persistence": {
+          "ets_ci": [
+            0.02495714711640891,
+            0.09498155253021094
+          ],
+          "hit_rate_ci": [
+            0.11463287601626017,
+            0.2481819830439316
+          ]
+        }
+      },
+      "pairs": {
+        "C3-hop R-prob minus C3-hop R-point": {
+          "ets_ci": [
+            0.02773643166450338,
+            0.07370939251653902
+          ],
+          "hit_rate_ci": [
+            0.28282788825757577,
+            0.48947460434302537
+          ],
+          "share_ets_above_0": 1.0
+        },
+        "C3-hop R-shift minus C3-hop R-point": {
+          "ets_ci": [
+            0.03575275504826712,
+            0.08901270687982107
+          ],
+          "hit_rate_ci": [
+            0.2172010228166798,
+            0.3929553093964858
+          ],
+          "share_ets_above_0": 1.0
+        },
+        "C3-hop R-prob minus Delhi-only LSTM R-prob": {
+          "ets_ci": [
+            -0.00705375994788148,
+            0.020175961051023615
+          ],
+          "hit_rate_ci": [
+            -0.14822879724389507,
+            0.008336864406779613
+          ],
+          "share_ets_above_0": 0.7975
+        },
+        "C3-hop R-prob minus persistence": {
+          "ets_ci": [
+            0.003885606758674846,
+            0.05746099875421497
+          ],
+          "hit_rate_ci": [
+            0.1803431637806638,
+            0.35946397941680946
+          ],
+          "share_ets_above_0": 0.99
+        },
+        "C3-hop R-shift minus Delhi-only LSTM R-shift": {
+          "ets_ci": [
+            -0.0074399068520333836,
+            0.03754270745797017
+          ],
+          "hit_rate_ci": [
+            -0.030156288916562902,
+            0.08000819672131139
+          ],
+          "share_ets_above_0": 0.879
+        },
+        "C3-hop R-shift minus C2 R-shift": {
+          "ets_ci": [
+            -0.01765713354741953,
+            0.014677666474859807
+          ],
+          "hit_rate_ci": [
+            -0.09937898089171972,
+            -0.01385967907135538
+          ],
+          "share_ets_above_0": 0.492
+        },
+        "C3-hop R-shift minus U1_tuned R-shift": {
+          "ets_ci": [
+            -0.020348743900869857,
+            0.017359784460931334
+          ],
+          "hit_rate_ci": [
+            -0.08059821858449692,
+            0.0022276422764226944
+          ],
+          "share_ets_above_0": 0.511
+        },
+        "C3-hop R-shift minus C3pool_tuned R-shift": {
+          "ets_ci": [
+            -0.022277360102311093,
+            0.0129349162629122
+          ],
+          "hit_rate_ci": [
+            0.012193274205469336,
+            0.06765522875816993
+          ],
+          "share_ets_above_0": 0.322
+        },
+        "C3-hop R-shift minus ridge R-shift": {
+          "ets_ci": [
+            0.0025085179805592983,
+            0.04941165928479719
+          ],
+          "hit_rate_ci": [
+            -0.04651904997525974,
+            0.05373421354764637
+          ],
+          "share_ets_above_0": 0.987
+        },
+        "C3-hop R-shift minus ridge_hw5 R-shift": {
+          "ets_ci": [
+            0.00455330656956558,
+            0.05236272405732026
+          ],
+          "hit_rate_ci": [
+            -0.06379621400639883,
+            0.040000000000000036
+          ],
+          "share_ets_above_0": 0.9935
+        }
+      }
+    },
+    "tradeoff": {
+      "0.1": {
+        "hits": 376,
+        "misses": 264,
+        "false_alarms": 1850,
+        "n": 7870,
+        "hit_rate": 0.5875,
+        "false_alarm_ratio": 0.8310871518418689,
+        "ets": 0.08444357862737913,
+        "frequency_bias": 3.478125
+      },
+      "0.2": {
+        "hits": 166,
+        "misses": 474,
+        "false_alarms": 543,
+        "n": 7870,
+        "hit_rate": 0.259375,
+        "false_alarm_ratio": 0.765867418899859,
+        "ets": 0.09627559575224835,
+        "frequency_bias": 1.1078125
+      },
+      "0.3": {
+        "hits": 56,
+        "misses": 584,
+        "false_alarms": 118,
+        "n": 7870,
+        "hit_rate": 0.0875,
+        "false_alarm_ratio": 0.6781609195402298,
+        "ets": 0.056261423617635496,
+        "frequency_bias": 0.271875
+      },
+      "0.5": {
+        "hits": 2,
+        "misses": 638,
+        "false_alarms": 5,
+        "n": 7870,
+        "hit_rate": 0.003125,
+        "false_alarm_ratio": 0.7142857142857143,
+        "ets": 0.0022201759972553417,
+        "frequency_bias": 0.0109375
+      }
+    },
+    "n_rows": 7870,
+    "n_events": 640
+  },
+  "Tmax": {
+    "choices": {
+      "C3-hop R-shift": {
+        "delta_C": 0.25,
+        "dev_ets": 0.3599371346957973,
+        "dev_ets_r_point": 0.34409580188347383
+      },
+      "Delhi-only LSTM R-shift": {
+        "delta_C": 0.6,
+        "dev_ets": 0.29716981611581383,
+        "dev_ets_r_point": 0.24274152686044606
+      },
+      "C2 R-shift": {
+        "delta_C": 0.2,
+        "dev_ets": 0.34612956003483475,
+        "dev_ets_r_point": 0.33190418702259933
+      },
+      "U1_tuned R-shift": {
+        "delta_C": 0.25,
+        "dev_ets": 0.3441124271944124,
+        "dev_ets_r_point": 0.34220524167750827
+      },
+      "C3pool_tuned R-shift": {
+        "delta_C": 0.15,
+        "dev_ets": 0.35654617591291554,
+        "dev_ets_r_point": 0.3463522285045673
+      },
+      "ridge R-shift": {
+        "delta_C": 1.45,
+        "dev_ets": 0.2867508181958291,
+        "dev_ets_r_point": 0.14925990362277938
+      },
+      "ridge_hw5 R-shift": {
+        "delta_C": 1.05,
+        "dev_ets": 0.3013174448369005,
+        "dev_ets_r_point": 0.2319410819278579
+      },
+      "C3-hop R-prob": {
+        "p_star": 0.37,
+        "dev_ets": 0.36620007505115515
+      },
+      "Delhi-only LSTM R-prob": {
+        "p_star": 0.24,
+        "dev_ets": 0.2887981176841732
+      }
+    },
+    "test": {
+      "C3-hop R-point": {
+        "hits": 158,
+        "misses": 487,
+        "false_alarms": 91,
+        "n": 5560,
+        "hit_rate": 0.24496124031007752,
+        "false_alarm_ratio": 0.3654618473895582,
+        "ets": 0.18259314698637055,
+        "frequency_bias": 0.386046511627907
+      },
+      "C3-hop R-shift": {
+        "hits": 209,
+        "misses": 436,
+        "false_alarms": 131,
+        "n": 5560,
+        "hit_rate": 0.324031007751938,
+        "false_alarm_ratio": 0.38529411764705884,
+        "ets": 0.23020272217148605,
+        "frequency_bias": 0.5271317829457365
+      },
+      "Delhi-only LSTM R-point": {
+        "hits": 179,
+        "misses": 466,
+        "false_alarms": 177,
+        "n": 5560,
+        "hit_rate": 0.2775193798449612,
+        "false_alarm_ratio": 0.49719101123595505,
+        "ets": 0.17638168958923678,
+        "frequency_bias": 0.5519379844961241
+      },
+      "Delhi-only LSTM R-shift": {
+        "hits": 275,
+        "misses": 370,
+        "false_alarms": 356,
+        "n": 5560,
+        "hit_rate": 0.4263565891472868,
+        "false_alarm_ratio": 0.5641838351822503,
+        "ets": 0.21750331729851227,
+        "frequency_bias": 0.9782945736434109
+      },
+      "C2 R-point": {
+        "hits": 170,
+        "misses": 475,
+        "false_alarms": 103,
+        "n": 5560,
+        "hit_rate": 0.26356589147286824,
+        "false_alarm_ratio": 0.3772893772893773,
+        "ets": 0.19310936164176165,
+        "frequency_bias": 0.4232558139534884
+      },
+      "C2 R-shift": {
+        "hits": 206,
+        "misses": 439,
+        "false_alarms": 140,
+        "n": 5560,
+        "hit_rate": 0.31937984496124033,
+        "false_alarm_ratio": 0.4046242774566474,
+        "ets": 0.2226742936618511,
+        "frequency_bias": 0.5364341085271318
+      },
+      "U1_tuned R-point": {
+        "hits": 184,
+        "misses": 461,
+        "false_alarms": 120,
+        "n": 5560,
+        "hit_rate": 0.28527131782945736,
+        "false_alarm_ratio": 0.39473684210526316,
+        "ets": 0.20381926986286514,
+        "frequency_bias": 0.47131782945736433
+      },
+      "U1_tuned R-shift": {
+        "hits": 232,
+        "misses": 413,
+        "false_alarms": 190,
+        "n": 5560,
+        "hit_rate": 0.35968992248062015,
+        "false_alarm_ratio": 0.45023696682464454,
+        "ets": 0.23286831212632222,
+        "frequency_bias": 0.6542635658914728
+      },
+      "C3pool_tuned R-point": {
+        "hits": 177,
+        "misses": 468,
+        "false_alarms": 120,
+        "n": 5560,
+        "hit_rate": 0.2744186046511628,
+        "false_alarm_ratio": 0.40404040404040403,
+        "ets": 0.19512240157465777,
+        "frequency_bias": 0.4604651162790698
+      },
+      "C3pool_tuned R-shift": {
+        "hits": 205,
+        "misses": 440,
+        "false_alarms": 150,
+        "n": 5560,
+        "hit_rate": 0.3178294573643411,
+        "false_alarm_ratio": 0.4225352112676056,
+        "ets": 0.21731713281916384,
+        "frequency_bias": 0.5503875968992248
+      },
+      "ridge R-point": {
+        "hits": 88,
+        "misses": 557,
+        "false_alarms": 45,
+        "n": 5560,
+        "hit_rate": 0.13643410852713178,
+        "false_alarm_ratio": 0.3383458646616541,
+        "ets": 0.10758102337883255,
+        "frequency_bias": 0.2062015503875969
+      },
+      "ridge R-shift": {
+        "hits": 314,
+        "misses": 331,
+        "false_alarms": 397,
+        "n": 5560,
+        "hit_rate": 0.4868217054263566,
+        "false_alarm_ratio": 0.5583684950773559,
+        "ets": 0.2412864285814702,
+        "frequency_bias": 1.1023255813953488
+      },
+      "ridge_hw5 R-point": {
+        "hits": 139,
+        "misses": 506,
+        "false_alarms": 98,
+        "n": 5560,
+        "hit_rate": 0.21550387596899226,
+        "false_alarm_ratio": 0.41350210970464135,
+        "ets": 0.15584250725513826,
+        "frequency_bias": 0.3674418604651163
+      },
+      "ridge_hw5 R-shift": {
+        "hits": 338,
+        "misses": 307,
+        "false_alarms": 414,
+        "n": 5560,
+        "hit_rate": 0.524031007751938,
+        "false_alarm_ratio": 0.550531914893617,
+        "ets": 0.2580492319081991,
+        "frequency_bias": 1.165891472868217
+      },
+      "C3-hop R-prob": {
+        "hits": 185,
+        "misses": 460,
+        "false_alarms": 107,
+        "n": 5560,
+        "hit_rate": 0.2868217054263566,
+        "false_alarm_ratio": 0.3664383561643836,
+        "ets": 0.21044485295959203,
+        "frequency_bias": 0.45271317829457364
+      },
+      "Delhi-only LSTM R-prob": {
+        "hits": 346,
+        "misses": 299,
+        "false_alarms": 452,
+        "n": 5560,
+        "hit_rate": 0.5364341085271318,
+        "false_alarm_ratio": 0.5664160401002506,
+        "ets": 0.25230947192373326,
+        "frequency_bias": 1.2372093023255815
+      },
+      "persistence": {
+        "hits": 271,
+        "misses": 374,
+        "false_alarms": 374,
+        "n": 5560,
+        "hit_rate": 0.4201550387596899,
+        "false_alarm_ratio": 0.57984496124031,
+        "ets": 0.20777428439990359,
+        "frequency_bias": 1.0
+      }
+    },
+    "bootstrap": {
+      "rules": {
+        "C3-hop R-point": {
+          "ets_ci": [
+            0.1005482331416683,
+            0.27095389676515236
+          ],
+          "hit_rate_ci": [
+            0.12537011910146237,
+            0.35683155080213896
+          ]
+        },
+        "C3-hop R-shift": {
+          "ets_ci": [
+            0.1290921942287389,
+            0.33326012277780387
+          ],
+          "hit_rate_ci": [
+            0.16827728504557773,
+            0.4575994829136688
+          ]
+        },
+        "Delhi-only LSTM R-point": {
+          "ets_ci": [
+            0.1044055535492387,
+            0.23985818673529535
+          ],
+          "hit_rate_ci": [
+            0.15913719393703848,
+            0.35920408163265294
+          ]
+        },
+        "Delhi-only LSTM R-shift": {
+          "ets_ci": [
+            0.14384516263995578,
+            0.2962423111407504
+          ],
+          "hit_rate_ci": [
+            0.28540650406504064,
+            0.525
+          ]
+        },
+        "C2 R-point": {
+          "ets_ci": [
+            0.10700887525876096,
+            0.2918590533596016
+          ],
+          "hit_rate_ci": [
+            0.13833959899749373,
+            0.3912095588235292
+          ]
+        },
+        "C2 R-shift": {
+          "ets_ci": [
+            0.13258620967595122,
+            0.3114259288171812
+          ],
+          "hit_rate_ci": [
+            0.18037776578521317,
+            0.4408513409222458
+          ]
+        },
+        "U1_tuned R-point": {
+          "ets_ci": [
+            0.13321838534540684,
+            0.2626940393361477
+          ],
+          "hit_rate_ci": [
+            0.18,
+            0.36001408450704214
+          ]
+        },
+        "U1_tuned R-shift": {
+          "ets_ci": [
+            0.15286789588311092,
+            0.3055254734117403
+          ],
+          "hit_rate_ci": [
+            0.232317620650954,
+            0.44767551434718056
+          ]
+        },
+        "C3pool_tuned R-point": {
+          "ets_ci": [
+            0.09967017932863174,
+            0.28860514093920514
+          ],
+          "hit_rate_ci": [
+            0.13331858407079647,
+            0.40439128511391276
+          ]
+        },
+        "C3pool_tuned R-shift": {
+          "ets_ci": [
+            0.12290207521193604,
+            0.3117909885560866
+          ],
+          "hit_rate_ci": [
+            0.17203541374474055,
+            0.45002717391304337
+          ]
+        },
+        "ridge R-point": {
+          "ets_ci": [
+            0.07802229370923747,
+            0.14429095572748826
+          ],
+          "hit_rate_ci": [
+            0.09523578363384189,
+            0.17812642045454546
+          ]
+        },
+        "ridge R-shift": {
+          "ets_ci": [
+            0.16968702298106894,
+            0.29756287976915424
+          ],
+          "hit_rate_ci": [
+            0.3702016328550222,
+            0.5671232876712329
+          ]
+        },
+        "ridge_hw5 R-point": {
+          "ets_ci": [
+            0.11307982250539558,
+            0.1885389205973842
+          ],
+          "hit_rate_ci": [
+            0.14814009661835748,
+            0.2657258403361344
+          ]
+        },
+        "ridge_hw5 R-shift": {
+          "ets_ci": [
+            0.18236063660577312,
+            0.31487520743719094
+          ],
+          "hit_rate_ci": [
+            0.3937946535602973,
+            0.609526678141136
+          ]
+        },
+        "C3-hop R-prob": {
+          "ets_ci": [
+            0.13055490577705345,
+            0.2961412324796298
+          ],
+          "hit_rate_ci": [
+            0.16812852928782135,
+            0.3913676800495088
+          ]
+        },
+        "Delhi-only LSTM R-prob": {
+          "ets_ci": [
+            0.18047360541707805,
+            0.31968916617111987
+          ],
+          "hit_rate_ci": [
+            0.39577278562259305,
+            0.6229472390791914
+          ]
+        },
+        "persistence": {
+          "ets_ci": [
+            0.14349684855052422,
+            0.28316835657379036
+          ],
+          "hit_rate_ci": [
+            0.30966804201050263,
+            0.5132198242439906
+          ]
+        }
+      },
+      "pairs": {
+        "C3-hop R-prob minus C3-hop R-point": {
+          "ets_ci": [
+            0.020286640728735813,
+            0.03628489177658468
+          ],
+          "hit_rate_ci": [
+            0.028946575776791383,
+            0.05426411960132891
+          ],
+          "share_ets_above_0": 1.0
+        },
+        "C3-hop R-shift minus C3-hop R-point": {
+          "ets_ci": [
+            0.027120315709582052,
+            0.06344564153647869
+          ],
+          "hit_rate_ci": [
+            0.04086021505376343,
+            0.10409396779620281
+          ],
+          "share_ets_above_0": 1.0
+        },
+        "C3-hop R-prob minus Delhi-only LSTM R-prob": {
+          "ets_ci": [
+            -0.08293276968264988,
+            -0.0031727025385707153
+          ],
+          "hit_rate_ci": [
+            -0.2895705521472392,
+            -0.1843478260869565
+          ],
+          "share_ets_above_0": 0.0135
+        },
+        "C3-hop R-prob minus persistence": {
+          "ets_ci": [
+            -0.025625173266402,
+            0.026391953073660587
+          ],
+          "hit_rate_ci": [
+            -0.17265873015873015,
+            -0.10369934640522877
+          ],
+          "share_ets_above_0": 0.5705
+        },
+        "C3-hop R-shift minus Delhi-only LSTM R-shift": {
+          "ets_ci": [
+            -0.03404378035072588,
+            0.051336821495176925
+          ],
+          "hit_rate_ci": [
+            -0.14074900793650796,
+            -0.050000000000000044
+          ],
+          "share_ets_above_0": 0.7185
+        },
+        "C3-hop R-shift minus C2 R-shift": {
+          "ets_ci": [
+            -0.01162682799601358,
+            0.02620987836808766
+          ],
+          "hit_rate_ci": [
+            -0.018823529411764683,
+            0.022019071010619083
+          ],
+          "share_ets_above_0": 0.7985
+        },
+        "C3-hop R-shift minus U1_tuned R-shift": {
+          "ets_ci": [
+            -0.035757985699325694,
+            0.03293877029267345
+          ],
+          "hit_rate_ci": [
+            -0.08089887640449439,
+            0.022978552939726206
+          ],
+          "share_ets_above_0": 0.4025
+        },
+        "C3-hop R-shift minus C3pool_tuned R-shift": {
+          "ets_ci": [
+            -0.012716287311748276,
+            0.0330263960449573
+          ],
+          "hit_rate_ci": [
+            -0.02791637303265213,
+            0.03490033961348754
+          ],
+          "share_ets_above_0": 0.8455
+        },
+        "C3-hop R-shift minus ridge R-shift": {
+          "ets_ci": [
+            -0.07025117991172689,
+            0.05202728131385352
+          ],
+          "hit_rate_ci": [
+            -0.24286166365280287,
+            -0.07850319268811831
+          ],
+          "share_ets_above_0": 0.3345
+        },
+        "C3-hop R-shift minus ridge_hw5 R-shift": {
+          "ets_ci": [
+            -0.09013525887990996,
+            0.04098987206746843
+          ],
+          "hit_rate_ci": [
+            -0.29473879142300197,
+            -0.0924337427278604
+          ],
+          "share_ets_above_0": 0.1875
+        }
+      }
+    },
+    "tradeoff": {
+      "0.1": {
+        "hits": 552,
+        "misses": 93,
+        "false_alarms": 965,
+        "n": 5560,
+        "hit_rate": 0.8558139534883721,
+        "false_alarm_ratio": 0.6361239288068556,
+        "ets": 0.26221241707308357,
+        "frequency_bias": 2.351937984496124
+      },
+      "0.2": {
+        "hits": 411,
+        "misses": 234,
+        "false_alarms": 479,
+        "n": 5560,
+        "hit_rate": 0.6372093023255814,
+        "false_alarm_ratio": 0.5382022471910113,
+        "ets": 0.30149646103615785,
+        "frequency_bias": 1.37984496124031
+      },
+      "0.3": {
+        "hits": 264,
+        "misses": 381,
+        "false_alarms": 218,
+        "n": 5560,
+        "hit_rate": 0.40930232558139534,
+        "false_alarm_ratio": 0.45228215767634855,
+        "ets": 0.2578224758712748,
+        "frequency_bias": 0.7472868217054264
+      },
+      "0.5": {
+        "hits": 86,
+        "misses": 559,
+        "false_alarms": 35,
+        "n": 5560,
+        "hit_rate": 0.13333333333333333,
+        "false_alarm_ratio": 0.2892561983471074,
+        "ets": 0.10805872924349572,
+        "frequency_bias": 0.1875968992248062
+      }
+    },
+    "n_rows": 5560,
+    "n_events": 645
+  }
+}

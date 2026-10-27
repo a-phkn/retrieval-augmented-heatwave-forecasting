@@ -71,7 +71,11 @@ averaged ("ensemble") forecast of the 10 runs is a little better again (C3-hop: 
   `docs/MODELS_EXPLAINED.md` §11 explains why.
 - **Ranges and warnings work on ordinary days, not on heatwave days.** The 80% forecast range holds the truth 77–78%
   of the time over all days, but only 29% (WBGT) and 54% (Tmax) of the time on heatwave days, where forecasts are too
-  cold and too narrow. As a yes/no WBGT heatwave warning, C3-hop catches about 9% of heatwave days, and about two in
+  cold and too narrow. Warning when the hot-day probability passes a level set on 2007–2018 raises the share of
+  WBGT heat-stress days caught from 6% to 47% (counting every day that meets the label rule), but about 4 in 5 such
+  warnings are false alarms, and every model does about equally
+  well under that rule (post-test, `evaluation_post_test/warning_rules.md`). With the plain rule "warn when the
+  forecast reaches the threshold", C3-hop catches about 9% of heatwave days, and about two in
   three of its warnings are false alarms (Tmax: 27% caught, 37% false alarms).
 - **Global AI weather models are better.** GraphCast had about 40% lower Tmax error in 2018, because it sees the whole
   atmosphere. Our contribution is a cheap, transparent local model, a careful test of retrieval, and heat-stress

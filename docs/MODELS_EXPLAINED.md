@@ -292,6 +292,11 @@ models run cold on real heatwave days. Section 11 explains why.
 **Warnings:** the Tmax heatwave warning has Brier skill +0.28 (Delhi-only LSTM +0.23). For WBGT it is +0.07 (weak).
 As a yes/no warning, the averaged C3-hop forecast catches 27% of Tmax heatwave days (37% of its warnings are false
 alarms) but only 9% of WBGT heatwave days (68% false alarms) (`evaluation_post_test/test_period_extras.md`).
+That rule ("warn when the averaged forecast reaches the threshold") is the main reason. Counting every day that meets
+the label rule (6% caught under the plain rule), warning instead when the hot-day probability passes a level chosen
+on 2007–2018 catches about 47% of WBGT heat-stress days, but about 4 in 5
+of those warnings are false alarms (ETS 0.04 → 0.09). Under the same tuned rule, C3-hop is no better a yes/no warner
+than the LSTM or the ridge models (post-test, `evaluation_post_test/warning_rules.md`).
 
 **Range forecasts:** the 80% range contains the truth 77–78% of the time on all days, but only 29% (WBGT) and 54%
 (Tmax) of the time on heatwave days: there the forecasts are too cold and the ranges too narrow.
