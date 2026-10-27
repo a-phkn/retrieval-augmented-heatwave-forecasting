@@ -4,8 +4,12 @@ the exact rule written in context/decisions.md 2026-10-26 before this code ran).
 
 Deterministic and model-free: the LLM never sets a colour. Input is the last OBSERVED_DAYS observed days and the
 FORECAST_DAYS forecast days of Delhi's area-average Tmax with each date's normal (the training-years climatology).
-  - heat-wave day: the labels-v2 rule (pipeline/labels_v2.py, unchanged): Tmax >= 40 C and >= 3.0 C above normal,
-    or Tmax >= 45 C, inside Mar 15 - Jul 31; severe: a heat-wave day >= 4.5 C above normal;
+  - observed heat-wave day: the labels-v2 rule (pipeline/labels_v2.py, unchanged): Tmax >= 40 C and >= 3.0 C above
+    normal, or Tmax >= 45 C, inside Mar 15 - Jul 31; severe: a heat-wave day >= 4.5 C above normal;
+  - forecast heat-wave day (decision 2026-10-27): in the Tmax season and the hot-day probability >= P_HOT_LEVEL
+    (chosen on 2007-2018, post-test 3), because "the forecast itself crosses the threshold" caught only 24% of Tmax
+    heatwave days; severe: also a forecast departure >= 4.5 C. forecast_rule="value" keeps the old rule (the
+    forecast classified like an observation), used for the perfect-forecast check and comparisons;
   - run: consecutive heat-wave days, observed and forecast together; every day of a run gets the run's colour:
       RED     >= 3 consecutive severe days, or >= 7 days
       ORANGE  >= 2 consecutive severe days, or >= 4 days
@@ -23,11 +27,15 @@ import numpy as np
 import pandas as pd
 
 from advisory.library import IMD_STYLE_LABEL, Action, colour_rank
-from pipeline.labels_v2 import ANOMALY_SEVERE_C, hot_days_tmax, in_wbgt_season
+from pipeline.labels_v2 import ANOMALY_SEVERE_C, hot_days_tmax, in_season, in_wbgt_season
 
 OBSERVED_DAYS = 7
 FORECAST_DAYS = 5
 HEAT_SEASON = ("03-15", "09-30")  # preparedness actions are shown in this window (Tmax and humid-heat seasons)
+# Post-test 3 (evaluation_post_test/warning_rules.md): C3-hop's Tmax probability level with the highest warning skill
+# (ETS) on 2007-2018; applied unchanged to forecasts (decision 2026-10-27)
+P_HOT_LEVEL = 0.37
+FORECAST_RULES = ("probability", "value")
 
 
 @dataclass(frozen=True)
@@ -52,6 +60,8 @@ class Assessment:
     label: str
     in_heat_season: bool
     wbgt_threshold: float | None
+    forecast_rule: str = "probability"
+    p_hot_level: float = P_HOT_LEVEL
 
     @property
     def any_humid_heat(self) -> bool:
@@ -123,14 +133,36 @@ def _check_frames(observed: pd.DataFrame, forecast: pd.DataFrame) -> pd.DataFram
     return both
 
 
-def assess(observed: pd.DataFrame, forecast: pd.DataFrame, wbgt_threshold: float | None = None) -> Assessment:
+def classify_forecast(dates, tmax, normal, p_hot, level: float = P_HOT_LEVEL) -> tuple[np.ndarray, np.ndarray]:
+    """(heat-wave day, severe day) for FORECAST days: in the Tmax season and p_hot >= level; severe if the forecast
+    departure is also >= ANOMALY_SEVERE_C."""
+    p = np.asarray(p_hot, dtype=np.float64)
+    if np.isnan(p).any():
+        raise ValueError("the probability rule needs p_hot for every forecast day")
+    hw = in_season(dates) & (p >= level)
+    return hw, hw & (np.asarray(tmax, dtype=np.float64) - np.asarray(normal, dtype=np.float64) >= ANOMALY_SEVERE_C)
+
+
+def assess(observed: pd.DataFrame, forecast: pd.DataFrame, wbgt_threshold: float | None = None,
+           forecast_rule: str = "probability", p_hot_level: float = P_HOT_LEVEL) -> Assessment:
     """Colours and notes for the 5 forecast days.
 
     observed: OBSERVED_DAYS rows (date, tmax, normal), the days just before the first forecast day.
-    forecast: FORECAST_DAYS rows (date, tmax, normal) and optionally p_hot (D) and wbgt (the humid-heat note,
-    used only with wbgt_threshold)."""
+    forecast: FORECAST_DAYS rows (date, tmax, normal, p_hot (D); required by the probability rule) and optionally
+    wbgt (the humid-heat note, used only with wbgt_threshold).
+    forecast_rule: "probability" (default, decision 2026-10-27) or "value" (the forecast classified like an
+    observation)."""
+    if forecast_rule not in FORECAST_RULES:
+        raise ValueError(f"unknown forecast_rule {forecast_rule!r}")
     both = _check_frames(observed, forecast)
     hw, severe = classify(both["date"], both["tmax"], both["normal"])
+    if forecast_rule == "probability":
+        if "p_hot" not in forecast:
+            raise ValueError("the probability rule needs p_hot for every forecast day")
+        f_hw, f_sev = classify_forecast(both["date"].iloc[OBSERVED_DAYS:], both["tmax"].iloc[OBSERVED_DAYS:],
+                                        both["normal"].iloc[OBSERVED_DAYS:], forecast["p_hot"].to_numpy(), p_hot_level)
+        hw, severe = hw.copy(), severe.copy()
+        hw[OBSERVED_DAYS:], severe[OBSERVED_DAYS:] = f_hw, f_sev
     colours = day_colours(hw, severe)
     f = forecast.reset_index(drop=True)
     days = []
@@ -148,7 +180,7 @@ def assess(observed: pd.DataFrame, forecast: pd.DataFrame, wbgt_threshold: float
     md = [d.date.strftime("%m-%d") for d in days]
     return Assessment(days=tuple(days), headline_colour=headline, label=IMD_STYLE_LABEL,
                       in_heat_season=any(HEAT_SEASON[0] <= m <= HEAT_SEASON[1] for m in md),
-                      wbgt_threshold=wbgt_threshold)
+                      wbgt_threshold=wbgt_threshold, forecast_rule=forecast_rule, p_hot_level=p_hot_level)
 
 
 def forecast_actions(colour: str, library: dict[str, Action]) -> list[Action]:

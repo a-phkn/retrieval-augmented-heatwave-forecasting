@@ -14,6 +14,11 @@ Short, frequently-updated. The sections below the current status are a dated his
   ignored).
 - **Phase 6 parts 1-3 built 2026-10-26** (`advisory/`): action library (133 actions), rule engine (B + D; colour
   check on observed 2007-2018 in `advisory/colour_check.md`), verifier + rule-only template advisory; 45 new tests.
+- **Post-test 3 (2026-10-27): better yes/no warnings** (`post_test/warning_rules.py`, pre-registered): a probability
+  rule chosen on 2007-2018 lifts WBGT hits from 6% to 47% (ETS 0.04 -> 0.09; ~80% false alarms); all models about
+  equal under the same tuned rule.
+- **Rule engine change (2026-10-27):** forecast days are heatwave days when the hot-day probability >= 0.37; on
+  real 2007-2018 forecasts the advisory raises 68% of the alerts the observed weather would have (61% before).
 - **Next:** the constrained LLM advisory, faithfulness evaluation (2 raters), demo page, then the paper. Decisions
   needed: which LLM and where it runs; who the 2 raters are.
 

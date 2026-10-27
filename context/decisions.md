@@ -1392,3 +1392,67 @@ before any code ran**
   precedent, clinical disclaimer); an IMD alert word or colour used for WBGT.
 - Check after building (descriptive, not a gate): how often each colour fires on the OBSERVED 2007-2018 Tmax
   (perfect-forecast case), to see the rule is not absurd. No test-period data is used for this.
+
+**Post-test 3: better yes/no heat warnings from the same forecasts. PRE-REGISTERED 2026-10-27 (user: "option 1"),
+written before any number was computed. Descriptive only: the test period was already used; nothing here changes
+H1-H4 or any model.**
+- Question: the current yes/no warning ("the averaged forecast reaches the heatwave threshold") catches 9% of WBGT
+  and 27% of Tmax heatwave days on 2019-2026. Does warning from the hot-day probability, or from a lowered forecast
+  threshold, catch more of them at an acceptable false-alarm cost, and how do the models compare under the same rule?
+- Unit: the 10-seed ensemble forecast, one row per (query date, lead), in-season rows only (Tmax Mar 15 - Jul 31,
+  WBGT Mar 15 - Sep 30). Event = the observed heatwave / heat-stress day (the label rule, `event_thresholds`).
+- Rules:
+  - R-point (current): warn if the forecast >= the threshold.
+  - R-prob: warn if the hot-day probability >= p*. Probability exactly as in the test report: recalibrated on the
+    inner block (development) or the 2017-2018 stop block (test), Gaussian spread from that block's residuals per lead
+    (`evaluation/calibration_check.py`). Only C3-hop and the Delhi-only LSTM have the test stop-block forecasts it
+    needs.
+  - R-shift: warn if the forecast >= the threshold - delta (deg C). Works for every point-forecast model.
+  - Persistence warning: warn on every lead if the day before the query date was a heatwave day.
+- Choice of p* and delta: on the four development folds pooled (2007-2018 validation blocks), per model and family,
+  the value with the highest equitable threat score (ETS), pooled over leads; grids p* = 0.01..0.99 (step 0.01),
+  delta = 0.00..6.00 C (step 0.05); ties -> the value closest to R-point (largest p*, smallest delta). Then applied
+  unchanged to 2019-2026.
+- Models: R-prob for C3-hop and the LSTM; R-shift for C3-hop, LSTM, C2, U1_tuned, C3pool_tuned, ridge, ridge_hw5;
+  persistence. Both families.
+- Scores: hit rate (share of heatwave days warned), false-alarm ratio (share of warnings wrong), ETS (main summary:
+  balances both), frequency bias (warnings / events). 95% CIs by cluster bootstrap over year x season clusters
+  (2000 resamples, fixed seed), also for paired differences: C3-hop R-prob vs R-point; C3-hop vs each model under
+  R-shift; C3-hop vs LSTM under R-prob. Also a descriptive hit-rate / false-alarm table for C3-hop at p* = 0.1, 0.2,
+  0.3, 0.5.
+- Code: `post_test/warning_rules.py` -> `evaluation_post_test/warning_rules.{md,json}`.
+- **RESULT 2026-10-27** (`evaluation_post_test/warning_rules.md`; event = every day meeting the label rule, so the
+  current rule reads 6% / 24% here vs 9% / 27% for in-run days only):
+  - WBGT: current rule hit rate 6% (false-alarm ratio 64%, ETS 0.04). Probability rule (p* = 0.13, from 2007-2018):
+    47% (82%, ETS 0.09); shifted rule (delta = 1.20 C): 38% (79%, ETS 0.10). Versus the current rule: ETS +0.03 to
+    +0.07 and +0.04 to +0.09; hit rate +28 to +49 and +22 to +39 points. About 4 in 5 warnings are false alarms.
+  - Tmax: current 24% (37%, ETS 0.18); probability rule (p* = 0.37): 29% (ETS 0.21); shifted (delta = 0.25 C): 32%
+    (39%, ETS 0.23).
+  - Across models under the same tuned rule the differences are small and mostly within the CIs (WBGT ETS 0.08-0.11;
+    Tmax 0.21-0.26). For Tmax the LSTM's probability rule beat C3-hop's (ETS difference -0.08 to -0.00), and
+    persistence (ETS 0.21) is as good as most models. In development C3-hop had the best Tmax ETS (0.37 vs 0.29);
+    that did not carry over.
+  - Reading: the warning RULE was most of the problem, and the tuned rules catch many more heatwave days; but C3-hop
+    is not a better yes/no warner than the simpler models. Its advantage is temperature accuracy. Whether the advisory
+    adopts a tuned yes/no rule is a separate team decision (the advisory already shows the probability, D).
+
+**Rule engine: forecast days classified by the hot-day probability. DECIDED 2026-10-27 (user), written before the
+code changed or the check below ran. Amends the 2026-10-22 mapping B for FORECAST days only.**
+- Why: post-test 3 showed that "the forecast itself crosses the heatwave threshold" catches only 24% of Tmax
+  heatwave days (6% WBGT); the alert colours inherited that. Observed days keep the label rule unchanged.
+- New rule: a forecast day is a heatwave day if it is in the Tmax season (Mar 15 - Jul 31) and its hot-day
+  probability (D) is >= 0.37, the level chosen for C3-hop's Tmax on 2007-2018 by the highest ETS (post-test 3; not
+  re-chosen on the test). A forecast heatwave day is severe if its forecast departure from normal is also >= 4.5 C
+  (unchanged; no severe probability was tuned). Runs and colours (Red / Orange / Yellow / Green) are unchanged.
+- The old rule stays available as `forecast_rule="value"` (used for the perfect-forecast check and for comparison).
+  A forecast without a probability is refused under the new rule (never silently classified the old way).
+- Check (descriptive, development years only): on 2007-2018 season query dates, C3-hop's real ensemble forecasts and
+  development probabilities; the headline colour under the new rule and the old rule vs the colour the observed
+  weather would have given (perfect forecast): colour frequencies and a colour-agreement table, plus the share of
+  "any alert" (Yellow+) cases caught and the share of alerts that were false. Written by `advisory/colour_check.py`.
+- **RESULT 2026-10-27** (`advisory/colour_check.md`, part B; 1,668 season advisories 2007-2018, C3-hop's real
+  forecasts): of the advisories where the observed weather would have given Yellow or above, the probability rule
+  raises an alert in 68% (old value rule 61%); 27% of its alerts are not in the perfect forecast (old 22%); same exact
+  colour 88% (89%). Colour shares are close to the perfect forecast (Green 87% vs 86%). Caveat: these are the years
+  the 0.37 level was chosen on, so the gain is slightly flattering; on the test years the same level lifted the
+  day-level Tmax hit rate from 24% to 29% (post-test 3).

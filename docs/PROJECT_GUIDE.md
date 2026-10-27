@@ -19,7 +19,9 @@
 - **Ties:** C3-hop ties the plain ridge on all days; the graph without edges (C2) ties C3-hop, so no claim that the
   graph structure helps.
 - **Heatwave days are the weak spot:** all models forecast them too cold; the 80% ranges hold the truth only 29%
-  (WBGT) and 54% (Tmax) of the time there, and a yes/no WBGT warning catches about 9% of heatwave days.
+  (WBGT) and 54% (Tmax) of the time there, and a yes/no WBGT warning catches about 9% of heatwave days. A warning
+  on the probability, at a level set on 2007–2018, catches about 47% (vs 6% when counting isolated hot days too), at
+  the cost of about 4 false alarms in 5.
 - **Retrieval** was never adopted: no variant beat its random control on heatwave days.
 - **Known issues** in the frozen code and protocol: [`KNOWN_DEVIATIONS.md`](KNOWN_DEVIATIONS.md).
 - §8 and §9 below record the work **as it happened**, week by week; text there written in the future tense is
@@ -819,7 +821,11 @@ forecasts were scored once. Nothing was changed after the results were seen.
 - **No graph-structure claim:** the graph without edges (C2) is as good as C3-hop again. The upstream data is what
   helps.
 - Warnings: the Tmax heatwave warning has real skill (+0.28 Brier skill); the WBGT one stays weak (+0.07). As a
-  yes/no warning, C3-hop catches 27% of Tmax heatwave days but only 9% of WBGT ones.
+  yes/no warning, C3-hop catches 27% of Tmax heatwave days but only 9% of WBGT ones. **Post-test (2026-10-27):** most
+  of that is the warning rule. Counting every day that meets the label rule, warning on the hot-day probability at a
+  level chosen on 2007–2018 raises the share caught from 6% to 47% for WBGT (ETS 0.04 → 0.09), but about 4 in 5
+  warnings are false alarms. Under the same tuned rule all
+  models are about equal (`evaluation_post_test/warning_rules.md`).
 - Ranges: the 80% range holds the truth 77–78% of the time on all days, but only 54% (Tmax) and 29% (WBGT) on
   heatwave days.
 - Full report: `evaluation_test/test_results.md`; post-test extras (10-run average, warning scores, bias split,
@@ -1050,6 +1056,13 @@ RAG counts as helping only if real retrieval beats both.
     probability (D) and a separate humid-heat note from our WBGT. **Check on observed 2007–2018 Tmax** (as if the
     forecast were perfect; `advisory/colour_check.md`): 86% of season days Green, 6% Yellow, 4% Orange, 4% Red. The
     hot years 2010 and 2012 get the most Orange and Red; 2011 gets none.
+  - **Changed 2026-10-27: forecast days are classified by their probability.** A forecast day counts as a
+    heat-wave day when its hot-day probability is at least 37% (the level with the best warning skill on 2007–2018);
+    it is severe if the forecast is also 4.5 °C or more above normal. Observed days keep the label rule. Why: "the
+    forecast itself crosses the threshold" caught only about a quarter of Tmax heatwave days, so the colours would
+    have fired too rarely. On C3-hop's real 2007–2018 forecasts, the advisory now raises an alert in 68% of the cases
+    where the observed weather would have (61% before), with 27% of its alerts unconfirmed (22% before). These are
+    the years the 37% level was chosen on, so the gain is slightly flattering.
   - **Verifier** (`advisory/verifier.py`): the advisory picks actions **by id**, so the reader always sees the
     library's own text and quote. It is rejected for: a colour that differs from the rule engine, an action below
     its colour or in the wrong section, an inexact quote, a number in the text that isn't in the forecast, a
@@ -1186,3 +1199,4 @@ critical reviews of 2026-10-22 were addressed: claims corrected, frozen-code iss
 | 2026-10-22 | README added; glossary refreshed (22 new terms, 4 outdated entries fixed); certifi and Pillow upgraded for new security advisories. |
 | 2026-10-25 | Critical-review fixes: final-state summary at the top; corrected claims (H2 is not a power problem, H3 is mostly bias against a ridge with fewer inputs, C3-hop ties the plain ridge on all days, ranges and warnings fail on heatwave days, retrieval and graph wording); post-test extras; `KNOWN_DEVIATIONS.md`; test lock tested and enforced in CI; test outputs fingerprinted. |
 | 2026-10-26 | Phase 6 parts 1–3 built: action library (133 actions), rule engine (B + D, colour check on 2007–2018), verifier and rule-only template advisory. |
+| 2026-10-27 | Post-test 3: tuned yes/no warning rules (WBGT hits 6% → 47%, ~80% false alarms; all models about equal). Rule engine now classifies forecast days by probability (≥ 37%); alerts raised in 68% of cases vs 61%. |

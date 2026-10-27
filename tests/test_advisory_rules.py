@@ -15,12 +15,15 @@ def library():
 
 
 def frames(tmax12, start="2024-05-20", p_hot=None, wbgt=None):
-    """7 observed + 5 forecast days with a flat normal."""
+    """7 observed + 5 forecast days with a flat normal. Without p_hot, each forecast day gets probability 1 if its
+    forecast meets the label rule and 0 otherwise, so the run tests below describe the same situations under the
+    probability rule."""
     dates = pd.date_range(start, periods=12, freq="D")
     df = pd.DataFrame({"date": dates, "tmax": np.asarray(tmax12, float), "normal": NORMAL})
     obs, fc = df.iloc[:7].reset_index(drop=True), df.iloc[7:].reset_index(drop=True)
-    if p_hot is not None:
-        fc["p_hot"] = p_hot
+    if p_hot is None:
+        p_hot = rules.classify(fc["date"], fc["tmax"], fc["normal"])[0].astype(float)
+    fc["p_hot"] = p_hot
     if wbgt is not None:
         fc["wbgt"] = wbgt
     return obs, fc
@@ -77,10 +80,44 @@ def test_isolated_forecast_heatwave_day_stays_green_and_severe_run_is_red():
     assert [d.colour for d in b.days] == ["RED"] * 3 + ["GREEN"] * 2 and b.days[0].severe_day
 
 
+def test_forecast_days_are_classified_by_the_probability():
+    level = rules.P_HOT_LEVEL
+    # forecasts below the threshold, but likely enough: a 2-day run -> YELLOW under the probability rule only
+    obs, fc = frames([COOL] * 7 + [39.0, 39.0, COOL, COOL, COOL], p_hot=[level, level + 0.2, 0.1, 0.0, 0.0])
+    a = rules.assess(obs, fc)
+    assert [d.colour for d in a.days] == ["YELLOW", "YELLOW", "GREEN", "GREEN", "GREEN"]
+    assert a.forecast_rule == "probability" and a.p_hot_level == level
+    assert rules.assess(obs, fc, forecast_rule="value").headline_colour == "GREEN"  # the old rule: never crosses
+    # a hot forecast with a low probability is not a heatwave day under the probability rule
+    obs, fc = frames([COOL] * 7 + [SEV, SEV, SEV, COOL, COOL], p_hot=[level - 0.01] * 3 + [0.0, 0.0])
+    assert rules.assess(obs, fc).headline_colour == "GREEN"
+    assert rules.assess(obs, fc, forecast_rule="value").headline_colour == "RED"
+    # severe still needs a forecast departure >= 4.5 C: likely days at +3.5 C make a run, not severe days
+    obs, fc = frames([COOL] * 7 + [HW, HW, HW, COOL, COOL], p_hot=[0.9, 0.9, 0.9, 0.0, 0.0])
+    a = rules.assess(obs, fc)
+    assert a.headline_colour == "YELLOW" and not any(d.severe_day for d in a.days)
+
+
+def test_probability_outside_the_season_never_makes_a_heatwave_day():
+    obs, fc = frames([COOL] * 12, start="2024-11-01", p_hot=[0.9] * 5)
+    assert rules.assess(obs, fc).headline_colour == "GREEN"
+
+
+def test_the_probability_rule_refuses_a_forecast_without_probabilities():
+    obs, fc = frames([COOL] * 12)
+    with pytest.raises(ValueError):
+        rules.assess(obs, fc.drop(columns="p_hot"))
+    with pytest.raises(ValueError):
+        rules.assess(obs, fc.assign(p_hot=[0.1, np.nan, 0.1, 0.1, 0.1]))
+    with pytest.raises(ValueError):
+        rules.assess(obs, fc, forecast_rule="guess")
+    assert rules.assess(obs, fc.drop(columns="p_hot"), forecast_rule="value").headline_colour == "GREEN"
+
+
 def test_probability_and_humid_heat_note_are_carried_separately():
-    a = rules.assess(*frames([COOL] * 12, p_hot=[0.1, 0.2, 0.3, 0.4, 0.5], wbgt=[30, 36.3, 30, 30, 30]),
+    a = rules.assess(*frames([COOL] * 12, p_hot=[0.1, 0.2, 0.3, 0.3, 0.3], wbgt=[30, 36.3, 30, 30, 30]),
                      wbgt_threshold=36.25)
-    assert [d.p_hot for d in a.days] == [0.1, 0.2, 0.3, 0.4, 0.5]
+    assert [d.p_hot for d in a.days] == [0.1, 0.2, 0.3, 0.3, 0.3]
     assert [d.humid_heat for d in a.days] == [False, True, False, False, False]
     assert a.headline_colour == "GREEN"  # humid heat never changes the IMD-style colour
     assert not rules.assess(*frames([COOL] * 12, wbgt=[40] * 5)).any_humid_heat  # no threshold given: no note
