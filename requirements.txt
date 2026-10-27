@@ -27,7 +27,7 @@ statsmodels==0.15.0
 matplotlib==3.11.2
 
 # External yardstick only (evaluation/graphcast_yardstick.py: decodes WeatherBench 2 zarr chunks)
-numcodecs==0.17.0
+numcodecs==0.17.1
 
 # Post-test foundation-model comparison only: see requirements-post-test.txt (not needed for the tests or CI)
 
