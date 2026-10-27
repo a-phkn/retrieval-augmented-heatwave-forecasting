@@ -1361,3 +1361,34 @@ any of them was run; exploratory (the frozen protocol and its one test run are u
   data they read; CI fetches tags and runs `test_lock.require()`.
 - Dependencies: post-test packages moved to `requirements-post-test{,.lock}.txt` (no version changed); Hugging Face
   revisions pinned to the commits used on 2026-10-21 (both repos unchanged since before then).
+
+**Phase 6 parts 1-3 (action library, rule engine, verifier): DECIDED 2026-10-26 (user: options 1a, 2a), written
+before any code ran**
+- Library built only from `sources/phase6_candidate_actions.json` (all 135 verified); nothing new is invented.
+  - Excluded: the 2 low-confidence actions (WHO_ENERGY_UTILITIES_SUSPEND_DISCONNECTIONS,
+    WHO_ENERGY_PHILADELPHIA_HALT_SERVICE_SUSPENSIONS): practice abroad, not Delhi instructions (user option 2a).
+  - Section from `trigger_type`: forecast -> "forecast"; observation -> "if_this_happens" (never mixed; decision
+    2026-10-06); standing -> "preparedness", shown all heat season whatever the colour (user option 1a), EXCEPT the
+    8 standing actions a source gives a colour: they go to the forecast list at that sourced colour (a source ties
+    them to an alert level, so the colour is kept).
+  - If-this-happens: audience "health" -> the collapsed "for health professionals" part behind the disclaimer;
+    audience "public" -> shown directly (decision 2026-10-06).
+  - Minimum colour: as sourced; UNSPECIFIED -> YELLOW with tier_basis "delhi_any_alert" (decision 2026-10-13);
+    Ahmedabad colours keep tier_basis "ahmedabad_precedent" and are always shown with the precedent label.
+- Rule engine (mapping B + D, decision 2026-10-22), applied to the last 7 observed days + the 5 forecast days:
+  - Day class: heat-wave day = Tmax >= 40 C and >= 3.0 C above the day-of-year normal, or Tmax >= 45 C, inside the
+    Mar 15 - Jul 31 season; severe = heat-wave day and >= 4.5 C above normal (`pipeline/labels_v2.py`, unchanged).
+  - A "run" = consecutive heat-wave days (observed and forecast together). Every day of a run gets the run's colour:
+    RED if it has >= 3 consecutive severe days or >= 7 days; else ORANGE if >= 2 consecutive severe days or >= 4
+    days; else YELLOW if >= 2 days; else GREEN (a single heat-wave day stays GREEN, as in IMD's table). Days not in a
+    run are GREEN. Colours are reported for the 5 forecast days only; a run cut off by the horizon is not extended.
+  - Every day also carries the hot-day probability (D) and the label "IMD-style, adjusted for area-average data;
+    not an official IMD warning". The humid-heat note (WBGT >= the WBGT label threshold, Mar 15 - Sep 30) is
+    separate, says it comes from our physical WBGT, and never uses an IMD term or colour.
+  - Actions for a day: forecast-section actions whose minimum colour <= the day's colour (none on GREEN).
+- Verifier rejects an advisory with: an unknown action id; an action below its minimum colour; an action in the wrong
+  section; a colour that differs from the rule engine; a quote that is not an exact part of the source excerpt; a
+  number in the free text that is not in the forecast; a missing required label (not-an-IMD-warning, Ahmedabad
+  precedent, clinical disclaimer); an IMD alert word or colour used for WBGT.
+- Check after building (descriptive, not a gate): how often each colour fires on the OBSERVED 2007-2018 Tmax
+  (perfect-forecast case), to see the rule is not absurd. No test-period data is used for this.

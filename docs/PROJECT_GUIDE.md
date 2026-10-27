@@ -1039,6 +1039,22 @@ RAG counts as helping only if real retrieval beats both.
   happened (a heat-stroke patient, heat deaths) are kept in their own clearly labelled section,
   never mixed with the forecast actions. Clinical steps sit behind a "for health professionals"
   disclaimer;
+- **Built 2026-10-26 (parts 1–3, `advisory/`; rules written in `context/decisions.md` first):**
+  - **Action library** (`advisory/action_library.json`, built by `python -m advisory.library` from the verified
+    source catalogue): 133 actions. 65 are forecast actions, 38 are heat-season preparedness (shown all season,
+    whatever the colour), and 30 are "If this happens" (22 of them for health professionals). The 2 low-confidence
+    examples from abroad are left out. Each action keeps its word-for-word quote, page and where its colour comes from.
+  - **Rule engine** (`advisory/rules.py`): the last 7 observed days plus the 5 forecast days → heat-wave and severe
+    days (the B rule) → each run of consecutive heat-wave days gets one colour (Red: 3+ severe days in a row or 7+
+    days; Orange: 2 severe in a row or 4+ days; Yellow: 2+ days; a single hot day stays Green). It also carries the
+    probability (D) and a separate humid-heat note from our WBGT. **Check on observed 2007–2018 Tmax** (as if the
+    forecast were perfect; `advisory/colour_check.md`): 86% of season days Green, 6% Yellow, 4% Orange, 4% Red. The
+    hot years 2010 and 2012 get the most Orange and Red; 2011 gets none.
+  - **Verifier** (`advisory/verifier.py`): the advisory picks actions **by id**, so the reader always sees the
+    library's own text and quote. It is rejected for: a colour that differs from the rule engine, an action below
+    its colour or in the wrong section, an inexact quote, a number in the text that isn't in the forecast, a
+    missing label (not-an-IMD-warning, Ahmedabad precedent, clinical disclaimer), or IMD alert words used for WBGT.
+    A rule-only **template advisory** passes the verifier; it is the comparison for, and the fallback from, the LLM.
 - **front end** (decision 2026-10-06): one interactive web page (Week 8) with the 5-day chart,
   the alert colours, a click-a-day advisory and the "If this happens" section. Nothing to install;
   it could be upgraded to React later.
@@ -1122,8 +1138,9 @@ is installed globally.
 Updated 2026-10-25. The forecasting research is complete: the protocol was frozen and the test run, §9.0. The
 critical reviews of 2026-10-22 were addressed: claims corrected, frozen-code issues disclosed in
 `KNOWN_DEVIATIONS.md`, and the test lock and test outputs now checked automatically.
-- **Phase 6, the heat advisory:** the action-library schema, the rule engine (B + D above), the verifier, and the
-  constrained LLM advisory with its faithfulness evaluation.
+- **Phase 6, the heat advisory:** the action library, rule engine and verifier are built (2026-10-26). Left: the
+  constrained LLM advisory (needs your choice of model and where it runs) and its faithfulness evaluation (needs 2
+  raters), then the demo page.
 - **The paper and the demo page.** The README now has the results, run instructions and data notes.
 - Optional, each needs a decision: a station check against Safdarjung (needs a data download); a tuned Delhi-only
   LSTM (to remove the tuned-vs-untuned caveat on H1); a ridge on C3-hop's full inputs (a like-for-like H3 check);
@@ -1168,3 +1185,4 @@ critical reviews of 2026-10-22 were addressed: claims corrected, frozen-code iss
 | 2026-10-22 | Phase 6 forecast-to-alert mapping decided (B + D; C in reserve); open items refreshed; CI fixed (one test needed local-only raw data). |
 | 2026-10-22 | README added; glossary refreshed (22 new terms, 4 outdated entries fixed); certifi and Pillow upgraded for new security advisories. |
 | 2026-10-25 | Critical-review fixes: final-state summary at the top; corrected claims (H2 is not a power problem, H3 is mostly bias against a ridge with fewer inputs, C3-hop ties the plain ridge on all days, ranges and warnings fail on heatwave days, retrieval and graph wording); post-test extras; `KNOWN_DEVIATIONS.md`; test lock tested and enforced in CI; test outputs fingerprinted. |
+| 2026-10-26 | Phase 6 parts 1–3 built: action library (133 actions), rule engine (B + D, colour check on 2007–2018), verifier and rule-only template advisory. |

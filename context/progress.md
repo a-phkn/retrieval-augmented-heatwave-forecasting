@@ -12,8 +12,10 @@ Short, frequently-updated. The sections below the current status are a dated his
   fingerprinted (`data/TEST_MANIFEST.json`); post-test packages split out of the core lock; HF model revisions
   pinned; Dependabot added; workspace cleaned (duplicate PDF, caches, `git gc`; `sources/` results tracked, PDFs
   ignored).
-- **Next:** Phase 6 (action-library schema, rule engine B + D, verifier, constrained LLM advisory, faithfulness
-  evaluation, demo page), then the paper. Decisions needed: which LLM and where it runs; who the 2 raters are.
+- **Phase 6 parts 1-3 built 2026-10-26** (`advisory/`): action library (133 actions), rule engine (B + D; colour
+  check on observed 2007-2018 in `advisory/colour_check.md`), verifier + rule-only template advisory; 45 new tests.
+- **Next:** the constrained LLM advisory, faithfulness evaluation (2 raters), demo page, then the paper. Decisions
+  needed: which LLM and where it runs; who the 2 raters are.
 
 ## Done (September 2026, v1; historical)
 - P1 data pipeline fully verified.

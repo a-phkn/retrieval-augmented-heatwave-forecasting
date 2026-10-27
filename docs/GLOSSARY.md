@@ -201,6 +201,10 @@ attributed to that one change.
 | **UHI** | Urban heat island. |
 | **IMD / NDMA / HAP** | India Meteorological Department / National Disaster Management Authority / Heat Action Plan. |
 | **DERC / DISCOM / BEE** | Delhi Electricity Regulatory Commission / electricity distribution company / Bureau of Energy Efficiency. |
-| **Rule engine / verifier** | Phase 6 safety layers: the rule engine sets the risk tier deterministically; the verifier rejects any advisory action without an approved source. |
+| **Rule engine / verifier** | Phase 6 safety layers (`advisory/rules.py`, `advisory/verifier.py`): the rule engine sets each day's alert colour from the forecast by fixed rules (never the LLM); the verifier rejects any advisory whose colours, actions, quotes, numbers or labels don't match the rule engine and the action library. |
+| **Action library** | `advisory/action_library.json`: the 133 actions the advisory may recommend, each with a word-for-word official quote and page, its section (forecast / preparedness / "If this happens") and its minimum colour. Built from `sources/phase6_candidate_actions.json` by `advisory/library.py`. |
+| **Heat-wave run** | Consecutive heat-wave days (observed and forecast together). The rule engine gives every day of a run one colour from its length and its severe days, following IMD's colour table. |
+| **Preparedness actions** | Standing heat-season measures (e.g. stock supplies before summer) that no forecast triggers; shown all heat season whatever the colour (decision 2026-10-26). |
+| **Template advisory** | An advisory built from the rules alone, with fixed sentences and no LLM. It passes the verifier; it is the reference the LLM is compared with and the fallback when an LLM advisory is rejected. |
 | **IMD-style alert mapping (B + D)** | How our forecast becomes an alert colour (decided 2026-10-22): IMD's heat-wave rules with the departure threshold adjusted for area-average data (≥ 3 °C heat wave, ≥ 4.5 °C severe; or ≥ 45 °C), IMD's persistence rules for the colours, plus the hot-day probability shown next to each day. Labelled "not an official IMD warning". |
 | **tier_basis** | Where an action's alert colour comes from: the source itself; `delhi_any_alert` (Delhi's plan says "during a heat alert", so shown at Yellow and up); or `ahmedabad_precedent` (Ahmedabad's plan; not Delhi policy). |

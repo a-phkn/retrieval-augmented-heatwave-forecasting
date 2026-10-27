@@ -161,6 +161,7 @@ on a CPU, and the results match the committed ones exactly only on the same CPU 
 |---|---|
 | `pipeline/`, `training/`, `models/`, `retrieval/`, `evaluation/`, `configs/` | the v2 code, frozen at `test-lock` |
 | `post_test/` | analyses run after the test (not frozen) |
+| `advisory/` | Phase 6 heat advisory: action library, rule engine, verifier |
 | `datasets_v2/`, `predictions_v2/`, `evaluation_v2/` | v2 development data, forecasts and reports |
 | `predictions_test/`, `evaluation_test/`, `registry/` | the one test run, its report, and the run registry |
 | `docs/`, `context/` | the guides, protocol and decision log |
