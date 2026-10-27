@@ -7,7 +7,7 @@ colorama==0.4.6
 contourpy==1.4.0
 cycler==0.12.1
 faiss-cpu==1.15.1
-filelock==4.0.10
+filelock==4.2.4
 fonttools==4.66.1
 formulaic==1.2.2
 fsspec==2026.9.0
@@ -35,7 +35,7 @@ pytest==9.1.1
 python-dateutil==2.9.0.post0
 requests==2.34.2
 scipy==1.18.1
-setuptools==84.0.0
+setuptools==84.2.1
 six==1.17.0
 statsmodels==0.15.0
 sympy==1.14.0
