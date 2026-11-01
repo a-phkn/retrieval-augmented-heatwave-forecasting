@@ -7,7 +7,8 @@ import pytest
 
 from advisory import rules
 from advisory import verifier as vf
-from advisory.library import CLINICAL_DISCLAIMER, PRECEDENT_LABEL, load_library
+from advisory.library import PRECEDENT_LABEL, load_library
+from advisory.library import colour_rank as lib_rank
 
 COOL, HW, SEV = 36.0, 41.5, 43.0  # normal 38: anomaly -2 / +3.5 / +5
 
@@ -17,10 +18,10 @@ def library():
     return load_library()
 
 
-def assessment(tmax12, wbgt=None, start="2024-05-20", thr=36.25):
+def assessment(tmax12, wbgt=None, start="2024-05-20", thr=36.25, p_hot=(0.05, 0.42, 0.61, 0.33, 0.1)):
     dates = pd.date_range(start, periods=12, freq="D")
     df = pd.DataFrame({"date": dates, "tmax": np.asarray(tmax12, float), "normal": 38.0})
-    fc = df.iloc[7:].reset_index(drop=True).assign(p_hot=[0.05, 0.42, 0.61, 0.33, 0.1])
+    fc = df.iloc[7:].reset_index(drop=True).assign(p_hot=list(p_hot))
     if wbgt is not None:
         fc["wbgt"] = wbgt
     return rules.assess(df.iloc[:7].reset_index(drop=True), fc, wbgt_threshold=thr)
@@ -112,6 +113,28 @@ def test_precedent_label_and_quotes(orange, library):
     assert vf.verify(ok, a, library) == []
     bad = _broken(adv, lambda d: d["forecast_actions"][0].update(quote="Stay indoors at all times"))
     assert any("not an exact part" in m for m in vf.verify(bad, a, library))
+
+
+def test_at_most_eight_highlighted_actions(library):
+    red = assessment([COOL] * 7 + [SEV] * 3 + [COOL] * 2, p_hot=(0.9, 0.9, 0.9, 0.1, 0.1))
+    adv = vf.template_advisory(red, library)
+    assert red.headline_colour == "RED" and len(adv["forecast_actions"]) == rules.MAX_HIGHLIGHTS
+    assert vf.verify(adv, red, library) == []
+    extra = [x for x in rules.forecast_actions("RED", library)
+             if x.action_id not in {e["action_id"] for e in adv["forecast_actions"]}][0]
+    adv["forecast_actions"].append({"action_id": extra.action_id, **({"label": PRECEDENT_LABEL}
+                                    if extra.tier_basis == "ahmedabad_precedent" else {})})
+    assert any("at most 8" in m for m in vf.verify(adv, red, library))
+
+
+def test_highlight_order_is_colour_first_then_audiences_in_turn(library):
+    order = rules.highlight_order(rules.forecast_actions("RED", library))
+    ranks = [lib_rank(x.min_colour) for x in order]
+    assert ranks == sorted(ranks, reverse=True)  # highest colour first
+    top = [x for x in order if x.min_colour == order[0].min_colour]
+    present = [aud for aud in rules.AUDIENCE_ORDER if any(x.audience == aud for x in top)]
+    assert [x.audience for x in top[:len(present)]] == present  # one of each audience before any repeats
+    assert sorted(x.action_id for x in order) == sorted(x.action_id for x in rules.forecast_actions("RED", library))
 
 
 def test_preparedness_outside_the_season_is_rejected(library):

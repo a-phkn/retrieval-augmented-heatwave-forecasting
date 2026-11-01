@@ -11,7 +11,9 @@ An advisory is a dict:
   headline_colour   the rule engine's headline colour
   summary           free text
   days              5 x {date "YYYY-MM-DD", colour, p_hot (or None), text (free)}
-  forecast_actions  [{action_id, label (PRECEDENT_LABEL, required for Ahmedabad-coloured actions), quote (optional)}]
+  forecast_actions  the highlighted actions, at most MAX_HIGHLIGHTS (8, decision 2026-10-27):
+                    [{action_id, label (PRECEDENT_LABEL, required for Ahmedabad-coloured actions), quote (optional)}]
+                    (the other unlocked actions are listed as "More actions" by the page, not by the advisory)
   preparedness      [{action_id, quote (optional)}]                       (only in the heat season)
   if_this_happens   {public: [{action_id, ...}], professionals: {disclaimer, actions: [{action_id, ...}]}}
   humid_heat_note   None, or {text (free; must include HUMID_SOURCE_PHRASE)}  (exactly when the engine flags humid heat)
@@ -26,7 +28,8 @@ import re
 
 from advisory.library import CLINICAL_DISCLAIMER, IMD_STYLE_LABEL, PRECEDENT_LABEL, Action, colour_rank
 from advisory.rules import (
-    FORECAST_DAYS, Assessment, forecast_actions, if_this_happens_actions, preparedness_actions,
+    FORECAST_DAYS, MAX_HIGHLIGHTS, Assessment, forecast_actions, highlight_order, if_this_happens_actions,
+    preparedness_actions,
 )
 from pipeline.labels_v2 import ANOMALY_HOT_C, ANOMALY_SEVERE_C, TMAX_ABSOLUTE_C, TMAX_FLOOR_C
 
@@ -137,6 +140,8 @@ def verify(adv: dict, a: Assessment, library: dict[str, Action]) -> list[str]:
             _check_free_text(d.get("text"), f"day {i}", allowed, {ref.colour}, out)
 
     seen: set[str] = set()
+    if len(adv["forecast_actions"]) > MAX_HIGHLIGHTS:
+        out.append(f"forecast_actions: {len(adv['forecast_actions'])} highlighted, at most {MAX_HIGHLIGHTS} allowed")
     for e in adv["forecast_actions"]:
         _check_entry(e, "forecast_actions", "forecast", a, library, out, seen)
     if adv["preparedness"] and not a.in_heat_season:
@@ -181,7 +186,8 @@ def verify(adv: dict, a: Assessment, library: dict[str, Action]) -> list[str]:
 
 
 def template_advisory(a: Assessment, library: dict[str, Action]) -> dict:
-    """A valid advisory from the rules alone: every unlocked action, fixed sentences, no LLM."""
+    """A valid advisory from the rules alone: the first MAX_HIGHLIGHTS unlocked actions in the fixed highlight order,
+    fixed sentences, no LLM."""
     def entry(act: Action) -> dict:
         e = {"action_id": act.action_id}
         if act.tier_basis == "ahmedabad_precedent":
@@ -204,7 +210,8 @@ def template_advisory(a: Assessment, library: dict[str, Action]) -> dict:
         "headline_colour": a.headline_colour,
         "summary": f"Highest level in the next {FORECAST_DAYS} days: {a.headline_colour}.",
         "days": days,
-        "forecast_actions": [entry(x) for x in forecast_actions(a.headline_colour, library)],
+        "forecast_actions": [entry(x) for x in
+                             highlight_order(forecast_actions(a.headline_colour, library))[:MAX_HIGHLIGHTS]],
         "preparedness": [entry(x) for x in preparedness_actions(a, library)],
         "if_this_happens": {"public": [entry(x) for x in public],
                             "professionals": {"disclaimer": CLINICAL_DISCLAIMER, "actions": [entry(x) for x in pro]}},

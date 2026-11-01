@@ -190,6 +190,26 @@ def forecast_actions(colour: str, library: dict[str, Action]) -> list[Action]:
                   key=lambda a: (-colour_rank(a.min_colour), a.audience, a.action_id))
 
 
+MAX_HIGHLIGHTS = 8  # decision 2026-10-27: both advisory versions highlight at most 8 forecast actions
+AUDIENCE_ORDER = ("public", "health", "municipal", "energy")
+
+
+def highlight_order(actions: list[Action]) -> list[Action]:
+    """The rule-based version's fixed order (decision 2026-10-27): highest minimum colour first; within a colour,
+    cycling through the audiences in AUDIENCE_ORDER; then by id."""
+    out = []
+    for rank in sorted({colour_rank(a.min_colour) for a in actions}, reverse=True):
+        queues = [sorted((a for a in actions if colour_rank(a.min_colour) == rank and a.audience == aud),
+                         key=lambda a: a.action_id) for aud in AUDIENCE_ORDER]
+        while any(queues):
+            for q in queues:
+                if q:
+                    out.append(q.pop(0))
+    if len(out) != len(actions):
+        raise ValueError("an action with an audience outside AUDIENCE_ORDER")
+    return out
+
+
 def preparedness_actions(assessment: Assessment, library: dict[str, Action]) -> list[Action]:
     """Heat-season preparedness (decision 2026-10-26, option 1a): shown in the heat season whatever the colour."""
     if not assessment.in_heat_season:

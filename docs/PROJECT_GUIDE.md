@@ -1068,6 +1068,9 @@ RAG counts as helping only if real retrieval beats both.
     its colour or in the wrong section, an inexact quote, a number in the text that isn't in the forecast, a
     missing label (not-an-IMD-warning, Ahmedabad precedent, clinical disclaimer), or IMD alert words used for WBGT.
     A rule-only **template advisory** passes the verifier; it is the comparison for, and the fallback from, the LLM.
+    Both versions highlight **at most 8** forecast actions (decision 2026-10-27): the LLM picks its 8; the template
+    takes 8 in a fixed order (highest colour first, then public, health, municipal and energy in turn). The rest are
+    listed under "More actions". The raters get 4 practice items, one per colour, before the 120 rated items.
 - **front end** (decision 2026-10-06): one interactive web page (Week 8) with the 5-day chart,
   the alert colours, a click-a-day advisory and the "If this happens" section. Nothing to install;
   it could be upgraded to React later.
