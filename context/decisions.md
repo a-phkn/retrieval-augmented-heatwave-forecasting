@@ -1503,3 +1503,9 @@ Post-test and descriptive: uses the committed 2019-2026 test forecasts; changes 
   separately); the post-rating discussion is recorded but does not change the scores.
 - Primary reading: the LLM version is acceptable only if it is not less faithful than the rule-based one on
   questions 1-3; questions 4-5 then say whether it adds clarity.
+- Run note 2026-11-01: the run stopped at 14 of 56 cases on a 120 s read timeout from the provider. The client now
+  retries timeouts and connection errors, stops cleanly if they persist, and treats a request too large to send (HTTP
+  413, possible for a repair call on a Red case) as a failed attempt, so that case uses the rule-based advisory. The
+  system prompt, schema design, model and settings are unchanged, so the hashes above still hold. The CI failure on
+  79f43bf was a test comparing rebuilt floats exactly (they differ by ~3e-15 between CPU types); the test now uses a
+  tolerance. `cases.json` is unchanged and remains the reference.

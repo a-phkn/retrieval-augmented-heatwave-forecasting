@@ -176,6 +176,14 @@ class DailyLimit(RuntimeError):
     """The provider asked for a long wait: stop now, resume later (finished cases are cached)."""
 
 
+class ProviderUnavailable(RuntimeError):
+    """No usable answer after several tries (timeouts, connection errors): stop now, resume later."""
+
+
+class RequestTooLarge(RuntimeError):
+    """HTTP 413: this request alone exceeds the provider's size limit (possible for a repair call on a Red case)."""
+
+
 class Throttle:
     """Keeps the tokens used in the last 60 s under TOKENS_PER_MINUTE_BUDGET."""
 
@@ -196,13 +204,22 @@ class Throttle:
 
 
 def call_api(body: dict, key: str, post=None, sleep=time.sleep, max_tries: int = 4) -> dict:
-    """One chat completion; retries 5xx and short 429 waits; raises DailyLimit on a long wait."""
+    """One chat completion; retries timeouts, connection errors, 5xx and short 429 waits. Raises DailyLimit on a long
+    wait, ProviderUnavailable when the tries run out, RequestTooLarge on a 413."""
     import requests
 
     post = post or requests.post
     for attempt in range(1, max_tries + 1):
-        r = post(API_URL, headers={"Authorization": f"Bearer {key}", "Content-Type": "application/json"},
-                 json=body, timeout=TIMEOUT_S)
+        try:
+            r = post(API_URL, headers={"Authorization": f"Bearer {key}", "Content-Type": "application/json"},
+                     json=body, timeout=TIMEOUT_S)
+        except (requests.exceptions.Timeout, requests.exceptions.ConnectionError) as e:
+            if attempt == max_tries:
+                raise ProviderUnavailable(f"no answer after {max_tries} tries ({type(e).__name__})") from e
+            sleep(10 * attempt)
+            continue
+        if r.status_code == 413:
+            raise RequestTooLarge("the request exceeds the provider's size limit")
         if r.status_code == 429:
             wait = float(r.headers.get("retry-after", 60))
             if wait > LONG_WAIT_S:
@@ -215,7 +232,7 @@ def call_api(body: dict, key: str, post=None, sleep=time.sleep, max_tries: int =
         if r.status_code != 200:
             raise RuntimeError(f"API error {r.status_code}: {r.text[:300]}")
         return r.json()
-    raise RuntimeError("the API kept refusing the request")
+    raise ProviderUnavailable(f"the provider kept refusing the request after {max_tries} tries")
 
 
 def run_case(case: dict, wbgt_threshold: float, library: dict[str, Action], key: str, throttle: Throttle,
@@ -231,7 +248,13 @@ def run_case(case: dict, wbgt_threshold: float, library: dict[str, Action], key:
     for attempt in (1, 2):
         estimate = (len(SYSTEM_PROMPT) + sum(len(m["content"]) for m in messages)) // 3 + 1500
         throttle.wait_for(estimate)
-        resp = call_api(request_body(messages, sch), key, post=post, sleep=sleep)
+        try:
+            resp = call_api(request_body(messages, sch), key, post=post, sleep=sleep)
+        except RequestTooLarge as e:  # recorded; this case then falls back to the rule-based advisory
+            rec["attempts"].append({"attempt": attempt, "utc": now().isoformat(timespec="seconds"), "raw_content": None,
+                                    "reasoning": None, "usage": {}, "system_fingerprint": None,
+                                    "violations": [f"not sent: {e}"]})
+            break
         usage = resp.get("usage", {})
         throttle.record(int(usage.get("total_tokens", estimate)))
         message = (resp.get("choices") or [{}])[0].get("message", {})
@@ -273,7 +296,7 @@ def run(cases_path: Path = CASES_PATH, only: list[str] | None = None, post=None,
         else:
             try:
                 rec = run_case(case, doc["wbgt_threshold"], library, key, throttle, post=post, sleep=sleep)
-            except DailyLimit as e:
+            except (DailyLimit, ProviderUnavailable) as e:
                 print(f"Stopped at {case['case_id']}: {e}. Finished cases are saved; run the same command later.")
                 break
             path.write_text(json.dumps(rec, indent=1, ensure_ascii=False) + "\n", encoding="utf-8")

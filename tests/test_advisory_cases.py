@@ -81,6 +81,31 @@ def test_stored_colours_follow_from_the_stored_numbers(doc):
         assert ac.assessment_of(c, doc["wbgt_threshold"]).headline_colour == c["headline_colour"], c["case_id"]
 
 
+def assert_same(a, b, where="doc"):
+    """Equal structure, ids, dates and colours; floats within 1e-9 (the last digits differ between CPU types, because
+    the recalibration behind the probabilities uses the machine's linear-algebra kernels)."""
+    assert type(a) is type(b), where
+    if isinstance(a, dict):
+        assert a.keys() == b.keys(), where
+        for k in a:
+            assert_same(a[k], b[k], f"{where}.{k}")
+    elif isinstance(a, list):
+        assert len(a) == len(b), where
+        for i, (x, y) in enumerate(zip(a, b)):
+            assert_same(x, y, f"{where}[{i}]")
+    elif isinstance(a, float):
+        assert a == pytest.approx(b, abs=1e-9), where
+    else:
+        assert a == b, where
+
+
+def test_assert_same_tolerates_only_tiny_float_differences():
+    assert_same({"p": [0.37, {"c": "RED"}]}, {"p": [0.37 + 3e-15, {"c": "RED"}]})
+    for other in ({"p": [0.38, {"c": "RED"}]}, {"p": [0.37, {"c": "ORANGE"}]}, {"p": [0.37]}):
+        with pytest.raises(AssertionError):
+            assert_same({"p": [0.37, {"c": "RED"}]}, other)
+
+
 @pytest.mark.slow
 def test_committed_cases_match_a_rebuild(doc):
     from training import test_lock
@@ -89,4 +114,4 @@ def test_committed_cases_match_a_rebuild(doc):
         test_lock.require()
     except test_lock.TestLocked:
         pytest.skip("the test lock is not open here")
-    assert json.loads(json.dumps(ac.build_cases())) == doc
+    assert_same(json.loads(json.dumps(ac.build_cases())), doc)

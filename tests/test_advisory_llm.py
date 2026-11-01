@@ -225,6 +225,65 @@ def test_rate_limits(monkeypatch):
         llm.call_api({}, FAKE_KEY, post=FakePost([FakeResponse(400, {"error": {"message": "bad"}})]), sleep=slept.append)
 
 
+class TimesOut:
+    """A post that times out `times` times, then returns ok."""
+
+    def __init__(self, times, ok=None):
+        self.times, self.ok, self.calls = times, ok, 0
+
+    def __call__(self, url, headers=None, json=None, timeout=None):
+        import requests
+
+        self.calls += 1
+        if self.calls <= self.times:
+            raise requests.exceptions.ReadTimeout("read timed out")
+        return self.ok
+
+
+def test_timeouts_are_retried_and_then_stop_cleanly():
+    ok = FakeResponse(200, {"choices": [{"message": {"content": "{}"}}]})
+    post = TimesOut(2, ok)
+    assert llm.call_api({}, FAKE_KEY, post=post, sleep=lambda s: None) == ok.json() and post.calls == 3
+    with pytest.raises(llm.ProviderUnavailable):
+        llm.call_api({}, FAKE_KEY, post=TimesOut(99), sleep=lambda s: None)
+    with pytest.raises(llm.ProviderUnavailable):  # 429s that never clear also stop cleanly
+        llm.call_api({}, FAKE_KEY, post=FakePost([FakeResponse(429, headers={"retry-after": "1"})] * 4),
+                     sleep=lambda s: None)
+
+
+def test_run_stops_cleanly_and_keeps_finished_cases_when_the_provider_is_down(doc, library, tmp_path, monkeypatch):
+    (c1, a1), c2 = first(doc, "GREEN"), next(c for c in doc["cases"] if c["headline_colour"] == "ORANGE")
+    cases_path = tmp_path / "cases.json"
+    cases_path.write_text(json.dumps({**doc, "cases": [c1, c2], "practice": []}), encoding="utf-8")
+    monkeypatch.setenv(llm.KEY_ENV, FAKE_KEY)
+    responses = iter([completion(good_reply(a1, library))])
+
+    def post(url, headers=None, json=None, timeout=None):
+        import requests
+
+        try:
+            return next(responses)
+        except StopIteration:
+            raise requests.exceptions.ConnectTimeout("down") from None
+
+    counts = llm.run(cases_path, post=post, sleep=lambda s: None, runs_dir=tmp_path / "runs")
+    assert counts == {"passed_first_try": 1}
+    assert (tmp_path / "runs" / f"{c1['case_id']}.json").exists()
+    assert not (tmp_path / "runs" / f"{c2['case_id']}.json").exists()  # no half-finished record: it is retried later
+
+
+def test_a_repair_too_large_to_send_falls_back_to_the_template(doc, library):
+    from advisory.verifier import template_advisory
+
+    case, a = first(doc, "RED")
+    bad = good_reply(a, library)
+    bad["day_1"] = "Up to 47 °C."
+    rec, post = _run(case, doc, library, [completion(bad), FakeResponse(413)])
+    assert rec["outcome"] == "template_fallback" and len(rec["attempts"]) == 2
+    assert "not sent" in rec["attempts"][1]["violations"][0]
+    assert rec["advisory"] == template_advisory(a, library)
+
+
 def test_throttle_waits_until_the_minute_window_has_room():
     now = [0.0]
     waits = []
