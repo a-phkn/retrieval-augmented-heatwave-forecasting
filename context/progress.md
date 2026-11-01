@@ -19,6 +19,9 @@ Short, frequently-updated. The sections below the current status are a dated his
   equal under the same tuned rule.
 - **Rule engine change (2026-10-27):** forecast days are heatwave days when the hot-day probability >= 0.37; on
   real 2007-2018 forecasts the advisory raises 68% of the alerts the observed weather would have (61% before).
+- **Phase 6 part 4 prepared (2026-10-30):** evaluation cases (`advisory/eval/cases.json`: 52 rated, 13 per colour,
+  3-day gap, + 4 practice), the Groq client (`advisory/llm.py`, offline-tested) and the pre-registration. Waiting for
+  the user to run `python -m advisory.llm` with their own key.
 - **Next:** the constrained LLM advisory, faithfulness evaluation (2 raters), demo page, then the paper. Decisions
   needed: which LLM and where it runs; who the 2 raters are.
 

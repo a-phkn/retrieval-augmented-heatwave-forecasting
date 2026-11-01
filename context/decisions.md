@@ -1456,3 +1456,50 @@ code changed or the check below ran. Amends the 2026-10-22 mapping B for FORECAS
   colour 88% (89%). Colour shares are close to the perfect forecast (Green 87% vs 86%). Caveat: these are the years
   the 0.37 level was chosen on, so the gain is slightly flattering; on the test years the same level lifted the
   day-level Tmax hit rate from 24% to 29% (post-test 3).
+
+**Rating design details: DECIDED 2026-10-27 (user), before any advisory was generated**
+- At most 8 highlighted forecast actions per advisory, in BOTH versions (LLM and rule-based), so raters cannot tell
+  the versions apart by length and question 4 compares like with like. The LLM picks its up-to-8 from the unlocked
+  actions; the rule-based version takes the first 8 in a fixed order: highest minimum colour first, then cycling
+  through audiences (public, health, municipal, energy), then by id. All other unlocked actions stay listed under
+  "More actions" in both versions (identical, not rated). The verifier rejects more than 8 highlights.
+- 4 practice items (not counted, not among the 60 cases, one per colour), rated together by both raters and
+  discussed before the independent rating, so they read the five questions the same way.
+
+**Rating cases: 13 per colour, 3-day gap. DECIDED 2026-10-30 (user), before any advisory was generated.**
+- The planned 60 cases (15 per colour, >= 5 days apart) are infeasible on 2019-2026: the test period holds only 38 Red,
+  38 Orange and 31 Yellow season query dates, and only 14 Red ones are >= 5 days apart. Feasible (with 1 practice
+  item per colour): 9 per colour at a 5-day gap, 11 at 4, 13 at 3.
+- Chosen: 13 per colour (52 cases = 104 rated items, ~2.6 h per rater), cases >= 3 days apart (neighbouring cases from
+  the same heatwave may share up to 2 forecast days: different moments of the same event). 4 practice items, one per
+  colour, also >= 3 days from every rated case.
+- Sampling: seeds tried in order from 20261027 upward; the first seed that fills every colour (rated and practice) is
+  used and recorded in cases.json. Feasibility is the only criterion: no advisory exists yet.
+
+**Phase 6 part 4: LLM advisory and its faithfulness rating. PRE-REGISTERED 2026-10-30, before any API call.
+Post-test and descriptive: uses the committed 2019-2026 test forecasts; changes no forecasting result.**
+- Model and settings: `openai/gpt-oss-120b` (open weights) through Groq's chat completions API; temperature 0,
+  seed 20261030 (best effort), max_completion_tokens 4000, reasoning_effort "low"; strict JSON schema. The exact
+  system prompt is `advisory/llm.py::SYSTEM_PROMPT`, SHA-256 3757a15c6689c68c148a49ba6fdd3a1c1c27ac88ff5d1eee3110be4837d4038a;
+  every cached reply records this hash, its user-message and schema hashes and the provider's system fingerprint.
+- What the model may do: write the summary, one sentence per day and (only when the rule engine flags humid heat) the
+  humid-heat note, and pick up to 8 forecast actions by id from that case's unlocked actions (an enum in the
+  schema). Everything else comes from the rule-based template. The verifier checks every advisory; a rejected one
+  gets ONE repair call listing the violations; after that the rule-based template is used (recorded as a fallback).
+- Cases: `advisory/eval/cases.json` (SHA-256 f900bf595f4d342b10112788b19da0acc25664f3e191959490cb7c20b06366da):
+  52 rated cases (13 per colour) + 4 practice items, seed 20261046 (first feasible from 20261027).
+- Automatic results reported: share passing the verifier first time, after repair, and falling back; tokens used.
+- Rating (two teammate raters, independently, blind to version): 104 items = each case's LLM and rule-based
+  advisory, shuffled (fixed seed), coded A001-A104, same layout; at most 8 highlighted actions in both; the rest
+  listed as "More actions". 4 practice items first, rated and discussed together, not counted (versions alternate:
+  P1, P3 LLM; P2, P4 rule-based). Questions per item: (1) faithful to the forecast (yes/no); (2) every
+  recommendation supported by the quote shown (yes/no); (3) anything harmful or misleading (yes/no); (4) highlighted
+  actions suit the alert level and audience (1-5); (5) clear for the public (1-5); notes required for a "no" in
+  1-2 or a "yes" in 3. The key (item -> case, version) is hashed into this log before the pack is sent.
+- Analysis: per version, the share of items rated faithful (1, 2) and harmful (3), and mean scores (4, 5), with 95%
+  CIs (cluster bootstrap over cases); paired LLM-vs-rule-based differences per case (McNemar for 1-3, Wilcoxon
+  signed-rank for 4-5); inter-rater agreement (Cohen's kappa for 1-3, quadratic-weighted kappa for 4-5). Item scores
+  = the two raters' independent answers (an item counts as unfaithful if either rater says so; agreement is reported
+  separately); the post-rating discussion is recorded but does not change the scores.
+- Primary reading: the LLM version is acceptable only if it is not less faithful than the rule-based one on
+  questions 1-3; questions 4-5 then say whether it adds clarity.
