@@ -1509,3 +1509,20 @@ Post-test and descriptive: uses the committed 2019-2026 test forecasts; changes 
   system prompt, schema design, model and settings are unchanged, so the hashes above still hold. The CI failure on
   79f43bf was a test comparing rebuilt floats exactly (they differ by ~3e-15 between CPU types); the test now uses a
   tolerance. `cases.json` is unchanged and remains the reference.
+- **LLM run finished 2026-11-01:** 56 of 56 advisories (52 rated + 4 practice) passed the verifier first time; no repairs,
+  no fallbacks; 149,057 tokens; `openai/gpt-oss-120b`. The same prompt hash in every record. Provider fingerprints vary
+  (25 values), so the backend changed during the run; results are reproducible from the saved replies, not by re-calling.
+  Replies fingerprint (`advisory/eval/llm_runs/`, sorted file name + SHA-256 of each file, LF line endings):
+  071b37211465022459499bbda4cae39bb505f4322de0175c52e61646b19e70db.
+- **Seen before the rating, recorded so it cannot be reinterpreted later:** the first-try pass rate does not show the
+  advisories are good. Advice breaks the prompt's rule 4 in many of them ("stay hydrated" in 23 of 56) and the verifier
+  cannot detect it, since it checks numbers, colours, labels and quotes, not meaning. Prompt and verifier are NOT changed
+  (that would undo this pre-registration); rating question 2 measures it. Raters are not told.
+- **Rating pack built 2026-11-01:** key SHA-256 18637930bf63180821161f535bf643a7191ec5982f5f2423991200042828b811 (shuffle
+  seed 20261030). Key gitignored until both raters finish.
+- **Rating pack REBUILT 2026-11-02, before it was sent to any rater (supersedes the 2026-11-01 pack and key):** the
+  shuffle seed 20261030 was written in the code and in this log, so anyone with the repository could rebuild the key
+  in one line, and the two raters work in the repository. The pack now uses a random seed drawn at build time and
+  stored only in the gitignored key. New key SHA-256 c04cac304afba9f9efbb5d1eb02fbf06668c4f1501f49f9bcf362db5f8a8d983.
+  The saved LLM replies (`advisory/eval/llm_runs/`) are also gitignored until both raters finish; their fingerprint
+  above is unchanged. Only the item order changed; the advisories, questions and analysis are as pre-registered.

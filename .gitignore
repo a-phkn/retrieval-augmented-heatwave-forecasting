@@ -87,3 +87,8 @@ models/test/
 /sources/build/img/
 # NOAA GHCN-Daily station record for Safdarjung and its tidy copy (public data, re-downloadable; see README_DATA.md)
 /sources/data/*.csv
+
+# The blind rating key (item -> version): kept out of git until both raters have finished
+/advisory/eval/key.json
+# The saved LLM replies show which rated item is the LLM's: kept out of git until both raters have finished
+/advisory/eval/llm_runs/

@@ -20,8 +20,11 @@ Short, frequently-updated. The sections below the current status are a dated his
 - **Rule engine change (2026-10-27):** forecast days are heatwave days when the hot-day probability >= 0.37; on
   real 2007-2018 forecasts the advisory raises 68% of the alerts the observed weather would have (61% before).
 - **Phase 6 part 4 prepared (2026-10-30):** evaluation cases (`advisory/eval/cases.json`: 52 rated, 13 per colour,
-  3-day gap, + 4 practice), the Groq client (`advisory/llm.py`, offline-tested) and the pre-registration. Waiting for
-  the user to run `python -m advisory.llm` with their own key.
+  3-day gap, + 4 practice), the Groq client (`advisory/llm.py`, offline-tested) and the pre-registration.
+- **LLM run done 2026-11-01:** 56 of 56 passed the verifier first time (149,057 tokens). That does not mean they are
+  good: "stay hydrated" and similar advice appears in many, against the prompt; only the raters can judge this.
+  Rating pack built (`advisory/rating.py`, `advisory/eval/rating_pack.html`, 104 items + 4 practice); key and replies
+  are fingerprinted in the decision log. Waiting for the two raters.
 - **Next:** the constrained LLM advisory, faithfulness evaluation (2 raters), demo page, then the paper. Decisions
   needed: which LLM and where it runs; who the 2 raters are.
 
