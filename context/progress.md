@@ -3,7 +3,7 @@
 Short, frequently-updated. The sections below the current status are a dated history, newest results in
 "Week 3 results" onwards; the September "Done / Next" lists are historical (`build_plan.md` is v1-era).
 
-## Current status (2026-10-25)
+## Current status (2026-11-05)
 - **Forecasting research complete.** Protocol frozen 2026-10-19 (tag `test-lock`); test run once: H1 and H3
   confirmed, H2 and H4 not (`evaluation_test/test_results.md`). Post-test: foundation models (C3-hop beats both),
   extras (ensemble, warning scores, bias split, without ERA5T: `evaluation_post_test/`).
@@ -25,8 +25,8 @@ Short, frequently-updated. The sections below the current status are a dated his
   good: "stay hydrated" and similar advice appears in many, against the prompt; only the raters can judge this.
   Rating pack built (`advisory/rating.py`, `advisory/eval/rating_pack.html`, 104 items + 4 practice); key and replies
   are fingerprinted in the decision log. Waiting for the two raters.
-- **Next:** the constrained LLM advisory, faithfulness evaluation (2 raters), demo page, then the paper. Decisions
-  needed: which LLM and where it runs; who the 2 raters are.
+- **Next:** the two teammate raters score the blind pack; then `python -m advisory.rating --analyse`, publish
+  `key.json` and `llm_runs/`, the demo page (the same two teammates, on their own branch) and the paper.
 
 ## Done (September 2026, v1; historical)
 - P1 data pipeline fully verified.
