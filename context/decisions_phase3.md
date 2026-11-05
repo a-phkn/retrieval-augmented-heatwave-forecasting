@@ -80,6 +80,14 @@ Rules for this file:
 - Code: `followup/global_models.py` -> `followup/results/global_models.{md,json}`. Raw API replies are kept in
   `data/raw/open_meteo_runs/` (gitignored, like other raw downloads); the tidy daily extract is committed with its
   SHA-256.
+- **DEVIATION 2026-11-06 (a clarification, written before any data was downloaded):**
+  - Requests use the ERA5 download's own coordinates and settings (`pipeline/download_era5_v2.py`: `CELLS`,
+    `cell_selection=nearest`), not the rounded cell centres.
+  - A probe showed both snap to the same 0.25° grid points (cell 1: 28.25° N, 77.0° E) with the same elevation for
+    Open-Meteo's height adjustment (274 m), so the global forecasts and the ERA5 truth are adjusted identically.
+  - IFS HRES 9 km (Open-Meteo model id `ecmwf_ifs`) uses its nearest 9 km grid point to the same coordinates.
+  - The Single Runs API labels hours at XX:30 IST (whole UTC hours), unlike XX:00 IST elsewhere. The 24 values whose
+    timestamps fall in the IST day are used, as for the other models.
 
 **P3-2: A corrector on top of a global forecast. PRE-REGISTERED 2026-11-05 (user approved).**
 - Question: does a cheap Delhi corrector make global forecasts better, and does C3-hop add information on top?
