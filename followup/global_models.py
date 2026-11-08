@@ -171,7 +171,8 @@ def summarise(df: pd.DataFrame, season) -> dict:
     for k, v in parts.items():
         n = int(len(v) / max(1, v["seed"].nunique()))
         out[k] = {"rmse": rmse_by(v) if n else float("nan"),
-                  "bias": float(v.groupby("seed")["error"].mean().mean()) if n else float("nan"), "n": n}
+                  "bias": float(v.groupby("seed")["error"].mean().mean()) if n else float("nan"), "n": n,
+                  "clusters": int(v["cluster_id"].nunique())}
     out["by_lead"] = [rmse_by(df[df["lead"] == L]) if (df["lead"] == L).any() else float("nan")
                       for L in range(1, FORECAST_DAYS + 1)]
     return out
@@ -297,7 +298,7 @@ def write_report(res: dict) -> None:
                     L.append(f"| {name} | no data | 0 | | | | | | | | |")
                     continue
                 g, c, s, m = (r[k][stratum] for k in ("global", "c3hop", "c3hop_per_seed", "lstm"))
-                L.append(f"| {name} | {r['first_query']} to {r['last_query']} | {g['n']} | {r['clusters']} | "
+                L.append(f"| {name} | {r['first_query']} to {r['last_query']} | {g['n']} | {g['clusters']} | "
                          f"{_num(g['rmse'])} | {_num(c['rmse'])} | {_num(s['rmse'])} | {_num(m['rmse'])} | "
                          f"{_delta(r['test'][stratum])} | {_num(g['bias'], '+.2f')} | {_num(c['bias'], '+.2f')} |")
             L.append("")

@@ -88,6 +88,42 @@ Rules for this file:
   - IFS HRES 9 km (Open-Meteo model id `ecmwf_ifs`) uses its nearest 9 km grid point to the same coordinates.
   - The Single Runs API labels hours at XX:30 IST (whole UTC hours), unlike XX:00 IST elsewhere. The 24 values whose
     timestamps fall in the IST day are used, as for the other models.
+- **RESULT 2026-11-08** (`followup/results/global_models.md`). Descriptive, with few clusters: IFS has 9 on all days and
+  3 in the heat season and on heatwave days.
+  - **Tmax, IFS vs C3-hop: IFS is better.**
+    - RMSE on all days 1.76 vs 2.13 °C (delta -0.36, CI -0.83 to +0.10).
+    - Heat season 1.75 vs 2.48; heatwave days 1.58 vs 2.38 (no CI).
+    - The gap grows with lead: day 1 1.47 vs 1.52 (about even), day 5 2.03 vs 2.52.
+    - On heatwave days IFS is 0.85 °C too cold and C3-hop 2.04 °C too cold.
+  - **Tmax, AIFS** (the archive id `ecmwf_aifs025` ends 2025-03-10: one heat season, 3 clusters):
+    - worse than C3-hop on all days (2.12 vs 1.89), 1.50 °C too cold, as expected from 6-hourly output missing the
+      afternoon peak;
+    - better in the heat season (1.69 vs 2.04); worse on heatwave days (2.51 vs 2.22).
+  - **Tmax, GFS: much worse than C3-hop.**
+    - 3.73 vs 2.12; since 2021, 3.43 vs 2.19 (delta +1.25, CI +0.90 to +1.59, 17 clusters).
+    - 2.6-2.9 °C warmer than ERA5 on all days, 3.4-3.7 °C in the heat season. Whether ERA5 or GFS is off is a
+      question for P3-3 (the station).
+  - **WBGT, IFS vs C3-hop: IFS is better on all days, C3-hop slightly better on heatwave days.**
+    - All days 1.97 vs 2.22 (delta -0.25, CI -0.48 to -0.02, fragile); IFS is better at every lead.
+    - Heatwave days 3.28 vs 3.08 in C3-hop's favour (no CI); both are about 2.7-2.8 °C too cold there.
+  - **WBGT, GFS: worse than C3-hop.** All days 2.65 vs 2.21 (delta +0.44, CI +0.21 to +0.66). Heatwave days 4.97 vs
+    3.08, 4.6 °C too cold, because GFS's air is too dry.
+  - **Warnings (ETS):**
+    - Tmax: IFS 0.33 vs C3-hop 0.24-0.27 (its pre-chosen rules); AIFS 0.46 vs 0.39-0.45; GFS 0.18 (it warns on far
+      too many days).
+    - WBGT: every model poor and about equal (0.02-0.09).
+    - The GFS and LSTM WBGT R-point counts are the same (28 warnings, 7 hits) by coincidence: they warn on different
+      days (1 in common).
+  - **Reading.** The forecasts Delhi can get from ECMWF beat C3-hop on all days, mostly beyond day 1, for both Tmax
+    and WBGT. C3-hop beats GFS on both. C3-hop is slightly better than IFS only for WBGT on heatwave days, and that
+    is not testable with 3 clusters.
+  - **Seen while scoring:** the archive changed AIFS's model id.
+    - `ecmwf_aifs025` (the experimental AIFS) ends 2025-03-10.
+    - The operational AIFS Single is `ecmwf_aifs025_single` (probe 2026-11-08). It has radiation, so WBGT would be
+      possible.
+    - It is not included: adding it would change this pre-registration after these results were seen. Decision
+      pending (user).
+  - Not run yet: the IFS timing check (single runs; download pending).
 
 **P3-2: A corrector on top of a global forecast. PRE-REGISTERED 2026-11-05 (user approved).**
 - Question: does a cheap Delhi corrector make global forecasts better, and does C3-hop add information on top?

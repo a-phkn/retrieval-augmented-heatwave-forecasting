@@ -27,6 +27,11 @@ class FakeResponse:
             raise om.requests.HTTPError(str(self.status_code))
 
 
+class NotJSON(FakeResponse):
+    def json(self):
+        raise ValueError("Expecting value: line 1 column 1 (char 0)")
+
+
 class FakeSession:
     def __init__(self, responses):
         self.responses, self.calls = list(responses), []
@@ -74,6 +79,23 @@ def test_rate_limits_wait_the_daily_limit_stops_and_refusals_raise():
                     sleep=slept.append)
 
 
+def test_a_reply_that_is_not_json_is_retried_then_skipped(tmp_path, monkeypatch):
+    slept = []
+    ok = FakeSession([NotJSON(200, None), FakeResponse(200, {"ok": 1})])
+    assert om.get_json(ok, "u", {}, sleep=slept.append) == {"ok": 1} and slept == [15]
+    with pytest.raises(om.BadReply) as err:
+        om.get_json(FakeSession([NotJSON(200, None)] * 4), "u", {}, sleep=slept.append)
+    assert not isinstance(err.value, ValueError)  # so a single run is never mistaken for one the archive lacks
+    cols = om.column_groups(("temperature_2m",))[0]
+    reqs = [("m", cell, date(2024, 3, 1), date(2024, 3, 2), cols) for cell in (1, 2)]
+    monkeypatch.setattr(om, "previous_plan", lambda pulls=None: reqs)
+    good = hourly_reply("2024-03-01", 2, {c: (lambda i: 30.0) for c in cols})
+    s = FakeSession([NotJSON(200, None)] * 4 + [FakeResponse(200, good)])
+    assert om.download_previous(s, root=tmp_path, pause=0, sleep=lambda x: None) == 1  # cell 1 skipped, cell 2 saved
+    assert not om.previous_path("m", 1, date(2024, 3, 1), cols, tmp_path).exists()
+    assert om.previous_path("m", 2, date(2024, 3, 1), cols, tmp_path).exists()
+
+
 def test_a_cached_reply_is_never_fetched_again(tmp_path, monkeypatch):
     cols = om.column_groups(("temperature_2m",))[0]
     req = ("ecmwf_ifs025", 1, date(2024, 3, 1), date(2024, 3, 2), cols)
@@ -99,6 +121,17 @@ def test_cached_groups_are_joined_per_hour_and_split_by_lead(tmp_path):
                                                               spot=(28.5, 77.0, 274.0))))
     with pytest.raises(ValueError, match="grid point"):
         om.load_previous("m", ("temperature_2m",), tmp_path)
+
+
+def test_a_month_with_no_values_still_loads_as_numbers(tmp_path):
+    cols = om.column_groups(("temperature_2m",))[0]
+    d = tmp_path / "m" / "cell_1"
+    d.mkdir(parents=True)
+    (d / "2024-02_t.json").write_text(json.dumps(hourly_reply("2024-02-01", 1, {c: (lambda i: None) for c in cols})))
+    (d / "2024-03_t.json").write_text(json.dumps(hourly_reply("2024-03-01", 1, {c: (lambda i: 30.5) for c in cols})))
+    by_lead, _ = om.load_previous("m", ("temperature_2m",), tmp_path)
+    t = by_lead[1]["temperature_2m"]
+    assert t.dtype == "float64" and t.isna().sum() == 24 and (t.dropna() == 30.5).all()
 
 
 def test_single_runs_and_unavailable_runs_are_read_back(tmp_path):

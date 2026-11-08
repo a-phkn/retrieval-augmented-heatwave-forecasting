@@ -58,6 +58,10 @@ class DailyLimit(RuntimeError):
     """The API quota is used up (or rate limiting persisted): stop now and run again later to resume."""
 
 
+class BadReply(RuntimeError):
+    """The API kept sending a body that is not JSON (an empty or cut-off reply)."""
+
+
 # ------------------------------------------------------------------ request plans
 
 
@@ -166,9 +170,10 @@ def _reason(r: requests.Response) -> str:
 
 
 def get_json(session, url: str, params: dict, retries: int = 4, max_rate_waits: int = 10, sleep=time.sleep):
-    """GET with retries for timeouts, connection errors and server errors. A 429 waits (60 s, 120 s, ... up to 10 min)
-    unless the reason names the daily limit; DailyLimit is raised when the quota is gone. Any other 4xx raises
-    ValueError with Open-Meteo's reason (for example a model run that is not in the archive)."""
+    """GET with retries for timeouts, connection errors, server errors and bodies that are not JSON (BadReply after
+    the last try). A 429 waits (60 s, 120 s, ... up to 10 min) unless the reason names the daily limit; DailyLimit
+    is raised when the quota is gone. Any other 4xx raises ValueError with Open-Meteo's reason (for example a model
+    run that is not in the archive)."""
     attempts = rate_waits = 0
     while True:
         try:
@@ -194,30 +199,51 @@ def get_json(session, url: str, params: dict, retries: int = 4, max_rate_waits: 
             continue
         if r.status_code >= 400:
             raise ValueError(f"Open-Meteo refused the request ({r.status_code}): {_reason(r)}")
-        return r.json()
+        try:
+            return r.json()
+        except ValueError:  # an empty or cut-off body: retried like a server error
+            attempts += 1
+            if attempts >= retries:
+                raise BadReply(f"the reply was not JSON in {retries} tries") from None
+            sleep(15 * attempts)
 
 
 # ------------------------------------------------------------------ downloads
 
 
+def _report_failed(failed: list[str]) -> int:
+    """0 if nothing failed; otherwise list the failures (a re-run retries them) and return 1."""
+    if not failed:
+        return 0
+    print(f"\n{len(failed)} request(s) failed after their retries; run again to retry them:", flush=True)
+    print("\n".join(f"  {f}" for f in failed[:20]), flush=True)
+    return 1
+
+
 def download_previous(session, root: Path = RAW_DIR, pause: float = 2.0, sleep=time.sleep) -> int:
-    """Fetch every Previous Runs request not cached yet. Returns 0 when all are present, 2 when the quota stopped it."""
+    """Fetch every Previous Runs request not cached yet. Returns 0 when all are present, 1 when some failed after
+    their retries (skipped, the rest continues), 2 when the quota stopped it."""
     todo = [p for p in previous_plan() if not cached(previous_path(*p[:3], p[4], root=root),
                                                      lambda d, p=p: previous_reply_ok(d, p[2], p[3], p[4]))]
     print(f"Previous Runs: {len(todo)} requests to download into {root}", flush=True)
+    failed = []
     for i, (model, cell, first, last, cols) in enumerate(todo, 1):
         try:
             payload = get_json(session, PREVIOUS_URL, previous_params(model, cell, first, last, cols), sleep=sleep)
         except DailyLimit as err:
             print(f"\nStopped at {i - 1}/{len(todo)}: {err}\nRun again later to resume.", flush=True)
             return 2
+        except (BadReply, requests.RequestException) as err:
+            failed.append(f"{model} cell {cell} {first:%Y-%m} {group_name(cols)}: {err}")
+            sleep(pause)
+            continue
         if not previous_reply_ok(payload, first, last, cols):
             raise ValueError(f"{model} cell {cell} {first:%Y-%m}: reply has missing columns or hours")
         write_atomic(previous_path(model, cell, first, cols, root), payload)
         if i % 50 == 0 or i == len(todo):
             print(f"  {i}/{len(todo)} (last: {model} cell {cell} {first:%Y-%m})", flush=True)
         sleep(pause)
-    return 0
+    return _report_failed(failed)
 
 
 def download_single(session, root: Path = RAW_DIR, pause: float = 6.0, sleep=time.sleep) -> int:
@@ -225,12 +251,17 @@ def download_single(session, root: Path = RAW_DIR, pause: float = 6.0, sleep=tim
     {"unavailable": reason} so it is not asked for again."""
     todo = [r for r in single_run_dates() if not cached(single_path(r, root), lambda d, r=r: single_reply_ok(d, r))]
     print(f"Single Runs: {len(todo)} runs to download into {root / SINGLE_DIR}", flush=True)
+    failed = []
     for i, run in enumerate(todo, 1):
         try:
             payload = get_json(session, SINGLE_URL, single_params(run), sleep=sleep)
         except DailyLimit as err:
             print(f"\nStopped at {i - 1}/{len(todo)}: {err}\nRun again later to resume.", flush=True)
             return 2
+        except (BadReply, requests.RequestException) as err:
+            failed.append(f"run {run}: {err}")
+            sleep(pause)
+            continue
         except ValueError as err:
             payload = {"unavailable": str(err)}
         if not single_reply_ok(payload, run):
@@ -239,7 +270,7 @@ def download_single(session, root: Path = RAW_DIR, pause: float = 6.0, sleep=tim
         if i % 25 == 0 or i == len(todo):
             print(f"  {i}/{len(todo)} (last run: {run})", flush=True)
         sleep(pause)
-    return 0
+    return _report_failed(failed)
 
 
 # ------------------------------------------------------------------ reading the cache
@@ -261,6 +292,7 @@ def load_previous(model: str, variables: tuple[str, ...], root: Path = RAW_DIR
         if not frames:
             continue
         wide = pd.concat(frames).groupby(level=0).first()  # one row per hour; columns come from different files
+        wide = wide.astype("float64")  # a month with no values at all arrives as object columns; a string would raise
         wide.index = pd.to_datetime(wide.index)
         per_cell.append(wide.assign(cell=cell))
     if not per_cell:
@@ -291,6 +323,7 @@ def load_single(root: Path = RAW_DIR) -> tuple[pd.DataFrame, dict[int, dict], li
             if where.setdefault(cell, spot) != spot:
                 raise ValueError(f"IFS HRES cell {cell}: runs disagree on the grid point")
             h = pd.DataFrame(p["hourly"])
+            h[list(WBGT_VARS)] = h[list(WBGT_VARS)].astype("float64")  # all-null columns arrive as object
             rows.append(h.assign(run=run, cell=cell, time=pd.to_datetime(h["time"])))
     if not rows:
         raise FileNotFoundError(f"no cached IFS HRES runs in {root / SINGLE_DIR}; run python -m followup.open_meteo --single-runs")
