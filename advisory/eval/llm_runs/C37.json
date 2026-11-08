@@ -1,0 +1,323 @@
+{
+ "case_id": "C37",
+ "model": "openai/gpt-oss-120b",
+ "settings": {
+  "temperature": 0,
+  "seed": 20261030,
+  "max_completion_tokens": 4000,
+  "reasoning_effort": "low"
+ },
+ "api_url": "https://api.groq.com/openai/v1/chat/completions",
+ "system_prompt_sha256": "3757a15c6689c68c148a49ba6fdd3a1c1c27ac88ff5d1eee3110be4837d4038a",
+ "user_message_sha256": "912742a6196dde9a01897ab809acede401767f50368f8187912a8bf5699c52d9",
+ "schema_sha256": "17f66c88d55785c56c1c821736407b5b5068ba906782acc6de596b187e711ae6",
+ "headline_colour": "ORANGE",
+ "attempts": [
+  {
+   "attempt": 1,
+   "utc": "2026-11-01T06:31:17+00:00",
+   "raw_content": "{\n  \"day_1\": \"Tuesday 11 June: max 42 °C, orange alert.\",\n  \"day_2\": \"Wednesday 12 June: max 42 °C, orange alert.\",\n  \"day_3\": \"Thursday 13 June: max 42 °C, orange alert.\",\n  \"day_4\": \"Friday 14 June: max 42 °C, orange alert.\",\n  \"day_5\": \"Saturday 15 June: max 42 °C, orange alert.\",\n  \"summary\": \"Orange alert runs from Tuesday 11 June to Saturday 15 June. Watch for high temperatures and stay hydrated.\",\n  \"highlight_action_ids\": [\n    \"COMMS_PUBLIC_ANNOUNCE_ORANGE_RED\",\n    \"IMD_ORANGE_ADVICE\",\n    \"IMD_ORANGE_ORS_FLUIDS\",\n    \"NDMA_ORANGE_AVOID_EXPOSURE_HYDRATE\",\n    \"NAP_HOSP_AMBULANCE_ICE_PACKS_COLD_WATER\",\n    \"MUNI_WATER_TANKERS_SLUMS\",\n    \"SCHOOL_RESCHEDULE_TIMINGS\",\n    \"HEALTH_WEEKLY_IMPACT_REPORT\"\n  ]\n}",
+   "reasoning": "We need produce heat_advisory JSON. Include day sentences, summary, highlight_action_ids up to 8 most important for orange. Choose actions: COMMS_PUBLIC_ANNOUNCE_ORANGE_RED, IMD_ORANGE_ADVICE, IMD_ORANGE_ORS_FLUIDS, NDMA_ORANGE_AVOID_EXPOSURE_HYDRATE, NAP_HOSP_AMBULANCE_ICE_PACKS_COLD_WATER, MUNI_WATER_TANKERS_SLUMS, SCHOOL_RESCHEDULE_TIMINGS, HEALTH_WEEKLY_IMPACT_REPORT. That's 8.\n\nNow day sentences: each one short, mention forecast max and colour? Must name colour only that day's own colour (orange). So include \"orange\". Example: \"Tuesday 11 June: max 42°C, orange alert.\" Use numbers rounded. Use given max 42.2 -> 42°C. Include date? Probably include day name. Provide one sentence each.\n\nSummary: 2-3 sentences: highest alert level orange, on which days (all five), and what to watch. Eg: \"Orange alert runs from Tuesday 11 June to Saturday 15 June. Watch for high temperatures and stay hydrated.\" That's 2 sentences.\n\nNow JSON.",
+   "usage": {
+    "queue_time": 0.212751363,
+    "prompt_tokens": 2361,
+    "prompt_time": 0.075501471,
+    "completion_tokens": 509,
+    "completion_time": 1.056561285,
+    "total_tokens": 2870,
+    "total_time": 1.132062756,
+    "prompt_tokens_details": {
+     "cached_tokens": 768
+    },
+    "completion_tokens_details": {
+     "reasoning_tokens": 251
+    }
+   },
+   "system_fingerprint": "fp_c15aa9c1b7",
+   "violations": []
+  }
+ ],
+ "outcome": "passed_first_try",
+ "advisory": {
+  "label": "IMD-style, adjusted for area-average data; not an official IMD warning",
+  "headline_colour": "ORANGE",
+  "summary": "Orange alert runs from Tuesday 11 June to Saturday 15 June. Watch for high temperatures and stay hydrated.",
+  "days": [
+   {
+    "date": "2024-06-11",
+    "colour": "ORANGE",
+    "p_hot": 0.44840262840668754,
+    "text": "Tuesday 11 June: max 42 °C, orange alert."
+   },
+   {
+    "date": "2024-06-12",
+    "colour": "ORANGE",
+    "p_hot": 0.4430331936951935,
+    "text": "Wednesday 12 June: max 42 °C, orange alert."
+   },
+   {
+    "date": "2024-06-13",
+    "colour": "ORANGE",
+    "p_hot": 0.4381650124119325,
+    "text": "Thursday 13 June: max 42 °C, orange alert."
+   },
+   {
+    "date": "2024-06-14",
+    "colour": "ORANGE",
+    "p_hot": 0.41456400151904566,
+    "text": "Friday 14 June: max 42 °C, orange alert."
+   },
+   {
+    "date": "2024-06-15",
+    "colour": "ORANGE",
+    "p_hot": 0.39948130463666465,
+    "text": "Saturday 15 June: max 42 °C, orange alert."
+   }
+  ],
+  "forecast_actions": [
+   {
+    "action_id": "COMMS_PUBLIC_ANNOUNCE_ORANGE_RED"
+   },
+   {
+    "action_id": "IMD_ORANGE_ADVICE"
+   },
+   {
+    "action_id": "IMD_ORANGE_ORS_FLUIDS"
+   },
+   {
+    "action_id": "NDMA_ORANGE_AVOID_EXPOSURE_HYDRATE"
+   },
+   {
+    "action_id": "NAP_HOSP_AMBULANCE_ICE_PACKS_COLD_WATER",
+    "label": "Precedent from Ahmedabad's Heat Action Plan (2019 update), not Delhi policy"
+   },
+   {
+    "action_id": "MUNI_WATER_TANKERS_SLUMS"
+   },
+   {
+    "action_id": "SCHOOL_RESCHEDULE_TIMINGS",
+    "label": "Precedent from Ahmedabad's Heat Action Plan (2019 update), not Delhi policy"
+   },
+   {
+    "action_id": "HEALTH_WEEKLY_IMPACT_REPORT",
+    "label": "Precedent from Ahmedabad's Heat Action Plan (2019 update), not Delhi policy"
+   }
+  ],
+  "preparedness": [
+   {
+    "action_id": "BEE_AC_DEFAULT_24C_MANDATORY"
+   },
+   {
+    "action_id": "BEE_AC_NOTIFICATION_TEXT_24C"
+   },
+   {
+    "action_id": "CEA_DISCOMS_DISSEMINATE_TO_CONSUMERS"
+   },
+   {
+    "action_id": "CEA_DISCOMS_MONITOR_EQUIPMENT_LOADING"
+   },
+   {
+    "action_id": "DELHI_LABOUR_ELECTRICAL_SAFETY_OFFICER_250KW"
+   },
+   {
+    "action_id": "DELHI_LABOUR_FIRE_SWITCH_OFF_SUPPLY"
+   },
+   {
+    "action_id": "DELHI_LABOUR_RCD_FOR_2KW_AND_ABOVE"
+   },
+   {
+    "action_id": "DELHI_LABOUR_SWITCH_OFF_ELECTRICAL_EQUIPMENT"
+   },
+   {
+    "action_id": "HAP25_ELECTRICITY_VULNERABILITY_ANALYSIS"
+   },
+   {
+    "action_id": "HAP25_POWER_DEMAND_HEAT_RISK_MAP"
+   },
+   {
+    "action_id": "NCDC_ENERGY_HEALTH_FACILITY_CONSERVATION"
+   },
+   {
+    "action_id": "NCDC_ENERGY_HEALTH_FACILITY_LOAD_AUDITS"
+   },
+   {
+    "action_id": "NCDC_ENERGY_HOSPITAL_UNINTERRUPTED_ELECTRICITY"
+   },
+   {
+    "action_id": "NDMA_ENERGY_MOP_ADVISORY_UNINTERRUPTED_SUPPLY"
+   },
+   {
+    "action_id": "NDMA_ENERGY_UNINTERRUPTED_POWER_BEFORE_DURING_SUMMER"
+   },
+   {
+    "action_id": "HEALTH_AC_WARDS"
+   },
+   {
+    "action_id": "HEALTH_AMBULANCE_DYNAMIC_DEPLOYMENT"
+   },
+   {
+    "action_id": "HEALTH_HEAT_ILLNESS_PROTOCOLS"
+   },
+   {
+    "action_id": "HEALTH_HOSPITAL_READINESS"
+   },
+   {
+    "action_id": "MOLE_ESIC_DGLW_HEATSTROKE_HELP_DESKS"
+   },
+   {
+    "action_id": "NAP_HOSP_COOLING_EQUIPMENT_AC_COOLER_FAN"
+   },
+   {
+    "action_id": "NAP_HOSP_DEDICATED_BED_COOLER_AREA"
+   },
+   {
+    "action_id": "NCDC_FACILITY_COOLING_APPLIANCES"
+   },
+   {
+    "action_id": "NCDC_FACILITY_DRINKING_WATER"
+   },
+   {
+    "action_id": "NCDC_HEATSTROKE_UNITS_EXTERNAL_COOLING"
+   },
+   {
+    "action_id": "NDMA_HOSP_RAPID_RESPONSE_TEAMS"
+   },
+   {
+    "action_id": "NDMA_HOSP_SUPPLIES_STAFF_IV_ORS"
+   },
+   {
+    "action_id": "NDMA_HOSP_SURGE_CAPACITY_HEATSTROKE_BEDS"
+   },
+   {
+    "action_id": "MAN_LOW_SES_PUBLIC_ACCESS_COOL_PLACES"
+   },
+   {
+    "action_id": "MOLE_AWARENESS_LABOUR_CHOWKS"
+   },
+   {
+    "action_id": "NCDC_EVENTS_AVOID_12_3"
+   },
+   {
+    "action_id": "NCDC_EVENTS_WATER_OUTLETS"
+   },
+   {
+    "action_id": "NCDC_PUBLIC_COOLING_AND_DRINKING_WATER_FACILITIES"
+   },
+   {
+    "action_id": "CEA_AC_NOT_CONTINUOUS_24C"
+   },
+   {
+    "action_id": "CEA_CONSUMERS_LOAD_WITHIN_SANCTIONED"
+   },
+   {
+    "action_id": "CEA_NO_MULTIPLE_APPLIANCES_ONE_SOCKET"
+   },
+   {
+    "action_id": "CEA_SERVICE_AC_REGULARLY"
+   },
+   {
+    "action_id": "CEA_SWITCH_OFF_UNNEEDED_LOADS"
+   }
+  ],
+  "if_this_happens": {
+   "public": [
+    {
+     "action_id": "NDMA_HEAT_EXHAUSTION_FIRST_AID"
+    },
+    {
+     "action_id": "NDMA_HEAT_STROKE_EMERGENCY_CALL_108_102"
+    },
+    {
+     "action_id": "NDMA_NEWCOMERS_STAY_INDOORS_ONE_WEEK"
+    },
+    {
+     "action_id": "NDMA_ORANGE_SUNSTROKE_FIRST_AID"
+    },
+    {
+     "action_id": "NIOSH_MEDICAL_MONITORING_ABOVE_RAL"
+    },
+    {
+     "action_id": "PUBLIC_HEAT_STROKE_EMERGENCY"
+    },
+    {
+     "action_id": "PUBLIC_NO_ORAL_FLUIDS_UNCONSCIOUS"
+    },
+    {
+     "action_id": "WHO_FANS_CAUTION_ABOVE_35C"
+    }
+   ],
+   "professionals": {
+    "disclaimer": "Clinical and health-system guidance quoted from official health documents, for trained health workers only. Members of the public: call 108 or 102.",
+    "actions": [
+     {
+      "action_id": "CLINICAL_40C_IV_TRANSPORT"
+     },
+     {
+      "action_id": "CLINICAL_REMOVE_FROM_HEAT"
+     },
+     {
+      "action_id": "MAN_HEATEXH_104F_IV_TRANSPORT_ED"
+     },
+     {
+      "action_id": "MAN_HEATEXH_BELOW_104F_REASSESS_5MIN"
+     },
+     {
+      "action_id": "MAN_HEATEXH_REMOVE_FROM_HEAT_STOP_ACTIVITY"
+     },
+     {
+      "action_id": "MAN_HEATSTROKE_AMBULANCE_AC_OR_WINDOWS"
+     },
+     {
+      "action_id": "MAN_HEATSTROKE_ONSITE_COOLING_SHADY_PLACE"
+     },
+     {
+      "action_id": "NAP_ED_TEMP_MONITOR_DO_NOT_OVERCORRECT"
+     },
+     {
+      "action_id": "NAP_PHC_CALL_108_COOL_BEFORE_REFER"
+     },
+     {
+      "action_id": "NAP_PHC_COLD_COMPRESS_NECK_AXILLA_GROIN"
+     },
+     {
+      "action_id": "NAP_PHC_NO_FLUID_IF_UNCONSCIOUS"
+     },
+     {
+      "action_id": "NCDC_AC_ROOM_ALONE_INADEQUATE_FOR_HEATSTROKE"
+     },
+     {
+      "action_id": "NCDC_AMBULANCE_COOL_FIRST_TRANSPORT_SECOND"
+     },
+     {
+      "action_id": "NCDC_AVOID_WARM_WATER_FOR_COOLING"
+     },
+     {
+      "action_id": "NCDC_CLASSIC_HEATSTROKE_EVAPORATIVE_COOLING"
+     },
+     {
+      "action_id": "NCDC_CLUSTER_DEATHS_DISTRICT_TASK_FORCE_MEETING"
+     },
+     {
+      "action_id": "NCDC_COOL_FIRST_TRANSPORT_SECOND"
+     },
+     {
+      "action_id": "NCDC_DO_NOT_DELAY_COOLING_FOR_CLOTHING"
+     },
+     {
+      "action_id": "NCDC_ICE_PACKS_NECK_AXILLA_GROIN_NOT_PRIMARY"
+     },
+     {
+      "action_id": "NCDC_RAPID_COOLING_WITHIN_30_MIN"
+     },
+     {
+      "action_id": "NDMA_HOSP_REPORT_HRI_TO_IDSP"
+     },
+     {
+      "action_id": "NDMA_PHC_STABILISE_BEFORE_REFERRAL"
+     }
+    ]
+   }
+  },
+  "humid_heat_note": null
+ }
+}

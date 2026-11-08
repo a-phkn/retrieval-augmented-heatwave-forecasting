@@ -1,0 +1,421 @@
+{
+ "seed": 2571280754,
+ "items": {
+  "A001": {
+   "case_id": "C41",
+   "version": "rule_based"
+  },
+  "A002": {
+   "case_id": "C49",
+   "version": "rule_based"
+  },
+  "A003": {
+   "case_id": "C09",
+   "version": "llm"
+  },
+  "A004": {
+   "case_id": "C48",
+   "version": "rule_based"
+  },
+  "A005": {
+   "case_id": "C22",
+   "version": "llm"
+  },
+  "A006": {
+   "case_id": "C11",
+   "version": "llm"
+  },
+  "A007": {
+   "case_id": "C37",
+   "version": "rule_based"
+  },
+  "A008": {
+   "case_id": "C25",
+   "version": "llm"
+  },
+  "A009": {
+   "case_id": "C38",
+   "version": "llm"
+  },
+  "A010": {
+   "case_id": "C13",
+   "version": "llm"
+  },
+  "A011": {
+   "case_id": "C38",
+   "version": "rule_based"
+  },
+  "A012": {
+   "case_id": "C33",
+   "version": "rule_based"
+  },
+  "A013": {
+   "case_id": "C41",
+   "version": "llm"
+  },
+  "A014": {
+   "case_id": "C02",
+   "version": "rule_based"
+  },
+  "A015": {
+   "case_id": "C39",
+   "version": "llm"
+  },
+  "A016": {
+   "case_id": "C03",
+   "version": "llm"
+  },
+  "A017": {
+   "case_id": "C15",
+   "version": "llm"
+  },
+  "A018": {
+   "case_id": "C45",
+   "version": "rule_based"
+  },
+  "A019": {
+   "case_id": "C15",
+   "version": "rule_based"
+  },
+  "A020": {
+   "case_id": "C31",
+   "version": "rule_based"
+  },
+  "A021": {
+   "case_id": "C07",
+   "version": "rule_based"
+  },
+  "A022": {
+   "case_id": "C23",
+   "version": "llm"
+  },
+  "A023": {
+   "case_id": "C20",
+   "version": "llm"
+  },
+  "A024": {
+   "case_id": "C28",
+   "version": "llm"
+  },
+  "A025": {
+   "case_id": "C29",
+   "version": "rule_based"
+  },
+  "A026": {
+   "case_id": "C26",
+   "version": "rule_based"
+  },
+  "A027": {
+   "case_id": "C12",
+   "version": "llm"
+  },
+  "A028": {
+   "case_id": "C32",
+   "version": "rule_based"
+  },
+  "A029": {
+   "case_id": "C19",
+   "version": "rule_based"
+  },
+  "A030": {
+   "case_id": "C12",
+   "version": "rule_based"
+  },
+  "A031": {
+   "case_id": "C46",
+   "version": "llm"
+  },
+  "A032": {
+   "case_id": "C14",
+   "version": "llm"
+  },
+  "A033": {
+   "case_id": "C14",
+   "version": "rule_based"
+  },
+  "A034": {
+   "case_id": "C26",
+   "version": "llm"
+  },
+  "A035": {
+   "case_id": "C31",
+   "version": "llm"
+  },
+  "A036": {
+   "case_id": "C49",
+   "version": "llm"
+  },
+  "A037": {
+   "case_id": "C29",
+   "version": "llm"
+  },
+  "A038": {
+   "case_id": "C24",
+   "version": "rule_based"
+  },
+  "A039": {
+   "case_id": "C01",
+   "version": "llm"
+  },
+  "A040": {
+   "case_id": "C28",
+   "version": "rule_based"
+  },
+  "A041": {
+   "case_id": "C27",
+   "version": "rule_based"
+  },
+  "A042": {
+   "case_id": "C40",
+   "version": "llm"
+  },
+  "A043": {
+   "case_id": "C39",
+   "version": "rule_based"
+  },
+  "A044": {
+   "case_id": "C08",
+   "version": "rule_based"
+  },
+  "A045": {
+   "case_id": "C03",
+   "version": "rule_based"
+  },
+  "A046": {
+   "case_id": "C10",
+   "version": "rule_based"
+  },
+  "A047": {
+   "case_id": "C04",
+   "version": "llm"
+  },
+  "A048": {
+   "case_id": "C35",
+   "version": "rule_based"
+  },
+  "A049": {
+   "case_id": "C52",
+   "version": "rule_based"
+  },
+  "A050": {
+   "case_id": "C17",
+   "version": "rule_based"
+  },
+  "A051": {
+   "case_id": "C30",
+   "version": "rule_based"
+  },
+  "A052": {
+   "case_id": "C08",
+   "version": "llm"
+  },
+  "A053": {
+   "case_id": "C18",
+   "version": "rule_based"
+  },
+  "A054": {
+   "case_id": "C35",
+   "version": "llm"
+  },
+  "A055": {
+   "case_id": "C40",
+   "version": "rule_based"
+  },
+  "A056": {
+   "case_id": "C36",
+   "version": "rule_based"
+  },
+  "A057": {
+   "case_id": "C19",
+   "version": "llm"
+  },
+  "A058": {
+   "case_id": "C21",
+   "version": "rule_based"
+  },
+  "A059": {
+   "case_id": "C06",
+   "version": "llm"
+  },
+  "A060": {
+   "case_id": "C22",
+   "version": "rule_based"
+  },
+  "A061": {
+   "case_id": "C52",
+   "version": "llm"
+  },
+  "A062": {
+   "case_id": "C16",
+   "version": "llm"
+  },
+  "A063": {
+   "case_id": "C23",
+   "version": "rule_based"
+  },
+  "A064": {
+   "case_id": "C43",
+   "version": "rule_based"
+  },
+  "A065": {
+   "case_id": "C32",
+   "version": "llm"
+  },
+  "A066": {
+   "case_id": "C06",
+   "version": "rule_based"
+  },
+  "A067": {
+   "case_id": "C30",
+   "version": "llm"
+  },
+  "A068": {
+   "case_id": "C50",
+   "version": "rule_based"
+  },
+  "A069": {
+   "case_id": "C51",
+   "version": "rule_based"
+  },
+  "A070": {
+   "case_id": "C34",
+   "version": "rule_based"
+  },
+  "A071": {
+   "case_id": "C05",
+   "version": "llm"
+  },
+  "A072": {
+   "case_id": "C45",
+   "version": "llm"
+  },
+  "A073": {
+   "case_id": "C01",
+   "version": "rule_based"
+  },
+  "A074": {
+   "case_id": "C13",
+   "version": "rule_based"
+  },
+  "A075": {
+   "case_id": "C44",
+   "version": "llm"
+  },
+  "A076": {
+   "case_id": "C47",
+   "version": "llm"
+  },
+  "A077": {
+   "case_id": "C21",
+   "version": "llm"
+  },
+  "A078": {
+   "case_id": "C16",
+   "version": "rule_based"
+  },
+  "A079": {
+   "case_id": "C02",
+   "version": "llm"
+  },
+  "A080": {
+   "case_id": "C27",
+   "version": "llm"
+  },
+  "A081": {
+   "case_id": "C17",
+   "version": "llm"
+  },
+  "A082": {
+   "case_id": "C11",
+   "version": "rule_based"
+  },
+  "A083": {
+   "case_id": "C42",
+   "version": "llm"
+  },
+  "A084": {
+   "case_id": "C46",
+   "version": "rule_based"
+  },
+  "A085": {
+   "case_id": "C18",
+   "version": "llm"
+  },
+  "A086": {
+   "case_id": "C37",
+   "version": "llm"
+  },
+  "A087": {
+   "case_id": "C43",
+   "version": "llm"
+  },
+  "A088": {
+   "case_id": "C44",
+   "version": "rule_based"
+  },
+  "A089": {
+   "case_id": "C09",
+   "version": "rule_based"
+  },
+  "A090": {
+   "case_id": "C48",
+   "version": "llm"
+  },
+  "A091": {
+   "case_id": "C24",
+   "version": "llm"
+  },
+  "A092": {
+   "case_id": "C07",
+   "version": "llm"
+  },
+  "A093": {
+   "case_id": "C10",
+   "version": "llm"
+  },
+  "A094": {
+   "case_id": "C25",
+   "version": "rule_based"
+  },
+  "A095": {
+   "case_id": "C42",
+   "version": "rule_based"
+  },
+  "A096": {
+   "case_id": "C33",
+   "version": "llm"
+  },
+  "A097": {
+   "case_id": "C20",
+   "version": "rule_based"
+  },
+  "A098": {
+   "case_id": "C51",
+   "version": "llm"
+  },
+  "A099": {
+   "case_id": "C05",
+   "version": "rule_based"
+  },
+  "A100": {
+   "case_id": "C34",
+   "version": "llm"
+  },
+  "A101": {
+   "case_id": "C50",
+   "version": "llm"
+  },
+  "A102": {
+   "case_id": "C04",
+   "version": "rule_based"
+  },
+  "A103": {
+   "case_id": "C36",
+   "version": "llm"
+  },
+  "A104": {
+   "case_id": "C47",
+   "version": "rule_based"
+  }
+ }
+}

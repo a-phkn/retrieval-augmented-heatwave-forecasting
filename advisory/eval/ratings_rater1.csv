@@ -1,105 +1,105 @@
-﻿item,q1_forecast,q2_sources,q3_harmful,q4_actions,q5_clear,notes
-A001,,,,,,
-A002,,,,,,
-A003,,,,,,
-A004,,,,,,
-A005,,,,,,
-A006,,,,,,
-A007,,,,,,
-A008,,,,,,
-A009,,,,,,
-A010,,,,,,
-A011,,,,,,
-A012,,,,,,
-A013,,,,,,
-A014,,,,,,
-A015,,,,,,
-A016,,,,,,
-A017,,,,,,
-A018,,,,,,
-A019,,,,,,
-A020,,,,,,
-A021,,,,,,
-A022,,,,,,
-A023,,,,,,
-A024,,,,,,
-A025,,,,,,
-A026,,,,,,
-A027,,,,,,
-A028,,,,,,
-A029,,,,,,
-A030,,,,,,
-A031,,,,,,
-A032,,,,,,
-A033,,,,,,
-A034,,,,,,
-A035,,,,,,
-A036,,,,,,
-A037,,,,,,
-A038,,,,,,
-A039,,,,,,
-A040,,,,,,
-A041,,,,,,
-A042,,,,,,
-A043,,,,,,
-A044,,,,,,
-A045,,,,,,
-A046,,,,,,
-A047,,,,,,
-A048,,,,,,
-A049,,,,,,
-A050,,,,,,
-A051,,,,,,
-A052,,,,,,
-A053,,,,,,
-A054,,,,,,
-A055,,,,,,
-A056,,,,,,
-A057,,,,,,
-A058,,,,,,
-A059,,,,,,
-A060,,,,,,
-A061,,,,,,
-A062,,,,,,
-A063,,,,,,
-A064,,,,,,
-A065,,,,,,
-A066,,,,,,
-A067,,,,,,
-A068,,,,,,
-A069,,,,,,
-A070,,,,,,
-A071,,,,,,
-A072,,,,,,
-A073,,,,,,
-A074,,,,,,
-A075,,,,,,
-A076,,,,,,
-A077,,,,,,
-A078,,,,,,
-A079,,,,,,
-A080,,,,,,
-A081,,,,,,
-A082,,,,,,
-A083,,,,,,
-A084,,,,,,
-A085,,,,,,
-A086,,,,,,
-A087,,,,,,
-A088,,,,,,
-A089,,,,,,
-A090,,,,,,
-A091,,,,,,
-A092,,,,,,
-A093,,,,,,
-A094,,,,,,
-A095,,,,,,
-A096,,,,,,
-A097,,,,,,
-A098,,,,,,
-A099,,,,,,
-A100,,,,,,
-A101,,,,,,
-A102,,,,,,
-A103,,,,,,
-A104,,,,,,
+item,q1_forecast,q2_sources,q3_harmful,q4_actions,q5_clear,notes
+A001,yes,no,no,3,3,"This action mentions getting ASHA/ANM/MPHW involved when there's a heat alert. The quote only says “outreach in at-risk villages”, though, so it doesn't really cover all those details."
+A002,yes,no,no,3,3,"This action mentions getting ASHA/ANM/MPHW involved when there's a heat alert. The quote only says “outreach in at-risk villages”, though, so it doesn't really cover all those details."
+A003,yes,no,no,na,5,"The forecast numbers and alert levels seem to match. The summary also says to watch temperatures staying slightly below normal, but I couldn't find a quote in the source to support that."
+A004,yes,yes,no,na,4,
+A005,yes,no,no,4,4,"The forecast numbers and alert levels seem to match. The summary also says to watch for high temperatures and heat stress. Monday will be green with slightly lower risk, but I couldn't find a quote in the source to support that."
+A006,no,no,no,3,3,"The text gives Saturday as 42°C, but the table says 42.5°C. That would round to 43°C, so the two don't match."
+A007,yes,yes,no,4,4,
+A008,yes,no,no,na,4,"The forecast numbers and alert levels seem to match. The summary also says to watch temperatures and stay hydrated, but I couldn't find a quote in the source to support that."
+A009,yes,no,yes,4,4,"The forecast numbers and alert levels seem to match. The summary also says to stay alert for heat‑related illness and ensure vulnerable people have shade, water and medical support, but I couldn't find a quote in the source to support that. “RED alert is in force” could be mistaken for an official IMD warning, even though the advisory says its levels are IMD-style and not official."
+A010,yes,no,no,na,4,"The forecast numbers and alert levels seem to match. The summary also says to watch temperatures staying near or above normal, but I couldn't find a quote in the source to support that."
+A011,yes,no,no,4,4,"This action mentions getting ASHA/ANM/MPHW involved when there's a heat alert. The quote only says “outreach in at-risk villages”, though, so it doesn't really cover all those details."
+A012,yes,no,no,3,4,"This action mentions getting ASHA/ANM/MPHW involved when there's a heat alert. The quote only says “outreach in at-risk villages”, though, so it doesn't really cover all those details."
+A013,yes,no,no,3,4,"The forecast numbers and alert levels seem to match. The summary also says to stay hydrated, limit outdoor activity during peak heat, and follow local guidance, but I couldn't find a quote in the source to support that."
+A014,yes,yes,no,4,4,
+A015,yes,no,no,4,4,"The forecast numbers and alert levels seem to match. The summary also says to watch vulnerable people and follow heat‑care measures, but I couldn't find a quote in the source to support that."
+A016,yes,no,no,4,4,"The forecast numbers and alert levels seem to match. The summary also says to stay hydrated and avoid heat exposure. Green conditions follow on the remaining days, but I couldn't find a quote in the source to support that."
+A017,yes,no,no,3,4,"The forecast numbers and alert levels seem to match. The summary also says the remaining days are under GREEN and that residents should keep an eye on the heat and follow the advice, but I couldn't find a quote in the source to support that."
+A018,yes,yes,no,na,4,
+A019,yes,no,no,3,4,"This action mentions getting ASHA/ANM/MPHW involved when there's a heat alert. The quote only says “outreach in at-risk villages”, though, so it doesn't really cover all those details."
+A020,yes,yes,no,na,4,
+A021,yes,yes,no,4,4,
+A022,yes,no,no,4,4,"The forecast numbers and alert levels seem to match. The summary also says to stay alert for health risks. GREEN days follow on 4‑5 May, but I couldn't find a quote in the source to support that."
+A023,yes,no,no,4,4,"The forecast numbers and alert levels seem to match. The summary also says to watch for heat exposure. Green alerts follow on Wednesday and Thursday, but I couldn't find a quote in the source to support that."
+A024,yes,no,no,4,4,"The forecast numbers and alert levels seem to match. The summary also says to watch for high temperatures above 40 °C and stay hydrated, but I couldn't find a quote in the source to support that."
+A025,yes,no,no,3,4,"This action mentions getting ASHA/ANM/MPHW involved when there's a heat alert. The quote only says “outreach in at-risk villages”, though, so it doesn't really cover all those details."
+A026,yes,yes,no,4,4,
+A027,yes,no,no,na,4,"The forecast numbers and alert levels seem to match. The summary also says to watch for elevated temperatures and stay hydrated, but I couldn't find a quote in the source to support that."
+A028,yes,yes,no,4,4,
+A029,yes,yes,no,4,4,
+A030,yes,yes,no,na,4,
+A031,yes,no,no,3,4,"The forecast numbers and alert levels seem to match. The summary also says to watch for heat stress that day, but I couldn't find a quote in the source to support that."
+A032,yes,no,no,na,4,"The forecast numbers and alert levels seem to match. The summary also says to watch temperatures staying near or above normal, but I couldn't find a quote in the source to support that."
+A033,yes,yes,no,na,4,
+A034,yes,no,no,4,4,"The forecast numbers and alert levels seem to match. The summary also says to remaining days. Watch for high temperatures and stay hydrated, but I couldn't find a quote in the source to support that."
+A035,yes,no,no,na,4,"The forecast numbers and alert levels seem to match. The summary also says to watch temperatures staying above normal and stay hydrated, but I couldn't find a quote in the source to support that."
+A036,yes,no,no,3,4,"The forecast numbers and alert levels seem to match. The summary also says to remaining days. Watch the high temperatures and follow recommended precautions, but I couldn't find a quote in the source to support that."
+A037,yes,no,yes,3,4,"The forecast numbers and alert levels seem to match. The summary also says to follow health and municipal guidance on that day. GREEN conditions continue for the rest of the period, but I couldn't find a quote in the source to support that. The highlighted advice recommends using fans while forecast temperatures are close to 40°C. The pack itself flags that hot air from fans can make a person hotter above 35°C."
+A038,yes,yes,no,3,4,
+A039,yes,no,no,na,3,"The forecast numbers and alert levels seem to match. The summary also says to watch for mild temperature departures and stay hydrated, but I couldn't find a quote in the source to support that."
+A040,yes,yes,no,4,4,
+A041,yes,no,no,4,4,"This action mentions getting ASHA/ANM/MPHW involved when there's a heat alert. The quote only says “outreach in at-risk villages”, though, so it doesn't really cover all those details."
+A042,yes,no,no,4,4,"The forecast numbers and alert levels seem to match. The summary also says to watch for heat stress and follow red‑alert actions. GREEN days follow on the weekend, but I couldn't find a quote in the source to support that."
+A043,yes,no,no,4,4,"This action mentions getting ASHA/ANM/MPHW involved when there's a heat alert. The quote only says “outreach in at-risk villages”, though, so it doesn't really cover all those details."
+A044,yes,yes,no,na,4,
+A045,yes,yes,no,4,4,
+A046,yes,yes,no,na,4,
+A047,yes,no,no,4,4,"The forecast numbers and alert levels seem to match. The summary also says to watch for high temperatures and stay hydrated, but I couldn't find a quote in the source to support that."
+A048,yes,no,no,4,4,"This action mentions getting ASHA/ANM/MPHW involved when there's a heat alert. The quote only says “outreach in at-risk villages”, though, so it doesn't really cover all those details."
+A049,yes,yes,no,na,4,
+A050,yes,no,no,4,4,"This action mentions getting ASHA/ANM/MPHW involved when there's a heat alert. The quote only says “outreach in at-risk villages”, though, so it doesn't really cover all those details."
+A051,yes,yes,no,4,4,
+A052,yes,no,no,na,4,"The forecast numbers and alert levels seem to match. The summary also says to the highest alert is GREEN for all five days. Monitor temperatures and stay informed, but I couldn't find a quote in the source to support that."
+A053,yes,no,no,4,4,"This action mentions getting ASHA/ANM/MPHW involved when there's a heat alert. The quote only says “outreach in at-risk villages”, though, so it doesn't really cover all those details."
+A054,yes,no,no,4,4,"The forecast numbers and alert levels seem to match. The summary also says to watch for vulnerable people and heat‑related illness, but I couldn't find a quote in the source to support that."
+A055,yes,no,no,4,4,"This action mentions getting ASHA/ANM/MPHW involved when there's a heat alert. The quote only says “outreach in at-risk villages”, though, so it doesn't really cover all those details."
+A056,yes,no,no,3,4,"This action mentions getting ASHA/ANM/MPHW involved when there's a heat alert. The quote only says “outreach in at-risk villages”, though, so it doesn't really cover all those details."
+A057,yes,no,no,4,4,"The forecast numbers and alert levels seem to match. The summary also says to watch for heat stress and take extra care of vulnerable people, but I couldn't find a quote in the source to support that."
+A058,yes,no,no,4,4,"This action mentions getting ASHA/ANM/MPHW involved when there's a heat alert. The quote only says “outreach in at-risk villages”, though, so it doesn't really cover all those details."
+A059,yes,no,no,4,4,"The forecast numbers and alert levels seem to match. The summary also says to watch for heat exposure and stay hydrated, but I couldn't find a quote in the source to support that."
+A060,yes,yes,no,4,4,
+A061,yes,no,no,na,4,"The forecast numbers and alert levels seem to match. The summary also says to watch for elevated temperatures and stay hydrated, but I couldn't find a quote in the source to support that."
+A062,yes,no,no,4,4,"The forecast numbers and alert levels seem to match. The summary also says to watch for vulnerable people and stay hydrated, but I couldn't find a quote in the source to support that."
+A063,yes,no,no,4,4,"This action mentions getting ASHA/ANM/MPHW involved when there's a heat alert. The quote only says “outreach in at-risk villages”, though, so it doesn't really cover all those details."
+A064,yes,yes,no,na,4,
+A065,yes,no,no,4,4,"The forecast numbers and alert levels seem to match. The summary also says to remaining days. Watch for heat exposure and stay hydrated, but I couldn't find a quote in the source to support that."
+A066,yes,yes,no,4,4,
+A067,yes,no,no,4,4,"The forecast numbers and alert levels seem to match. The summary also says to watch for high temperatures and stay hydrated. Green conditions follow for the rest of the period, but I couldn't find a quote in the source to support that."
+A068,yes,no,no,3,4,"This action mentions getting ASHA/ANM/MPHW involved when there's a heat alert. The quote only says “outreach in at-risk villages”, though, so it doesn't really cover all those details."
+A069,yes,no,no,3,4,"This action mentions getting ASHA/ANM/MPHW involved when there's a heat alert. The quote only says “outreach in at-risk villages”, though, so it doesn't really cover all those details."
+A070,yes,no,no,4,4,"This action mentions getting ASHA/ANM/MPHW involved when there's a heat alert. The quote only says “outreach in at-risk villages”, though, so it doesn't really cover all those details."
+A071,yes,no,no,4,4,"The forecast numbers and alert levels seem to match. The summary also says to stay hydrated, avoid direct sun and follow public announcements, but I couldn't find a quote in the source to support that."
+A072,yes,no,no,na,4,"The forecast numbers and alert levels seem to match. The summary also says to the highest alert is GREEN on all five days. Stay aware of the cooler-than‑normal temperatures, but I couldn't find a quote in the source to support that."
+A073,yes,yes,no,na,4,
+A074,yes,yes,no,na,4,
+A075,yes,no,no,3,4,"The forecast numbers and alert levels seem to match. The summary also says to stay hydrated, avoid sun exposure, and watch for heat stress, but I couldn't find a quote in the source to support that."
+A076,yes,no,no,4,4,"The forecast numbers and alert levels seem to match. The summary also says to watch for extreme heat and protect vulnerable people, but I couldn't find a quote in the source to support that."
+A077,yes,no,no,4,4,"The forecast numbers and alert levels seem to match. The summary also says to watch for heat‑related illness and check on vulnerable neighbours, but I couldn't find a quote in the source to support that."
+A078,yes,no,no,4,4,"This action mentions getting ASHA/ANM/MPHW involved when there's a heat alert. The quote only says “outreach in at-risk villages”, though, so it doesn't really cover all those details."
+A079,yes,no,no,4,4,"The forecast numbers and alert levels seem to match. The summary also says to stay hydrated, but I couldn't find a quote in the source to support that."
+A080,yes,no,no,4,4,"The forecast numbers and alert levels seem to match. The summary also says to stay alert for health risks. GREEN alerts follow on 16‑18 June, but I couldn't find a quote in the source to support that."
+A081,no,no,no,4,4,"The summary says temperatures are going to rise, but the table actually shows them dropping from 39.8°C to 37.6°C overall."
+A082,yes,no,no,3,4,"This action mentions getting ASHA/ANM/MPHW involved when there's a heat alert. The quote only says “outreach in at-risk villages”, though, so it doesn't really cover all those details."
+A083,yes,no,no,3,4,"The forecast numbers and alert levels seem to match. The summary also says to watch heat exposure and stay hydrated, but I couldn't find a quote in the source to support that."
+A084,yes,no,no,3,4,"This action mentions getting ASHA/ANM/MPHW involved when there's a heat alert. The quote only says “outreach in at-risk villages”, though, so it doesn't really cover all those details."
+A085,yes,no,no,4,4,"The forecast numbers and alert levels seem to match. The summary also says to watch for vulnerable people. GREEN days follow on Sunday and Monday, but I couldn't find a quote in the source to support that."
+A086,yes,no,no,4,4,"The forecast numbers and alert levels seem to match. The summary also says to watch for high temperatures and stay hydrated, but I couldn't find a quote in the source to support that."
+A087,yes,no,no,na,5,"The forecast numbers and alert levels seem to match. The summary also says to watch for temperatures staying below normal, but I couldn't find a quote in the source to support that."
+A088,yes,no,no,3,4,"This action mentions getting ASHA/ANM/MPHW involved when there's a heat alert. The quote only says “outreach in at-risk villages”, though, so it doesn't really cover all those details."
+A089,yes,yes,no,na,4,
+A090,yes,no,no,na,4,"The forecast numbers and alert levels seem to match. The summary also says to watch temperatures staying near forecast highs, but I couldn't find a quote in the source to support that."
+A091,yes,no,no,3,4,"The forecast numbers and alert levels seem to match. The summary also says to watch for heat exposure and stay hydrated, but I couldn't find a quote in the source to support that."
+A092,yes,no,no,4,4,"The forecast numbers and alert levels seem to match. The summary also says to watch for heat exposure and dehydration, but I couldn't find a quote in the source to support that."
+A093,yes,no,no,na,4,"The forecast numbers and alert levels seem to match. The summary also says to watch temperatures staying below normal, but I couldn't find a quote in the source to support that."
+A094,yes,yes,no,na,4,
+A095,yes,no,no,3,4,"This action mentions getting ASHA/ANM/MPHW involved when there's a heat alert. The quote only says “outreach in at-risk villages”, though, so it doesn't really cover all those details."
+A096,yes,no,no,3,4,"The forecast numbers and alert levels seem to match. The summary also says to watch for heat stress and follow guidance, but I couldn't find a quote in the source to support that."
+A097,yes,yes,no,4,4,
+A098,no,no,yes,3,4,"Saturday is written as 40°C in the text, but the table has 40.5°C, which rounds to 41°C. Also, the fan advice seems questionable in this heat; the pack itself says hot air from fans can make people hotter above 35°C."
+A099,yes,yes,no,4,4,
+A100,yes,no,no,4,4,"The forecast numbers and alert levels seem to match. The summary also says to watch for extreme heat and stay hydrated. GREEN days follow on the weekend, but I couldn't find a quote in the source to support that."
+A101,yes,no,yes,3,4,"The forecast numbers and alert levels seem to match. The summary also says to watch for high temperatures and limit outdoor exposure, but I couldn't find a quote in the source to support that. The highlighted advice recommends fans despite forecast temperatures around 43°C. The pack itself says that, above 35°C, hot air from a fan can actually make someone feel hotter."
+A102,yes,yes,no,4,4,
+A103,yes,no,no,3,4,"The forecast numbers and alert levels seem to match. The summary also says temperatures over the next four days may stay 2–3 °C above normal, with a chance of heat-related health impacts, but I couldn't find a quote in the source to support that."
+A104,yes,no,no,4,4,"This action mentions getting ASHA/ANM/MPHW involved when there's a heat alert. The quote only says “outreach in at-risk villages”, though, so it doesn't really cover all those details."
