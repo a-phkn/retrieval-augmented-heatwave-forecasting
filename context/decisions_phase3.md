@@ -124,6 +124,26 @@ Rules for this file:
     - It is not included: adding it would change this pre-registration after these results were seen. Decision
       pending (user).
   - Not run yet: the IFS timing check (single runs; download pending).
+- **DEVIATION 2026-11-10 (user approved). Written after the 2026-11-08 results were seen, and before any value of
+  the new model was downloaded for scoring:**
+  - The operational AIFS Single (Open-Meteo model id `ecmwf_aifs025_single`) is added as a fourth model, named
+    "AIFS Single". It is reported as its own model and is never joined to the experimental AIFS series.
+  - Why this is a deviation: the choice to add it was made after seeing that the experimental AIFS series stops
+    after one heat season, and after seeing how IFS, AIFS and GFS scored. Every table marks it as "added after the
+    first results".
+  - Seen of the new model so far, probes only (2026-11-08 and 2026-11-10, cell 1; no value compared with truth):
+    - all six WBGT inputs are archived;
+    - lead 1 starts on 2025-02-18 and lead 5 on 2025-02-22; the last month (to 2026-09-06) has no gaps;
+    - the grid point and elevation are ERA5's (28.25° N, 77.0° E, 274 m).
+  - Period: from its first complete archived day per lead (2025-02-19 for lead 1, 2025-02-23 for lead 5) to windows
+    ending 2026-09-06. That is two heat seasons (2025 and 2026).
+  - Targets: Tmax and WBGT, with the definitions, strata, scores, warnings and test of the other models. Its native
+    output is 6-hourly, so its hourly values are Open-Meteo's interpolation, as for the experimental AIFS.
+  - Expected (written now):
+    - Tmax: too cold on all days, as the experimental AIFS was (the 6-hourly output misses the afternoon peak), and
+      so worse than C3-hop on all days;
+    - WBGT: open. The same 6-hourly limit applies to every input.
+  - It counts as one of "the P3-1 models" wherever P3-2 and P3-3 use that phrase.
 
 **P3-2: A corrector on top of a global forecast. PRE-REGISTERED 2026-11-05 (user approved).**
 - Question: does a cheap Delhi corrector make global forecasts better, and does C3-hop add information on top?
