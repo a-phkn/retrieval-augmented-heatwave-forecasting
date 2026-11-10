@@ -211,6 +211,45 @@ Rules for this file:
     forecast - station)?
 - WBGT: GHCN-Daily has no humidity, so WBGT is not part of this check.
 - Code: `followup/station_check.py`.
+- **DEVIATION 2026-11-10 (a clarification, written before any ERA5 or forecast value was compared with the
+  station):**
+  - Seen of the station so far: its coverage per year (about 350 usable days a year to 2015, 145-290 from 2016), and
+    the Phase 6 summaries of known heatwave windows (`sources/data/phase6_label_windows_ghcn.json`). Nothing else.
+  - Station days: a day counts if it has a TMAX value and no quality flag (4 values dropped). No gap is filled. A day
+    without a station value is left out of every station comparison.
+  - Station normal: `doy_climatology` on the usable station days of 1980-2018.
+  - Station heatwave day: any single day that meets the rule. No run-length condition, because the gaps make runs
+    unreliable. Thresholds: label rule min(45, max(40, normal + 3)); IMD rule min(45, max(40, normal + 4.5)).
+  - Rows: forecasts whose target day has a station value. Every row is scored against both truths (ERA5 and the
+    station), so the two rankings are on the same rows. Test forecasts: 2019-01-01 to 2025-08-23.
+  - Strata: all days; the heat season; station heatwave days (label rule, and IMD rule); and the test's "extreme"
+    stratum (ERA5 label) for reference.
+  - (i) also gets the mirror view: station minus ERA5 on ERA5 heatwave days. Stated now: picking days by one
+    record's heat makes the other record look colder on those days (selection, as in the forecaster's dilemma), so
+    the two views are read together.
+  - Warnings, in-season rows, events = station heatwave days (each rule):
+    - raw forecasts: R-point with the ERA5 label threshold, as issued; R-prob with the test report's probabilities
+      and the pre-chosen p* (C3-hop 0.37, the LSTM 0.24). ridge_hw5 and the global models have no probability, so
+      R-point only.
+    - station-mapped forecasts: R-point with the station's own threshold for that rule. No R-prob.
+  - (iv) The mapping is fitted on the usable station days of 1980-2018 and applied by the target day's month. It is
+    also applied to ERA5 itself. That gives the error a perfect forecast of ERA5 would still have against the
+    station, raw and mapped.
+  - Tests (paired cluster jackknife, RMSE against the station, same rows; raw and station-mapped): C3-hop vs the
+    control and vs ridge_hw5; each global model vs C3-hop. Strata: all days, heat season, station heatwave days
+    (label rule).
+  - Reading rule for the ranking: both orderings are shown side by side. A change of order between two models is
+    called clear only if their paired CIs exclude 0 with opposite signs under the two truths.
+  - ERA5's share of the cold bias: on station heatwave days, per lead, forecast - station = (forecast - ERA5) +
+    (ERA5 - station). The three means are reported, and the share is (ERA5 - station) / (forecast - station).
+  - (iii) in two steps:
+    - now: GraphCast 2018 (the committed extract with the yardstick's max-only correction, fold f4's 2018 windows,
+      our development forecasts on the same windows) and the P3-1 models from the committed daily extract (AIFS
+      Single included; the IFS timing check once its download is complete);
+    - after P3-2 has run: GraphCast 2020 and the P3-2 variants.
+  - Expected (written now): ERA5's 9-cell mean is colder than the station on station heatwave days (an area mean
+    damps a station's peaks), and this explains part, not all, of the forecasts' cold bias. The ranking of our
+    models does not change.
 
 **P3-4: Conformal forecast ranges. PRE-REGISTERED 2026-11-05 (user approved).**
 - Base: the test report's ranges: the recalibrated ensemble mean +/- a Gaussian width from the stop-block residual SD
