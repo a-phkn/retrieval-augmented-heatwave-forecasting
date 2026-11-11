@@ -33,6 +33,8 @@ OUT_DIR = REPO_ROOT / "retrieval_study" / "results"
 N_PCS = 10
 BASE_RUNS = {"Tmax": "A1prime_hw5_C3hop", "WBGT": "A2Lr_hw5_C3hop"}
 SUFFIX = "_Z500d"
+CONTROL_SUFFIX = "_Z500shuf"  # the pre-registered control: the same dates' scores from another training year
+CONTROL_SEED = 20261111
 
 
 def daily_pcs(fold: str, d: pd.DataFrame, n_pcs: int = N_PCS) -> pd.DataFrame:
@@ -50,6 +52,27 @@ def daily_pcs(fold: str, d: pd.DataFrame, n_pcs: int = N_PCS) -> pd.DataFrame:
     return pd.DataFrame(scores / scores[train].std(axis=0), index=za.index)
 
 
+def shuffled_pcs(pcs: pd.DataFrame, fold: str, seed: int = CONTROL_SEED) -> pd.DataFrame:
+    """The control's scores: every year's dates take the scores of the same calendar dates in another of the fold's
+    training years (one random donor year per year, never the year itself; 29 February takes 28 February). The
+    season and each 14-day sequence's coherence are kept; what the right day's upper air says is not."""
+    from training.folds import fold_bounds
+
+    train_end = fold_bounds(fold)[0]
+    years = sorted(set(pcs.index.year))
+    train_years = [y for y in years if y <= train_end.year]
+    rng = np.random.default_rng([seed, int(fold[1])])
+    donor = {y: int(rng.choice([t for t in train_years if t != y])) for y in years}
+    src = [pd.Timestamp(year=donor[d.year], month=d.month,
+                        day=28 if (d.month == 2 and d.day == 29 and not pd.Timestamp(year=donor[d.year], month=3,
+                                                                                          day=1).is_leap_year)
+                        else d.day) for d in pcs.index]
+    out = pcs.reindex(pd.DatetimeIndex(src))
+    if out.isna().any().any():
+        raise ValueError("a donor date has no 500 hPa scores")
+    return pd.DataFrame(out.to_numpy(), index=pcs.index, columns=pcs.columns)
+
+
 def with_z500(split: SplitArrays, pcs: pd.DataFrame) -> SplitArrays:
     """The split with the 500 hPa scores of each window's 14 input days appended as extra Delhi channels."""
     pos = pcs.index.get_indexer(pd.DatetimeIndex(split.query_dates))
@@ -59,7 +82,8 @@ def with_z500(split: SplitArrays, pcs: pd.DataFrame) -> SplitArrays:
     return replace(split, X=np.concatenate([split.X, z], axis=2))
 
 
-def run_family(short: str, folds: list[str], seeds: list[int] | None = None) -> None:
+def run_family(short: str, folds: list[str], seeds: list[int] | None = None, control: bool = False) -> None:
+    """Train and save C3-hop + the 500 hPa input for one family (control=True: the shuffled-year control)."""
     import torch
 
     from evaluation.predict_v1 import long_frame
@@ -68,7 +92,7 @@ def run_family(short: str, folds: list[str], seeds: list[int] | None = None) -> 
     from training.graph_data import build_upstream, load_upstream
 
     cfg = tu.load_config(REPO_ROOT / "configs" / f"{BASE_RUNS[short]}.json")
-    rid = cfg["run_id"] + SUFFIX
+    rid = cfg["run_id"] + (CONTROL_SUFFIX if control else SUFFIX)
     seeds = cfg["seeds"] if seeds is None else seeds
     torch.set_num_threads(int(cfg.get("threads", 8)))
     up_table = load_upstream()  # pre-2019 rows only
@@ -82,6 +106,8 @@ def run_family(short: str, folds: list[str], seeds: list[int] | None = None) -> 
         fit, stop = tu.fit_and_stop_sets(data, cfg["early_stop"])
         d, _ = fold_daily(fold, cfg["target"], cfg["labels"])
         pcs = daily_pcs(fold, d)
+        if control:
+            pcs = shuffled_pcs(pcs, fold)
         fit, stop, val = (with_z500(s, pcs) for s in (fit, stop, data.val))
         upd = build_upstream(fold, up_table)
         pos_fit, pos_stop, pos_val = (upd.positions(a.query_dates) for a in (fit, stop, val))
@@ -128,6 +154,9 @@ def report() -> dict:
         refs = {"C3-hop": REPO_ROOT / "predictions_v2" / base}
         if short == "WBGT":
             refs["C3-hop + Rz (retrieval)"] = REPO_ROOT / "predictions_v2" / (base + "_Rz")
+        control = PRED_DIR / (base + CONTROL_SUFFIX)
+        if all((control / f"{f}.parquet").exists() for f in FOLDS):
+            refs["the shuffled-year control"] = control
         r = {"rmse": {s: rmse_by(child if s == "all" else child[child["stratum"] == s]) for s in ("all", "extreme")},
              "by_lead": [rmse_by(child[child["lead"] == L]) for L in range(1, 6)], "tests": {}}
         for name, path in refs.items():
@@ -175,10 +204,11 @@ def main(argv: list[str] | None = None) -> None:
     ap.add_argument("--family", choices=sorted(BASE_RUNS))
     ap.add_argument("--folds", nargs="*", default=list(FOLDS))
     ap.add_argument("--seeds", nargs="*", type=int, default=None)
+    ap.add_argument("--control", action="store_true", help="the shuffled-year control run")
     ap.add_argument("--report", action="store_true")
     args = ap.parse_args(argv)
     if args.family:
-        run_family(args.family, args.folds, args.seeds)
+        run_family(args.family, args.folds, args.seeds, control=args.control)
     if args.report:
         res = report()
         OUT_DIR.mkdir(parents=True, exist_ok=True)

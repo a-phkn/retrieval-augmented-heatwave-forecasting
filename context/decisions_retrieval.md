@@ -336,6 +336,14 @@ before any run (user approved).**
   - It helps on all days in both families, but by less than in the linear screen (-0.01 to -0.04 °C), because C3-hop
     already sees 27 upstream points.
   - Heatwave days: no detectable gain for WBGT; open for Tmax.
+- **DEVIATION 2026-11-11 (a clarification of the control, written before the control ran and before the main runs
+  finished):**
+  - Each year's dates take the scores of the same calendar dates in another of the fold's training years. There is
+    one random donor year per year, never the year itself, with a fixed seed; 29 February takes 28 February.
+  - Why this form of "a random other day": each 14-day sequence stays a coherent upper-air sequence, and the season
+    is kept. Only the link to the right day is broken.
+  - Code: `retrieval_study/z500_direct.py --control` (`*_Z500shuf`).
+  - It runs for a family only if that family's main comparison helps (CI below 0 on all days).
 
 **RS-5: retrieval keyed on a global model's forecast, an analogue ensemble (Tmax only). PRE-REGISTERED 2026-11-11, after
 RS-2 and before any forecast value was downloaded (user approved).**

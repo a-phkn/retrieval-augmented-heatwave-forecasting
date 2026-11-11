@@ -26,3 +26,18 @@ def test_each_window_gets_the_scores_of_its_own_14_input_days():
     np.testing.assert_array_equal(out.X[:, :, :3], 0)  # the original channels are untouched
     with pytest.raises(ValueError):
         zd.with_z500(split(days[[5]]), pcs)  # not enough input days
+
+
+def test_the_control_takes_the_same_dates_from_another_training_year():
+    days = pd.date_range("2004-01-01", "2009-12-31", freq="D")  # fold f1: training years end 2006
+    pcs = pd.DataFrame({c: days.year * 1000 + days.dayofyear for c in range(zd.N_PCS)}, index=days, dtype=float)
+    out = zd.shuffled_pcs(pcs, "f1")
+    donor_year = (out[0] // 1000).astype(int)
+    assert (donor_year != days.year).all() and donor_year.isin([2004, 2005, 2006]).all()  # never itself; training years
+    assert (donor_year.groupby(days.year).nunique() == 1).all()  # one donor year per year: sequences stay coherent
+    same = days[(days.month != 2) | (days.day != 29)]
+    np.testing.assert_array_equal(out.loc[same, 0] % 1000, pd.DatetimeIndex(
+        [pd.Timestamp(year=int(y), month=d.month, day=d.day) for y, d in zip(donor_year.loc[same], same)]).dayofyear)
+    leap_day = pd.Timestamp("2008-02-29")
+    assert out.loc[leap_day, 0] % 1000 in (59, 60)  # 28 Feb of a common year, or 29 Feb of a leap one
+    np.testing.assert_array_equal(zd.shuffled_pcs(pcs, "f1").to_numpy(), out.to_numpy())  # fixed seed
