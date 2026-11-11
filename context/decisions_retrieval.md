@@ -116,6 +116,36 @@ Rules for this file:
   descriptive. If P2 fails, the explanation offered to the mentor has to change, and that is reported as it comes out.
 - Outputs: `retrieval_study/results/step1.{md,json}`.
 
+**RS-1e: RAFT in its own kind of setting, on our data (a positive control). PRE-REGISTERED 2026-11-11, written while
+RS-1 was running and before any of its results were seen.**
+- Why: if RAFT gives nothing on our daily task, a sceptic could blame our implementation. RAFT's gains come from
+  high-frequency data with daily cycles. A July 2026 study (Cakiroglu et al., arXiv 2609.20193, abstract) finds
+  retrieval's benefit depends on the input window relative to the dominant cycle. So the same code is run where those
+  conditions hold: hourly temperature with a short window.
+- Data: Delhi's hourly 2 m temperature, the 9-cell mean, IST hours (`pipeline.hourly_features.load_cell_hourly`).
+  Rows from 2019 on are dropped right after reading and never used. Training 1980-2015, validation 2016-2018 (fold
+  f4's years); the settings are chosen on 2014-2015 after fitting on the earlier years.
+- Queries: issue times every 6 hours (00, 06, 12 and 18 IST). Training queries are 15,000 issue times drawn at random
+  (fixed seed) from 1980-2013 plus every issue time in 2014-2015. Validation queries are every issue time in
+  2016-2018.
+- Candidates: windows starting every 3 hours that end within 1980-2015. A candidate whose window overlaps the
+  query's is excluded.
+- Window S = 12 or 96 hours; horizon 48 hours (the next 48 hourly values).
+- Bases: **H0**, the S hours minus the last one (RAFT's input normalisation); **H1**, H0 plus sine and cosine of the
+  issue hour and of the day of year (the phase given directly).
+- Arms: none; RAFT as in RS-1 (Pearson; top m from {1, 5, 10, 20}; softmax(rho / 0.1); periods of 1, 2 and 4 hours,
+  keys pooled from the end and values from the start: 48 + 24 + 12 values); RAFT-rand (3 seeds; the same m).
+- Model and selection as in RS-1a. Score: RMSE over the 48 hourly values.
+- Clusters: year x season of the issue date. There are 9 on validation, so the CIs are fragile and the result is
+  descriptive.
+- **Predictions (written now):**
+  - **P8.** At S = 12 hours, RAFT helps H0 (CI below 0) and beats RAFT-rand.
+  - **P9.** RAFT's gain on H0 is at least twice as large at S = 12 as at S = 96. On H1 it is smaller than on H0 at
+    the same S.
+- Reading: if P8 holds, our RAFT code works where the published conditions hold, and the daily null result is about
+  the setting, not the code. If P8 fails, that is reported, and the RS-1 explanation has to lean on RS-1a-d alone.
+- Code: `retrieval_study/hourly.py`; outputs `retrieval_study/results/step1e.{md,json}`.
+
 **RS-2 (written after RS-1's results, as its own entry before anything in it runs).** Candidates named now, in no
 order. A candidate runs only if RS-1 gives a reason to expect it to help.
 - RAFT-style retrieval inside C3-hop.
