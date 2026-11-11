@@ -188,6 +188,27 @@ RS-1 was running and before any of its results were seen.**
 - Reading: if P8 holds, our RAFT code works where the published conditions hold, and the daily null result is about
   the setting, not the code. If P8 fails, that is reported, and the RS-1 explanation has to lean on RS-1a-d alone.
 - Code: `retrieval_study/hourly.py`; outputs `retrieval_study/results/step1e.{md,json}`.
+- **RESULT 2026-11-11** (`retrieval_study/results/step1e.md`). 9 clusters, so the CIs are fragile; descriptive.
+  RMSE over the next 48 hours.
+  - **P8 holds: our RAFT code works where the published conditions hold.**
+    - With a 12-hour window, RAFT cuts the error of the window-only model (H0) from 1.978 to 1.833 °C (-0.145, CI
+      -0.194 to -0.097; 7%). It beats its random control by 0.106 °C (CI -0.137 to -0.075).
+    - Random retrieval also helps a little (-0.039 °C): any past windows add the average shape of the daily cycle,
+      which a straight-line model fed 12 hours cannot produce.
+  - **P9 holds.**
+    - With a 96-hour window, RAFT's gain on H0 is 0.029 °C (CI -0.046 to -0.012), five times smaller. Random retrieval
+      adds nothing there.
+    - Given the phase directly (H1), RAFT's gain shrinks: from 0.145 to 0.079 °C at 12 hours, and from 0.029 to
+      0.019 °C at 96 hours. The sine and cosine of the hour are not the whole daily shape, so part of the gain
+      remains.
+  - **Reading.**
+    - On the same data source, RAFT gives the kind of gain its paper reports when the input window does not contain
+      the cycle that repeats. The gain shrinks as the window covers the cycle, and again when the model is told the
+      phase.
+    - On our daily task, the cycle that matters (the season) is given to the model directly, so there is nothing
+      left for RAFT to supply (RS-1a: |Δ| ≤ 0.003 °C).
+    - This agrees with Cakiroglu et al. 2026 (arXiv 2609.20193; we read its abstract only): retrieval's benefit
+      follows the input window relative to the dominant cycle.
 
 **RS-2 (written after RS-1's results, as its own entry before anything in it runs).** Candidates named now, in no
 order. A candidate runs only if RS-1 gives a reason to expect it to help.

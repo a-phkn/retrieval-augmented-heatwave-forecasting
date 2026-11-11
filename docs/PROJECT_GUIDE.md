@@ -6,7 +6,7 @@
 > log at the end. Short forms are explained in [`GLOSSARY.md`](GLOSSARY.md); the original
 > plan is in [`PLAN_REVIEW_v5.md`](PLAN_REVIEW_v5.md) (historical).
 >
-> **Last updated:** 2026-10-25 (review fixes; forecasting research complete, Phase 6 in progress)
+> **Last updated:** 2026-11-11 (retrieval study on the branch `retrieval-improvements`, §9.2)
 
 ## Final state at a glance (2026-10-25)
 
@@ -22,7 +22,9 @@
   (WBGT) and 54% (Tmax) of the time there, and a yes/no WBGT warning catches about 9% of heatwave days. A warning
   on the probability, at a level set on 2007–2018, catches about 47% (vs 6% when counting isolated hot days too), at
   the cost of about 4 false alarms in 5.
-- **Retrieval** was never adopted: no variant beat its random control on heatwave days.
+- **Retrieval** was never adopted: no variant beat its random control on heatwave days. **Why** (retrieval study,
+  2026-11-11, §9.2): retrieval only helps when it brings information the model's inputs lack, and our models already
+  have everything Delhi's own past could add. On heatwave days the analogues regress to the mean.
 - **Known issues** in the frozen code and protocol: [`KNOWN_DEVIATIONS.md`](KNOWN_DEVIATIONS.md).
 - §8 and §9 below record the work **as it happened**, week by week; text there written in the future tense is
   historical. The current results are §9.0 and the README.
@@ -1115,6 +1117,73 @@ against the saved documents; details in `sources/PHASE6_PART_D_RESULT.md`):
   stated limitation. (A 2022 paper by IMD authors notes Delhi's heat stress is lower than
   Chennai's because Delhi is less humid.)
 
+### 9.2 Why retrieval didn't help, and what could (retrieval study, 2026-11-11; branch `retrieval-improvements`)
+
+**Why this study:**
+- Our mentor asked (meeting 2026-11-09) why our retrieval failed when the papers we based it on report gains, and
+  whether another kind of retrieval could work.
+- Every step's rules and predictions were written down and pushed before it ran (`context/decisions_retrieval.md`).
+- Development years 2007–2018 only. Code: `retrieval_study/`; reports: `retrieval_study/results/`.
+
+**The two reference papers, and what they actually tested:**
+- **RAFT** (Han et al. 2025, arXiv 2505.04163):
+  - It finds past stretches of the same series whose *shape* matches the input, and gives a straight-line model the
+    *changes* that followed them.
+  - Its gains are on hourly and 15-minute data (electricity, traffic), predicted 96–720 steps ahead.
+  - On its one daily dataset (exchange rates), and on its weather data, it was not the best model.
+- **Deznabi, Kumar & Fiterau 2025** (arXiv 2510.16695):
+  - It retrieves *other weather stations at the same moment*, for a place with no history of its own.
+  - That is what our graph model does with its 27 upstream points, and it is where our confirmed gain (H1) comes
+    from. We replicated this paper rather than contradicting it.
+
+**The experiment, an "information ladder":**
+- The same retrieval is added to a straight-line model that knows more and more:
+  - B0: only the target's last 14 days;
+  - B1: + the season;
+  - B2: + all Delhi inputs;
+  - B3: + the region.
+- Two retrievals are tested: RAFT exactly as published, and our own (R0). Each is compared with no retrieval and with
+  random past days.
+
+**What we found (step 1):**
+- **Retrieval helps only when it brings information the model lacks.**
+  - Our own retrieval cuts the B0 model's error by about 0.15 °C (6%), and beats random past days.
+  - Give the model the season directly and the gain vanishes.
+  - With all Delhi inputs, or the region as well, retrieval changes nothing (≤ 0.001 °C).
+  - The same holds in both families.
+- **RAFT adds nothing at any level, not even to the B0 model.** Its key ignores the temperature level, and the
+  *shape* of the last 14 days says nothing useful about the next 5 days' changes.
+- **A similar past barely means a similar future here.** How alike two past fortnights are predicts how alike their
+  next 5 days were with a correlation of only 0.02–0.08. RAFT reports 0.60 on its data.
+- **The right examples exist but can't be found.**
+  - For each day, the pool does hold 5 past windows whose next 5 days really matched. Using them would give errors of
+    0.3–0.4 °C.
+  - But nothing in the last 14 days points to them: our keys rank them at chance (the 51st–60th percentile).
+- **The "cold days" explained.** On heatwave days the analogues' futures are 1.6–3.6 °C (Tmax) and 4.4–4.9 °C (WBGT)
+  too cold.
+  - It is not that the past has no days that hot: it always does.
+  - It is only slightly that the analogues start cooler.
+  - Mostly, windows that look like today were usually followed by ordinary days. The last 14 days at Delhi don't
+    tell a coming heatwave apart. This is regression to the mean.
+- **RAFT's add-on to our trained networks carries no information.** Its only effect was a constant correction,
+  which random retrieval gave equally, and that correction made heatwave days worse.
+- Report: `retrieval_study/results/step1.md`.
+
+**The positive control (step 1e): is our RAFT code simply broken?**
+- The test: the same RAFT code, run where its paper's gains come from. That is Delhi's *hourly* temperature with a
+  short input window, forecasting the next 48 hours.
+- **It works there.**
+  - With a 12-hour window, RAFT cuts the error by 7% (0.145 °C) and beats random past windows clearly.
+  - With a 96-hour window, which already contains the daily cycle, the gain is five times smaller.
+  - Telling the model the time of day directly roughly halves the gain again.
+- So retrieval pays off when the input can't see the cycle that repeats, and retrieval supplies it. In our daily task
+  the cycle that matters (the season) is given to the model directly, so retrieval has nothing left to add.
+- A July 2026 study (Cakiroglu et al., arXiv 2609.20193) reports the same pattern across benchmarks: retrieval's
+  benefit follows the input window relative to the dominant cycle.
+- Report: `retrieval_study/results/step1e.md`.
+
+**Step 2, trying to make retrieval help our best model:** _running_.
+
 ---
 
 ## 10. Ground rules (why the results can be trusted)
@@ -1174,9 +1243,11 @@ is installed globally.
 
 ## 12. Open items
 
-Updated 2026-11-08. The forecasting research is complete: the protocol was frozen and the test run, §9.0. The
+Updated 2026-11-11. The forecasting research is complete: the protocol was frozen and the test run, §9.0. The
 critical reviews of 2026-10-22 were addressed: claims corrected, frozen-code issues disclosed in
 `KNOWN_DEVIATIONS.md`, and the test lock and test outputs now checked automatically.
+- **The retrieval study** (§9.2), on the branch `retrieval-improvements`: why retrieval did not help, and what could.
+  This is the mentor's priority (2026-11-09). Step 1 is done; its positive control and step 2's screens are running.
 - **Phase 6, the heat advisory:** library, rule engine, verifier, the LLM step and its blind rating are done. The
   LLM version failed the rating, so the advisory uses the rule-based text (§9, Part 4). Left:
   - the demo page (the two teammate raters, on their own branch);
@@ -1235,3 +1306,4 @@ critical reviews of 2026-10-22 were addressed: claims corrected, frozen-code iss
 | 2026-10-27 | Post-test 3: tuned yes/no warning rules (WBGT hits 6% → 47%, ~80% false alarms; all models about equal). Rule engine now classifies forecast days by probability (≥ 37%); alerts raised in 68% of cases vs 61%. |
 | 2026-11-01 | Phase 6 part 4: LLM advisories generated (Groq, `gpt-oss-120b`; 56 of 56 passed the verifier first time); blind rating pack built. |
 | 2026-11-08 | Blind rating results: the LLM version fails its pre-registered rule (source support 0% vs 54%, harmful 8% vs 0%, no clarity gain); the advisory keeps the rule-based text. Phase 3 extras started on the branch `phase3-extras`. |
+| 2026-11-11 | Retrieval study (§9.2, branch `retrieval-improvements`), after the mentor's feedback: the information ladder shows retrieval helps only when it brings information the model lacks; RAFT as published adds nothing on our data; a similar past barely means a similar future (0.02–0.08 vs RAFT's 0.60); heatwave-day "cold analogues" are regression to the mean. The second reference paper's idea is what C3-hop already does (H1). |

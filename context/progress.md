@@ -3,7 +3,20 @@
 Short, frequently-updated. The sections below the current status are a dated history, newest results in
 "Week 3 results" onwards; the September "Done / Next" lists are historical (`build_plan.md` is v1-era).
 
-## Current status (2026-11-08)
+## Current status (2026-11-11)
+- **Retrieval study** on the branch `retrieval-improvements`, after the mentor's feedback of 2026-11-09. It asks why
+  retrieval did not help when RAFT (arXiv 2505.04163) and Deznabi et al. (arXiv 2510.16695) report gains, and what
+  could help. Pre-registered in `context/decisions_retrieval.md`; development years only.
+  - **Step 1 done** (`retrieval_study/results/step1.md`): retrieval helps only when it brings information the model
+    lacks (the "information ladder", both families). RAFT as published adds nothing at any level. A similar past
+    barely means a similar future (key-value correlation 0.02-0.08 vs RAFT's 0.60).
+  - The heatwave-day "cold analogues" are regression to the mean, not a shortage of hot past days.
+  - The second paper's idea (neighbouring stations) is what C3-hop already does, and is our confirmed gain (H1).
+  - Running: the hourly positive control (step 1e) and step 2's screens (500 hPa pattern, season-to-date, ranges).
+- The Phase 3 extras are parked on `phase3-extras` (committed and pushed 2026-11-11). Open there: whether and how to
+  get a correctly dated station record.
+
+## Status on 2026-11-08
 - **Forecasting research complete.** Protocol frozen 2026-10-19 (tag `test-lock`); test run once: H1 and H3
   confirmed, H2 and H4 not (`evaluation_test/test_results.md`). Post-test: foundation models (C3-hop beats both),
   extras (ensemble, warning scores, bias split, without ERA5T: `evaluation_post_test/`).
