@@ -12,7 +12,13 @@ Short, frequently-updated. The sections below the current status are a dated his
     barely means a similar future (key-value correlation 0.02-0.08 vs RAFT's 0.60).
   - The heatwave-day "cold analogues" are regression to the mean, not a shortage of hot past days.
   - The second paper's idea (neighbouring stations) is what C3-hop already does, and is our confirmed gain (H1).
-  - Running: the hourly positive control (step 1e) and step 2's screens (500 hPa pattern, season-to-date, ranges).
+  - **Positive control done** (`results/step1e.md`): the same RAFT code works on hourly temperature with a 12-hour
+    window (-7%). Its gain shrinks five-fold with a 96-hour window, and halves when the model is told the time of day.
+  - **Step 2 done** (`results/step2.md`):
+    - Only upper-air retrieval (Rz) helps C3-hop, on WBGT ordinary days (~1%; the October run C3-hop + Rz:
+      -0.023 °C). The same information given directly helps more.
+    - Season-to-date retrieval adds nothing.
+    - Retrieval-based ranges are worse on heatwave days (coverage WBGT 15% vs 41%).
 - The Phase 3 extras are parked on `phase3-extras` (committed and pushed 2026-11-11). Open there: whether and how to
   get a correctly dated station record.
 

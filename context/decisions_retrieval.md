@@ -269,3 +269,39 @@ before any screen was run.**
   - **P11.** LW adds nothing on B3 (|Δ| < 0.005 °C) in either family.
   - **P12.** KR covers heatwave days better than the global ranges. Whether its interval score is better is open.
 - Outputs: `retrieval_study/results/step2.{md,json}`.
+- **RESULT 2026-11-11** (`retrieval_study/results/step2.md`).
+  - **Rz passes for WBGT and fails for Tmax.**
+    - WBGT information screen: -0.011 °C on all days against B3 alone and against its random control (both CIs
+      below 0). On heatwave days -0.034 °C (CI includes 0).
+    - WBGT relevance screen: it beats the random add-on by 0.012 °C on all days (CI -0.020 to -0.005) and by 0.080 °C
+      on heatwave days (CI -0.155 to -0.005).
+    - As in RS-1c, every add-on is worse than C3-hop alone on heatwave days (+0.35 °C), because of its constant shift.
+    - Tmax: -0.004 °C against B3 (CI includes 0) and no relevance.
+  - **The information beats retrieval of it.** The direct version (the 20 PC scores of the 500 hPa fields) helps B3
+    far more than Rz does:
+    - Tmax: -0.038 °C on all days and -0.120 °C on heatwave days (both CIs below 0);
+    - WBGT: -0.046 °C on all days.
+    - Retrieval delivers about a quarter of that for WBGT and none of it for Tmax. Rz is worse than the direct
+      version by 0.034 °C (Tmax) and 0.036 °C (WBGT) on all days, both CIs above 0.
+  - **P10 holds:** a little for WBGT, nothing for Tmax, nothing on heatwave days, and the direct version adds at least
+    as much.
+  - **P11 holds. LW adds nothing** (|Δ| < 0.005 °C, every CI includes 0), and neither does its direct version.
+    Weather beyond the last 14 days is not missing information.
+  - **P12 fails, the wrong way. KR's ranges are worse on heatwave days.**
+    - They hold the truth less often than the plain ranges: Tmax 70% vs 79%, WBGT 15% vs 41%.
+    - The interval score is worse by 1.3 and 8.0 (CIs above 0).
+    - The most similar past situations were mostly ordinary days with small errors, so the ranges narrow exactly
+      where they should widen. This is the same regression to the mean as for the forecasts.
+  - **Reading.**
+    - The only retrieval that helps our best model is keyed on information the model lacks: the upper air. It helps
+      only on ordinary WBGT days.
+    - Giving the model that information directly does more, including on Tmax heatwave days in the linear screen.
+    - Retrieval is a weak channel for information, not a source of it.
+- **DEVIATION 2026-11-11 (written after the RS-2 result):** RS-3 is not run.
+  - The end-to-end run the pass rule calls for, C3-hop + Rz for WBGT, already exists. It is `A2Lr_hw5_C3hop_Rz`,
+    trained 2026-10-18 under its own pre-registered rule (`evaluation_v2/rz_gate.md`), with the same retrieval
+    (`FoldRetriever` mode "synoptic", K = 5) and the same backbone.
+  - Its development result stands in for RS-3:
+    - all days -0.023 °C (CI -0.041 to -0.005); against random retrieval -0.020 °C (CI -0.040 to -0.000);
+    - heatwave days +0.004 °C (CI -0.120 to +0.128).
+  - Training it again would repeat that run. For Tmax, nothing passed.

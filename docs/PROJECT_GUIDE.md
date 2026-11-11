@@ -1182,7 +1182,36 @@ against the saved documents; details in `sources/PHASE6_PART_D_RESULT.md`):
   benefit follows the input window relative to the dominant cycle.
 - Report: `retrieval_study/results/step1e.md`.
 
-**Step 2, trying to make retrieval help our best model:** _running_.
+**Step 2: can retrieval help our best model (C3-hop)?**
+- **Skipped, because step 1 already answered them:**
+  - RAFT inside C3-hop: RAFT added nothing anywhere.
+  - A bigger pool of past examples from other places: the pool isn't short of hot days.
+  - A learned similarity on the same inputs: there is no information left to find.
+- **Screened:** the two kinds of retrieval that bring something C3-hop doesn't see, and retrieval for ranges. Each was
+  checked twice: does it add information to a straight-line model that sees roughly what C3-hop sees, and does it
+  tell us anything about C3-hop's own errors?
+- **Upper air (Rz, matching on the 500 hPa pattern): the only one that helps, and only a little.**
+  - WBGT on ordinary days: about 0.5–1% better. The full C3-hop + Rz model, trained in October, gave −0.023 °C.
+  - Nothing on heatwave days, and nothing for Tmax.
+  - **The same upper-air information given directly does much more:** −0.038 °C (Tmax) and −0.046 °C (WBGT) on all
+    days, and −0.12 °C on Tmax heatwave days in the straight-line screen.
+  - So retrieval is a weak way to deliver information, not a source of it.
+- **Season-to-date (the last 60 days): nothing.** Weather beyond the last 14 days isn't missing information.
+- **Ranges from the most similar past situations: worse on heatwave days.** They catch the truth 70% (Tmax) and 15%
+  (WBGT) of the time, against 79% and 41% for ordinary ranges. Similar-looking past situations were mostly ordinary
+  days with small errors, so the ranges get narrower exactly when they should widen: regression to the mean again.
+- Report: `retrieval_study/results/step2.md`.
+
+**What this means for the paper:**
+- **The contribution is the explanation.** It is backed by four kinds of evidence: the information ladder, the
+  positive control, the "similar past ≠ similar future" measurement, and the oracle analogues.
+- **When retrieval helps:** only when the past examples carry information the model's own inputs lack. RAFT's
+  benchmarks (short windows on data with a daily cycle) are such a case. So is Deznabi et al.'s location with no
+  history, which is what our graph does.
+- **Why it doesn't help ours:** Delhi's daily heat, 1–5 days ahead, from inputs that already include the season and
+  the region, is not such a case.
+- **What could help heatwave days:** information that tells a coming heatwave apart. The upper-air pattern is the
+  only candidate that showed any, and it works better as a direct input than through retrieval.
 
 ---
 
@@ -1247,7 +1276,10 @@ Updated 2026-11-11. The forecasting research is complete: the protocol was froze
 critical reviews of 2026-10-22 were addressed: claims corrected, frozen-code issues disclosed in
 `KNOWN_DEVIATIONS.md`, and the test lock and test outputs now checked automatically.
 - **The retrieval study** (§9.2), on the branch `retrieval-improvements`: why retrieval did not help, and what could.
-  This is the mentor's priority (2026-11-09). Step 1 is done; its positive control and step 2's screens are running.
+  This is the mentor's priority (2026-11-09). Steps 1 and 2 are done. Open, each needing a decision:
+  - give C3-hop the upper-air pattern directly (not retrieval; the 500 hPa data we have end in 2021);
+  - an analogue ensemble keyed on a global model's past forecasts (needs an archive of past forecasts);
+  - a write-up for the mentor.
 - **Phase 6, the heat advisory:** library, rule engine, verifier, the LLM step and its blind rating are done. The
   LLM version failed the rating, so the advisory uses the rule-based text (§9, Part 4). Left:
   - the demo page (the two teammate raters, on their own branch);
@@ -1306,4 +1338,4 @@ critical reviews of 2026-10-22 were addressed: claims corrected, frozen-code iss
 | 2026-10-27 | Post-test 3: tuned yes/no warning rules (WBGT hits 6% → 47%, ~80% false alarms; all models about equal). Rule engine now classifies forecast days by probability (≥ 37%); alerts raised in 68% of cases vs 61%. |
 | 2026-11-01 | Phase 6 part 4: LLM advisories generated (Groq, `gpt-oss-120b`; 56 of 56 passed the verifier first time); blind rating pack built. |
 | 2026-11-08 | Blind rating results: the LLM version fails its pre-registered rule (source support 0% vs 54%, harmful 8% vs 0%, no clarity gain); the advisory keeps the rule-based text. Phase 3 extras started on the branch `phase3-extras`. |
-| 2026-11-11 | Retrieval study (§9.2, branch `retrieval-improvements`), after the mentor's feedback: the information ladder shows retrieval helps only when it brings information the model lacks; RAFT as published adds nothing on our data; a similar past barely means a similar future (0.02–0.08 vs RAFT's 0.60); heatwave-day "cold analogues" are regression to the mean. The second reference paper's idea is what C3-hop already does (H1). |
+| 2026-11-11 | Retrieval study (§9.2, branch `retrieval-improvements`), after the mentor's feedback: the information ladder shows retrieval helps only when it brings information the model lacks; RAFT as published adds nothing on our data, but the same code works in its own kind of setting (hourly, short window: −7%), the positive control; a similar past barely means a similar future (0.02–0.08 vs RAFT's 0.60); heatwave-day "cold analogues" are regression to the mean. The second reference paper's idea is what C3-hop already does (H1). Step 2: only upper-air retrieval helps C3-hop (WBGT ordinary days, ~1%); the same information given directly helps more; season-to-date retrieval adds nothing; retrieval-based ranges are worse on heatwave days. |
