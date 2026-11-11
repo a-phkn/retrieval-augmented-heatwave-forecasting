@@ -115,6 +115,49 @@ Rules for this file:
 - **Reading rule:** the information principle counts as supported if P2 holds in both families. P1 and P3-P7 are
   descriptive. If P2 fails, the explanation offered to the mentor has to change, and that is reported as it comes out.
 - Outputs: `retrieval_study/results/step1.{md,json}`.
+- **RESULT 2026-11-11** (`retrieval_study/results/step1.md`). All-days numbers unless stated. Δ = RMSE change; negative
+  = retrieval helps.
+  - **P2, the information principle, holds in both families.**
+    - Our own retrieval (R0) cuts the error of the model that knows only the target's last 14 days (B0): Tmax by
+      0.148 °C (CI -0.170 to -0.126), WBGT by 0.143 °C. It beats random retrieval by 0.13 °C in both families.
+    - Give that model the season directly (B1) and the gain is gone for Tmax (+0.003, CI includes 0). For WBGT a
+      trace remains (-0.009, CI below 0), equal to its margin over random. R0's features include humidity, which B1
+      still lacks.
+    - With all Delhi inputs (B2) or the region as well (B3), R0 changes nothing: |Δ| ≤ 0.001 °C in both families.
+  - **P1: RAFT as published adds nothing at any level, B0 included**: |Δ| ≤ 0.003 °C in both families, and it is
+    never better than its random control. Its key ignores the level, and the shape of the last 14 days says nothing
+    usable about the next 5 days' changes.
+  - **P3 holds** (every retrieval on B2 and B3: |Δ| ≤ 0.001 °C).
+  - **P4, RAFT's add-on mode on our networks:**
+    - It fails as written for the Delhi-only WBGT LSTM: -0.041 °C on all days (CI -0.080 to -0.002).
+    - But the random-retrieval add-on does the same: the difference is +0.001. In every fold the add-on chose the
+      strongest ridge penalty (1000), which shrinks the retrieved values to almost nothing. What is left is a
+      constant shift, a bias correction learned on the inner years. It is not retrieval.
+    - Every add-on makes heatwave days worse (+0.15 to +0.51 °C), because it corrects towards the average, as the
+      earlier analogue correction did.
+  - **P5 holds. A similar past barely means a similar future here.** The key-value correlations are 0.02 to 0.08
+    against RAFT's 0.60. On heatwave queries they are -0.04 to +0.05.
+  - **P6 holds.**
+    - The 5 past windows whose next 5 days really matched the query's (the oracle analogues) rank only at the 51st
+      to 60th percentile under either key, against 50 for chance; on heatwave queries, 51st to 59th.
+    - The pool does contain them: the oracle's own forecast has an RMSE of 0.29 °C (Tmax) and 0.37 °C (WBGT). Nothing
+      in the last 14 days points to them.
+  - **P7 holds, and it changes the "cold days" explanation.**
+    - On heatwave days the R0 analogues' futures are 1.6 to 3.6 °C (Tmax, lead 1 to 5) and 4.4 to 4.9 °C (WBGT)
+      colder than the truth. RAFT's change-based version is less cold (0.6 to 3.0 °C, and 2.9 to 4.2 °C).
+    - The pool is not short of hot days: every heatwave-day value is matched or beaten by some past future (0% of
+      rows without one).
+    - The analogues also do not start much cooler: the query's last value is above its analogues' by 0.25 °C (Tmax)
+      and 1.35 °C (WBGT) for heatwave-bound queries.
+    - So the cold bias comes mainly from what follows: windows that look like today were usually followed by ordinary
+      days. Nothing in the last 14 days at Delhi tells the coming heatwaves apart (regression to the mean). It is not
+      that hot examples are missing.
+  - **Reading.**
+    - Retrieval adds what the model's inputs lack, and nothing else.
+    - Our models' inputs already contain everything Delhi-only analogues could add: the season, the level, all
+      Delhi variables and the region.
+    - The reference method's key carries no information about the next 5 days' changes in our data.
+    - The RS-1e positive control (hourly) tests whether this is about the setting or our code.
 
 **RS-1e: RAFT in its own kind of setting, on our data (a positive control). PRE-REGISTERED 2026-11-11, written while
 RS-1 was running and before any of its results were seen.**
@@ -154,3 +197,54 @@ order. A candidate runs only if RS-1 gives a reason to expect it to help.
 - Retrieval keyed on the 500 hPa pattern (1980-2018 data exist; Rz).
 - Retrieval for forecast ranges: neighbours' past errors.
 - A learned similarity.
+
+**RS-2: Screens for retrieval that could help our best model. PRE-REGISTERED 2026-11-11, after RS-1's results and
+before any screen was run.**
+- **SKIPPED, with RS-1's numbers** (the user allowed skipping unpromising steps):
+  - **RAFT-style retrieval inside C3-hop.** RAFT added nothing at any information level (|Δ| ≤ 0.003 °C) and never
+    beat its random control. Its add-on to C3-hop was no better than random.
+  - **A cross-site analogue pool.** It would fix a shortage of hot examples, and RS-1 found none: 0% of heatwave-day
+    values lack an equally hot past future. The failure is that the key cannot pick out the right analogues (oracle
+    ranks 51st to 60th percentile). A larger pool does not change that.
+  - **A learned similarity on the same inputs.** On B2 and B3 every retrieval added nothing (|Δ| ≤ 0.001 °C). A
+    learned key over the same information cannot add information the model does not already use.
+- **Run: the two candidates that bring information C3-hop does not see, and retrieval for ranges.**
+  - **Rz**, the 500 hPa pattern (the project's own retrieval, `FoldRetriever` mode "synoptic", K = 5, 1980-2018 data).
+    - Signal: the mean standardised anomaly of the analogues' next 5 days. Random control: R0-rand, as in the runs.
+    - Direct version: the 20 principal-component scores of the same 3-day 500 hPa anomaly fields that Rz matches on.
+  - **LW, season-to-date analogues.**
+    - Key: the target's standardised anomaly over the last 60 days. Distance: RMS. The m = 10 nearest training
+      windows that do not overlap the query.
+    - Signal: their mean standardised anomaly over the next 5 days. Random control: 10 random eligible windows (10
+      seeds).
+    - Direct version: the mean standardised anomaly over days -60 to -46, -45 to -31 and -30 to -15.
+  - **KR, retrieval for ranges.** 80% ranges around C3-hop's 10-seed forecast, from its inner-block errors.
+    - "knn" uses the 50 inner-block situations most similar to the query (R0's key) and the 10th and 90th
+      percentiles of their errors per lead.
+    - "global" uses all inner-block errors. "random" uses 50 random inner-block situations (10 seeds).
+- **Two screens for Rz and LW, in both families:**
+  - **Information screen** (the RS-1 testbed):
+    - Arms: B3 alone; B3 + the signal; B3 + its random control; B3 + the direct version.
+    - Ridge as in RS-1a; scored on the 4 validation blocks.
+    - B3 stands in for what C3-hop sees; C3-hop sees more upstream variables, so this screen is generous.
+  - **Relevance screen** (the add-on, `retrieval_study/screens.py`):
+    - A ridge maps the signal to C3-hop's error. It is fitted on C3-hop's inner-block forecasts, with its strength
+      chosen leave-one-year-out; the random control gets the same strength.
+    - RS-1c showed that the add-on's constant shift alone changes the scores. So the decisive comparison is against
+      the random control.
+- **Pass rule (fixed now):**
+  - A signal passes when both of these hold:
+    - In the information screen, B3 + signal beats B3 alone and B3 + random, with both CIs below 0, either on all
+      days, or on heatwave days without being worse on all days by more than 0.005 °C.
+    - In the relevance screen, + signal beats + random, with the CI below 0, on the same stratum.
+  - A signal that passes gets an end-to-end C3-hop run, written as its own entry (RS-3) before it runs. If none
+    passes, step 2 ends here.
+  - KR passes if its interval score (Gneiting & Raftery 2007) on heatwave days is below that of both the global
+    ranges and the random-50 ranges (paired cluster jackknife on the mean score, CIs below 0), and its all-days
+    interval score is not more than 2% above the global ranges'. Coverage and mean width are reported.
+- **Predictions (written now):**
+  - **P10.** Rz adds a little information on B3 for WBGT (the earlier screen found about -0.004 °C) and nothing for
+    Tmax, and nothing on heatwave days. The direct version adds at least as much as Rz.
+  - **P11.** LW adds nothing on B3 (|Δ| < 0.005 °C) in either family.
+  - **P12.** KR covers heatwave days better than the global ranges. Whether its interval score is better is open.
+- Outputs: `retrieval_study/results/step2.{md,json}`.
