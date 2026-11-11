@@ -680,6 +680,245 @@
           }
         }
       },
+      "AIFS Single": {
+        "rows": 2775,
+        "clusters": 6,
+        "first_query": "2025-02-19",
+        "last_query": "2026-09-02",
+        "global": {
+          "all": {
+            "rmse": 1.8885575115269797,
+            "bias": -1.3085244796951494,
+            "n": 2775,
+            "clusters": 6
+          },
+          "extreme": {
+            "rmse": 2.6351698165325077,
+            "bias": -2.5082827180804625,
+            "n": 110,
+            "clusters": 2
+          },
+          "season": {
+            "rmse": 2.0181055107872448,
+            "bias": -1.345057119855694,
+            "n": 1360,
+            "clusters": 2
+          },
+          "by_lead": [
+            1.6633999689788785,
+            1.857889636068027,
+            1.9213510623117036,
+            1.9650420198014364,
+            2.020719962695862
+          ]
+        },
+        "c3hop": {
+          "all": {
+            "rmse": 2.2742505689680623,
+            "bias": 0.37255251642175624,
+            "n": 2775,
+            "clusters": 6
+          },
+          "extreme": {
+            "rmse": 2.4918647654132684,
+            "bias": -2.1585322709517047,
+            "n": 110,
+            "clusters": 2
+          },
+          "season": {
+            "rmse": 2.6598565228471154,
+            "bias": 0.45753387549344227,
+            "n": 1360,
+            "clusters": 2
+          },
+          "by_lead": [
+            1.6183858740592716,
+            2.0591882546808042,
+            2.3087970285243817,
+            2.5223211924710305,
+            2.720366404754821
+          ]
+        },
+        "c3hop_per_seed": {
+          "all": {
+            "rmse": 2.317074079785857,
+            "bias": 0.37255251642175624,
+            "n": 2775,
+            "clusters": 6
+          },
+          "extreme": {
+            "rmse": 2.5319358034866823,
+            "bias": -2.1585322709517047,
+            "n": 110,
+            "clusters": 2
+          },
+          "season": {
+            "rmse": 2.6998124394103598,
+            "bias": 0.45753387549344227,
+            "n": 1360,
+            "clusters": 2
+          },
+          "by_lead": [
+            1.6697198697106355,
+            2.1045636767245446,
+            2.348520890423198,
+            2.5634770244462155,
+            2.761829845350964
+          ]
+        },
+        "lstm": {
+          "all": {
+            "rmse": 2.3828252142475566,
+            "bias": 0.32155877225033874,
+            "n": 2775,
+            "clusters": 6
+          },
+          "extreme": {
+            "rmse": 3.0065030224043263,
+            "bias": -2.374768486022949,
+            "n": 110,
+            "clusters": 2
+          },
+          "season": {
+            "rmse": 2.8155915923188157,
+            "bias": 0.46721532414941225,
+            "n": 1360,
+            "clusters": 2
+          },
+          "by_lead": [
+            1.7628918760682826,
+            2.2132791559629688,
+            2.433378677151398,
+            2.6314781697741134,
+            2.76083390570017
+          ]
+        },
+        "test": {
+          "all": {
+            "metric": "rmse",
+            "parent": 2.2742505689680628,
+            "child": 1.8885575115269801,
+            "delta": -0.3856930574410826,
+            "se": 0.2548608195335206,
+            "ci_low": -1.0408336507493354,
+            "ci_high": 0.2694475358671702,
+            "ci_level": 0.95,
+            "p_value": 0.19060703628343978,
+            "df": 5,
+            "n_instances": 2775,
+            "n_clusters": 6,
+            "clusters_child_better": 5,
+            "n_seeds_parent": 1,
+            "n_seeds_child": 1,
+            "seed_variance_included": false,
+            "few_clusters": true,
+            "significant": false,
+            "warnings": []
+          },
+          "extreme": {
+            "metric": "rmse",
+            "parent": 2.491864765413268,
+            "child": 2.6351698165325077,
+            "delta": 0.14330505111923975,
+            "se": 0.47724682985419764,
+            "ci_low": NaN,
+            "ci_high": NaN,
+            "ci_level": 0.95,
+            "p_value": NaN,
+            "df": 1,
+            "n_instances": 110,
+            "n_clusters": 2,
+            "clusters_child_better": 1,
+            "n_seeds_parent": 1,
+            "n_seeds_child": 1,
+            "seed_variance_included": false,
+            "few_clusters": true,
+            "significant": false,
+            "warnings": [
+              "Only 2 clusters (< 5): no CI or p-value reported. Report the per-cluster sign count instead, or pool more data (rolling-origin folds)."
+            ]
+          },
+          "season": {
+            "metric": "rmse",
+            "parent": 2.6598565228471163,
+            "child": 2.0181055107872456,
+            "delta": -0.6417510120598706,
+            "se": 0.3304024699969058,
+            "ci_low": NaN,
+            "ci_high": NaN,
+            "ci_level": 0.95,
+            "p_value": NaN,
+            "df": 1,
+            "n_instances": 1360,
+            "n_clusters": 2,
+            "clusters_child_better": 2,
+            "n_seeds_parent": 1,
+            "n_seeds_child": 1,
+            "seed_variance_included": false,
+            "few_clusters": true,
+            "significant": false,
+            "warnings": [
+              "Only 2 clusters (< 5): no CI or p-value reported. Report the per-cluster sign count instead, or pool more data (rolling-origin folds)."
+            ]
+          }
+        },
+        "warnings": {
+          "rows": 1360,
+          "events": 123,
+          "rules": {
+            "global model, R-point": {
+              "hits": 1,
+              "misses": 122,
+              "false_alarms": 0,
+              "n": 1360,
+              "hit_rate": 0.008130081300813009,
+              "false_alarm_ratio": 0.0,
+              "ets": 0.0074002285276715905,
+              "frequency_bias": 0.008130081300813009
+            },
+            "C3-hop, R-point": {
+              "hits": 10,
+              "misses": 113,
+              "false_alarms": 7,
+              "n": 1360,
+              "hit_rate": 0.08130081300813008,
+              "false_alarm_ratio": 0.4117647058823529,
+              "ets": 0.06587525542473484,
+              "frequency_bias": 0.13821138211382114
+            },
+            "C3-hop, R-prob (p* = 0.37)": {
+              "hits": 16,
+              "misses": 107,
+              "false_alarms": 14,
+              "n": 1360,
+              "hit_rate": 0.13008130081300814,
+              "false_alarm_ratio": 0.4666666666666667,
+              "ets": 0.09894321852926682,
+              "frequency_bias": 0.24390243902439024
+            },
+            "C3-hop, R-shift (delta = 0.25 C)": {
+              "hits": 15,
+              "misses": 108,
+              "false_alarms": 14,
+              "n": 1360,
+              "hit_rate": 0.12195121951219512,
+              "false_alarm_ratio": 0.4827586206896552,
+              "ets": 0.09210792709285211,
+              "frequency_bias": 0.23577235772357724
+            },
+            "LSTM, R-point": {
+              "hits": 19,
+              "misses": 104,
+              "false_alarms": 28,
+              "n": 1360,
+              "hit_rate": 0.15447154471544716,
+              "false_alarm_ratio": 0.5957446808510638,
+              "ets": 0.10050656632210804,
+              "frequency_bias": 0.3821138211382114
+            }
+          }
+        }
+      },
       "GFS, Tmax since 2021": {
         "rows": 9825,
         "clusters": 17,
@@ -911,6 +1150,245 @@
               "false_alarm_ratio": 0.4679245283018868,
               "ets": 0.18379287376549047,
               "frequency_bias": 0.53
+            }
+          }
+        }
+      },
+      "IFS HRES 9 km, 12 UTC run": {
+        "rows": 4502,
+        "clusters": 8,
+        "first_query": "2024-03-15",
+        "last_query": "2026-09-02",
+        "global": {
+          "all": {
+            "rmse": 1.6913958726963894,
+            "bias": -0.5950688450103087,
+            "n": 4502,
+            "clusters": 8
+          },
+          "extreme": {
+            "rmse": 1.6306524509289133,
+            "bias": -1.2337866543101612,
+            "n": 245,
+            "clusters": 3
+          },
+          "season": {
+            "rmse": 1.6451114983674626,
+            "bias": -0.3111110492732918,
+            "n": 2070,
+            "clusters": 3
+          },
+          "by_lead": [
+            1.3707775107478462,
+            1.5708532549885046,
+            1.6776808415559206,
+            1.7947916098124788,
+            1.9806885013766182
+          ]
+        },
+        "c3hop": {
+          "all": {
+            "rmse": 2.143046997733333,
+            "bias": 0.1558020862882691,
+            "n": 4502,
+            "clusters": 8
+          },
+          "extreme": {
+            "rmse": 2.3840602396550805,
+            "bias": -2.035160620553153,
+            "n": 245,
+            "clusters": 3
+          },
+          "season": {
+            "rmse": 2.4736680526002828,
+            "bias": 0.15424831049453802,
+            "n": 2070,
+            "clusters": 3
+          },
+          "by_lead": [
+            1.5377525567396988,
+            1.94572597506163,
+            2.179760127469632,
+            2.377682421201579,
+            2.532067086816998
+          ]
+        },
+        "c3hop_per_seed": {
+          "all": {
+            "rmse": 2.188501708750833,
+            "bias": 0.15580208628826914,
+            "n": 4502,
+            "clusters": 8
+          },
+          "extreme": {
+            "rmse": 2.428187770445034,
+            "bias": -2.0351606205531527,
+            "n": 245,
+            "clusters": 3
+          },
+          "season": {
+            "rmse": 2.5178007726871496,
+            "bias": 0.1542483104945381,
+            "n": 2070,
+            "clusters": 3
+          },
+          "by_lead": [
+            1.5931973283602068,
+            1.9937063832881219,
+            2.2220521595355196,
+            2.421378733564663,
+            2.5758069498068203
+          ]
+        },
+        "lstm": {
+          "all": {
+            "rmse": 2.2353064643752023,
+            "bias": 0.13556094358148493,
+            "n": 4502,
+            "clusters": 8
+          },
+          "extreme": {
+            "rmse": 2.5987812907918375,
+            "bias": -2.1223645097382215,
+            "n": 245,
+            "clusters": 3
+          },
+          "season": {
+            "rmse": 2.6219176689657635,
+            "bias": 0.2628709222729079,
+            "n": 2070,
+            "clusters": 3
+          },
+          "by_lead": [
+            1.658214611189866,
+            2.0580439432475903,
+            2.274960187157818,
+            2.4725085281777,
+            2.5908211618047305
+          ]
+        },
+        "test": {
+          "all": {
+            "metric": "rmse",
+            "parent": 2.143046997733333,
+            "child": 1.6913958726963894,
+            "delta": -0.4516511250369435,
+            "se": 0.1960221960158564,
+            "ci_low": -0.915169963586512,
+            "ci_high": 0.011867713512625,
+            "ci_level": 0.95,
+            "p_value": 0.05466136071836512,
+            "df": 7,
+            "n_instances": 4502,
+            "n_clusters": 8,
+            "clusters_child_better": 7,
+            "n_seeds_parent": 1,
+            "n_seeds_child": 1,
+            "seed_variance_included": false,
+            "few_clusters": true,
+            "significant": false,
+            "warnings": []
+          },
+          "extreme": {
+            "metric": "rmse",
+            "parent": 2.3840602396550805,
+            "child": 1.6306524509289135,
+            "delta": -0.753407788726167,
+            "se": 0.34890096663431575,
+            "ci_low": NaN,
+            "ci_high": NaN,
+            "ci_level": 0.95,
+            "p_value": NaN,
+            "df": 2,
+            "n_instances": 245,
+            "n_clusters": 3,
+            "clusters_child_better": 3,
+            "n_seeds_parent": 1,
+            "n_seeds_child": 1,
+            "seed_variance_included": false,
+            "few_clusters": true,
+            "significant": false,
+            "warnings": [
+              "Only 3 clusters (< 5): no CI or p-value reported. Report the per-cluster sign count instead, or pool more data (rolling-origin folds)."
+            ]
+          },
+          "season": {
+            "metric": "rmse",
+            "parent": 2.473668052600283,
+            "child": 1.6451114983674624,
+            "delta": -0.8285565542328208,
+            "se": 0.20288496391964558,
+            "ci_low": NaN,
+            "ci_high": NaN,
+            "ci_level": 0.95,
+            "p_value": NaN,
+            "df": 2,
+            "n_instances": 2070,
+            "n_clusters": 3,
+            "clusters_child_better": 3,
+            "n_seeds_parent": 1,
+            "n_seeds_child": 1,
+            "seed_variance_included": false,
+            "few_clusters": true,
+            "significant": false,
+            "warnings": [
+              "Only 3 clusters (< 5): no CI or p-value reported. Report the per-cluster sign count instead, or pool more data (rolling-origin folds)."
+            ]
+          }
+        },
+        "warnings": {
+          "rows": 2070,
+          "events": 260,
+          "rules": {
+            "global model, R-point": {
+              "hits": 128,
+              "misses": 132,
+              "false_alarms": 59,
+              "n": 2070,
+              "hit_rate": 0.49230769230769234,
+              "false_alarm_ratio": 0.3155080213903743,
+              "ets": 0.3536643180592111,
+              "frequency_bias": 0.7192307692307692
+            },
+            "C3-hop, R-point": {
+              "hits": 72,
+              "misses": 188,
+              "false_alarms": 28,
+              "n": 2070,
+              "hit_rate": 0.27692307692307694,
+              "false_alarm_ratio": 0.28,
+              "ets": 0.21579907394415604,
+              "frequency_bias": 0.38461538461538464
+            },
+            "C3-hop, R-prob (p* = 0.37)": {
+              "hits": 81,
+              "misses": 179,
+              "false_alarms": 33,
+              "n": 2070,
+              "hit_rate": 0.31153846153846154,
+              "false_alarm_ratio": 0.2894736842105263,
+              "ets": 0.23927401320921524,
+              "frequency_bias": 0.43846153846153846
+            },
+            "C3-hop, R-shift (delta = 0.25 C)": {
+              "hits": 93,
+              "misses": 167,
+              "false_alarms": 42,
+              "n": 2070,
+              "hit_rate": 0.3576923076923077,
+              "false_alarm_ratio": 0.3111111111111111,
+              "ets": 0.26677852348993286,
+              "frequency_bias": 0.5192307692307693
+            },
+            "LSTM, R-point": {
+              "hits": 75,
+              "misses": 185,
+              "false_alarms": 52,
+              "n": 2070,
+              "hit_rate": 0.28846153846153844,
+              "false_alarm_ratio": 0.4094488188976378,
+              "ets": 0.19945497862341308,
+              "frequency_bias": 0.48846153846153845
             }
           }
         }
@@ -1390,18 +1868,498 @@
             }
           }
         }
+      },
+      "AIFS Single": {
+        "rows": 2745,
+        "clusters": 6,
+        "first_query": "2025-02-19",
+        "last_query": "2026-09-02",
+        "global": {
+          "all": {
+            "rmse": 1.6784042601525893,
+            "bias": -0.2538208381060948,
+            "n": 2745,
+            "clusters": 6
+          },
+          "extreme": {
+            "rmse": 2.691939978392283,
+            "bias": -1.8756241248045016,
+            "n": 95,
+            "clusters": 2
+          },
+          "season": {
+            "rmse": 1.683582992638592,
+            "bias": -0.1976543586601442,
+            "n": 1810,
+            "clusters": 4
+          },
+          "by_lead": [
+            1.4079796275965606,
+            1.5377162203521286,
+            1.6631556698717085,
+            1.773620565575545,
+            1.961973321773597
+          ]
+        },
+        "c3hop": {
+          "all": {
+            "rmse": 2.2595495036309567,
+            "bias": 0.48713969214387903,
+            "n": 2745,
+            "clusters": 6
+          },
+          "extreme": {
+            "rmse": 3.0809985462375775,
+            "bias": -2.7057167606202914,
+            "n": 95,
+            "clusters": 2
+          },
+          "season": {
+            "rmse": 2.2425868706184993,
+            "bias": 0.6981926531119165,
+            "n": 1810,
+            "clusters": 4
+          },
+          "by_lead": [
+            1.9916427353585997,
+            2.2113823305727056,
+            2.2840047112669604,
+            2.3739970783975988,
+            2.418618748041307
+          ]
+        },
+        "c3hop_per_seed": {
+          "all": {
+            "rmse": 2.2859721564441453,
+            "bias": 0.487139692143879,
+            "n": 2745,
+            "clusters": 6
+          },
+          "extreme": {
+            "rmse": 3.0966800551449802,
+            "bias": -2.7057167606202905,
+            "n": 95,
+            "clusters": 2
+          },
+          "season": {
+            "rmse": 2.2702527743401997,
+            "bias": 0.6981926531119165,
+            "n": 1810,
+            "clusters": 4
+          },
+          "by_lead": [
+            2.0255033776774054,
+            2.2342030064185585,
+            2.3084126589864735,
+            2.4021366547189613,
+            2.4417357449422754
+          ]
+        },
+        "lstm": {
+          "all": {
+            "rmse": 2.374266432086814,
+            "bias": 0.5438646531347658,
+            "n": 2745,
+            "clusters": 6
+          },
+          "extreme": {
+            "rmse": 3.055772560861706,
+            "bias": -2.7285254041296807,
+            "n": 95,
+            "clusters": 2
+          },
+          "season": {
+            "rmse": 2.318328843317474,
+            "bias": 0.7922279390034443,
+            "n": 1810,
+            "clusters": 4
+          },
+          "by_lead": [
+            2.155185127616012,
+            2.357345026198115,
+            2.4337534919510473,
+            2.4492231181307695,
+            2.4676341891924736
+          ]
+        },
+        "test": {
+          "all": {
+            "metric": "rmse",
+            "parent": 2.259549503630957,
+            "child": 1.6784042601525888,
+            "delta": -0.5811452434783684,
+            "se": 0.050666049791367795,
+            "ci_low": -0.7113864707555035,
+            "ci_high": -0.4509040162012332,
+            "ci_level": 0.95,
+            "p_value": 8.825359896441672e-05,
+            "df": 5,
+            "n_instances": 2745,
+            "n_clusters": 6,
+            "clusters_child_better": 6,
+            "n_seeds_parent": 1,
+            "n_seeds_child": 1,
+            "seed_variance_included": false,
+            "few_clusters": true,
+            "significant": true,
+            "warnings": []
+          },
+          "extreme": {
+            "metric": "rmse",
+            "parent": 3.0809985462375775,
+            "child": 2.691939978392283,
+            "delta": -0.3890585678452947,
+            "se": 0.25973287822489444,
+            "ci_low": NaN,
+            "ci_high": NaN,
+            "ci_level": 0.95,
+            "p_value": NaN,
+            "df": 1,
+            "n_instances": 95,
+            "n_clusters": 2,
+            "clusters_child_better": 1,
+            "n_seeds_parent": 1,
+            "n_seeds_child": 1,
+            "seed_variance_included": false,
+            "few_clusters": true,
+            "significant": false,
+            "warnings": [
+              "Only 2 clusters (< 5): no CI or p-value reported. Report the per-cluster sign count instead, or pool more data (rolling-origin folds)."
+            ]
+          },
+          "season": {
+            "metric": "rmse",
+            "parent": 2.2425868706184993,
+            "child": 1.683582992638592,
+            "delta": -0.5590038779799074,
+            "se": 0.07949958277034389,
+            "ci_low": NaN,
+            "ci_high": NaN,
+            "ci_level": 0.95,
+            "p_value": NaN,
+            "df": 3,
+            "n_instances": 1810,
+            "n_clusters": 4,
+            "clusters_child_better": 4,
+            "n_seeds_parent": 1,
+            "n_seeds_child": 1,
+            "seed_variance_included": false,
+            "few_clusters": true,
+            "significant": false,
+            "warnings": [
+              "Only 4 clusters (< 5): no CI or p-value reported. Report the per-cluster sign count instead, or pool more data (rolling-origin folds)."
+            ]
+          }
+        },
+        "warnings": {
+          "rows": 1810,
+          "events": 110,
+          "rules": {
+            "global model, R-point": {
+              "hits": 37,
+              "misses": 73,
+              "false_alarms": 71,
+              "n": 1810,
+              "hit_rate": 0.33636363636363636,
+              "false_alarm_ratio": 0.6574074074074074,
+              "ets": 0.17448452791942481,
+              "frequency_bias": 0.9818181818181818
+            },
+            "C3-hop, R-point": {
+              "hits": 10,
+              "misses": 100,
+              "false_alarms": 13,
+              "n": 1810,
+              "hit_rate": 0.09090909090909091,
+              "false_alarm_ratio": 0.5652173913043478,
+              "ets": 0.07074057246706043,
+              "frequency_bias": 0.20909090909090908
+            },
+            "C3-hop, R-prob (p* = 0.13)": {
+              "hits": 68,
+              "misses": 42,
+              "false_alarms": 357,
+              "n": 1810,
+              "hit_rate": 0.6181818181818182,
+              "false_alarm_ratio": 0.84,
+              "ets": 0.0955893402795171,
+              "frequency_bias": 3.8636363636363638
+            },
+            "C3-hop, R-shift (delta = 1.2 C)": {
+              "hits": 60,
+              "misses": 50,
+              "false_alarms": 268,
+              "n": 1810,
+              "hit_rate": 0.5454545454545454,
+              "false_alarm_ratio": 0.8170731707317073,
+              "ets": 0.11189631229748496,
+              "frequency_bias": 2.981818181818182
+            },
+            "LSTM, R-point": {
+              "hits": 6,
+              "misses": 104,
+              "false_alarms": 12,
+              "n": 1810,
+              "hit_rate": 0.05454545454545454,
+              "false_alarm_ratio": 0.6666666666666666,
+              "ets": 0.040577590934015716,
+              "frequency_bias": 0.16363636363636364
+            }
+          }
+        }
+      },
+      "IFS HRES 9 km, 12 UTC run": {
+        "rows": 4502,
+        "clusters": 8,
+        "first_query": "2024-03-15",
+        "last_query": "2026-09-02",
+        "global": {
+          "all": {
+            "rmse": 1.8487478569249443,
+            "bias": -0.6106354368990898,
+            "n": 4502,
+            "clusters": 8
+          },
+          "extreme": {
+            "rmse": 3.1779192443450146,
+            "bias": -2.6244790152721875,
+            "n": 145,
+            "clusters": 4
+          },
+          "season": {
+            "rmse": 1.865204678296371,
+            "bias": -0.5845444205087645,
+            "n": 2852,
+            "clusters": 6
+          },
+          "by_lead": [
+            1.5229309726761315,
+            1.7762017873823566,
+            1.8735798206430305,
+            1.9579682510678227,
+            2.0670518728986145
+          ]
+        },
+        "c3hop": {
+          "all": {
+            "rmse": 2.217175331569476,
+            "bias": 0.35744812197919024,
+            "n": 4502,
+            "clusters": 8
+          },
+          "extreme": {
+            "rmse": 3.076893474814221,
+            "bias": -2.7207046272179642,
+            "n": 145,
+            "clusters": 4
+          },
+          "season": {
+            "rmse": 2.1890376853515328,
+            "bias": 0.5930915273034372,
+            "n": 2852,
+            "clusters": 6
+          },
+          "by_lead": [
+            1.9477886842539769,
+            2.1514929252881445,
+            2.247553036066641,
+            2.3305615069810544,
+            2.382243392041413
+          ]
+        },
+        "c3hop_per_seed": {
+          "all": {
+            "rmse": 2.2439066549932067,
+            "bias": 0.3574481219791902,
+            "n": 4502,
+            "clusters": 8
+          },
+          "extreme": {
+            "rmse": 3.092152409258657,
+            "bias": -2.7207046272179634,
+            "n": 145,
+            "clusters": 4
+          },
+          "season": {
+            "rmse": 2.2179140279378013,
+            "bias": 0.5930915273034373,
+            "n": 2852,
+            "clusters": 6
+          },
+          "by_lead": [
+            1.9835178242554197,
+            2.1748899489526683,
+            2.2719618903733325,
+            2.3579731810736995,
+            2.405829513789017
+          ]
+        },
+        "lstm": {
+          "all": {
+            "rmse": 2.366484511732793,
+            "bias": 0.38463456947695523,
+            "n": 4502,
+            "clusters": 8
+          },
+          "extreme": {
+            "rmse": 3.133942522658296,
+            "bias": -2.806342199655232,
+            "n": 145,
+            "clusters": 4
+          },
+          "season": {
+            "rmse": 2.3081296370132036,
+            "bias": 0.7001353907959219,
+            "n": 2852,
+            "clusters": 6
+          },
+          "by_lead": [
+            2.126961033263248,
+            2.3351667680541466,
+            2.4306656279871706,
+            2.4513213997293453,
+            2.471543066294294
+          ]
+        },
+        "test": {
+          "all": {
+            "metric": "rmse",
+            "parent": 2.2171753315694764,
+            "child": 1.8487478569249438,
+            "delta": -0.3684274746445326,
+            "se": 0.06958923368303743,
+            "ci_low": -0.5329798642612004,
+            "ci_high": -0.2038750850278649,
+            "ci_level": 0.95,
+            "p_value": 0.0011303215535298568,
+            "df": 7,
+            "n_instances": 4502,
+            "n_clusters": 8,
+            "clusters_child_better": 8,
+            "n_seeds_parent": 1,
+            "n_seeds_child": 1,
+            "seed_variance_included": false,
+            "few_clusters": true,
+            "significant": true,
+            "warnings": []
+          },
+          "extreme": {
+            "metric": "rmse",
+            "parent": 3.076893474814221,
+            "child": 3.177919244345014,
+            "delta": 0.10102576953079323,
+            "se": 0.18987084356732248,
+            "ci_low": NaN,
+            "ci_high": NaN,
+            "ci_level": 0.95,
+            "p_value": NaN,
+            "df": 3,
+            "n_instances": 145,
+            "n_clusters": 4,
+            "clusters_child_better": 2,
+            "n_seeds_parent": 1,
+            "n_seeds_child": 1,
+            "seed_variance_included": false,
+            "few_clusters": true,
+            "significant": false,
+            "warnings": [
+              "Only 4 clusters (< 5): no CI or p-value reported. Report the per-cluster sign count instead, or pool more data (rolling-origin folds)."
+            ]
+          },
+          "season": {
+            "metric": "rmse",
+            "parent": 2.1890376853515323,
+            "child": 1.8652046782963703,
+            "delta": -0.32383300705516205,
+            "se": 0.08259080601411213,
+            "ci_low": -0.5361394327856012,
+            "ci_high": -0.11152658132472293,
+            "ci_level": 0.95,
+            "p_value": 0.011171522955738948,
+            "df": 5,
+            "n_instances": 2852,
+            "n_clusters": 6,
+            "clusters_child_better": 6,
+            "n_seeds_parent": 1,
+            "n_seeds_child": 1,
+            "seed_variance_included": false,
+            "few_clusters": true,
+            "significant": true,
+            "warnings": []
+          }
+        },
+        "warnings": {
+          "rows": 2852,
+          "events": 190,
+          "rules": {
+            "global model, R-point": {
+              "hits": 45,
+              "misses": 145,
+              "false_alarms": 87,
+              "n": 2852,
+              "hit_rate": 0.23684210526315788,
+              "false_alarm_ratio": 0.6590909090909091,
+              "ets": 0.13499380330594934,
+              "frequency_bias": 0.6947368421052632
+            },
+            "C3-hop, R-point": {
+              "hits": 15,
+              "misses": 175,
+              "false_alarms": 44,
+              "n": 2852,
+              "hit_rate": 0.07894736842105263,
+              "false_alarm_ratio": 0.7457627118644068,
+              "ets": 0.048113411708765264,
+              "frequency_bias": 0.3105263157894737
+            },
+            "C3-hop, R-prob (p* = 0.13)": {
+              "hits": 102,
+              "misses": 88,
+              "false_alarms": 571,
+              "n": 2852,
+              "hit_rate": 0.5368421052631579,
+              "false_alarm_ratio": 0.8484398216939079,
+              "ets": 0.07982072967370411,
+              "frequency_bias": 3.542105263157895
+            },
+            "C3-hop, R-shift (delta = 1.2 C)": {
+              "hits": 90,
+              "misses": 100,
+              "false_alarms": 439,
+              "n": 2852,
+              "hit_rate": 0.47368421052631576,
+              "false_alarm_ratio": 0.8298676748582231,
+              "ets": 0.09222285605628447,
+              "frequency_bias": 2.7842105263157895
+            },
+            "LSTM, R-point": {
+              "hits": 7,
+              "misses": 183,
+              "false_alarms": 21,
+              "n": 2852,
+              "hit_rate": 0.03684210526315789,
+              "false_alarm_ratio": 0.75,
+              "ets": 0.02455184993930777,
+              "frequency_bias": 0.14736842105263157
+            }
+          }
+        }
       }
     }
   },
   "native_steps": {
     "IFS": "3-hourly (6-hourly after 144 h)",
     "AIFS": "6-hourly",
-    "GFS": "hourly (3-hourly after 120 h)"
+    "GFS": "hourly (3-hourly after 120 h)",
+    "AIFS Single": "6-hourly",
+    "IFS HRES 9 km, 12 UTC run": "hourly (3-hourly after 90 h, 6-hourly after 144 h)"
   },
   "wbgt_solver_failures": {
     "IFS": 0,
     "AIFS": 0,
-    "GFS": 0
+    "GFS": 0,
+    "AIFS Single": 0,
+    "IFS HRES 9 km, 12 UTC run": 0
   },
   "grid": {
     "IFS": {
@@ -1733,9 +2691,229 @@
         "elevation": 221.0,
         "era5_elevation": 221.0
       }
+    },
+    "AIFS Single": {
+      "1": {
+        "grid": [
+          28.25,
+          77.0
+        ],
+        "era5_grid": [
+          28.25,
+          77.0
+        ],
+        "elevation": 274.0,
+        "era5_elevation": 274.0
+      },
+      "2": {
+        "grid": [
+          28.25,
+          77.25
+        ],
+        "era5_grid": [
+          28.25,
+          77.25
+        ],
+        "elevation": 204.0,
+        "era5_elevation": 204.0
+      },
+      "3": {
+        "grid": [
+          28.25,
+          77.5
+        ],
+        "era5_grid": [
+          28.25,
+          77.5
+        ],
+        "elevation": 199.0,
+        "era5_elevation": 199.0
+      },
+      "4": {
+        "grid": [
+          28.5,
+          77.0
+        ],
+        "era5_grid": [
+          28.5,
+          77.0
+        ],
+        "elevation": 214.0,
+        "era5_elevation": 214.0
+      },
+      "5": {
+        "grid": [
+          28.5,
+          77.25
+        ],
+        "era5_grid": [
+          28.5,
+          77.25
+        ],
+        "elevation": 231.0,
+        "era5_elevation": 231.0
+      },
+      "6": {
+        "grid": [
+          28.5,
+          77.5
+        ],
+        "era5_grid": [
+          28.5,
+          77.5
+        ],
+        "elevation": 208.0,
+        "era5_elevation": 208.0
+      },
+      "7": {
+        "grid": [
+          28.75,
+          77.0
+        ],
+        "era5_grid": [
+          28.75,
+          77.0
+        ],
+        "elevation": 220.0,
+        "era5_elevation": 220.0
+      },
+      "8": {
+        "grid": [
+          28.75,
+          77.25
+        ],
+        "era5_grid": [
+          28.75,
+          77.25
+        ],
+        "elevation": 212.0,
+        "era5_elevation": 212.0
+      },
+      "9": {
+        "grid": [
+          28.75,
+          77.5
+        ],
+        "era5_grid": [
+          28.75,
+          77.5
+        ],
+        "elevation": 221.0,
+        "era5_elevation": 221.0
+      }
+    },
+    "IFS HRES 9 km, 12 UTC run": {
+      "1": {
+        "grid": [
+          28.295254,
+          76.93878
+        ],
+        "era5_grid": [
+          28.25,
+          77.0
+        ],
+        "elevation": 274.0,
+        "era5_elevation": 274.0
+      },
+      "2": {
+        "grid": [
+          28.365553,
+          77.23042
+        ],
+        "era5_grid": [
+          28.25,
+          77.25
+        ],
+        "elevation": 204.0,
+        "era5_elevation": 204.0
+      },
+      "3": {
+        "grid": [
+          28.295254,
+          77.44898
+        ],
+        "era5_grid": [
+          28.25,
+          77.5
+        ],
+        "elevation": 199.0,
+        "era5_elevation": 199.0
+      },
+      "4": {
+        "grid": [
+          28.576448,
+          76.98177
+        ],
+        "era5_grid": [
+          28.5,
+          77.0
+        ],
+        "elevation": 214.0,
+        "era5_elevation": 214.0
+      },
+      "5": {
+        "grid": [
+          28.576448,
+          77.18678
+        ],
+        "era5_grid": [
+          28.5,
+          77.25
+        ],
+        "elevation": 231.0,
+        "era5_elevation": 231.0
+      },
+      "6": {
+        "grid": [
+          28.576448,
+          77.4943
+        ],
+        "era5_grid": [
+          28.5,
+          77.5
+        ],
+        "elevation": 208.0,
+        "era5_elevation": 208.0
+      },
+      "7": {
+        "grid": [
+          28.857643,
+          76.9222
+        ],
+        "era5_grid": [
+          28.75,
+          77.0
+        ],
+        "elevation": 220.0,
+        "era5_elevation": 220.0
+      },
+      "8": {
+        "grid": [
+          28.857643,
+          77.231125
+        ],
+        "era5_grid": [
+          28.75,
+          77.25
+        ],
+        "elevation": 212.0,
+        "era5_elevation": 212.0
+      },
+      "9": {
+        "grid": [
+          28.857643,
+          77.43707
+        ],
+        "era5_grid": [
+          28.75,
+          77.5
+        ],
+        "elevation": 221.0,
+        "era5_elevation": 221.0
+      }
     }
   },
-  "grid_summary": "IFS: grid points the same as ERA5's, elevations the same; AIFS: grid points the same as ERA5's, elevations the same; GFS: grid points differ from ERA5's, elevations the same",
-  "extract_sha256": "8b51c2096533f87c544953d296e8fbc21f6b67513d0d72b3f6381424812a9b92",
-  "single_status": "not complete yet (0 of 902 runs downloaded); python -m followup.open_meteo --single-runs resumes it"
+  "grid_summary": "IFS: grid points the same as ERA5's, elevations the same; AIFS: grid points the same as ERA5's, elevations the same; GFS: grid points differ from ERA5's, elevations the same; AIFS Single: grid points the same as ERA5's, elevations the same; IFS HRES 9 km, 12 UTC run: grid points differ from ERA5's (expected: its own 9 km grid), elevations the same",
+  "extract_sha256": "58ceaaaca724b4dbffbd79ea21717d9aa322efddc4ec5cec8b9d6e64660c4ccd",
+  "single_status": "included (1 of 902 runs not in the archive)"
 }

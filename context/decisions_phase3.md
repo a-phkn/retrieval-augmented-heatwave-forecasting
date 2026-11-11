@@ -144,6 +144,39 @@ Rules for this file:
       so worse than C3-hop on all days;
     - WBGT: open. The same 6-hourly limit applies to every input.
   - It counts as one of "the P3-1 models" wherever P3-2 and P3-3 use that phrase.
+- **RESULT 2026-11-11** (`followup/results/global_models.md`, re-run with both downloads complete; daily extract
+  SHA-256 58ceaaaca724b4dbffbd79ea21717d9aa322efddc4ec5cec8b9d6e64660c4ccd). The 2026-11-08 numbers are unchanged.
+  - **IFS timing check** (IFS HRES 9 km, the run started 12 UTC on q - 1; 901 of 902 runs are in the archive; 8
+    clusters on all days):
+    - Tmax: IFS is better than C3-hop at every lead, day 1 included: 1.37 vs 1.54 at day 1, 1.98 vs 2.53 at day 5.
+    - Tmax, all days 1.69 vs 2.14 (delta -0.45, CI -0.92 to +0.01, fragile); heatwave days 1.63 vs 2.38 (3
+      clusters, no CI).
+    - WBGT, all days 1.85 vs 2.22 (delta -0.37, CI -0.53 to -0.20, fragile); heat season 1.87 vs 2.19 (delta -0.32,
+      CI -0.54 to -0.11, fragile).
+    - WBGT, heatwave days 3.18 vs 3.08: still slightly in C3-hop's favour (4 clusters, no CI).
+    - Reading: the "about even at day 1" of the main result came from the older runs behind `_previous_day1`. With
+      the latest run that starts before our input cutoff, IFS is ahead at day 1 too.
+  - **AIFS Single** (added after the first results; query dates 2025-02-19 to 2026-09-02; 6 clusters on all days, 2
+    on heatwave days):
+    - Tmax, all days: 1.31 °C too cold, as expected, but still better than C3-hop: 1.89 vs 2.27 (delta -0.39, CI
+      -1.04 to +0.27, fragile). **The expectation "worse than C3-hop on all days" was wrong.** About even at day 1
+      (1.66 vs 1.62), better from day 2.
+    - Tmax, heat season 2.02 vs 2.66 (no CI). Heatwave days 2.64 vs 2.49, C3-hop slightly better (110 rows, no CI);
+      AIFS Single is 2.51 °C too cold there.
+    - Tmax warnings: R-point almost never fires for AIFS Single (hit rate 1%, ETS 0.01) because of its cold bias.
+      C3-hop on the same rows: ETS 0.07-0.10. These two seasons have few events (123 rows).
+    - WBGT: the best forecast in this comparison. All days 1.68 vs 2.26 (delta -0.58, CI -0.71 to -0.45, fragile);
+      heat season 1.68 vs 2.24 (4 clusters, no CI).
+    - WBGT, heatwave days 2.69 vs 3.08 (95 rows, 2 clusters, no CI); 1.88 °C too cold, C3-hop 2.71. Warnings: ETS
+      0.17 vs C3-hop's 0.07-0.11.
+    - Reading: C3-hop's one edge over IFS (WBGT on heatwave days) does not hold against AIFS Single. With 2
+      clusters that is not testable either way.
+- **DEVIATION 2026-11-11 (a clarification of where files live; user approved; no number changes):**
+  - The committed daily extract now lives in `followup/data/open_meteo_runs_daily.parquet`. It moved from
+    `data/external/`; its content is unchanged (SHA-256 58ceaaaca724b4dbffbd79ea21717d9aa322efddc4ec5cec8b9d6e64660c4ccd).
+  - Why: `data/external/` holds the inputs of the one-time test. Every tracked file there must be in the test's
+    fingerprint list (`data/TEST_MANIFEST.json`, checked by `tests/test_test_manifest.py`), and this file was never
+    one of the test's inputs. Committing it there made that check fail on this branch from commit 94bf43a until now.
 
 **P3-2: A corrector on top of a global forecast. PRE-REGISTERED 2026-11-05 (user approved).**
 - Question: does a cheap Delhi corrector make global forecasts better, and does C3-hop add information on top?
@@ -189,6 +222,8 @@ Rules for this file:
   (2018: under 1% on top of (a)).
 - Code: `followup/corrector.py`; the GraphCast 2020 extract (box means only, cached) goes to
   `data/external/graphcast_2020_delhi_t2m.parquet`.
+- **DEVIATION 2026-11-11 (a clarification, written before any P3-2 code or download):** the GraphCast 2020 extract
+  goes to `followup/data/graphcast_2020_delhi_t2m.parquet` instead, for the reason given under P3-1 on the same date.
 
 **P3-3: Safdarjung station check. PRE-REGISTERED 2026-11-05 (user approved).**
 - Data: GHCN-Daily IN022021900 TMAX (`sources/data/safdarjung_daily_tidy.csv`; to 2025-08-23; gaps; quality-flagged
@@ -250,6 +285,53 @@ Rules for this file:
   - Expected (written now): ERA5's 9-cell mean is colder than the station on station heatwave days (an area mean
     damps a station's peaks), and this explains part, not all, of the forecasts' cold bias. The ranking of our
     models does not change.
+- **RESULT 2026-11-11** (`followup/results/station_check.md`; the P3-2 parts of (iii) are not run yet).
+  - **The registered comparison cannot answer its questions for 2019-2025: the station file's recent values are not
+    dated to the day they occurred.** This was found after the registered numbers were seen, by a check that was not
+    registered (exploratory). The check uses the station and ERA5 only, no forecast:
+    - 1980-2008: a value dated D matches ERA5 of day D. The SD of ERA5 - station is 1.09 °C on the same day and 1.95
+      against the day before. Missing days look random. ERA5 is 0.42 °C below the station.
+    - 2011-2015: the value matches the larger of the maxima of D - 1 and D best (SD 1.21, same day 1.43). 22% of
+      consecutive values are identical (5% in 1980-2008): a hot day's maximum is repeated on the next, cooler day.
+      2009-2010 lie in between (14% identical).
+    - 2016-2025: values exist on 56-64% of days. 63-72% of them fall on a day cooler than the day before; 46-48% of
+      all days are such days. The day before fits far better than the same day (2019-2025: SD 1.02 vs 1.74).
+    - All values carry GHCN-Daily's source flag S (Global Summary of the Day). Its readme (v3.35, read 2026-11-11)
+      says S values are "derived from hourly synoptic reports" and "may differ significantly from 'true' daily data
+      ... (i.e., use with caution)". It says nothing on how an S-source TMAX is dated.
+    - Consequence: in 2019-2025 most station values dated D are the maximum of D - 1, so a forecast for D is scored
+      against the wrong day. The numbers of (ii), (iii) and the 2019-2025 half of (i) are in the report exactly as
+      registered, and no conclusion is drawn from them.
+  - **The registered numbers, for the record (not interpretable for 2019-2025):**
+    - (i) ERA5 - station: -0.63 °C in 1980-2018 (RMSE 1.41) and -1.83 °C in 2019-2025 (RMSE 2.53). Matched to the
+      larger of the two days, the 2019-2025 gap is -0.91 °C.
+    - (i) ERA5 labels 75% of the station's heatwave days (label rule) in 1980-2018 and 53% in 2019-2025.
+    - (ii) Against the station, ridge_hw5 scores better than C3-hop on all days: 2.13 vs 2.28 (delta +0.15, CI +0.07
+      to +0.22). Against ERA5 on the same rows the order is the reverse (delta -0.14, CI -0.18 to -0.09). By the
+      registered rule this is a clear change of order. It cannot be read as one: a truth that is mostly the day
+      before favours a forecast that leans on the last observed days.
+    - (ii) C3-hop vs the LSTM keeps its order against the station (delta -0.06, CI -0.18 to +0.06).
+    - (ii) Cold-bias split, C3-hop on station heatwave days: -2.21 = -0.54 (forecast - ERA5) + -1.67 (ERA5 -
+      station), ERA5's share 76%. The ERA5 - station part carries the dating effect.
+    - (iii) On all days, IFS (both versions), AIFS Single and GraphCast 2018 are better than C3-hop against ERA5 and
+      worse against the station; the experimental AIFS is worse against both. GFS is 0.9 °C warmer than the station
+      (2.9 °C warmer than ERA5 in P3-1). The same caveat applies to all of it.
+  - **What can be said:**
+    - Where the dates are right (1980-2008), ERA5's 9-cell mean runs 0.42 °C below the station on average, and the
+      two differ by about 1.1 °C from day to day.
+    - The expected damping of peaks is not visible in the registered 1980-2018 numbers: ERA5 - station is -0.61 °C
+      on station heatwave days and -0.63 °C on all days. (The affected years 2011-2018 are inside that period.)
+    - The mapping (iv) does not carry over to recent years with this file: it leaves -1.20 °C in 2019-2025. The
+      advisory's reserve option C (station mapping) would need a station record with correct dates.
+  - **Expectations:** not testable. The registered numbers go against "the ranking of our models does not change",
+    but for a reason that lies in the data, not in the models.
+  - **Not decided (user):** how to get a usable station truth for 2019-2025. Nothing further is run on the station
+    until this is decided, and P3-2's station part waits on it. Options:
+    - (a) rebuild the station's daily maxima from NOAA's hourly archive (Integrated Surface Database), dated by IST
+      day: a new data source, with its own pre-registration;
+    - (b) a re-dated comparison with this file: score each forecast's two-day maximum against the station value,
+      with ERA5's two-day maximum as the reference. Post hoc, and only on the days the station reports;
+    - (c) leave P3-3 as a documented negative result.
 
 **P3-4: Conformal forecast ranges. PRE-REGISTERED 2026-11-05 (user approved).**
 - Base: the test report's ranges: the recalibrated ensemble mean +/- a Gaussian width from the stop-block residual SD

@@ -8,16 +8,18 @@ descriptive: it changes no model and no confirmatory result.
   input cutoff (the end of q - 1 IST).
 - Tmax = daily maximum of the 24 hourly 2 m temperatures of the IST day per cell, then the 9-cell mean (the ERA5
   target's definition). WBGT = hourly Liljegren WBGT with the steps of pipeline/build_wbgt_liljegren.py, the same
-  daily maximum and 9-cell mean; IFS and GFS only (AIFS has no radiation in the archive).
+  daily maximum and 9-cell mean; not for the experimental AIFS, which has no radiation in the archive.
 - A (q, L) row whose target day lacks any hour or cell for a model is dropped from every comparison with that model.
 - Compared with C3-hop and the Delhi-only LSTM, 10-seed ensemble means (C3-hop's mean of per-seed RMSE as well): RMSE
   and bias on all days, the extreme stratum and the heat season, by lead; the paired cluster jackknife of
   RMSE(global) - RMSE(C3-hop); R-point warnings for every model, with C3-hop's R-prob and R-shift (post-test 3) for
   reference.
 - Timing check, once downloaded: IFS HRES 9 km from its 12 UTC run on q - 1 (Single Runs API).
+- Deviation of 2026-11-10: the operational AIFS Single (`ecmwf_aifs025_single`, from 2025-02, Tmax and WBGT) is a
+  fourth model. It was added after the first results were seen, and every table says so.
 
 Run from repo root, after python -m followup.open_meteo:  python -m followup.global_models
-  -> followup/results/global_models.{md,json} and data/external/open_meteo_runs_daily.parquet
+  -> followup/results/global_models.{md,json} and followup/data/open_meteo_runs_daily.parquet
 """
 from __future__ import annotations
 
@@ -33,7 +35,7 @@ from training.folds import FORECAST_DAYS
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
 OUT_DIR = REPO_ROOT / "followup" / "results"
-EXTRACT = REPO_ROOT / "data" / "external" / "open_meteo_runs_daily.parquet"
+EXTRACT = REPO_ROOT / "followup" / "data" / "open_meteo_runs_daily.parquet"
 PRED_TEST = REPO_ROOT / "predictions_test"
 WARNING_JSON = REPO_ROOT / "evaluation_post_test" / "warning_rules.json"
 ERA5_RAW = REPO_ROOT / "data" / "raw" / "era5_monthly"
@@ -46,7 +48,9 @@ MODELS = {
     "IFS": ("ecmwf_ifs025", om.WBGT_VARS, ("tmax", "wbgt"), "3-hourly (6-hourly after 144 h)"),
     "AIFS": ("ecmwf_aifs025", ("temperature_2m",), ("tmax",), "6-hourly"),
     "GFS": ("gfs_seamless", om.WBGT_VARS, ("tmax", "wbgt"), "hourly (3-hourly after 120 h)"),
+    "AIFS Single": ("ecmwf_aifs025_single", om.WBGT_VARS, ("tmax", "wbgt"), "6-hourly"),
 }
+ADDED_LATER = {"AIFS Single"}  # the deviation of 2026-11-10: chosen after the first results were seen
 GFS_SINCE_2021 = "GFS, Tmax since 2021"
 SINGLE_NAME = "IFS HRES 9 km, 12 UTC run"
 SINGLE_STEP = "hourly (3-hourly after 90 h, 6-hourly after 144 h)"
@@ -271,6 +275,10 @@ def _num(x, fmt: str = ".3f") -> str:
     return "n/a" if x is None or not np.isfinite(x) else format(x, fmt)
 
 
+def _label(name: str) -> str:
+    return f"{name} (added after the first results)" if name in ADDED_LATER else name
+
+
 def _delta(t: dict) -> str:
     if "error" in t:
         return "not testable"
@@ -295,10 +303,10 @@ def write_report(res: dict) -> None:
                   "|---|---|---|---|---|---|---|---|---|---|---|"]
             for name, r in models.items():
                 if not r.get("rows"):
-                    L.append(f"| {name} | no data | 0 | | | | | | | | |")
+                    L.append(f"| {_label(name)} | no data | 0 | | | | | | | | |")
                     continue
                 g, c, s, m = (r[k][stratum] for k in ("global", "c3hop", "c3hop_per_seed", "lstm"))
-                L.append(f"| {name} | {r['first_query']} to {r['last_query']} | {g['n']} | {g['clusters']} | "
+                L.append(f"| {_label(name)} | {r['first_query']} to {r['last_query']} | {g['n']} | {g['clusters']} | "
                          f"{_num(g['rmse'])} | {_num(c['rmse'])} | {_num(s['rmse'])} | {_num(m['rmse'])} | "
                          f"{_delta(r['test'][stratum])} | {_num(g['bias'], '+.2f')} | {_num(c['bias'], '+.2f')} |")
             L.append("")
@@ -306,14 +314,14 @@ def write_report(res: dict) -> None:
         for name, r in models.items():
             if r.get("rows"):
                 for who, k in (("global", "global"), ("C3-hop", "c3hop")):
-                    L.append(f"| {name} | {who} | " + " | ".join(_num(x) for x in r[k]["by_lead"]) + " |")
+                    L.append(f"| {_label(name)} | {who} | " + " | ".join(_num(x) for x in r[k]["by_lead"]) + " |")
         L += ["", "### Yes/no heatwave warnings (in-season rows where the global model has a value)", "",
               "| Model rows | Rule | Hit rate | False-alarm ratio | ETS | Frequency bias |", "|---|---|---|---|---|---|"]
         for name, r in models.items():
             if r.get("rows"):
                 w = r["warnings"]
                 for rule, s in w["rules"].items():
-                    L.append(f"| {name} ({w['rows']} rows, {w['events']} events) | {rule} | {_num(s['hit_rate'], '.0%')} | "
+                    L.append(f"| {_label(name)} ({w['rows']} rows, {w['events']} events) | {rule} | {_num(s['hit_rate'], '.0%')} | "
                              f"{_num(s['false_alarm_ratio'], '.0%')} | {_num(s['ets'], '.2f')} | {_num(s['frequency_bias'], '.2f')} |")
         L.append("")
     L += ["## Notes", "",
@@ -322,6 +330,9 @@ def write_report(res: dict) -> None:
           "the end of that day, IST).",
           "- Native output steps (Open-Meteo's documentation; hourly values are its interpolation, which can miss the "
           "afternoon peak, most for 6-hourly AIFS): " + "; ".join(f"{k} {v}" for k, v in res["native_steps"].items()) + ".",
+          "- AIFS Single (`ecmwf_aifs025_single`, the operational AIFS) was added by the dated deviation of 2026-11-10, "
+          "after the results of the other models had been seen. It is a separate model and is not joined to the "
+          "experimental AIFS series (`ecmwf_aifs025`), which ends 2025-03-10.",
           "- WBGT inputs: IFS 0.25° gives only global radiation, so Open-Meteo estimates the diffuse part with a "
           "separation model; WBGT's direct / diffuse split is therefore partly modelled for IFS.",
           "- ERA5 is produced with the IFS model, so ERA5 truth may favour IFS and our ERA5-trained models over GFS "

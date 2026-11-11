@@ -2,8 +2,9 @@
 Archived global-model forecasts for the 9 Delhi cells, from Open-Meteo (P3-1, context/decisions_phase3.md).
 
 - Previous Runs API: `<variable>_previous_dayL` is the value predicted L x 24 h before its valid time; it is our
-  lead-L forecast. Models: ECMWF IFS 0.25° (`ecmwf_ifs025`), ECMWF AIFS 0.25° (`ecmwf_aifs025`), NCEP GFS
-  (`gfs_seamless`).
+  lead-L forecast. Models: ECMWF IFS 0.25° (`ecmwf_ifs025`), ECMWF AIFS 0.25° (`ecmwf_aifs025`, the experimental
+  series, which ends 2025-03-10), NCEP GFS (`gfs_seamless`), and the operational AIFS Single
+  (`ecmwf_aifs025_single`), added by the deviation of 2026-11-10.
 - Single Runs API: one model run by its start time. Only for the IFS timing check: IFS HRES 9 km (`ecmwf_ifs`), the run
   started at 12 UTC on q - 1.
 Requests use the ERA5 download's coordinates and settings (pipeline/download_era5_v2.py), so a 0.25° model snaps to
@@ -45,6 +46,8 @@ PULLS = {
     "AIFS": ("ecmwf_aifs025", ("temperature_2m",), date(2024, 3, 1), END),
     "GFS": ("gfs_seamless", WBGT_VARS, date(2024, 1, 1), END),
     "GFS early": ("gfs_seamless", ("temperature_2m",), date(2021, 3, 1), date(2023, 12, 31)),
+    # added by the deviation of 2026-11-10; its first archived value is 2025-02-18 (probe 2026-11-10)
+    "AIFS Single": ("ecmwf_aifs025_single", WBGT_VARS, date(2025, 2, 1), END),
 }
 SINGLE_MODEL = "ecmwf_ifs"  # ECMWF IFS HRES 9 km; Single Runs archive from 2024-03-14
 SINGLE_FIRST_RUN = date(2024, 3, 14)

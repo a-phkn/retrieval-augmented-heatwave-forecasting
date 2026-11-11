@@ -118,6 +118,14 @@ def test_single_runs_become_leads_counted_from_the_run_date(tmp_path):
         assert len(daily["wbgt"][L]) == 1
 
 
+def test_a_model_added_after_the_first_results_is_marked_and_downloaded():
+    assert gm.ADDED_LATER <= set(gm.MODELS)
+    for name in gm.ADDED_LATER:
+        assert gm._label(name) == f"{name} (added after the first results)"
+        assert gm.MODELS[name][0] == om.PULLS[name][0]  # the analysis reads the model id the download fetches
+    assert gm._label("IFS") == "IFS"
+
+
 def test_extract_has_one_row_per_model_target_lead_and_day():
     s = pd.Series([1.0, 2.0], index=pd.to_datetime(["2024-05-01", "2024-05-02"]))
     out = gm.extract_frame({"IFS": {"tmax": {1: s, 2: s}}, "AIFS": {"tmax": {1: s}}})
