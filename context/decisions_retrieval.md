@@ -381,3 +381,25 @@ RS-2 and before any forecast value was downloaded (user approved).**
   - Its key-value correlation is far above RS-1's 0.02-0.08.
   - On heatwave days it is less cold than C3-hop (descriptive).
   - Against corrected HRES: open.
+- **RESULT 2026-11-11** (`retrieval_study/results/step5.md`; extract SHA-256
+  14a98de55ee84ef2c7d9b6f600a3840384df1b92b4544a7392a570bed1109024). Descriptive: one fold, 3 years, 9 clusters on
+  all days and 3 on heatwave days.
+  - **Retrieval works when its key carries forecast information.**
+    - The analogue ensemble cuts the error from C3-hop's 1.971 to 1.465 °C on all days (-0.506, CI -0.819 to -0.192;
+      26%). It wins at every lead: day 1 1.22 vs 1.36 °C, day 5 1.66 vs 2.31 °C.
+    - It beats its random control by 1.19 °C (CI -1.50 to -0.88).
+    - Heatwave days: 1.54 vs 2.02 °C (no CI), and less cold (bias -1.27 vs -1.57 °C).
+  - **The information comes from the forecast, not from the retrieval.**
+    - Against HRES's own corrected daily maximum: -0.124 °C on all days (CI -0.297 to +0.049, includes 0), and
+      slightly worse on heatwave days (1.54 vs 1.44 °C, no CI).
+    - What the retrieval adds is mainly a bias correction (bias +0.04 vs -0.65 °C).
+  - **The key-value prediction fails as written.** The forecast key's key-value correlation is 0.16 (day 1) to 0.09
+    (day 5): above the past-based keys' 0.02-0.08, but not far above. Yet this key works.
+    - So the pairwise correlation is a coarse measure of a key's usefulness.
+    - RS-1's explanation rests on the information ladder, the positive control and the oracle ranks. This correlation
+      is supporting evidence only.
+  - **The other predictions hold:** it beats C3-hop and its random control on all days, and it is less cold on heatwave
+    days. Against corrected HRES it ties.
+  - **Reading.** The retrieval machinery that adds nothing with Delhi's past as the key gives a 26% gain when the key
+    is a numerical forecast: the information principle again. The gain belongs to the forecast; retrieval is a way to
+    correct it.
