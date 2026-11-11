@@ -344,6 +344,14 @@ before any run (user approved).**
     is kept. Only the link to the right day is broken.
   - Code: `retrieval_study/z500_direct.py --control` (`*_Z500shuf`).
   - It runs for a family only if that family's main comparison helps (CI below 0 on all days).
+- **RESULT, WBGT, 2026-11-11** (`retrieval_study/results/step4.md`; Tmax still training).
+  - **It helps, by more than predicted.** All days: 2.248 -> 2.165 °C (-0.083, CI -0.108 to -0.057; about 4%). The
+    prediction was -0.01 to -0.04.
+  - The gain appears at every lead: day 1 -0.023, then -0.085, -0.102, -0.110 and -0.085 °C on days 2 to 5.
+  - Heatwave days: -0.069 °C (CI -0.208 to +0.071), no detectable gain, as predicted.
+  - **Direct input beats retrieval of the same information.** Against C3-hop + Rz (the 500 hPa pattern through
+    retrieval, October): -0.059 °C on all days (CI -0.083 to -0.035).
+  - The rule says it helps, so the WBGT shuffled-year control was started on 2026-11-11, after this result.
 
 **RS-5: retrieval keyed on a global model's forecast, an analogue ensemble (Tmax only). PRE-REGISTERED 2026-11-11, after
 RS-2 and before any forecast value was downloaded (user approved).**
