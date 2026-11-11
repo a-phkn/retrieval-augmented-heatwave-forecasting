@@ -305,3 +305,71 @@ before any screen was run.**
     - all days -0.023 °C (CI -0.041 to -0.005); against random retrieval -0.020 °C (CI -0.040 to -0.000);
     - heatwave days +0.004 °C (CI -0.120 to +0.128).
   - Training it again would repeat that run. For Tmax, nothing passed.
+
+**RS-4: C3-hop with the 500 hPa pattern as a direct input (not retrieval). PRE-REGISTERED 2026-11-11, after RS-2 and
+before any run (user approved).**
+- **Why.** RS-2's linear screen found the upper-air information worth more given directly than through retrieval:
+  -0.038 °C (Tmax) and -0.046 °C (WBGT) on all days, and -0.120 °C on Tmax heatwave days. This tests it in our best
+  model. It is the information principle's next step, not a retrieval method.
+- **Model.** C3-hop exactly as frozen (`configs/{A1prime,A2Lr}_hw5_C3hop.json`), trained by the frozen
+  `training.train_unified.train_one_seed_graph`.
+  - Unchanged: graph, hops, hidden size, learning rate, dropout, hot-day weight 5, early stopping on the last 2
+    training years, seeds 0-9.
+  - The only change: 10 extra Delhi input channels on each of the 14 input days. They are that day's 500 hPa anomaly
+    field scored on its first 10 principal components.
+  - The fields come from `retrieval.fold_retrieval.synoptic_daily`: South Asia 10-45° N, 40-100° E, 12 UTC,
+    standardised anomalies against the fold's training-year climatology, weighted by sqrt(cos lat).
+  - The PCA uses the fold's training days only. Scores are divided by their training-day SD.
+- **Runs:** 10 seeds x 4 folds, both families (`{A1prime,A2Lr}_hw5_C3hop_Z500d`). Predictions go in
+  `retrieval_study/predictions/`; checkpoints in `retrieval_study/checkpoints/` (not committed).
+- **Comparison:**
+  - against C3-hop's saved forecasts (same seeds, folds and windows), paired cluster jackknife with 10 seeds each, on
+    all days and heatwave days;
+  - for WBGT, also against C3-hop + Rz (descriptive).
+- **Rule:** the direct input helps if its all-days CI is below 0. Heatwave days are reported with their CI (12
+  clusters).
+- **Control (conditional):**
+  - If it helps, the same run is repeated with each day's 500 hPa scores taken from a random other day (within the
+    fold's years, within ±30 days of the same day of year). This rules out "more inputs" as the cause.
+  - The direct input must then also beat that control on all days.
+- **Predictions:**
+  - It helps on all days in both families, but by less than in the linear screen (-0.01 to -0.04 °C), because C3-hop
+    already sees 27 upstream points.
+  - Heatwave days: no detectable gain for WBGT; open for Tmax.
+
+**RS-5: retrieval keyed on a global model's forecast, an analogue ensemble (Tmax only). PRE-REGISTERED 2026-11-11, after
+RS-2 and before any forecast value was downloaded (user approved).**
+- **Why.** This is the textbook case where retrieval works in weather forecasting (the analogue ensemble, Delle Monache
+  et al. 2013). Its key is a numerical forecast, which carries information about the future that past observations do
+  not. By RS-1's principle it should work here, unlike same-site analogues.
+- **Data:**
+  - ECMWF IFS HRES operational forecasts from WeatherBench 2
+    (`datasets/hres/2016-2022-0012-240x121_equiangular_with_poles_conservative.zarr`, 1.5°), 2 m temperature only. The
+    store has no surface humidity or radiation, so there is no WBGT.
+  - Runs started 12 UTC on q - 1 (the GraphCast yardstick's timing), 2016-01-01 12 UTC to 2018-12-26 12 UTC. Lead
+    hours 12 to 126, every 6 hours.
+  - About 3,300 chunks (~2 GB), streamed. Only the Delhi-box means are kept, in
+    `retrieval_study/data/hres_2016_2018_delhi_t2m.parquet` (committed).
+  - Nothing from 2019 on is downloaded.
+- **Box:** the area-weighted mean over the 1.5° cells overlapping the 9-cell Delhi box
+  (`evaluation.graphcast_yardstick.overlap_weights`).
+- **Queries:** fold f4's validation windows with query dates 2016-01-02 to 2018-12-27 (2016-01-01 has no 12 UTC run
+  the day before), leads 1-5.
+- **Key:** the four 6-hourly HRES values (00, 06, 12 and 18 UTC) on the target day, standardised per lead over the
+  archive.
+- **Archive, leave-one-year-out:** the same lead's forecasts for target days in the other two years, within ±45 days
+  of the same day of year. Each member's value is the ERA5 9-cell Tmax of its target day.
+- **Forecast:** the mean value of the K = 20 nearest members (Euclidean). Random control: 20 random archive members (10
+  seeds).
+- **Compared with, on the same rows:**
+  - C3-hop (10-seed ensemble mean, fold f4);
+  - HRES's own daily maximum after the yardstick's per-month correction (fitted on ERA5 1980-2015);
+  - the random control.
+- **Diagnostic:** the key-value Spearman correlation of the forecast key, as in RS-1d.
+- **Statistics:** paired cluster jackknife over year x season clusters. There are 9 on all days (fragile) and at most 3
+  on heatwave days (no CI; descriptive). This is one fold and 3 years, so RS-5 is descriptive.
+- **Predictions:**
+  - The analogue ensemble beats C3-hop and its random control on all days (CIs below 0).
+  - Its key-value correlation is far above RS-1's 0.02-0.08.
+  - On heatwave days it is less cold than C3-hop (descriptive).
+  - Against corrected HRES: open.
