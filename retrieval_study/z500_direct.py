@@ -141,6 +141,12 @@ def load(run_dir: Path) -> pd.DataFrame:
     return pd.concat([pd.read_parquet(run_dir / f"{f}.parquet") for f in FOLDS], ignore_index=True)
 
 
+def bias(df: pd.DataFrame) -> dict[str, float]:
+    """Mean error (forecast minus truth, mean over seeds) on all days and on heatwave days; negative = too cold."""
+    return {s: float((df if s == "all" else df[df["stratum"] == s]).groupby("seed")["error"].mean().mean())
+            for s in ("all", "extreme")}
+
+
 def report() -> dict:
     from evaluation.compare_v2 import compare, rmse_by
 
@@ -158,12 +164,13 @@ def report() -> dict:
         if all((control / f"{f}.parquet").exists() for f in FOLDS):
             refs["the shuffled-year control"] = control
         r = {"rmse": {s: rmse_by(child if s == "all" else child[child["stratum"] == s]) for s in ("all", "extreme")},
-             "by_lead": [rmse_by(child[child["lead"] == L]) for L in range(1, 6)], "tests": {}}
+             "by_lead": [rmse_by(child[child["lead"] == L]) for L in range(1, 6)], "bias": bias(child), "tests": {}}
         for name, path in refs.items():
             parent = load(path)
             r[f"rmse {name}"] = {s: rmse_by(parent if s == "all" else parent[parent["stratum"] == s])
                                  for s in ("all", "extreme")}
             r[f"by_lead {name}"] = [rmse_by(parent[parent["lead"] == L]) for L in range(1, 6)]
+            r[f"bias {name}"] = bias(parent)
             for s in ("all", "extreme"):
                 t = compare(parent, child, s)
                 r["tests"][f"vs {name}|{s}"] = {k: t[k] for k in ("parent", "child", "delta", "ci_low", "ci_high",
@@ -187,14 +194,20 @@ def write_report(res: dict) -> None:
         if r.get("status"):
             L += [f"Not complete yet ({r['status']}).", ""]
             continue
-        L += ["| Compared with | Days | RMSE before | RMSE with the 500 hPa input | Δ [95% CI] |", "|---|---|---|---|---|"]
+        L += ["| Compared with | Days | Its RMSE | RMSE with the 500 hPa input | Δ [95% CI] |", "|---|---|---|---|---|"]
         for key, t in r["tests"].items():
             name, s = key[3:].split("|")
             L.append(f"| {name} | {'all days' if s == 'all' else 'heatwave days'} | {t['parent']:.3f} | {t['child']:.3f} | "
                      f"{d(t)} |")
-        L += ["", "| Lead | " + " | ".join(str(i) for i in range(1, 6)) + " |", "|---|---|---|---|---|---|",
-              "| C3-hop | " + " | ".join(f"{x:.3f}" for x in r["by_lead C3-hop"]) + " |",
-              "| C3-hop + 500 hPa input | " + " | ".join(f"{x:.3f}" for x in r["by_lead"]) + " |", ""]
+        L += ["", "| Lead | " + " | ".join(str(i) for i in range(1, 6)) + " |", "|---|---|---|---|---|---|"]
+        L += [f"| {key[len('by_lead '):]} | " + " | ".join(f"{x:.3f}" for x in vals) + " |"
+              for key, vals in r.items() if key.startswith("by_lead ")]
+        L += ["| C3-hop + 500 hPa input | " + " | ".join(f"{x:.3f}" for x in r["by_lead"]) + " |", ""]
+        L += ["Bias (mean error, forecast minus truth, °C; negative = too cold; descriptive):", "",
+              "| Model | All days | Heatwave days |", "|---|---|---|"]
+        L += [f"| {key[len('bias '):]} | {b['all']:+.2f} | {b['extreme']:+.2f} |"
+              for key, b in r.items() if key.startswith("bias ")]
+        L += [f"| C3-hop + 500 hPa input | {r['bias']['all']:+.2f} | {r['bias']['extreme']:+.2f} |", ""]
     OUT_DIR.mkdir(parents=True, exist_ok=True)
     (OUT_DIR / "step4.md").write_text("\n".join(L) + "\n", encoding="utf-8")
 

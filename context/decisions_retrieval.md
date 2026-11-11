@@ -352,6 +352,25 @@ before any run (user approved).**
   - **Direct input beats retrieval of the same information.** Against C3-hop + Rz (the 500 hPa pattern through
     retrieval, October): -0.059 °C on all days (CI -0.083 to -0.035).
   - The rule says it helps, so the WBGT shuffled-year control was started on 2026-11-11, after this result.
+- **RESULT, WBGT control, 2026-11-12** (`retrieval_study/results/step4.md`).
+  - **It passes.** Against the shuffled-year control: -0.080 °C on all days (CI -0.108 to -0.052). Heatwave days:
+    -0.127 °C (CI -0.257 to +0.003; 14 clusters).
+  - The control itself is no better than C3-hop: 2.245 vs 2.248 °C on all days, and the same at every lead. The gain
+    comes from the right day's upper air, not from having extra input channels.
+  - Bias on heatwave days (descriptive): -2.69 °C (C3-hop), -2.59 °C (with the input), -2.76 °C (the control).
+- **RESULT, Tmax, 2026-11-12** (`retrieval_study/results/step4.md`).
+  - **It helps.** All days: 2.065 -> 2.008 °C (-0.057, CI -0.091 to -0.024; about 3%).
+  - The gain grows with lead: day 1 -0.013, then -0.051, -0.061, -0.081 and -0.066 °C on days 2 to 5.
+  - **Heatwave days: 1.827 -> 1.603 °C (-0.224, CI -0.409 to -0.038; about 12%).** The prediction left this open.
+    - It rests on 11 year x season clusters, so the CI is fragile. The rule decides on all days only.
+    - It is one of many comparisons in this study, so its real test is new data (the 2027 season).
+  - Bias on heatwave days (descriptive): the cold bias shrinks from -1.25 to -0.98 °C.
+  - The rule says it helps, so the Tmax shuffled-year control was started on 2026-11-12, after this result.
+- **Predictions checked:**
+  - "It helps on all days in both families": held.
+  - "By less than in the linear screen": failed in both families. The network gains more than the straight-line screen
+    did: Tmax -0.057 vs -0.038 °C, WBGT -0.083 vs -0.046 °C.
+  - "No detectable heatwave-day gain for WBGT": held. Tmax, left open: a gain, with the caveats above.
 
 **RS-5: retrieval keyed on a global model's forecast, an analogue ensemble (Tmax only). PRE-REGISTERED 2026-11-11, after
 RS-2 and before any forecast value was downloaded (user approved).**

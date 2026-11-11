@@ -6,7 +6,7 @@
 > log at the end. Short forms are explained in [`GLOSSARY.md`](GLOSSARY.md); the original
 > plan is in [`PLAN_REVIEW_v5.md`](PLAN_REVIEW_v5.md) (historical).
 >
-> **Last updated:** 2026-11-11 (retrieval study on the branch `retrieval-improvements`, §9.2)
+> **Last updated:** 2026-11-12 (retrieval study on the branch `retrieval-improvements`, §9.2)
 
 ## Final state at a glance (2026-10-25)
 
@@ -24,7 +24,9 @@
   the cost of about 4 false alarms in 5.
 - **Retrieval** was never adopted: no variant beat its random control on heatwave days. **Why** (retrieval study,
   2026-11-11, §9.2): retrieval only helps when it brings information the model's inputs lack, and our models already
-  have everything Delhi's own past could add. On heatwave days the analogues regress to the mean.
+  have everything Delhi's own past could add. On heatwave days the analogues regress to the mean. The upper-air
+  pattern, which the models lacked, helps when given directly (2007–2018: 3–4% on all days; Tmax heatwave days 12%,
+  still to be confirmed on new data).
 - **Known issues** in the frozen code and protocol: [`KNOWN_DEVIATIONS.md`](KNOWN_DEVIATIONS.md).
 - §8 and §9 below record the work **as it happened**, week by week; text there written in the future tense is
   historical. The current results are §9.0 and the README.
@@ -1204,6 +1206,27 @@ against the saved documents; details in `sources/PHASE6_PART_D_RESULT.md`):
   days with small errors, so the ranges get narrower exactly when they should widen: regression to the mean again.
 - Report: `retrieval_study/results/step2.md`.
 
+**Step 4: the upper-air pattern given to C3-hop directly (not retrieval)**
+- **The test:** C3-hop exactly as frozen, plus 10 numbers per input day that sum up that day's 500 hPa pattern over
+  South Asia (its first 10 principal components). Nothing else changes. 10 seeds × 4 folds, both families.
+- **It helps in both families, more than the straight-line screen suggested:**
+  - WBGT: 2.248 → 2.165 °C on all days (−0.083, about 4%), at every lead. Retrieval of the same pattern (Rz) gave
+    only −0.023; the direct input beats it by 0.059 °C.
+  - Tmax: 2.065 → 2.008 °C (−0.057, about 3%), growing with lead.
+- **Heatwave days:**
+  - Tmax: 1.83 → 1.60 °C (−0.22, about 12%), and less cold (bias −1.25 → −0.98 °C). This is the project's first
+    heatwave-day gain with its CI below 0. But it rests on only 11 year × season clusters and is one of many
+    comparisons, so new data (the 2027 season) must confirm it.
+  - WBGT: no detectable gain (−0.07 °C, CI includes 0).
+- **Is it the information, or just more inputs?** The check: the same run with each year's upper-air numbers taken
+  from a different year (same calendar dates, so the season is kept).
+  - For WBGT, this shuffled model is no better than plain C3-hop (2.245 vs 2.248 °C), and the real input beats it by
+    0.080 °C. So it is the right day's upper air that helps.
+  - The same check for Tmax is running.
+- So the upper air is information C3-hop lacks, and given directly it is used far better than through retrieval.
+- Caveat: the 500 hPa data we have end in 2021, so this can't be run on the 2019–2026 test years as they stand.
+- Report: `retrieval_study/results/step4.md`.
+
 **Step 5: retrieval keyed on ECMWF's own forecast (Tmax, 2016–2018; descriptive, one fold)**
 - **The test:** the classic weather-forecasting use of retrieval, the analogue ensemble. For each day, find the 20
   past days when ECMWF's forecast for Delhi looked most like today's, and average what really happened on them.
@@ -1224,7 +1247,8 @@ against the saved documents; details in `sources/PHASE6_PART_D_RESULT.md`):
 - **Why it doesn't help ours:** Delhi's daily heat, 1–5 days ahead, from inputs that already include the season and
   the region, is not such a case.
 - **What could help heatwave days:** information that tells a coming heatwave apart. The upper-air pattern is the
-  only candidate that showed any, and it works better as a direct input than through retrieval.
+  only candidate that showed any. Given to C3-hop directly (step 4), it cuts the error in both families and, for
+  Tmax, on heatwave days too (fragile; to be confirmed). Through retrieval it did little.
 
 ---
 
@@ -1285,15 +1309,16 @@ is installed globally.
 
 ## 12. Open items
 
-Updated 2026-11-11. The forecasting research is complete: the protocol was frozen and the test run, §9.0. The
+Updated 2026-11-12. The forecasting research is complete: the protocol was frozen and the test run, §9.0. The
 critical reviews of 2026-10-22 were addressed: claims corrected, frozen-code issues disclosed in
 `KNOWN_DEVIATIONS.md`, and the test lock and test outputs now checked automatically.
 - **The retrieval study** (§9.2), on the branch `retrieval-improvements`: why retrieval did not help, and what could.
   This is the mentor's priority (2026-11-09).
-  - Done: steps 1, 2 and 5 (the analogue ensemble keyed on ECMWF's forecast), and the one-page note for the mentor
-    (Claude Docs, "Retrieval study: one-page note").
-  - Running: step 4, C3-hop given the upper-air pattern directly. This is not retrieval, and the 500 hPa data we have
-    end in 2021.
+  - Done: steps 1, 2, 4 (C3-hop given the upper-air pattern directly) and 5 (the analogue ensemble keyed on ECMWF's
+    forecast), and the one-page note for the mentor (Claude Docs, "Retrieval study: one-page note").
+  - Running: step 4's shuffled-year check for Tmax.
+  - Step 4 is not retrieval. The 500 hPa data we have end in 2021, so testing it on new years (the 2027 season)
+    needs fresh upper-air data.
 - **Phase 6, the heat advisory:** library, rule engine, verifier, the LLM step and its blind rating are done. The
   LLM version failed the rating, so the advisory uses the rule-based text (§9, Part 4). Left:
   - the demo page (the two teammate raters, on their own branch);
@@ -1352,4 +1377,5 @@ critical reviews of 2026-10-22 were addressed: claims corrected, frozen-code iss
 | 2026-10-27 | Post-test 3: tuned yes/no warning rules (WBGT hits 6% → 47%, ~80% false alarms; all models about equal). Rule engine now classifies forecast days by probability (≥ 37%); alerts raised in 68% of cases vs 61%. |
 | 2026-11-01 | Phase 6 part 4: LLM advisories generated (Groq, `gpt-oss-120b`; 56 of 56 passed the verifier first time); blind rating pack built. |
 | 2026-11-08 | Blind rating results: the LLM version fails its pre-registered rule (source support 0% vs 54%, harmful 8% vs 0%, no clarity gain); the advisory keeps the rule-based text. Phase 3 extras started on the branch `phase3-extras`. |
-| 2026-11-11 | Retrieval study (§9.2, branch `retrieval-improvements`), after the mentor's feedback: the information ladder shows retrieval helps only when it brings information the model lacks; RAFT as published adds nothing on our data, but the same code works in its own kind of setting (hourly, short window: −7%), the positive control; a similar past barely means a similar future (0.02–0.08 vs RAFT's 0.60); heatwave-day "cold analogues" are regression to the mean. The second reference paper's idea is what C3-hop already does (H1). Step 2: only upper-air retrieval helps C3-hop (WBGT ordinary days, ~1%); the same information given directly helps more; season-to-date retrieval adds nothing; retrieval-based ranges are worse on heatwave days. |
+| 2026-11-11 | Retrieval study (§9.2, branch `retrieval-improvements`), after the mentor's feedback: the information ladder shows retrieval helps only when it brings information the model lacks; RAFT as published adds nothing on our data, but the same code works in its own kind of setting (hourly, short window: −7%), the positive control; a similar past barely means a similar future (0.02–0.08 vs RAFT's 0.60); heatwave-day "cold analogues" are regression to the mean. The second reference paper's idea is what C3-hop already does (H1). Step 2: only upper-air retrieval helps C3-hop (WBGT ordinary days, ~1%); the same information given directly helps more; season-to-date retrieval adds nothing; retrieval-based ranges are worse on heatwave days. Step 5: an analogue ensemble keyed on ECMWF's forecast beats C3-hop by 26% (Tmax, 2016–2018) but only ties ECMWF's corrected forecast. |
+| 2026-11-12 | Retrieval study step 4: C3-hop given the 500 hPa pattern directly helps both families on all days (WBGT −0.083 °C, about 4%; Tmax −0.057 °C, about 3%) and Tmax heatwave days (−0.22 °C, about 12%; 11 clusters, to be confirmed). For WBGT it beats the shuffled-year check (−0.080 °C), which is no better than plain C3-hop; the Tmax check is running. |

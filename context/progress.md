@@ -3,7 +3,7 @@
 Short, frequently-updated. The sections below the current status are a dated history, newest results in
 "Week 3 results" onwards; the September "Done / Next" lists are historical (`build_plan.md` is v1-era).
 
-## Current status (2026-11-11)
+## Current status (2026-11-12)
 - **Retrieval study** on the branch `retrieval-improvements`, after the mentor's feedback of 2026-11-09. It asks why
   retrieval did not help when RAFT (arXiv 2505.04163) and Deznabi et al. (arXiv 2510.16695) report gains, and what
   could help. Pre-registered in `context/decisions_retrieval.md`; development years only.
@@ -23,8 +23,13 @@ Short, frequently-updated. The sections below the current status are a dated his
     - Retrieval keyed on ECMWF's own forecast (the analogue ensemble; Tmax, 2016-2018) beats C3-hop by 26% on all
       days.
     - It only ties ECMWF's corrected forecast: the forecast carries the information.
-  - **Step 4 running:** C3-hop given the upper-air pattern directly (10 seeds x 4 folds per family). If it helps, the
-    shuffled-year control runs next.
+  - **Step 4 done** (`results/step4.md`): C3-hop given the upper-air pattern directly (10 seeds x 4 folds per family).
+    - It helps on all days in both families: WBGT -0.083 °C (about 4%), Tmax -0.057 °C (about 3%).
+    - Tmax heatwave days: -0.22 °C (about 12%, CI below 0, but only 11 clusters; to be confirmed on new data). WBGT
+      heatwave days: no detectable gain.
+    - WBGT passes the shuffled-year control (-0.080 °C), and the control is no better than plain C3-hop: the gain is
+      the right day's upper air, not more inputs.
+    - Running: the Tmax shuffled-year control (started 2026-11-12, about 2.5 h).
   - One-page note for the mentor: Claude Docs "Retrieval study: one-page note".
 - The Phase 3 extras are parked on `phase3-extras` (committed and pushed 2026-11-11). Open there: whether and how to
   get a correctly dated station record.

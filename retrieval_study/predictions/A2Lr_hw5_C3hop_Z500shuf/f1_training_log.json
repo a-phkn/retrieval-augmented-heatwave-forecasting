@@ -1,0 +1,67 @@
+{
+ "n_pcs": 10,
+ "n_features_delhi": 24,
+ "seeds": [
+  {
+   "seed": 0,
+   "epochs": 14,
+   "finite": true,
+   "best_stop_loss": 1.0053998231887817
+  },
+  {
+   "seed": 1,
+   "epochs": 16,
+   "finite": true,
+   "best_stop_loss": 1.0036208629608154
+  },
+  {
+   "seed": 2,
+   "epochs": 15,
+   "finite": true,
+   "best_stop_loss": 0.999921977519989
+  },
+  {
+   "seed": 3,
+   "epochs": 15,
+   "finite": true,
+   "best_stop_loss": 1.0284992456436157
+  },
+  {
+   "seed": 4,
+   "epochs": 15,
+   "finite": true,
+   "best_stop_loss": 0.9828296303749084
+  },
+  {
+   "seed": 5,
+   "epochs": 15,
+   "finite": true,
+   "best_stop_loss": 1.0236926078796387
+  },
+  {
+   "seed": 6,
+   "epochs": 13,
+   "finite": true,
+   "best_stop_loss": 1.0235450267791748
+  },
+  {
+   "seed": 7,
+   "epochs": 14,
+   "finite": true,
+   "best_stop_loss": 0.9999111294746399
+  },
+  {
+   "seed": 8,
+   "epochs": 15,
+   "finite": true,
+   "best_stop_loss": 1.016234040260315
+  },
+  {
+   "seed": 9,
+   "epochs": 15,
+   "finite": true,
+   "best_stop_loss": 1.0183223485946655
+  }
+ ],
+ "wall_seconds": 2632.4
+}

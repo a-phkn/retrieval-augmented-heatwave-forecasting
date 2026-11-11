@@ -41,3 +41,25 @@ def test_the_control_takes_the_same_dates_from_another_training_year():
     leap_day = pd.Timestamp("2008-02-29")
     assert out.loc[leap_day, 0] % 1000 in (59, 60)  # 28 Feb of a common year, or 29 Feb of a leap one
     np.testing.assert_array_equal(zd.shuffled_pcs(pcs, "f1").to_numpy(), out.to_numpy())  # fixed seed
+
+
+def test_the_report_lists_every_comparison_and_its_lead_row(tmp_path, monkeypatch):
+    monkeypatch.setattr(zd, "OUT_DIR", tmp_path)
+    t = {"parent": 2.2, "child": 2.1, "delta": -0.1, "ci_low": -0.15, "ci_high": -0.05, "p_value": 0.01, "n_clusters": 36}
+    refs = ("C3-hop", "the shuffled-year control")
+    res = {"WBGT": {"tests": {f"vs {n}|{s}": t for n in refs for s in ("all", "extreme")},
+                    "by_lead": [1.0] * 5, **{f"by_lead {n}": [1.1] * 5 for n in refs},
+                    "bias": {"all": 0.01, "extreme": -0.5}, **{f"bias {n}": {"all": 0.02, "extreme": -0.9} for n in refs}},
+           "Tmax": {"status": "not complete"}}
+    zd.write_report(res)
+    text = (tmp_path / "step4.md").read_text(encoding="utf-8")
+    assert "| Its RMSE |" in text and text.count("**(CI < 0)**") == 4
+    for row in ("| C3-hop | 1.100", "| the shuffled-year control | 1.100", "| C3-hop + 500 hPa input | 1.000",
+                "| C3-hop | +0.02 | -0.90 |", "| C3-hop + 500 hPa input | +0.01 | -0.50 |"):
+        assert row in text
+    assert "Not complete yet" in text
+
+
+def test_bias_is_the_mean_error_on_all_days_and_on_heatwave_days():
+    df = pd.DataFrame({"seed": [0, 0, 1, 1], "stratum": ["normal", "extreme"] * 2, "error": [1.0, -2.0, 3.0, -4.0]})
+    assert zd.bias(df) == {"all": -0.5, "extreme": -3.0}
