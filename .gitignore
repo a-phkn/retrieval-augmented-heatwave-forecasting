@@ -62,6 +62,8 @@ context.zip
 runs/
 # v2 per-fold training checkpoints (regenerable via training/train_unified.py)
 models/v2/
+# retrieval-study checkpoints (regenerable: python -m retrieval_study.z500_direct)
+retrieval_study/checkpoints/
 
 # v2 inner-block forecast cache (regenerable: python -m evaluation.calibration_check)
 predictions_v2/inner/
