@@ -19,6 +19,13 @@ Short, frequently-updated. The sections below the current status are a dated his
       -0.023 °C). The same information given directly helps more.
     - Season-to-date retrieval adds nothing.
     - Retrieval-based ranges are worse on heatwave days (coverage WBGT 15% vs 41%).
+  - **Step 5 done** (`results/step5.md`):
+    - Retrieval keyed on ECMWF's own forecast (the analogue ensemble; Tmax, 2016-2018) beats C3-hop by 26% on all
+      days.
+    - It only ties ECMWF's corrected forecast: the forecast carries the information.
+  - **Step 4 running:** C3-hop given the upper-air pattern directly (10 seeds x 4 folds per family). If it helps, the
+    shuffled-year control runs next.
+  - One-page note for the mentor: Claude Docs "Retrieval study: one-page note".
 - The Phase 3 extras are parked on `phase3-extras` (committed and pushed 2026-11-11). Open there: whether and how to
   get a correctly dated station record.
 

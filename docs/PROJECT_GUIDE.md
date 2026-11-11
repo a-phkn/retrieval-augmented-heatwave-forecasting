@@ -1154,7 +1154,9 @@ against the saved documents; details in `sources/PHASE6_PART_D_RESULT.md`):
 - **RAFT adds nothing at any level, not even to the B0 model.** Its key ignores the temperature level, and the
   *shape* of the last 14 days says nothing useful about the next 5 days' changes.
 - **A similar past barely means a similar future here.** How alike two past fortnights are predicts how alike their
-  next 5 days were with a correlation of only 0.02–0.08. RAFT reports 0.60 on its data.
+  next 5 days were with a correlation of only 0.02–0.08. RAFT reports 0.60 on its data. This turned out to be a coarse
+  measure: ECMWF's forecast as the key scores only 0.09–0.16, yet works well (step 5 below), so it is supporting
+  evidence only.
 - **The right examples exist but can't be found.**
   - For each day, the pool does hold 5 past windows whose next 5 days really matched. Using them would give errors of
     0.3–0.4 °C.
@@ -1202,9 +1204,20 @@ against the saved documents; details in `sources/PHASE6_PART_D_RESULT.md`):
   days with small errors, so the ranges get narrower exactly when they should widen: regression to the mean again.
 - Report: `retrieval_study/results/step2.md`.
 
+**Step 5: retrieval keyed on ECMWF's own forecast (Tmax, 2016–2018; descriptive, one fold)**
+- **The test:** the classic weather-forecasting use of retrieval, the analogue ensemble. For each day, find the 20
+  past days when ECMWF's forecast for Delhi looked most like today's, and average what really happened on them.
+- **It works:** 26% lower error than C3-hop on all days (1.47 vs 1.97 °C), better at every lead, and less cold on
+  heatwave days (1.54 vs 2.02 °C). Random past days do far worse (2.66 °C).
+- **But the forecast does the work.** It only ties ECMWF's own forecast after a simple correction (1.59 °C, the
+  difference within noise); the retrieval mainly removes the forecast's cold bias.
+- So the same retrieval that adds nothing with Delhi's past as the key gives a large gain when the key is a forecast:
+  the information principle again.
+- Report: `retrieval_study/results/step5.md`.
+
 **What this means for the paper:**
-- **The contribution is the explanation.** It is backed by four kinds of evidence: the information ladder, the
-  positive control, the "similar past ≠ similar future" measurement, and the oracle analogues.
+- **The contribution is the explanation.** It is backed by three main kinds of evidence (the information ladder, the
+  positive control and the oracle analogues) and one contrast case (the forecast-keyed analogue ensemble, which works).
 - **When retrieval helps:** only when the past examples carry information the model's own inputs lack. RAFT's
   benchmarks (short windows on data with a daily cycle) are such a case. So is Deznabi et al.'s location with no
   history, which is what our graph does.
@@ -1276,10 +1289,11 @@ Updated 2026-11-11. The forecasting research is complete: the protocol was froze
 critical reviews of 2026-10-22 were addressed: claims corrected, frozen-code issues disclosed in
 `KNOWN_DEVIATIONS.md`, and the test lock and test outputs now checked automatically.
 - **The retrieval study** (§9.2), on the branch `retrieval-improvements`: why retrieval did not help, and what could.
-  This is the mentor's priority (2026-11-09). Steps 1 and 2 are done. Open, each needing a decision:
-  - give C3-hop the upper-air pattern directly (not retrieval; the 500 hPa data we have end in 2021);
-  - an analogue ensemble keyed on a global model's past forecasts (needs an archive of past forecasts);
-  - a write-up for the mentor.
+  This is the mentor's priority (2026-11-09).
+  - Done: steps 1, 2 and 5 (the analogue ensemble keyed on ECMWF's forecast), and the one-page note for the mentor
+    (Claude Docs, "Retrieval study: one-page note").
+  - Running: step 4, C3-hop given the upper-air pattern directly. This is not retrieval, and the 500 hPa data we have
+    end in 2021.
 - **Phase 6, the heat advisory:** library, rule engine, verifier, the LLM step and its blind rating are done. The
   LLM version failed the rating, so the advisory uses the rule-based text (§9, Part 4). Left:
   - the demo page (the two teammate raters, on their own branch);
