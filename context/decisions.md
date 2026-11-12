@@ -1526,3 +1526,47 @@ Post-test and descriptive: uses the committed 2019-2026 test forecasts; changes 
   stored only in the gitignored key. New key SHA-256 c04cac304afba9f9efbb5d1eb02fbf06668c4f1501f49f9bcf362db5f8a8d983.
   The saved LLM replies (`advisory/eval/llm_runs/`) are also gitignored until both raters finish; their fingerprint
   above is unchanged. Only the item order changed; the advisories, questions and analysis are as pre-registered.
+- **Ratings received 2026-11-08** (both raters finished; the files as received, unedited):
+  - `advisory/eval/ratings_rater1.csv` SHA-256 b78e3bfadbb73c0dcabe742b969412d0227b8f8e960691e57819e4d15435b70e;
+  - `advisory/eval/ratings_rater2.csv` SHA-256 d37104207a329e948953c4ebd4087f7f73eb807098c9936825cf9d9292cfa48e.
+- **DEVIATION 2026-11-08, written before the analysis was run (only the sheet check had been run):**
+  - Rater 2 wrote "na" for question 5 (clarity) on 3 items (A004, A027, A100); the sheet check allowed "na" only for
+    question 4.
+  - These count as missing, exactly as "na" in question 4 already does: the item's mean score is missing, and the
+    pair drops out of that question's paired test.
+  - Answers are only trimmed and lower-cased, as the code already did; nothing else in the sheets is changed.
+  - Rater 2 gave no note for 65 answers that needed one ("no" in questions 1-2 or "yes" in 3); the answers are kept as
+    given. Rater 1's sheet is complete.
+- **RESULT 2026-11-08** (`advisory/eval/rating_results.md`; 52 cases, 104 items, both raters):
+  - Faithful to the forecast: LLM 87% of items vs rule-based 92% (difference -6 points, 95% CI -13 to 0; p = 0.25).
+  - Supported by the sources: LLM 0% vs rule-based 54% (-54 points; p < 0.001).
+    - Both raters marked every LLM advisory as unsupported. Its free text gives advice ("stay hydrated", "watch the
+      temperatures") that no quoted source backs; rater 1's notes name this for 49 of the 52.
+    - The 24 rule-based items marked unsupported all highlight one library action,
+      `NAP_HOSP_INCREASE_OUTREACH_DURING_HEAT_ALERT`. Its text names ASHA/ANM/MPHW workers and a heat alert, while
+      its quote is only "outreach in at-risk villages".
+  - Harmful or misleading: LLM 8% (4 items) vs 0%; p = 0.125.
+    - Three LLM advisories highlight `NDMA_PUBLIC_USE_FANS_DAMP_CLOTHING` at forecast highs of about 40-43 °C, against
+      the pack's own WHO caution that fans can make a person hotter above 35 °C.
+    - One says "RED alert is in force", which could be read as an official IMD warning.
+  - Actions suit the level: 3.72 vs 3.74 (out of 5). Clear for the public: 4.22 vs 4.30. No difference on either.
+  - Agreement (kappa): sources 1.00, harmful 0.85, actions 0.72, forecast 0.13 (the raters flagged mostly different
+    items), clarity 0.19.
+  - **Pre-registered reading: the LLM version fails.** It is acceptable only if it is not less faithful than the
+    rule-based one on questions 1-3. It is clearly less faithful on question 2 and worse on question 3 (4 items vs
+    none). So the advisory keeps the rule-based text. The LLM version also adds no clarity (question 5).
+  - The verifier passed all 56 LLM advisories, so passing it does not mean faithful. It does not check advice that
+    has no quote, trends (A081 says "rising" when the forecast falls) or rounding (42.5 °C written as 42 °C).
+  - Two library fixes follow from the notes, for a later version; they are not applied to the rated items:
+    - the outreach action's quote must cover its whole text;
+    - the fan action needs a temperature limit.
+- **Rater process (reported by the user, 2026-11-08):** both raters made every judgment themselves and used an LLM to
+  help write their notes. The scores are human; the notes' wording is partly machine-written (this is why rater 1's
+  notes follow one template). Disclosed as a limitation, next to "teammate raters".
+- **Published 2026-11-08, after both raters finished:**
+  - `advisory/eval/key.json`, SHA-256 c04cac304afba9f9efbb5d1eb02fbf06668c4f1501f49f9bcf362db5f8a8d983, the same as
+    recorded before the pack was sent.
+  - `advisory/eval/llm_runs/`, fingerprint 071b37211465022459499bbda4cae39bb505f4322de0175c52e61646b19e70db, the same
+    as recorded after the run.
+  - The fingerprint (not written down before) is computed in file-name order: SHA-256 over each file's name followed
+    by the raw SHA-256 digest of its bytes, with CRLF turned into LF.

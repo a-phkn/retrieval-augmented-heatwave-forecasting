@@ -236,8 +236,10 @@ def read_sheet(path: Path, codes: list[str]) -> tuple[pd.DataFrame, list[str], l
                 errors.append(f"{path.name} {code}: {q} must be yes or no, got {r[q]!r}")
         if r["q4_actions"] not in ("1", "2", "3", "4", "5", "na"):
             errors.append(f"{path.name} {code}: q4_actions must be 1-5 or na, got {r['q4_actions']!r}")
-        if r["q5_clear"] not in ("1", "2", "3", "4", "5"):
+        if r["q5_clear"] not in ("1", "2", "3", "4", "5", "na"):
             errors.append(f"{path.name} {code}: q5_clear must be 1-5, got {r['q5_clear']!r}")
+        elif r["q5_clear"] == "na":  # deviation 2026-11-08: counted as missing, like na in q4
+            warnings.append(f"{path.name} {code}: q5_clear is na (counted as missing)")
         if (r["q1_forecast"] == "no" or r["q2_sources"] == "no" or r["q3_harmful"] == "yes") and not r["notes"].strip():
             warnings.append(f"{path.name} {code}: a note is required")
     return df, errors, warnings

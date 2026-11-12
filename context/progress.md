@@ -3,7 +3,7 @@
 Short, frequently-updated. The sections below the current status are a dated history, newest results in
 "Week 3 results" onwards; the September "Done / Next" lists are historical (`build_plan.md` is v1-era).
 
-## Current status (2026-11-05)
+## Current status (2026-11-08)
 - **Forecasting research complete.** Protocol frozen 2026-10-19 (tag `test-lock`); test run once: H1 and H3
   confirmed, H2 and H4 not (`evaluation_test/test_results.md`). Post-test: foundation models (C3-hop beats both),
   extras (ensemble, warning scores, bias split, without ERA5T: `evaluation_post_test/`).
@@ -22,11 +22,20 @@ Short, frequently-updated. The sections below the current status are a dated his
 - **Phase 6 part 4 prepared (2026-10-30):** evaluation cases (`advisory/eval/cases.json`: 52 rated, 13 per colour,
   3-day gap, + 4 practice), the Groq client (`advisory/llm.py`, offline-tested) and the pre-registration.
 - **LLM run done 2026-11-01:** 56 of 56 passed the verifier first time (149,057 tokens). That does not mean they are
-  good: "stay hydrated" and similar advice appears in many, against the prompt; only the raters can judge this.
+  good: "stay hydrated" and similar advice appears in many, against the prompt; only the raters could judge this.
   Rating pack built (`advisory/rating.py`, `advisory/eval/rating_pack.html`, 104 items + 4 practice); key and replies
-  are fingerprinted in the decision log. Waiting for the two raters.
-- **Next:** the two teammate raters score the blind pack; then `python -m advisory.rating --analyse`, publish
-  `key.json` and `llm_runs/`, the demo page (the same two teammates, on their own branch) and the paper.
+  are fingerprinted in the decision log.
+- **Blind rating done 2026-11-08** (`advisory/eval/rating_results.md`): the LLM version **fails** its
+  pre-registered rule, so the advisory keeps the rule-based text.
+  - Source support: 0% vs 54% for the rule-based version; every LLM advisory adds advice that no quote backs.
+  - Harmful or misleading: 8% vs 0% (fan advice at 40-43 °C; "RED alert is in force").
+  - Forecast faithfulness: 87% vs 92%. Clarity: no gain (4.22 vs 4.30 of 5).
+  - Two library fixes noted: one action's quote is too short for its text, and fans need a temperature limit.
+- **Phase 3 extras** run on the branch `phase3-extras` (pre-registered 2026-11-05 in `context/decisions_phase3.md`):
+  - comparison with the IFS, AIFS and GFS forecasts (downloading);
+  - a corrector on top of global forecasts, the Safdarjung station check and conformal ranges;
+  - a benchmark, and a prospective 2027 season.
+- **Next:** the demo page (the same two teammates, on their own branch), the extras, and the paper.
 
 ## Done (September 2026, v1; historical)
 - P1 data pipeline fully verified.

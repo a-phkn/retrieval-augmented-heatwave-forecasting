@@ -1070,7 +1070,30 @@ RAG counts as helping only if real retrieval beats both.
     A rule-only **template advisory** passes the verifier; it is the comparison for, and the fallback from, the LLM.
     Both versions highlight **at most 8** forecast actions (decision 2026-10-27): the LLM picks its 8; the template
     takes 8 in a fixed order (highest colour first, then public, health, municipal and energy in turn). The rest are
-    listed under "More actions". The raters get 4 practice items, one per colour, before the 120 rated items.
+    listed under "More actions". The raters get 4 practice items, one per colour, before the 104 rated items.
+- **Part 4, the LLM advisory and its blind rating (2026-10-30 to 2026-11-08; pre-registered in
+  `context/decisions.md`):**
+  - **The LLM step** (`advisory/llm.py`): `openai/gpt-oss-120b` through Groq. Its reply must match a strict schema.
+    It may only pick up to 8 forecast actions by id (from the ones the colour unlocks) and write the summary, one
+    sentence per day and the humid-heat note. Code assembles the advisory and the verifier checks it; a rejected one
+    gets one repair attempt, then the template is used. All 56 passed the verifier first time.
+  - **The rating** (`advisory/rating.py`): 52 forecast cases (13 per colour), each as the LLM and the rule-based
+    version, shuffled and coded so the two teammate raters could not tell which was which. The raters made every
+    judgment themselves and used an LLM to help write their notes (disclosed). The key and the LLM replies are
+    published now that the rating is over.
+  - **Result:** the LLM version **fails** the pre-registered rule (it must be no less faithful on questions 1–3), so
+    the advisory keeps the rule-based text. Rule-based numbers in brackets:
+    - **Supported by the sources: 0% vs 54%.** Every LLM advisory adds advice that no quote backs, such as "stay
+      hydrated". All 24 unsupported rule-based items come from one library action, whose quote is too short for its
+      text.
+    - **Harmful or misleading: 8% vs 0%.** Three LLM advisories highlight fan use on 40–43 °C days, against the
+      pack's own warning about fans above 35 °C; one says "RED alert is in force".
+    - **Forecast faithfulness: 87% vs 92%; clarity 4.22 vs 4.30 out of 5.** The LLM text is not clearer.
+  - **Lessons:**
+    - Passing the verifier is not the same as being faithful. It checks numbers, colours, labels and quotes, not
+      meaning: unquoted advice, a trend described the wrong way and rounding all got through.
+    - Two library fixes are noted for a later version: the outreach action's quote must cover its whole text, and
+      fan advice needs a temperature limit.
 - **front end** (decision 2026-10-06): one interactive web page (Week 8) with the 5-day chart,
   the alert colours, a click-a-day advisory and the "If this happens" section. Nothing to install;
   it could be upgraded to React later.
@@ -1151,16 +1174,23 @@ is installed globally.
 
 ## 12. Open items
 
-Updated 2026-10-25. The forecasting research is complete: the protocol was frozen and the test run, §9.0. The
+Updated 2026-11-08. The forecasting research is complete: the protocol was frozen and the test run, §9.0. The
 critical reviews of 2026-10-22 were addressed: claims corrected, frozen-code issues disclosed in
 `KNOWN_DEVIATIONS.md`, and the test lock and test outputs now checked automatically.
-- **Phase 6, the heat advisory:** the action library, rule engine and verifier are built (2026-10-26). Left: the
-  constrained LLM advisory (needs your choice of model and where it runs) and its faithfulness evaluation (needs 2
-  raters), then the demo page.
-- **The paper and the demo page.** The README now has the results, run instructions and data notes.
-- Optional, each needs a decision: a station check against Safdarjung (needs a data download); a tuned Delhi-only
-  LSTM (to remove the tuned-vs-untuned caveat on H1); a ridge on C3-hop's full inputs (a like-for-like H3 check);
-  Chronos-2 with Delhi's other variables as inputs.
+- **Phase 6, the heat advisory:** library, rule engine, verifier, the LLM step and its blind rating are done. The
+  LLM version failed the rating, so the advisory uses the rule-based text (§9, Part 4). Left:
+  - the demo page (the two teammate raters, on their own branch);
+  - the two library fixes.
+- **Phase 3 extras**, on the branch `phase3-extras`, pre-registered in `context/decisions_phase3.md`:
+  - comparison with the IFS, AIFS and GFS forecasts;
+  - a corrector on top of global forecasts;
+  - the Safdarjung station check;
+  - conformal ranges;
+  - a benchmark;
+  - a prospective 2027 season.
+- **The paper.** The README has the results, run instructions and data notes.
+- Optional, each needs a decision: a tuned Delhi-only LSTM (to remove the tuned-vs-untuned caveat on H1); a ridge on
+  C3-hop's full inputs (a like-for-like H3 check); Chronos-2 with Delhi's other variables as inputs.
 - Older items are done: v2 data, controls, labels, upstream download, sources (Parts A–E), tier mapping.
 
 ---
@@ -1203,3 +1233,5 @@ critical reviews of 2026-10-22 were addressed: claims corrected, frozen-code iss
 | 2026-10-25 | Critical-review fixes: final-state summary at the top; corrected claims (H2 is not a power problem, H3 is mostly bias against a ridge with fewer inputs, C3-hop ties the plain ridge on all days, ranges and warnings fail on heatwave days, retrieval and graph wording); post-test extras; `KNOWN_DEVIATIONS.md`; test lock tested and enforced in CI; test outputs fingerprinted. |
 | 2026-10-26 | Phase 6 parts 1–3 built: action library (133 actions), rule engine (B + D, colour check on 2007–2018), verifier and rule-only template advisory. |
 | 2026-10-27 | Post-test 3: tuned yes/no warning rules (WBGT hits 6% → 47%, ~80% false alarms; all models about equal). Rule engine now classifies forecast days by probability (≥ 37%); alerts raised in 68% of cases vs 61%. |
+| 2026-11-01 | Phase 6 part 4: LLM advisories generated (Groq, `gpt-oss-120b`; 56 of 56 passed the verifier first time); blind rating pack built. |
+| 2026-11-08 | Blind rating results: the LLM version fails its pre-registered rule (source support 0% vs 54%, harmful 8% vs 0%, no clarity gain); the advisory keeps the rule-based text. Phase 3 extras started on the branch `phase3-extras`. |

@@ -11,7 +11,10 @@ documented in detail when it helps and when it doesn't.
 
 **Status (2026-10-25):**
 - Forecasting research complete: the protocol was frozen and the test run once.
-- The heat advisory (Phase 6) is in progress.
+- The heat advisory (Phase 6) turns the forecast into IMD-style alert colours and actions quoted from official
+  documents, checked by a verifier. In a blind rating, an LLM-written version was less faithful to the sources than
+  the rule-based one (0% vs 54% of advisories fully supported), so the advisory uses the rule-based text
+  (`advisory/eval/rating_results.md`).
 
 ## Main results
 
@@ -165,7 +168,7 @@ on a CPU, and the results match the committed ones exactly only on the same CPU 
 |---|---|
 | `pipeline/`, `training/`, `models/`, `retrieval/`, `evaluation/`, `configs/` | the v2 code, frozen at `test-lock` |
 | `post_test/` | analyses run after the test (not frozen) |
-| `advisory/` | Phase 6 heat advisory: action library, rule engine, verifier |
+| `advisory/` | Phase 6 heat advisory: action library, rule engine, verifier, LLM client, evaluation cases and the blind rating |
 | `datasets_v2/`, `predictions_v2/`, `evaluation_v2/` | v2 development data, forecasts and reports |
 | `predictions_test/`, `evaluation_test/`, `registry/` | the one test run, its report, and the run registry |
 | `docs/`, `context/` | the guides, protocol and decision log |

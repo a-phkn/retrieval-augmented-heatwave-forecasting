@@ -111,6 +111,14 @@ def test_read_sheet_reports_bad_values_and_missing_notes(tmp_path):
     assert any("do not match" in e for e in errors)
 
 
+def test_na_clarity_is_counted_as_missing(tmp_path):
+    write_sheet(tmp_path / "s.csv", [["A001", "yes", "yes", "no", "4", "Na ", ""], ["A002", "Yes ", "yes", "no", "na", "5", ""]])
+    df, errors, warnings = rt.read_sheet(tmp_path / "s.csv", ["A001", "A002"])
+    assert errors == [] and warnings == ["s.csv A001: q5_clear is na (counted as missing)"]
+    c = rt.combine(df, df.copy())
+    assert np.isnan(c.loc["A001", "q5_clear"]) and c.loc["A002", "q5_clear"] == 5.0 and c.loc["A002", "q1_forecast"]
+
+
 def test_kappas_and_mcnemar_match_hand_calculations():
     assert rt.cohen_kappa(["y", "y", "n", "n"], ["y", "n", "n", "n"]) == pytest.approx(0.5)
     assert rt.cohen_kappa(["y", "n"], ["y", "n"]) == pytest.approx(1.0)
