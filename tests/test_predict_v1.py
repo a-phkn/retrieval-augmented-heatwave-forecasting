@@ -17,6 +17,10 @@ pytestmark = pytest.mark.skipif(not pv.seed_dirs(pv.LSTM_DIR), reason="frozen A1
 
 @pytest.fixture(scope="module")
 def val_outputs(tmp_path_factory):
+    # run_split reads the gitignored analogue table only for the frozen RA model
+    if pv.seed_dirs(pv.RA_DIR) and not pv.ANALOGUES_PATH.exists():
+        pytest.skip("retrieval/analogues_top20.parquet is gitignored; build it with "
+                    "python -m retrieval.build_index, then python -m retrieval.precompute_analogues")
     out = tmp_path_factory.mktemp("pred")
     original = pv.OUT_DIR
     pv.OUT_DIR = out

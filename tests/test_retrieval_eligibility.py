@@ -16,9 +16,14 @@ from pathlib import Path
 import pandas as pd
 import pytest
 
-from retrieval.query import query_analogues, _load
+from retrieval.query import RETRIEVAL_DIR, query_analogues, _load
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
+
+pytestmark = pytest.mark.skipif(
+    not all((RETRIEVAL_DIR / f).exists() for f in ("faiss_index.bin", "candidates.parquet")),
+    reason="retrieval index is gitignored; build it with python -m retrieval.build_index",
+)
 
 
 @pytest.fixture(scope="module")
