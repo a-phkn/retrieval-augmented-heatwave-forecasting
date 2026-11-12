@@ -441,6 +441,10 @@ Report: `evaluation_post_test/foundation_baselines.md`.
 
 ## 11. Why retrieval helps ordinary days a little but not heatwave days
 
+**Tested directly later (2026-11-11/12):** the retrieval study (`docs/PROJECT_GUIDE.md` §9.2, `retrieval_study/`)
+checks this explanation on the development years. Retrieval helps only when it brings information the model's inputs
+lack, and on heatwave days the analogues regress to the mean.
+
 **What retrieval does:** it finds the 5 past situations that looked most like today and hands the model what
 happened next in each. The model mostly **averages** those 5 outcomes; its attention stayed almost even across them.
 

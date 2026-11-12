@@ -30,8 +30,11 @@ Short, frequently-updated. The sections below the current status are a dated his
     - Both families pass the shuffled-year control (WBGT -0.080 °C, Tmax -0.077 °C on all days), and the control is
       no better than plain C3-hop: the gain is the right day's upper air, not more inputs. RS-4 is complete.
   - One-page note for the mentor: Claude Docs "Retrieval study: one-page note".
-- The Phase 3 extras are parked on `phase3-extras` (committed and pushed 2026-11-11). Open there: whether and how to
-  get a correctly dated station record.
+- The Phase 3 extras are parked on `phase3-extras` (main merged into it 2026-11-12).
+  - Station record: decided 2026-11-12 to rebuild Safdarjung's daily maxima from NOAA's hourly station reports (ISD,
+    option a), under its own pre-registration, written before any ISD data is downloaded.
+  - The corrector, conformal ranges, benchmark and 2027 season: to be discussed. The 2027 season's freeze is due by
+    2027-02-28.
 
 ## Status on 2026-11-08
 - **Forecasting research complete.** Protocol frozen 2026-10-19 (tag `test-lock`); test run once: H1 and H3

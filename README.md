@@ -9,12 +9,16 @@ points upwind over north-west India and Pakistan, where Delhi's hot air comes fr
 **analogue retrieval** (finding similar past situations and using what happened next) improves the forecasts, and
 documented in detail when it helps and when it doesn't.
 
-**Status (2026-10-25):**
+**Status (2026-11-12):**
 - Forecasting research complete: the protocol was frozen and the test run once.
 - The heat advisory (Phase 6) turns the forecast into IMD-style alert colours and actions quoted from official
   documents, checked by a verifier. In a blind rating, an LLM-written version was less faithful to the sources than
   the rule-based one (0% vs 54% of advisories fully supported), so the advisory uses the rule-based text
   (`advisory/eval/rating_results.md`).
+- A follow-up study on the development years (2007–2018) explains why retrieval did not help: it only helps when it
+  brings information the model's inputs lack, and ours already get the season and the region. Given directly, the
+  one piece C3-hop lacked, the 500 hPa upper-air pattern, cuts its error by 3–4% on all days
+  (`retrieval_study/README.md`).
 
 ## Main results
 
@@ -71,7 +75,8 @@ averaged ("ensemble") forecast of the 10 runs is a little better again (C3-hop: 
 - **Retrieval did not deliver.** H4 was not confirmed after correcting for four tests, and about half of its small
   all-day gain is simply a cooler average forecast. In development, regional retrieval helped heatwave days a little
   (−0.16 °C) but never beat its own random-retrieval control; on the test it made them worse (+0.18, exploratory).
-  `docs/MODELS_EXPLAINED.md` §11 explains why.
+  `docs/MODELS_EXPLAINED.md` §11 explains why, and the retrieval study (`retrieval_study/`, development years) tests
+  that explanation directly.
 - **Ranges and warnings work on ordinary days, not on heatwave days.** The 80% forecast range holds the truth 77–78%
   of the time over all days, but only 29% (WBGT) and 54% (Tmax) of the time on heatwave days, where forecasts are too
   cold and too narrow. Warning when the hot-day probability passes a level set on 2007–2018 raises the share of
@@ -97,6 +102,8 @@ All truth is ERA5 reanalysis averaged over 9 grid cells, not a weather station; 
 | `docs/KNOWN_DEVIATIONS.md` | known issues in the frozen code and protocol, disclosed rather than changed |
 | `docs/GLOSSARY.md` | the terms used |
 | `context/decisions.md` | the dated decision log, with each rule written down before it was run |
+| `context/decisions_retrieval.md` | the retrieval study's decision log: each step's rules and predictions, pushed before it ran, then its results |
+| `retrieval_study/` | the retrieval study: what it found, its code and reports, and how to rerun it (its README) |
 | `evaluation_test/test_results.md` | the full test report |
 | `evaluation_post_test/` | post-test extras: foundation models, ensemble and warning scores, bias split |
 
@@ -126,6 +133,8 @@ py -3.13 -m venv .venv
   - the daily datasets in `datasets_v2/`;
   - the 500 hPa extracts and the GraphCast extract in `data/external/`;
   - all development forecasts in `predictions_v2/` and all test forecasts in `predictions_test/`;
+  - the retrieval study's forecasts in `retrieval_study/predictions/` and its ECMWF HRES extract in
+    `retrieval_study/data/`;
   - our Phase 6 source catalogues and results in `sources/` (the official PDFs themselves are not committed; the
     report lists where to download them).
 - **Not committed (large; regenerable):**
@@ -133,7 +142,7 @@ py -3.13 -m venv .venv
     `download_era5_upstream.py` and `download_era5_humid.py`. The final ~3 months are revised by ECMWF after first
     release, so a new download can differ slightly there.
   - **500 hPa heights:** read from WeatherBench 2 (`pipeline/download_era5_z500.py`).
-  - **Model checkpoints:** `models/v2/` (development) and `models/test/`.
+  - **Model checkpoints:** `models/v2/` (development), `models/test/` and `retrieval_study/checkpoints/`.
   - **Inner-block forecasts:** `predictions_v2/inner/`.
 - **Consequence:** the comparison reports (`evaluation.compare_v2`, the test report) rerun from a fresh clone. The
   calibration, range-forecast, analog-correction and warning-retrieval reports need `predictions_v2/inner/`, and the
@@ -152,6 +161,7 @@ Use the venv interpreter (`.venv\Scripts\python.exe`) for every command.
 | Check the test outputs are untouched | `python -m scripts.make_test_manifest --check` |
 | Foundation-model comparison | `python -m post_test.foundation_baselines` |
 | Post-test ensemble and warning scores | `python -m post_test.test_period_extras` |
+| Retrieval study, steps 1–5 (development years) | the commands in `retrieval_study/README.md` |
 
 **Reading the test period needs a full clone with tags** (`git clone` gets them; CI fetches them explicitly).
 `training/test_lock.py` refuses to read 2019+ data unless the tag `test-lock` is in the history and the code under
@@ -168,17 +178,21 @@ on a CPU, and the results match the committed ones exactly only on the same CPU 
 |---|---|
 | `pipeline/`, `training/`, `models/`, `retrieval/`, `evaluation/`, `configs/` | the v2 code, frozen at `test-lock` |
 | `post_test/` | analyses run after the test (not frozen) |
+| `retrieval_study/` | the retrieval study: why retrieval did not help, and what could (development years only; not frozen) |
 | `advisory/` | Phase 6 heat advisory: action library, rule engine, verifier, LLM client, evaluation cases and the blind rating |
 | `datasets_v2/`, `predictions_v2/`, `evaluation_v2/` | v2 development data, forecasts and reports |
 | `predictions_test/`, `evaluation_test/`, `registry/` | the one test run, its report, and the run registry |
-| `docs/`, `context/` | the guides, protocol and decision log |
+| `docs/`, `context/` | the guides, protocol and decision logs |
 | `sources/` | Phase 6 (heat advisory) source research and catalogues |
 | **Legacy v1** (first version, kept frozen as the reference): `download_era5.py`, `process_weather.py`, `prepare_datasets.py`, `check_heatwaves.py`, `Step5_Colab_Minimal.ipynb`, `config/`, `datasets/`, `events/`, `splits/`, `predictions/`, `predictions_v1/`, `archive_v1/`, `models/frozen/` | fingerprinted in `data/MANIFEST.json`; not used by v2 except as a check |
 
 ## Data sources and methods credited
 
-- **Weather data:** ERA5 reanalysis (Copernicus / ECMWF), via Open-Meteo. ERA5 500 hPa heights and GraphCast
-  forecasts are from WeatherBench 2 (Rasp et al. 2024).
+- **Weather data:** ERA5 reanalysis (Copernicus / ECMWF), via Open-Meteo. ERA5 500 hPa heights, GraphCast forecasts
+  and the ECMWF IFS HRES forecasts used in the retrieval study are from WeatherBench 2 (Rasp et al. 2024).
+- **Retrieval:** the idea follows RAFT (Han et al. 2025, arXiv 2505.04163; re-implemented in `retrieval_study/raft.py`)
+  and resolution-aware retrieval (Deznabi, Kumar & Fiterau 2025, arXiv 2510.16695). The analogue ensemble follows
+  Delle Monache et al. (2013).
 - **Physical WBGT:** Liljegren et al. (2008), following the implementation of Kong & Huber (2022).
 - **Graph methods:** the graph recurrence follows DCRNN (Li et al. 2018); the ring message passing follows Abboud et
   al. (2022).

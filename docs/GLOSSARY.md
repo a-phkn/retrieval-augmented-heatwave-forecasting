@@ -57,7 +57,7 @@ attributed to that one change.
 | **Climatology** | "Each day = the long-term (train-years) average for that calendar date." |
 | **Damped persistence** | "Normal for that date + a shrinking fraction of today's departure from normal" (fractions 0.81, 0.64, 0.51, 0.43, 0.37 for days 1–5, fitted on training years). The strongest simple baseline, and the credibility floor. |
 | **φ (phi)** | The shrink fractions of damped persistence, one per lead day; refitted on each fold's training years. |
-| **AnEn** (analogue ensemble) | Average of what happened after the 5 most similar past situations (the same 5 the retrieval model uses). No neural network. |
+| **AnEn** (analogue ensemble) | Average of what happened after the 5 most similar past situations (the same 5 the retrieval model uses). No neural network. The retrieval study's step 5 (RS-5) uses the classic form instead (Delle Monache et al. 2013): average what really happened after the 20 past ECMWF forecasts most like today's. |
 | **AnEn-random** | Same, but with 5 random past situations. A control. |
 
 ## Plan checkpoints
@@ -84,6 +84,7 @@ attributed to that one change.
 | **Oracle analogues** | The 5 past windows whose next 5 days really matched the query's, found by peeking at the truth. They show whether the right examples exist in the pool (they do) and whether a key can find them (ours can't: they rank near chance). |
 | **Key–value correlation** | Does a more similar past (key) come with a more similar future (value)? RAFT reports 0.60 on its benchmark; on Delhi's daily data it is 0.02–0.08. |
 | **Positive control** | A test run where a method *should* work, to show that a null result elsewhere is not a bug. RS-1e runs RAFT on hourly temperature with short windows, the kind of setting where its published gains come from. |
+| **Shuffled-year control** | The check that a new input helps through its information, not just by adding input channels. The same model is trained with each year's input values taken from the same calendar dates of another training year, so the season and each 14-day sequence stay realistic but the link to the right day is broken. The real input must beat it. Used for the 500 hPa input (RS-4): the shuffled model is no better than C3-hop, and the real input beats it in both families. |
 | **S2 (heatwave-information screen)** | Screen of four ways to bring new information to WBGT heatwave days: humid-air points as input, Rh retrieval, matching past heatwave starts, the upper-air pattern as input. None passed. |
 | **Analog error correction (AnEn-corr)** | Correcting a forecast by the average error the model made on the 20 most similar past forecasts. Made heatwave days much worse (regression to the mean). |
 | **Regression to the mean** | Extreme values tend to be followed, or matched, by less extreme ones. Here: past situations that looked like today usually turned out milder than a real heatwave, so averaging them pulls heatwave forecasts towards "typical warm". |

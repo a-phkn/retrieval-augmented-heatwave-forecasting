@@ -1216,7 +1216,8 @@ against the saved documents; details in `sources/PHASE6_PART_D_RESULT.md`):
 - **Heatwave days:**
   - Tmax: 1.83 → 1.60 °C (−0.22, about 12%), and less cold (bias −1.25 → −0.98 °C). This is the project's first
     heatwave-day gain with its CI below 0. But it rests on only 11 year × season clusters and is one of many
-    comparisons, so new data (the 2027 season) must confirm it.
+    comparisons, so new data must confirm it. One new season (2027) adds too few clusters for a CI, so on its own
+    it would be a descriptive check.
   - WBGT: no detectable gain (−0.07 °C, CI includes 0).
 - **Is it the information, or just more inputs?** The check: the same run with each year's upper-air numbers taken
   from a different year (same calendar dates, so the season is kept).
@@ -1324,13 +1325,13 @@ critical reviews of 2026-10-22 were addressed: claims corrected, frozen-code iss
   LLM version failed the rating, so the advisory uses the rule-based text (§9, Part 4). Left:
   - the demo page (the two teammate raters, on their own branch);
   - the two library fixes.
-- **Phase 3 extras**, on the branch `phase3-extras`, pre-registered in `context/decisions_phase3.md`:
-  - comparison with the IFS, AIFS and GFS forecasts;
-  - a corrector on top of global forecasts;
-  - the Safdarjung station check;
-  - conformal ranges;
-  - a benchmark;
-  - a prospective 2027 season.
+- **Phase 3 extras**, on the branch `phase3-extras`, pre-registered in `context/decisions_phase3.md`. Parked after the
+  mentor's feedback; main was merged into the branch on 2026-11-12.
+  - Done: the comparison with the IFS, AIFS and GFS forecasts.
+  - The Safdarjung station check found the public station file misdated after 2010. Decided 2026-11-12: rebuild its
+    daily maxima from NOAA's hourly station reports (ISD), under its own pre-registration (not written yet).
+  - To discuss: a corrector on top of global forecasts, conformal ranges, a benchmark, and a prospective 2027 season
+    (its freeze is due by 2027-02-28).
 - **The paper.** The README has the results, run instructions and data notes.
 - Optional, each needs a decision: a tuned Delhi-only LSTM (to remove the tuned-vs-untuned caveat on H1); a ridge on
   C3-hop's full inputs (a like-for-like H3 check); Chronos-2 with Delhi's other variables as inputs.
@@ -1379,4 +1380,4 @@ critical reviews of 2026-10-22 were addressed: claims corrected, frozen-code iss
 | 2026-11-01 | Phase 6 part 4: LLM advisories generated (Groq, `gpt-oss-120b`; 56 of 56 passed the verifier first time); blind rating pack built. |
 | 2026-11-08 | Blind rating results: the LLM version fails its pre-registered rule (source support 0% vs 54%, harmful 8% vs 0%, no clarity gain); the advisory keeps the rule-based text. Phase 3 extras started on the branch `phase3-extras`. |
 | 2026-11-11 | Retrieval study (§9.2, branch `retrieval-improvements`), after the mentor's feedback: the information ladder shows retrieval helps only when it brings information the model lacks; RAFT as published adds nothing on our data, but the same code works in its own kind of setting (hourly, short window: −7%), the positive control; a similar past barely means a similar future (0.02–0.08 vs RAFT's 0.60); heatwave-day "cold analogues" are regression to the mean. The second reference paper's idea is what C3-hop already does (H1). Step 2: only upper-air retrieval helps C3-hop (WBGT ordinary days, ~1%); the same information given directly helps more; season-to-date retrieval adds nothing; retrieval-based ranges are worse on heatwave days. Step 5: an analogue ensemble keyed on ECMWF's forecast beats C3-hop by 26% (Tmax, 2016–2018) but only ties ECMWF's corrected forecast. |
-| 2026-11-12 | Retrieval study step 4: C3-hop given the 500 hPa pattern directly helps both families on all days (WBGT −0.083 °C, about 4%; Tmax −0.057 °C, about 3%) and Tmax heatwave days (−0.22 °C, about 12%; 11 clusters, to be confirmed). It beats the shuffled-year check in both families (WBGT −0.080 °C, Tmax −0.077 °C), which is no better than plain C3-hop: the gain is the right day's upper air, not more inputs. |
+| 2026-11-12 | Retrieval study step 4: C3-hop given the 500 hPa pattern directly helps both families on all days (WBGT −0.083 °C, about 4%; Tmax −0.057 °C, about 3%) and Tmax heatwave days (−0.22 °C, about 12%; 11 clusters, to be confirmed). It beats the shuffled-year check in both families (WBGT −0.080 °C, Tmax −0.077 °C), which is no better than plain C3-hop: the gain is the right day's upper air, not more inputs. The README and the glossary now cover the retrieval study. Phase 3 extras: the station record will be rebuilt from NOAA's hourly reports (option a, pre-registration to come); main merged into `phase3-extras`; the other extras are to be discussed. |
