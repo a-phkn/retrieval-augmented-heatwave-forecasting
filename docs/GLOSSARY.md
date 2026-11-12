@@ -199,13 +199,17 @@ attributed to that one change.
 
 ## Remote sensing and Phase 6
 
+The remote-sensing terms (NDVI / NDBI, LST, HVI, GEE, UHI) come from the original plan (Execution Plan v4). They were
+cut on 2026-10-04, when the team adopted Plan v5 (`docs/PLAN_REVIEW_v5.md`), and none of them was built. The main
+reason: our data, ERA5, has no urban physics, so it cannot show an urban heat island.
+
 | Term | Meaning |
 |---|---|
-| **NDVI / NDBI** | Satellite vegetation index / built-up-area index (from Landsat). |
-| **LST** | Land surface temperature (from MODIS satellites). |
-| **HVI** | Heat-vulnerability index combining the above (optional ward map for advisories). |
-| **GEE** | Google Earth Engine, the platform for those satellite data. |
-| **UHI** | Urban heat island. |
+| **NDVI / NDBI** | Satellite vegetation index / built-up-area index (from Landsat). *Cut; never built.* |
+| **LST** | Land surface temperature (from MODIS satellites). *Cut; never built.* |
+| **HVI** | Heat-vulnerability index combining the above, for an optional ward map in the advisory. *Plan v5 kept it only as an optional stretch goal; never built.* |
+| **GEE** | Google Earth Engine, the platform for those satellite data. *Not used.* |
+| **UHI** | Urban heat island. *Cut:* Plan v4's heat-island part ("Phase 4B") was dropped because ERA5 cannot show it. |
 | **IMD / NDMA / HAP** | India Meteorological Department / National Disaster Management Authority / Heat Action Plan. |
 | **DERC / DISCOM / BEE** | Delhi Electricity Regulatory Commission / electricity distribution company / Bureau of Energy Efficiency. |
 | **Rule engine / verifier** | Phase 6 safety layers (`advisory/rules.py`, `advisory/verifier.py`): the rule engine sets each day's alert colour from the forecast by fixed rules (never the LLM); the verifier rejects any advisory whose colours, actions, quotes, numbers or labels don't match the rule engine and the action library. |
