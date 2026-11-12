@@ -1220,9 +1220,10 @@ against the saved documents; details in `sources/PHASE6_PART_D_RESULT.md`):
   - WBGT: no detectable gain (−0.07 °C, CI includes 0).
 - **Is it the information, or just more inputs?** The check: the same run with each year's upper-air numbers taken
   from a different year (same calendar dates, so the season is kept).
-  - For WBGT, this shuffled model is no better than plain C3-hop (2.245 vs 2.248 °C), and the real input beats it by
-    0.080 °C. So it is the right day's upper air that helps.
-  - The same check for Tmax is running.
+  - In both families the shuffled model is no better than plain C3-hop (WBGT 2.245 vs 2.248 °C; Tmax 2.085 vs
+    2.065 °C, within noise), and the real input beats it: by 0.080 °C (WBGT) and 0.077 °C (Tmax) on all days.
+  - On Tmax heatwave days it beats the shuffled model by 0.22 °C too (same 11-cluster caveat), and the shuffled model
+    stays as cold as C3-hop (bias −1.20 °C). So it is the right day's upper air that helps, not more inputs.
 - So the upper air is information C3-hop lacks, and given directly it is used far better than through retrieval.
 - Caveat: the 500 hPa data we have end in 2021, so this can't be run on the 2019–2026 test years as they stand.
 - Report: `retrieval_study/results/step4.md`.
@@ -1314,9 +1315,9 @@ critical reviews of 2026-10-22 were addressed: claims corrected, frozen-code iss
 `KNOWN_DEVIATIONS.md`, and the test lock and test outputs now checked automatically.
 - **The retrieval study** (§9.2), on the branch `retrieval-improvements`: why retrieval did not help, and what could.
   This is the mentor's priority (2026-11-09).
-  - Done: steps 1, 2, 4 (C3-hop given the upper-air pattern directly) and 5 (the analogue ensemble keyed on ECMWF's
-    forecast), and the one-page note for the mentor (Claude Docs, "Retrieval study: one-page note").
-  - Running: step 4's shuffled-year check for Tmax.
+  - Done: steps 1, 2, 4 (C3-hop given the upper-air pattern directly, with its shuffled-year check in both families)
+    and 5 (the analogue ensemble keyed on ECMWF's forecast), and the one-page note for the mentor (Claude Docs,
+    "Retrieval study: one-page note").
   - Step 4 is not retrieval. The 500 hPa data we have end in 2021, so testing it on new years (the 2027 season)
     needs fresh upper-air data.
 - **Phase 6, the heat advisory:** library, rule engine, verifier, the LLM step and its blind rating are done. The
@@ -1378,4 +1379,4 @@ critical reviews of 2026-10-22 were addressed: claims corrected, frozen-code iss
 | 2026-11-01 | Phase 6 part 4: LLM advisories generated (Groq, `gpt-oss-120b`; 56 of 56 passed the verifier first time); blind rating pack built. |
 | 2026-11-08 | Blind rating results: the LLM version fails its pre-registered rule (source support 0% vs 54%, harmful 8% vs 0%, no clarity gain); the advisory keeps the rule-based text. Phase 3 extras started on the branch `phase3-extras`. |
 | 2026-11-11 | Retrieval study (§9.2, branch `retrieval-improvements`), after the mentor's feedback: the information ladder shows retrieval helps only when it brings information the model lacks; RAFT as published adds nothing on our data, but the same code works in its own kind of setting (hourly, short window: −7%), the positive control; a similar past barely means a similar future (0.02–0.08 vs RAFT's 0.60); heatwave-day "cold analogues" are regression to the mean. The second reference paper's idea is what C3-hop already does (H1). Step 2: only upper-air retrieval helps C3-hop (WBGT ordinary days, ~1%); the same information given directly helps more; season-to-date retrieval adds nothing; retrieval-based ranges are worse on heatwave days. Step 5: an analogue ensemble keyed on ECMWF's forecast beats C3-hop by 26% (Tmax, 2016–2018) but only ties ECMWF's corrected forecast. |
-| 2026-11-12 | Retrieval study step 4: C3-hop given the 500 hPa pattern directly helps both families on all days (WBGT −0.083 °C, about 4%; Tmax −0.057 °C, about 3%) and Tmax heatwave days (−0.22 °C, about 12%; 11 clusters, to be confirmed). For WBGT it beats the shuffled-year check (−0.080 °C), which is no better than plain C3-hop; the Tmax check is running. |
+| 2026-11-12 | Retrieval study step 4: C3-hop given the 500 hPa pattern directly helps both families on all days (WBGT −0.083 °C, about 4%; Tmax −0.057 °C, about 3%) and Tmax heatwave days (−0.22 °C, about 12%; 11 clusters, to be confirmed). It beats the shuffled-year check in both families (WBGT −0.080 °C, Tmax −0.077 °C), which is no better than plain C3-hop: the gain is the right day's upper air, not more inputs. |

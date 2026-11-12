@@ -10,6 +10,7 @@ scaling use the fold's training days only. Development folds only; nothing from 
 Run from repo root:
     python -m retrieval_study.z500_direct --family WBGT
     python -m retrieval_study.z500_direct --family Tmax
+    python -m retrieval_study.z500_direct --family Tmax --control   (the shuffled-year control, *_Z500shuf)
     python -m retrieval_study.z500_direct --report        -> retrieval_study/results/step4.{md,json}
 A fold whose predictions already exist is skipped, so an interrupted run can be resumed.
 """
@@ -165,16 +166,19 @@ def report() -> dict:
             refs["the shuffled-year control"] = control
         r = {"rmse": {s: rmse_by(child if s == "all" else child[child["stratum"] == s]) for s in ("all", "extreme")},
              "by_lead": [rmse_by(child[child["lead"] == L]) for L in range(1, 6)], "bias": bias(child), "tests": {}}
-        for name, path in refs.items():
-            parent = load(path)
+        keys = ("parent", "child", "delta", "ci_low", "ci_high", "p_value", "n_clusters")
+        parents = {name: load(path) for name, path in refs.items()}
+        for name, parent in parents.items():
             r[f"rmse {name}"] = {s: rmse_by(parent if s == "all" else parent[parent["stratum"] == s])
                                  for s in ("all", "extreme")}
             r[f"by_lead {name}"] = [rmse_by(parent[parent["lead"] == L]) for L in range(1, 6)]
             r[f"bias {name}"] = bias(parent)
             for s in ("all", "extreme"):
                 t = compare(parent, child, s)
-                r["tests"][f"vs {name}|{s}"] = {k: t[k] for k in ("parent", "child", "delta", "ci_low", "ci_high",
-                                                                 "p_value", "n_clusters")}
+                r["tests"][f"vs {name}|{s}"] = {k: t[k] for k in keys}
+        if "the shuffled-year control" in parents:  # descriptive: do uninformative extra channels alone change C3-hop?
+            r["control vs C3-hop"] = {s: {k: t[k] for k in keys} for s, t in (
+                (s, compare(parents["C3-hop"], parents["the shuffled-year control"], s)) for s in ("all", "extreme"))}
         res[short] = r
     return res
 
@@ -208,6 +212,13 @@ def write_report(res: dict) -> None:
         L += [f"| {key[len('bias '):]} | {b['all']:+.2f} | {b['extreme']:+.2f} |"
               for key, b in r.items() if key.startswith("bias ")]
         L += [f"| C3-hop + 500 hPa input | {r['bias']['all']:+.2f} | {r['bias']['extreme']:+.2f} |", ""]
+        if "control vs C3-hop" in r:
+            L += ["The shuffled-year control against C3-hop itself (descriptive: do extra channels that carry the wrong "
+                  "day's upper air change C3-hop? Δ = control minus C3-hop):", "",
+                  "| Days | C3-hop | The control | Δ [95% CI] |", "|---|---|---|---|"]
+            L += [f"| {'all days' if s == 'all' else 'heatwave days'} | {t['parent']:.3f} | {t['child']:.3f} | {d(t)} |"
+                  for s, t in r["control vs C3-hop"].items()]
+            L.append("")
     OUT_DIR.mkdir(parents=True, exist_ok=True)
     (OUT_DIR / "step4.md").write_text("\n".join(L) + "\n", encoding="utf-8")
 

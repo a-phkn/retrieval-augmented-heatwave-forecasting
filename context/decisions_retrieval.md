@@ -366,6 +366,17 @@ before any run (user approved).**
     - It is one of many comparisons in this study, so its real test is new data (the 2027 season).
   - Bias on heatwave days (descriptive): the cold bias shrinks from -1.25 to -0.98 °C.
   - The rule says it helps, so the Tmax shuffled-year control was started on 2026-11-12, after this result.
+- **RESULT, Tmax control, 2026-11-12** (`retrieval_study/results/step4.md`). The first start was paused overnight
+  before any fold was saved; the control then ran once in full, from scratch.
+  - **It passes.** Against the shuffled-year control: -0.077 °C on all days (CI -0.112 to -0.042). Heatwave days:
+    -0.218 °C (CI -0.402 to -0.034; 11 clusters, so fragile).
+  - The control itself is no better than C3-hop: 2.085 vs 2.065 °C on all days (+0.020, CI -0.004 to +0.044) and
+    1.821 vs 1.827 °C on heatwave days (CI -0.160 to +0.148). It is 0.01 to 0.03 °C worse at every lead. Extra
+    channels that carry the wrong day's upper air add nothing.
+  - The same check for WBGT, now in the report (descriptive): -0.003 °C on all days (CI -0.019 to +0.014).
+  - Bias on heatwave days (descriptive): -1.25 °C (C3-hop), -0.98 °C (with the input), -1.20 °C (the control). The
+    smaller cold bias also needs the right day's upper air.
+  - Both families now pass the rule and its control. RS-4 is complete.
 - **Predictions checked:**
   - "It helps on all days in both families": held.
   - "By less than in the linear screen": failed in both families. The network gains more than the straight-line screen

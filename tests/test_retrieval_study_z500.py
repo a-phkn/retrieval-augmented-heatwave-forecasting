@@ -46,16 +46,19 @@ def test_the_control_takes_the_same_dates_from_another_training_year():
 def test_the_report_lists_every_comparison_and_its_lead_row(tmp_path, monkeypatch):
     monkeypatch.setattr(zd, "OUT_DIR", tmp_path)
     t = {"parent": 2.2, "child": 2.1, "delta": -0.1, "ci_low": -0.15, "ci_high": -0.05, "p_value": 0.01, "n_clusters": 36}
+    null = {**t, "parent": 2.2, "child": 2.21, "delta": 0.01, "ci_low": -0.01, "ci_high": 0.03, "p_value": 0.3}
     refs = ("C3-hop", "the shuffled-year control")
     res = {"WBGT": {"tests": {f"vs {n}|{s}": t for n in refs for s in ("all", "extreme")},
                     "by_lead": [1.0] * 5, **{f"by_lead {n}": [1.1] * 5 for n in refs},
-                    "bias": {"all": 0.01, "extreme": -0.5}, **{f"bias {n}": {"all": 0.02, "extreme": -0.9} for n in refs}},
+                    "bias": {"all": 0.01, "extreme": -0.5}, **{f"bias {n}": {"all": 0.02, "extreme": -0.9} for n in refs},
+                    "control vs C3-hop": {"all": null, "extreme": null}},
            "Tmax": {"status": "not complete"}}
     zd.write_report(res)
     text = (tmp_path / "step4.md").read_text(encoding="utf-8")
     assert "| Its RMSE |" in text and text.count("**(CI < 0)**") == 4
     for row in ("| C3-hop | 1.100", "| the shuffled-year control | 1.100", "| C3-hop + 500 hPa input | 1.000",
-                "| C3-hop | +0.02 | -0.90 |", "| C3-hop + 500 hPa input | +0.01 | -0.50 |"):
+                "| C3-hop | +0.02 | -0.90 |", "| C3-hop + 500 hPa input | +0.01 | -0.50 |",
+                "| all days | 2.200 | 2.210 | +0.010 [-0.010, +0.030] |", "| heatwave days | 2.200 | 2.210 |"):
         assert row in text
     assert "Not complete yet" in text
 

@@ -8,10 +8,13 @@ Pre-registered in `context/decisions_retrieval.md` (RS-4) before any run. Not re
 |---|---|---|---|---|
 | C3-hop | all days | 2.065 | 2.008 | -0.057 [-0.091, -0.024] **(CI < 0)** |
 | C3-hop | heatwave days | 1.827 | 1.603 | -0.224 [-0.409, -0.038] **(CI < 0)** |
+| the shuffled-year control | all days | 2.085 | 2.008 | -0.077 [-0.112, -0.042] **(CI < 0)** |
+| the shuffled-year control | heatwave days | 1.821 | 1.603 | -0.218 [-0.402, -0.034] **(CI < 0)** |
 
 | Lead | 1 | 2 | 3 | 4 | 5 |
 |---|---|---|---|---|---|
 | C3-hop | 1.443 | 1.859 | 2.120 | 2.318 | 2.433 |
+| the shuffled-year control | 1.475 | 1.875 | 2.144 | 2.330 | 2.454 |
 | C3-hop + 500 hPa input | 1.430 | 1.808 | 2.059 | 2.237 | 2.367 |
 
 Bias (mean error, forecast minus truth, °C; negative = too cold; descriptive):
@@ -19,7 +22,15 @@ Bias (mean error, forecast minus truth, °C; negative = too cold; descriptive):
 | Model | All days | Heatwave days |
 |---|---|---|
 | C3-hop | +0.15 | -1.25 |
+| the shuffled-year control | +0.13 | -1.20 |
 | C3-hop + 500 hPa input | +0.21 | -0.98 |
+
+The shuffled-year control against C3-hop itself (descriptive: do extra channels that carry the wrong day's upper air change C3-hop? Δ = control minus C3-hop):
+
+| Days | C3-hop | The control | Δ [95% CI] |
+|---|---|---|---|
+| all days | 2.065 | 2.085 | +0.020 [-0.004, +0.044] |
+| heatwave days | 1.827 | 1.821 | -0.006 [-0.160, +0.148] |
 
 ## WBGT
 
@@ -47,4 +58,11 @@ Bias (mean error, forecast minus truth, °C; negative = too cold; descriptive):
 | C3-hop + Rz (retrieval) | +0.35 | -2.69 |
 | the shuffled-year control | +0.36 | -2.76 |
 | C3-hop + 500 hPa input | +0.34 | -2.59 |
+
+The shuffled-year control against C3-hop itself (descriptive: do extra channels that carry the wrong day's upper air change C3-hop? Δ = control minus C3-hop):
+
+| Days | C3-hop | The control | Δ [95% CI] |
+|---|---|---|---|
+| all days | 2.248 | 2.245 | -0.003 [-0.019, +0.014] |
+| heatwave days | 3.019 | 3.077 | +0.058 [-0.056, +0.173] |
 
