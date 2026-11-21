@@ -224,6 +224,10 @@ Rules for this file:
   `data/external/graphcast_2020_delhi_t2m.parquet`.
 - **DEVIATION 2026-11-11 (a clarification, written before any P3-2 code or download):** the GraphCast 2020 extract
   goes to `followup/data/graphcast_2020_delhi_t2m.parquet` instead, for the reason given under P3-1 on the same date.
+- **DEVIATION 2026-11-21 (user approved; written before any P3-2 code or download):** variant (a), the four-value
+  daily maximum for GraphCast 2020, is dropped, and with it the GraphCast 2020 download. Variants (b)-(d) run as
+  registered, on the P3-1 forecasts already downloaded. Why: the journal plan (2026-11-20) needs the blend's answer
+  (does C3-hop add anything to a corrected global forecast?), and (b)-(d) give it without new data.
 
 **P3-3: Safdarjung station check. PRE-REGISTERED 2026-11-05 (user approved).**
 - Data: GHCN-Daily IN022021900 TMAX (`sources/data/safdarjung_daily_tidy.csv`; to 2025-08-23; gaps; quality-flagged
@@ -332,6 +336,10 @@ Rules for this file:
     - (b) a re-dated comparison with this file: score each forecast's two-day maximum against the station value,
       with ERA5's two-day maximum as the reference. Post hoc, and only on the days the station reports;
     - (c) leave P3-3 as a documented negative result.
+- **DECISION 2026-11-12 (user): option (a).** The station's daily maxima are rebuilt from NOAA's Integrated Surface
+  Database, under their own pre-registration, written and pushed before any ISD temperature is downloaded. Options
+  (b) and (c) are not taken.
+  - 2026-11-21 (user approved): Palam, the airport station, is rebuilt the same way, as a second station.
 
 **P3-4: Conformal forecast ranges. PRE-REGISTERED 2026-11-05 (user approved).**
 - Base: the test report's ranges: the recalibrated ensemble mean +/- a Gaussian width from the stop-block residual SD
@@ -357,6 +365,10 @@ Rules for this file:
   - all-day 80% coverage between 0.78 and 0.82, with a lower interval score than the base;
   - (B) and (C) are judged by their coverage in the p >= p* group.
 - Code: `followup/conformal.py`.
+- **DEVIATION 2026-11-21 (user approved; written before any P3-4 code):** P3-4 is no longer parked, and it gains one
+  descriptive output: reliability tables for the test's recalibrated hot-day probability (observed hot-day
+  frequency against the forecast probability in 10 equal-width bins, with counts), for the same models and targets.
+  No pass rule. Why: the journal plan (2026-11-20) lists calibrated probabilities and range coverage among its fixes.
 
 **P3-5: Benchmark, leaderboard and error budget. PRE-REGISTERED 2026-11-05 (user approved).**
 - No new hypothesis. A package so others can score their own models the same way.
@@ -373,6 +385,9 @@ Rules for this file:
   - GraphCast's gap to C3-hop by lead;
   - the error correlation and blend weights.
 - Before release: check the licence terms of each data source.
+- **DROPPED 2026-11-21 (user approved), before any P3-5 code:** the leaderboard and the error budget are not built.
+  The journal plan (2026-11-20) asks only for a public code release with a DOI; a scoring script, if one is written,
+  goes into that release. The licence check stays, before the release.
 
 **P3-6: Prospective 2027 season. PRE-REGISTERED 2026-11-05 (user approved).**
 - Freeze by 2027-02-28: a commit tagged `prospective-2027` holding the test-fold models (checkpoint SHA-256s), the
@@ -386,3 +401,9 @@ Rules for this file:
   - C3-hop vs IFS, AIFS and GFS;
   - the corrector variants.
 - Scored once, after 2027-10-15 (when ERA5T for September exists), and reported whatever the result.
+- **DECISION 2026-11-21 (user approved): kept only if the upper-air model (RS-4 in `context/decisions_retrieval.md`,
+  branch `retrieval-improvements`) becomes the paper's main model.** That is decided before the 2027-02-28 freeze.
+  - If kept, a dated change slims it before the freeze: the frozen models plus the upper-air model, the P3-1 global
+    models, the P3-2 variants only if P3-2 has run, and the rebuilt ISD station record in place of GHCN. The upper-air
+    model also needs 500 hPa data for 2027.
+  - If not kept, a DROPPED line is added here.
