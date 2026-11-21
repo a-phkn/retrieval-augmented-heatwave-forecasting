@@ -6,7 +6,7 @@
 > log at the end. Short forms are explained in [`GLOSSARY.md`](GLOSSARY.md); the original
 > plan is in [`PLAN_REVIEW_v5.md`](PLAN_REVIEW_v5.md) (historical).
 >
-> **Last updated:** 2026-11-12 (retrieval study on the branch `retrieval-improvements`, §9.2)
+> **Last updated:** 2026-11-21 (retrieval study on the branch `retrieval-improvements`, §9.2; next steps in §12)
 
 ## Final state at a glance (2026-10-25)
 
@@ -1311,7 +1311,7 @@ is installed globally.
 
 ## 12. Open items
 
-Updated 2026-11-12. The forecasting research is complete: the protocol was frozen and the test run, §9.0. The
+Updated 2026-11-21. The forecasting research is complete: the protocol was frozen and the test run, §9.0. The
 critical reviews of 2026-10-22 were addressed: claims corrected, frozen-code issues disclosed in
 `KNOWN_DEVIATIONS.md`, and the test lock and test outputs now checked automatically.
 - **The retrieval study** (§9.2), on the branch `retrieval-improvements`: why retrieval did not help, and what could.
@@ -1321,6 +1321,11 @@ critical reviews of 2026-10-22 were addressed: claims corrected, frozen-code iss
     "Retrieval study: one-page note").
   - Step 4 is not retrieval. The 500 hPa data we have end in 2021, so testing it on new years (the 2027 season)
     needs fresh upper-air data.
+  - Next, from the journal plan (Claude Docs, "Research Positioning and Journal Plan", 2026-11-20):
+    - step 6, a descriptive check of step 4 on 2019–2021, where 500 hPa data already exist (drafted 2026-11-21,
+      waiting for approval);
+    - repeating the retrieval experiments for 2–3 more cities;
+    - a pre-registered prediction at longer leads (2–3 weeks ahead).
 - **Phase 6, the heat advisory:** library, rule engine, verifier, the LLM step and its blind rating are done. The
   LLM version failed the rating, so the advisory uses the rule-based text (§9, Part 4). Left:
   - the demo page (the two teammate raters, on their own branch);
@@ -1329,10 +1334,14 @@ critical reviews of 2026-10-22 were addressed: claims corrected, frozen-code iss
   mentor's feedback; main was merged into the branch on 2026-11-12.
   - Done: the comparison with the IFS, AIFS and GFS forecasts.
   - The Safdarjung station check found the public station file misdated after 2010. Decided 2026-11-12: rebuild its
-    daily maxima from NOAA's hourly station reports (ISD), under its own pre-registration (not written yet).
-  - To discuss: a corrector on top of global forecasts, conformal ranges, a benchmark, and a prospective 2027 season
-    (its freeze is due by 2027-02-28).
-- **The paper.** The README has the results, run instructions and data notes.
+    daily maxima from NOAA's hourly station reports (ISD), under its own pre-registration (not written yet). On
+    2026-11-21 Palam (the airport station) was added as a second station.
+  - Decided 2026-11-21: the corrector and blend on top of global forecasts is kept without its GraphCast 2020 part;
+    conformal ranges are kept, with reliability tables added; the benchmark is dropped. The prospective 2027 season
+    is kept only if the upper-air model becomes the paper's main model, decided before its freeze (due 2027-02-28).
+- **The paper.** The README has the results, run instructions and data notes. Target journals and the fixes before
+  submitting: the journal plan (Claude Docs, "Research Positioning and Journal Plan"). The code release (Zenodo DOI)
+  needs the retrieval study merged into `main` and a check of the data licences.
 - Optional, each needs a decision: a tuned Delhi-only LSTM (to remove the tuned-vs-untuned caveat on H1); a ridge on
   C3-hop's full inputs (a like-for-like H3 check); Chronos-2 with Delhi's other variables as inputs.
 - Older items are done: v2 data, controls, labels, upstream download, sources (Parts A–E), tier mapping.
@@ -1381,3 +1390,4 @@ critical reviews of 2026-10-22 were addressed: claims corrected, frozen-code iss
 | 2026-11-08 | Blind rating results: the LLM version fails its pre-registered rule (source support 0% vs 54%, harmful 8% vs 0%, no clarity gain); the advisory keeps the rule-based text. Phase 3 extras started on the branch `phase3-extras`. |
 | 2026-11-11 | Retrieval study (§9.2, branch `retrieval-improvements`), after the mentor's feedback: the information ladder shows retrieval helps only when it brings information the model lacks; RAFT as published adds nothing on our data, but the same code works in its own kind of setting (hourly, short window: −7%), the positive control; a similar past barely means a similar future (0.02–0.08 vs RAFT's 0.60); heatwave-day "cold analogues" are regression to the mean. The second reference paper's idea is what C3-hop already does (H1). Step 2: only upper-air retrieval helps C3-hop (WBGT ordinary days, ~1%); the same information given directly helps more; season-to-date retrieval adds nothing; retrieval-based ranges are worse on heatwave days. Step 5: an analogue ensemble keyed on ECMWF's forecast beats C3-hop by 26% (Tmax, 2016–2018) but only ties ECMWF's corrected forecast. |
 | 2026-11-12 | Retrieval study step 4: C3-hop given the 500 hPa pattern directly helps both families on all days (WBGT −0.083 °C, about 4%; Tmax −0.057 °C, about 3%) and Tmax heatwave days (−0.22 °C, about 12%; 11 clusters, to be confirmed). It beats the shuffled-year check in both families (WBGT −0.080 °C, Tmax −0.077 °C), which is no better than plain C3-hop: the gain is the right day's upper air, not more inputs. The README and the glossary now cover the retrieval study. Phase 3 extras: the station record will be rebuilt from NOAA's hourly reports (option a, pre-registration to come); main merged into `phase3-extras`; the other extras are to be discussed. |
+| 2026-11-21 | Next steps set from the journal plan (2026-11-20): step 6, a descriptive check of step 4 on 2019–2021 (drafted, awaiting approval), then more cities and a longer-lead prediction. Phase 3 decisions: Palam added to the station rebuild; corrector and blend kept without GraphCast 2020; conformal ranges kept with reliability tables; benchmark dropped; the 2027 season kept only if the upper-air model becomes the main model. |

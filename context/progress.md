@@ -3,7 +3,7 @@
 Short, frequently-updated. The sections below the current status are a dated history, newest results in
 "Week 3 results" onwards; the September "Done / Next" lists are historical (`build_plan.md` is v1-era).
 
-## Current status (2026-11-12)
+## Current status (2026-11-21)
 - **Retrieval study** on the branch `retrieval-improvements`, after the mentor's feedback of 2026-11-09. It asks why
   retrieval did not help when RAFT (arXiv 2505.04163) and Deznabi et al. (arXiv 2510.16695) report gains, and what
   could help. Pre-registered in `context/decisions_retrieval.md`; development years only.
@@ -30,11 +30,14 @@ Short, frequently-updated. The sections below the current status are a dated his
     - Both families pass the shuffled-year control (WBGT -0.080 °C, Tmax -0.077 °C on all days), and the control is
       no better than plain C3-hop: the gain is the right day's upper air, not more inputs. RS-4 is complete.
   - One-page note for the mentor: Claude Docs "Retrieval study: one-page note".
-- The Phase 3 extras are parked on `phase3-extras` (main merged into it 2026-11-12).
-  - Station record: decided 2026-11-12 to rebuild Safdarjung's daily maxima from NOAA's hourly station reports (ISD,
-    option a), under its own pre-registration, written before any ISD data is downloaded.
-  - The corrector, conformal ranges, benchmark and 2027 season: to be discussed. The 2027 season's freeze is due by
-    2027-02-28.
+  - Next (journal plan, 2026-11-20): step 6, a descriptive check of step 4 on 2019-2021 (drafted 2026-11-21, waiting
+    for approval); then the multi-city check and a pre-registered longer-lead prediction.
+- The Phase 3 extras are on `phase3-extras` (main merged into it 2026-11-12; decisions recorded 2026-11-21).
+  - Station record: rebuild the daily maxima of Safdarjung and Palam from NOAA's hourly station reports (ISD, option
+    a), under its own pre-registration, written before any ISD temperature is downloaded.
+  - Kept: the corrector and blend (without GraphCast 2020) and conformal ranges (with reliability tables). Dropped:
+    the benchmark. The 2027 season is kept only if the upper-air model becomes the paper's main model (decided before
+    the 2027-02-28 freeze).
 
 ## Status on 2026-11-08
 - **Forecasting research complete.** Protocol frozen 2026-10-19 (tag `test-lock`); test run once: H1 and H3
