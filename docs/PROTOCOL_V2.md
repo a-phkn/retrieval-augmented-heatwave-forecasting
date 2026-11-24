@@ -614,6 +614,27 @@ rows of steps 1 and 3 were computed before this commit: in-season ERA5 minus Saf
 paid in 38% of seasons on station Tmax vs 22% on ERA5 (34 station-years). Chennai and Ahmedabad were run only on
 placeholder data in that test.
 
+## 17. Amendment A6 (24 Nov 2026, night; power table and test scoring, BEFORE `test-lock-v2`)
+
+**A6.1 Power (Section 5 rule: development SE x sqrt(G_dev / G_test), t with G_test - 1 df; G_test = 16).**
+| Test (2019+, secondary) | Dev SE (G) | Test SE | Power at the dev estimate | Needed for 80% power |
+|---|---|---|---|---|
+| E5 lead 1, miss < 0.25, one-sided 0.05 | 0.021 (24) | 0.025 | 0.70 at miss 0.192 | miss <= 0.184 |
+| H-C lead 1 forecast-hot, TOST 0.75-0.85 | 0.024 (23) | 0.028 | about 0.07 at 0.828 | not reachable |
+| Model - persistence Peirce, per lead | see A3.3 | | | 0.074 (lead 1) to 0.15 (lead 5) |
+H-C on 2019+ is therefore descriptive only. H-N is not scored (not trained; E4 not load-bearing, A2).
+
+**A6.2 What is scored, once (`v2/run_test_v2.py`).** Test-fold WBGT C3-hop (trained 1980-2016, early-stopped on
+2017-2018, seeds 0-9; `predictions_test/A2Lr_hw5_C3hop/`). Calibration block = 2017-2018 (`test_stop.parquet`),
+the test fold's equivalent of each development fold's inner block. Event = rest-hours >= 9.0 (A1.6) from
+`delhi_hourly_test.parquet`.
+- E5 replication, lead 1: passes if the one-sided p for miss < 0.25 is < 0.05 AND false alarms <= 0.40. A single
+  pre-specified secondary test, so no Holm. A fail does not overturn the development result (Section 5).
+- H-C, leads 1-5: coverage, TOST p and observed-extreme coverage, reported.
+- Model minus persistence (A3.2), leads 1-5, Holm across leads.
+The script was tested on development fold f4 (2014-2015 as calibration, 2016-2018 as test) before this commit; no
+2019+ file has been read by v2 code.
+
 ## References
 - IMD_HW_FAQ, DELHI_HAP_2025, HOT_WEATHER_HAZARD_ANALYSIS_2022: see `sources/phase6_thresholds.json` and
   `sources/phase6_candidate_actions.json` (page and verbatim excerpt per row).
