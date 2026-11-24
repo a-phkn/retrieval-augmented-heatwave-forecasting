@@ -6,7 +6,7 @@
 > log at the end. Short forms are explained in [`GLOSSARY.md`](GLOSSARY.md); the original
 > plan is in [`PLAN_REVIEW_v5.md`](PLAN_REVIEW_v5.md) (historical).
 >
-> **Last updated:** 2026-11-21 (retrieval study on the branch `retrieval-improvements`, §9.2; next steps in §12)
+> **Last updated:** 2026-11-24 (retrieval study on the branch `retrieval-improvements`, §9.2; next steps in §12)
 
 ## Final state at a glance (2026-10-25)
 
@@ -1311,7 +1311,7 @@ is installed globally.
 
 ## 12. Open items
 
-Updated 2026-11-21. The forecasting research is complete: the protocol was frozen and the test run, §9.0. The
+Updated 2026-11-24. The forecasting research is complete: the protocol was frozen and the test run, §9.0. The
 critical reviews of 2026-10-22 were addressed: claims corrected, frozen-code issues disclosed in
 `KNOWN_DEVIATIONS.md`, and the test lock and test outputs now checked automatically.
 - **The retrieval study** (§9.2), on the branch `retrieval-improvements`: why retrieval did not help, and what could.
@@ -1321,11 +1321,27 @@ critical reviews of 2026-10-22 were addressed: claims corrected, frozen-code iss
     "Retrieval study: one-page note").
   - Step 4 is not retrieval. The 500 hPa data we have end in 2021, so testing it on new years (the 2027 season)
     needs fresh upper-air data.
-  - Next, from the journal plan (Claude Docs, "Research Positioning and Journal Plan", 2026-11-20):
-    - step 6, a descriptive check of step 4 on 2019–2021, where 500 hPa data already exist (drafted 2026-11-21,
-      waiting for approval);
-    - repeating the retrieval experiments for 2–3 more cities;
-    - a pre-registered prediction at longer leads (2–3 weeks ahead).
+  - Step 6, a descriptive check of step 4 on 2019–2021 (where 500 hPa data already exist), was pre-registered on
+    2026-11-24 and is training.
+  - Next, from the journal plan (Claude Docs, "Research Positioning and Journal Plan") and the heat-stress proposal
+    (2026-11-22):
+    - repeating the retrieval experiments for Jaipur, Ahmedabad and Nagpur. Their 2019–2026 years were never
+      scored, so they are a clean test;
+    - a pre-registered prediction at longer leads: weekly-mean anomalies 2–3 weeks ahead, against climatology,
+      damped persistence and a Ratnam-style baseline. GNA (Uhse 2026, arXiv 2609.36281) already states the
+      principle on benchmark data, so ours is its pre-registered physical test.
+- **The papers** (decided 2026-11-24): the lead paper stays "When does retrieval help a weather forecast?". The
+  second paper is on heat stress: humid-heat days that Delhi's alerts miss, and unsafe working hours.
+- **Heat-stress work** (added 2026-11-24 from the heat-stress proposal), each piece pre-registered before it runs:
+  - humid-heat days that none of Delhi's three alert schemes flags. The schemes are defined on station readings and
+    ERA5 runs about 0.4 °C below the station, so they run on the rebuilt station maxima;
+  - unsafe working hours per heat season, and the share outside the fixed 12–3 and 12–4 pm work-stop windows, from
+    the hourly ERA5 already on disk. The work limits and the hour convention (ERA5 is on UTC hours, India is
+    UTC+5:30) are fixed first, and 1980–2018 is counted before 2019–2026;
+  - later, forecasting unsafe hours: new code outside the frozen folders, with ECMWF's forecasts as a baseline.
+- **Order of work** (2026-11-24): step 6 → the station rebuild → humid-heat alerts and unsafe-hour counts → more
+  cities and longer leads → conformal ranges with the cost-loss value → forecasting unsafe hours → the blend with
+  ECMWF's forecasts → at submission, the merge into `main`, the licence check and the code release.
 - **Phase 6, the heat advisory:** library, rule engine, verifier, the LLM step and its blind rating are done. The
   LLM version failed the rating, so the advisory uses the rule-based text (§9, Part 4). Left:
   - the demo page (the two teammate raters, on their own branch);
@@ -1339,9 +1355,13 @@ critical reviews of 2026-10-22 were addressed: claims corrected, frozen-code iss
   - Decided 2026-11-21: the corrector and blend on top of global forecasts is kept without its GraphCast 2020 part;
     conformal ranges are kept, with reliability tables added; the benchmark is dropped. The prospective 2027 season
     is kept only if the upper-air model becomes the paper's main model, decided before its freeze (due 2027-02-28).
-- **The paper.** The README has the results, run instructions and data notes. Target journals and the fixes before
-  submitting: the journal plan (Claude Docs, "Research Positioning and Journal Plan"). The code release (Zenodo DOI)
-  needs the retrieval study merged into `main` and a check of the data licences.
+  - Decided 2026-11-24: the station rebuild also covers hourly temperature and dew point (which checks ERA5's
+    humidity around 2000–01) and daily minima; conformal ranges gain the cost-loss value of acting on the forecast.
+    NOAA's station list confirms both stations; both records end on 2025-08-24, so ISD has no 2026.
+- **The papers.** The README has the results, run instructions and data notes. Target journals, the fixes before
+  submitting and where each item stands: the journal plan (Claude Docs, "Research Positioning and Journal Plan",
+  updated 2026-11-24). The code release (Zenodo DOI) needs the retrieval study merged into `main` and a check of the
+  data licences.
 - Optional, each needs a decision: a tuned Delhi-only LSTM (to remove the tuned-vs-untuned caveat on H1); a ridge on
   C3-hop's full inputs (a like-for-like H3 check); Chronos-2 with Delhi's other variables as inputs.
 - Older items are done: v2 data, controls, labels, upstream download, sources (Parts A–E), tier mapping.
@@ -1391,3 +1411,4 @@ critical reviews of 2026-10-22 were addressed: claims corrected, frozen-code iss
 | 2026-11-11 | Retrieval study (§9.2, branch `retrieval-improvements`), after the mentor's feedback: the information ladder shows retrieval helps only when it brings information the model lacks; RAFT as published adds nothing on our data, but the same code works in its own kind of setting (hourly, short window: −7%), the positive control; a similar past barely means a similar future (0.02–0.08 vs RAFT's 0.60); heatwave-day "cold analogues" are regression to the mean. The second reference paper's idea is what C3-hop already does (H1). Step 2: only upper-air retrieval helps C3-hop (WBGT ordinary days, ~1%); the same information given directly helps more; season-to-date retrieval adds nothing; retrieval-based ranges are worse on heatwave days. Step 5: an analogue ensemble keyed on ECMWF's forecast beats C3-hop by 26% (Tmax, 2016–2018) but only ties ECMWF's corrected forecast. |
 | 2026-11-12 | Retrieval study step 4: C3-hop given the 500 hPa pattern directly helps both families on all days (WBGT −0.083 °C, about 4%; Tmax −0.057 °C, about 3%) and Tmax heatwave days (−0.22 °C, about 12%; 11 clusters, to be confirmed). It beats the shuffled-year check in both families (WBGT −0.080 °C, Tmax −0.077 °C), which is no better than plain C3-hop: the gain is the right day's upper air, not more inputs. The README and the glossary now cover the retrieval study. Phase 3 extras: the station record will be rebuilt from NOAA's hourly reports (option a, pre-registration to come); main merged into `phase3-extras`; the other extras are to be discussed. |
 | 2026-11-21 | Next steps set from the journal plan (2026-11-20): step 6, a descriptive check of step 4 on 2019–2021 (drafted, awaiting approval), then more cities and a longer-lead prediction. Phase 3 decisions: Palam added to the station rebuild; corrector and blend kept without GraphCast 2020; conformal ranges kept with reliability tables; benchmark dropped; the 2027 season kept only if the upper-air model becomes the main model. |
+| 2026-11-24 | Step 6 pre-registered and training. From the heat-stress proposal (2026-11-22): the lead paper stays the retrieval study; the second paper is on heat stress (humid-heat days the alerts miss, unsafe working hours); more cities named (Jaipur, Ahmedabad, Nagpur) and the longer-lead test specified; the station rebuild extended to hourly temperature, dew point and daily minima; the cost-loss value added to conformal ranges. New order of work in §12. The journal plan doc was brought up to date. |

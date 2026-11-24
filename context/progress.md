@@ -3,7 +3,14 @@
 Short, frequently-updated. The sections below the current status are a dated history, newest results in
 "Week 3 results" onwards; the September "Done / Next" lists are historical (`build_plan.md` is v1-era).
 
-## Current status (2026-11-21)
+## Current status (2026-11-24)
+- **Papers (decided 2026-11-24):** the lead paper stays the retrieval study ("When does retrieval help a weather
+  forecast?"). The second paper is on heat stress: humid-heat days that Delhi's alerts miss, and unsafe working hours
+  (from the heat-stress proposal of 2026-11-22). Each new piece is pre-registered before it runs.
+- **Order of work:** step 6 (training) → the station rebuild → humid-heat alerts and unsafe-hour counts → more cities
+  (Jaipur, Ahmedabad, Nagpur) and the longer-lead prediction → conformal ranges with the cost-loss value →
+  forecasting unsafe hours (ECMWF as a baseline) → the blend with ECMWF → at submission, the merge into `main`, the
+  licence check and the code release. Details: `docs/PROJECT_GUIDE.md` §12 and the journal plan doc.
 - **Retrieval study** on the branch `retrieval-improvements`, after the mentor's feedback of 2026-11-09. It asks why
   retrieval did not help when RAFT (arXiv 2505.04163) and Deznabi et al. (arXiv 2510.16695) report gains, and what
   could help. Pre-registered in `context/decisions_retrieval.md`; development years only.
@@ -30,11 +37,16 @@ Short, frequently-updated. The sections below the current status are a dated his
     - Both families pass the shuffled-year control (WBGT -0.080 °C, Tmax -0.077 °C on all days), and the control is
       no better than plain C3-hop: the gain is the right day's upper air, not more inputs. RS-4 is complete.
   - One-page note for the mentor: Claude Docs "Retrieval study: one-page note".
-  - Next (journal plan, 2026-11-20): step 6, a descriptive check of step 4 on 2019-2021 (drafted 2026-11-21, waiting
-    for approval); then the multi-city check and a pre-registered longer-lead prediction.
+  - **Step 6** (a descriptive check of step 4 on 2019-2021) was pre-registered 2026-11-24 (commit 38e046c); its code
+    is in `z500_direct.py` (`--folds test2021`, `--step6-report`) and both families are training.
+  - Next: the multi-city check (Jaipur, Ahmedabad, Nagpur) and a pre-registered longer-lead prediction (weekly-mean
+    anomalies at 2-3 weeks; GNA, arXiv 2609.36281, already states the principle on benchmark data).
 - The Phase 3 extras are on `phase3-extras` (main merged into it 2026-11-12; decisions recorded 2026-11-21).
   - Station record: rebuild the daily maxima of Safdarjung and Palam from NOAA's hourly station reports (ISD, option
-    a), under its own pre-registration, written before any ISD temperature is downloaded.
+    a), under its own pre-registration, written before any ISD temperature is downloaded. Extended 2026-11-24 to
+    hourly temperature and dew point (checks ERA5's humidity around 2000-01) and daily minima. NOAA's station list
+    (downloaded 2026-11-24, no temperatures) confirms both stations; both records end 2025-08-24.
+  - Conformal ranges also get the cost-loss value of acting on the forecast (decided 2026-11-24).
   - Kept: the corrector and blend (without GraphCast 2020) and conformal ranges (with reliability tables). Dropped:
     the benchmark. The 2027 season is kept only if the upper-air model becomes the paper's main model (decided before
     the 2027-02-28 freeze).
