@@ -4,13 +4,21 @@ Short, frequently-updated. The sections below the current status are a dated his
 "Week 3 results" onwards; the September "Done / Next" lists are historical (`build_plan.md` is v1-era).
 
 ## Current status (2026-11-24)
-- **Papers (decided 2026-11-24):** the lead paper stays the retrieval study ("When does retrieval help a weather
-  forecast?"). The second paper is on heat stress: humid-heat days that Delhi's alerts miss, and unsafe working hours
-  (from the heat-stress proposal of 2026-11-22). Each new piece is pre-registered before it runs.
-- **Order of work:** step 6 (done: the gain held) → the station rebuild (P3-7 drafted, waiting for approval) → humid-heat alerts and unsafe-hour counts → more cities
-  (Jaipur, Ahmedabad, Nagpur) and the longer-lead prediction → conformal ranges with the cost-loss value →
-  forecasting unsafe hours (ECMWF as a baseline) → the blend with ECMWF → at submission, the merge into `main`, the
-  licence check and the code release. Details: `docs/PROJECT_GUIDE.md` §12 and the journal plan doc.
+- **Papers (decided 2026-11-24):**
+  - The lead paper stays the retrieval study ("When does retrieval help a weather forecast?"), for Scientific
+    Reports.
+  - The second paper is Anushka's heat-stress study on `experiments-v2`. It has its own protocol and test lock, and
+    covers Delhi, Ahmedabad and Chennai. It goes to a different journal.
+  - Our own heat-stress items and P3-4 were retired, because her study covers them.
+  - Each new piece of ours is pre-registered before it runs.
+- **Order of work:**
+  1. Step 6 (done: the gain held).
+  2. The station rebuild for Safdarjung, Palam, Ahmedabad and Chennai (P3-7 drafted, waiting for approval).
+  3. More cities (ones `experiments-v2` has not analysed) and the longer-lead prediction.
+  4. A trigger built on ECMWF's forecasts for her paper, if she agrees.
+  5. The blend with ECMWF.
+  6. At submission: the merge into `main`, the licence check and the code release.
+  - Details: `docs/PROJECT_GUIDE.md` §12 and the journal plan doc.
 - **Retrieval study** on the branch `retrieval-improvements`, after the mentor's feedback of 2026-11-09. It asks why
   retrieval did not help when RAFT (arXiv 2505.04163) and Deznabi et al. (arXiv 2510.16695) report gains, and what
   could help. Pre-registered in `context/decisions_retrieval.md`; development years only.
@@ -50,7 +58,8 @@ Short, frequently-updated. The sections below the current status are a dated his
     a), under its own pre-registration, written before any ISD temperature is downloaded. Extended 2026-11-24 to
     hourly temperature and dew point (checks ERA5's humidity around 2000-01) and daily minima. NOAA's station list
     (downloaded 2026-11-24, no temperatures) confirms both stations; both records end 2025-08-24.
-  - Conformal ranges also get the cost-loss value of acting on the forecast (decided 2026-11-24).
+  - Later on 2026-11-24, P3-4 (conformal ranges, with the cost-loss value added earlier that day) was dropped,
+    because `experiments-v2` covers it (H-C and H-D). The rebuild was extended to Ahmedabad and Chennai.
   - Kept: the corrector and blend (without GraphCast 2020) and conformal ranges (with reliability tables). Dropped:
     the benchmark. The 2027 season is kept only if the upper-air model becomes the paper's main model (decided before
     the 2027-02-28 freeze).
