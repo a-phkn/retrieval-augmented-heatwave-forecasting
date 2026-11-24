@@ -60,11 +60,25 @@ def audit_graded(daily_rest: pd.DataFrame, trig: Trigger) -> dict:
     p = d[d["in_period"]]
     s = p.groupby(["cell", "season"]).agg(rest=("rest_hours", "sum"), paid_days=("counts", "sum"),
                                           paid=("season_paid", "first"))
-    rho = sp_stats.spearmanr(s["rest"], s["paid_days"]).statistic if s["paid_days"].nunique() > 1 else float("nan")
+    def _rho(x):
+        return sp_stats.spearmanr(x["rest"], x["paid_days"]).statistic if x["paid_days"].nunique() > 1 else float("nan")
+    rho = _rho(s)
+    # delete-one-season-year jackknife: the 9 cells of one year are not independent
+    years = s.index.get_level_values("season")
+    ids = np.unique(years)
+    reps = np.array([_rho(s[years != y]) for y in ids])
+    if np.isfinite(rho) and np.all(np.isfinite(reps)) and len(ids) >= 5:
+        G = len(ids)
+        se = float(np.sqrt((G - 1) / G * np.sum((reps - reps.mean()) ** 2)))
+        q = sp_stats.t.ppf(0.975, G - 1)
+        rho_ci = (float(rho - q * se), float(rho + q * se))
+    else:
+        rho_ci = (float("nan"), float("nan"))
     top = s["rest"] >= s["rest"].quantile(0.75)
     return {"trigger": trig.name, "cell_seasons": int(len(s)),
             "rest_hours_per_season": float(s["rest"].mean()),
             "share_rest_hours_on_days_not_counted": float(p.loc[~p["counts"], "rest_hours"].sum() / p["rest_hours"].sum()),
             "share_seasons_paid": float(s["paid"].mean()),
             "share_top_quartile_rest_seasons_unpaid": float((~s.loc[top, "paid"]).mean()),
-            "spearman_season_rest_vs_paid_days": float(rho)}
+            "spearman_season_rest_vs_paid_days": float(rho),
+            "spearman_ci95_year_jackknife": rho_ci}

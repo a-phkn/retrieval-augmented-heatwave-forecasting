@@ -56,7 +56,8 @@ def main() -> int:
     print(f"A1.5 H-D threshold R (record in the protocol): {out['h_d_threshold_R']}")
     print("H-E1 (moderate):")
     e = pd.DataFrame(out["h_e1"]).query("work == 'moderate'")
-    print(e.drop(columns=["work", "cell_seasons"]).to_string(index=False, float_format=lambda x: f"{x:.3f}"))
+    e = e.assign(rho_ci=e["spearman_ci95_year_jackknife"].map(lambda c: f"[{c[0]:+.2f}, {c[1]:+.2f}]"))
+    print(e.drop(columns=["work", "cell_seasons", "spearman_ci95_year_jackknife"]).to_string(index=False, float_format=lambda x: f"{x:.3f}"))
     return 0
 
 

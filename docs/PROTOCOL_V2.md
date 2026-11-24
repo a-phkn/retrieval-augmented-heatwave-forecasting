@@ -409,6 +409,17 @@ is kept as a reported secondary.
 
 None of A1 enters the Holm family (H-A, H-C, H-N).
 
+**A1.6 Recorded after the first A1 run (commit 9df47dc, 24 Nov), before any forecast result:**
+- **R = 9.0 rest-hours** (moderate, TLV, sun WBGT; 75th percentile of in-season daily rest-hours, 9-cell mean,
+  1980-2006, 5,400 days). This fixes the H-D event "tomorrow's rest-hours >= 9.0".
+- **Shade WBGT correction.** The first run used the no-solar-load formula (0.7 Tnwb + 0.3 Tg) for shade. A diagnostic
+  printed by the builder showed shade exceeding sun by up to 1.62 C (bright overcast hours, globe far above air
+  temperature). Shade now uses the same outdoor weights as sun (0.7 Tnwb + 0.2 Tg + 0.1 Ta), which guarantees
+  shade <= sun. All shade rows are re-run; the first-run shade numbers are kept in results_v2 history and noted in
+  the paper as superseded. Sun rows are unaffected.
+- **H-E1 Spearman CI added:** delete-one-season-year jackknife (the 9 cells of a year are not independent), t(G-1).
+
+
 ## References
 - IMD_HW_FAQ, DELHI_HAP_2025, HOT_WEATHER_HAZARD_ANALYSIS_2022: see `sources/phase6_thresholds.json` and
   `sources/phase6_candidate_actions.json` (page and verbatim excerpt per row).

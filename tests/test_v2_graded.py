@@ -29,12 +29,17 @@ def test_shade_below_sun_by_day_and_uses_frozen_components():
     sun = wbgt(d["t"], d["rh"], d["pressure"], d["wind"], d["ghi"], d["ghi"] - d["diffuse"], d["cosz"])["wbgt"]
     shade = shade_wbgt(d)
     assert np.all(shade < sun) and np.all(sun - shade < 6.0)
-    # at night (no sun) shade = 0.7 Tnwb + 0.3 Tg from the frozen components
+    # bright overcast (almost all diffuse): shade must not exceed sun (the bug the first version had)
+    o = _met(ghi=700.0, dif=690.0, cosz=0.6)
+    o["wind"] = 0.5
+    sun_o = wbgt(o["t"], o["rh"], o["pressure"], o["wind"], o["ghi"], o["ghi"] - o["diffuse"], o["cosz"])["wbgt"]
+    assert np.all(shade_wbgt(o) <= sun_o + 1e-6)
+    # at night (no sun) shade = sun: same components, same weights
     n = _met(ghi=0.0, dif=0.0, cosz=0.0)
     tk, rh = n["t"].to_numpy() + 273.15, n["rh"].to_numpy() / 100
     u2 = wind_2m(n["wind"].to_numpy(), 10.0, 0.0, 0.0)
-    ref = 0.7 * (natural_wet_bulb(tk, rh, 980.0, u2, 0.0, 0.0, 0.0) - 273.15) + 0.3 * (globe_temperature(tk, rh, 980.0, u2, 0.0, 0.0, 0.0) - 273.15)
-    assert np.allclose(shade_wbgt(n), ref)
+    sun_n = wbgt(n["t"], n["rh"], n["pressure"], n["wind"], n["ghi"], 0.0 * n["ghi"], n["cosz"])["wbgt"]
+    assert np.allclose(shade_wbgt(n), sun_n, atol=2e-4)
 
 
 def test_weighted_coverage_and_h_a1_on_synthetic_morning_peak():
