@@ -635,6 +635,15 @@ the test fold's equivalent of each development fold's inner block. Event = rest-
 The script was tested on development fold f4 (2014-2015 as calibration, 2016-2018 as test) before this commit; no
 2019+ file has been read by v2 code.
 
+## 18. Post-test exploration (24 Nov 2026, after `test-lock-v2` and the single test scoring)
+
+Everything from here is exploratory and labelled post-test. New code goes in `v2_post/`, so `v2/` stays as tagged.
+- **Alert gap (`v2_post/alert_gap.py`), development years only.** For each city: the share of season days with heat
+  stress (at least one working hour at WBGT >= 28 C; and rest-hours >= 9.0), and the share of those days with a
+  heat alert (station rule where a station exists: Delhi S1, Chennai IMD coastal on Minambakkam; Ahmedabad A4 ERA5
+  rule). The code was tested on Delhi data before this commit, so the Delhi row was seen: 5.1% of days with
+  rest-hours >= 9 had an IMD heat-wave alert at Safdarjung.
+
 ## References
 - IMD_HW_FAQ, DELHI_HAP_2025, HOT_WEATHER_HAZARD_ANALYSIS_2022: see `sources/phase6_thresholds.json` and
   `sources/phase6_candidate_actions.json` (page and verbatim excerpt per row).
