@@ -588,6 +588,32 @@ searched among windows of the comparator's length (3 h for Chennai, 4 h for Ahme
 cannot win by length. Everything else as Delhi H-A and H-A1 (moderate, acclimatised, 28 C; rest-hours moderate
 TLV sun; hold-out 2007-2018; year x season jackknife).
 
+## 16. Amendment A5 (24 Nov 2026, night; before any Chennai or Ahmedabad station comparison)
+
+**Why.** The A4 city results define alert days and insurance payouts on ERA5 Tmax. Published normals suggest ERA5
+runs cooler than the stations (about 0.7 C Chennai, 1.5 C Ahmedabad; Wikipedia/IMD, different periods), which
+would under-count payouts. Code: `v2/run_station_checks.py`. Exploratory.
+
+**A5.1 Stations (GHCN-Daily, downloaded 24 Nov 2026 into `sources/data/ghcn/`).** Ahmedabad IN005010600;
+Chennai Minambakkam IN020040900 (GSN). Nungambakkam IN020070300 has no TMAX and is not used. Quality-flagged
+values are dropped. Coverage counted before any value was compared (in-season Tmax days, 1980-2006 / 2007-2018):
+Minambakkam 4,881/5,400 and 2,019/2,400; Ahmedabad 4,659/5,400 and 849/2,400 (none after 2016). One Ahmedabad
+row (10 May 1990) was seen while checking the file format.
+
+**A5.2 What runs.**
+1. Bias check, all three cities (Delhi on Safdarjung): ERA5 minus station on in-season days 1980-2018, and the
+   share of days above each trigger threshold for station, 9-cell ERA5 and single-cell ERA5.
+2. Chennai H-A on station alert days: IMD coastal rule on Minambakkam (Tmax >= 37 and departure >= 4.5, normals
+   1981-2010 from the station, 2 consecutive days); departure-only as sensitivity; A4.3 window rules.
+   Ahmedabad's station is too thin in 2007-2018 to carry H-A, so its H-A stays on ERA5 (A4).
+3. Insurance audit with the trigger on station Tmax (rest-hours from the 9-cell mean hourly WBGT, moderate TLV
+   sun), on years with >= 90% of trigger-period days present; the ERA5 per-cell audit on the same years beside it.
+
+**A5.3 Disclosure.** The code was tested on Delhi data (Safdarjung + Delhi ERA5, both already seen), so the Delhi
+rows of steps 1 and 3 were computed before this commit: in-season ERA5 minus Safdarjung -0.71 C; MHT 45.27 C
+paid in 38% of seasons on station Tmax vs 22% on ERA5 (34 station-years). Chennai and Ahmedabad were run only on
+placeholder data in that test.
+
 ## References
 - IMD_HW_FAQ, DELHI_HAP_2025, HOT_WEATHER_HAZARD_ANALYSIS_2022: see `sources/phase6_thresholds.json` and
   `sources/phase6_candidate_actions.json` (page and verbatim excerpt per row).
