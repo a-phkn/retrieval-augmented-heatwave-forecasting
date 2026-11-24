@@ -550,6 +550,14 @@ development SEs by sqrt(24/16), the difference detectable with 80% power at the 
 0.074 (lead 1), 0.10 (2), 0.12 (3), 0.13 (4), 0.15 (5). The development lead-5 estimate (+0.054) is below that, so
 2019+ cannot confirm a model advantage at long leads; only the lead-1 deficit is detectable.
 
+**A3.6 Exploratory variant (not a hypothesis; not a pass rule; not in the Holm family).** E5 triggers on the
+forecast daily-maximum WBGT, while the event is defined on a full day of rest-hours. The persistence comparison
+(A3 table) shows this score is beaten at lead 1 by a score that reads rest-hours directly. A variant would trigger
+on a forecast of rest-hours. It was identified after the development-fold persistence result and the extreme-day
+coverage result (0.517 at lead 1), so it is exploratory. The released model predicts daily maximum WBGT only, so
+this variant needs hourly model output that does not exist yet; until then it is future work. If built, it is
+reported descriptively next to E5, never as a test.
+
 **A3.4 Operational persistence.** Persistence here reads ERA5 rest-hours; the model's inputs are ERA5 too, so
 neither is real-time as run. If Safdarjung hourly observations (NOAA ISD 42182, team task) cover 2007-2018,
 persistence is rerun from station WBGT as a sensitivity.
