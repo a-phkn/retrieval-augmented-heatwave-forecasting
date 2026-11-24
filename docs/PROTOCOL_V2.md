@@ -129,6 +129,17 @@ The only fully unseen data available to this study is (a) any city added in Sect
 
 ### H-A. Do fixed work windows miss unsafe hours? (exposure; no model)
 - **Population:** S2-Yellow days (Tmax ≥ 40 °C at Safdarjung), Mar 15-Sep 30. S1 and S3 days as sensitivities.
+- **Missing station days (added 24 Nov, on receiving the file, before any H-A computation):** Safdarjung GHCN-Daily
+  TMAX (station IN022021900, `sources/data/safdarjung_daily_tidy.csv`) lacks 660 of 7,800 season days in
+  1980-2018 (8.5%), concentrated in 1992 (81), 2016 (101), 2017 (106) and 2018 (80). Days without a station Tmax
+  cannot be classified and are excluded; the count is reported per year. Sensitivity: the same test with alert
+  days from the ERA5 9-cell Tmax proxy (the go/no-go note's rule), which has no gaps. Values flagged in TMAX_QFLAG
+  (4 days in the whole record) are excluded.
+- **Implementation details fixed before any H-A result (24 Nov, `v2/window_test.py`):** S1's two-day condition is
+  unknown (excluded) when either day lacks a station value, unless the other day is a known non-criterion day, which
+  settles "no alert". The ERA5 proxy's daily Tmax is the mean over the 9 cells of each cell's daily maximum hourly
+  2 m temperature, and it keeps the go/no-go rule's own season (Mar 15-Jul 31). Normals are a circular 31-day
+  moving average of the day-of-year mean. The by-decade share outside each window is reported for S2 only.
 - **Primary estimate:** the share of unsafe hours (Section 1.2) that fall outside W1, pooled over alert days,
   9-cell mean WBGT, with a 95% CI from the year-cluster jackknife (`evaluation/stats.py` clusters).
 - **Period:** 1980-2018 primary. 2019-2025 reported separately (descriptive; reads 2019+ only through
