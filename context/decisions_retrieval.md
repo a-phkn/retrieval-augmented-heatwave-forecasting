@@ -441,3 +441,39 @@ RS-2 and before any forecast value was downloaded (user approved).**
   - **Reading.** The retrieval machinery that adds nothing with Delhi's past as the key gives a 26% gain when the key
     is a numerical forecast: the information principle again. The gain belongs to the forecast; retrieval is a way to
     correct it.
+
+**RS-6: the upper-air input on 2019-2021 (post-test, descriptive). PRE-REGISTERED 2026-11-24 (user approved; drafted
+2026-11-21): nothing has run.**
+- **Why.** RS-4 found that the direct 500 hPa input helps C3-hop on the development years: -0.083 °C (WBGT) and
+  -0.057 °C (Tmax) on all days, -0.224 °C on Tmax heatwave days. The journal plan (2026-11-20) asks whether that holds
+  on later years. The 500 hPa fields exist for 2019-2021 (`data/external/era5_z500_southasia_2019_2021.parquet`,
+  downloaded for the Rz side-check in October). Later years need a new download and are not part of this entry.
+- **Status.** A look at the test years, so post-test and descriptive, as "Common to every entry" requires. C3-hop's
+  test results are already known, and the upper-air model was designed after them. Nothing here changes H1-H4 or a
+  frozen model.
+- **Model.** RS-4's model unchanged (`retrieval_study/z500_direct.py`): C3-hop as frozen plus 10 daily 500 hPa
+  principal-component scores as extra Delhi channels on the 14 input days. The PCA and the scaling use the fold's
+  training days (1980-2018).
+- **Fold.** `test2021` (`training.folds.TEST_FOLDS`): fit 1980-2016, early stopping on 2017-2018, forecasts for the
+  windows from 2019-01-01 whose 5 days end by 2021-12-31. Reading these years goes through
+  `training.test_lock.require()`, which refuses unless the locked folders are unchanged since the tag `test-lock`.
+- **Runs.** 10 seeds, both families (`{A1prime,A2Lr}_hw5_C3hop_Z500d`, fold `test2021`). Predictions go to
+  `retrieval_study/predictions/<run>/test2021.parquet`; checkpoints are not committed.
+- **Comparison.**
+  - Against C3-hop's committed test forecasts (`predictions_test/{A1prime,A2Lr}_hw5_C3hop/test.parquet`) on the same
+    windows: same training years, same seeds. Paired cluster jackknife, all days and heatwave days.
+  - For WBGT, also against the Rz side-check (`predictions_test/A2Lr_hw5_C3hop_Rz/test2021.parquet`), as in RS-4.
+  - Bias (forecast minus truth) on all days and heatwave days, descriptive.
+  - The shuffled-year control is not repeated: RS-4 settled that question on 36 clusters, and 9 more would add little.
+- **Reading rule (fixed now).** Three years give about 9 year x season clusters on all days and about 3 on heatwave
+  days (as in RS-5).
+  - All days: "consistent with RS-4" if the difference is below 0 in a family. Its 95% CI is reported and called
+    fragile (fewer than 10 clusters). A difference above 0 is reported as a failure to replicate.
+  - Heatwave days: no CI below 5 clusters, and no conclusion.
+- **Predictions (written now).**
+  - P13. All days: below 0 in both families.
+  - P14. Smaller than in development in both families (between -0.083 and 0 °C for WBGT, between -0.057 and 0 °C for
+    Tmax): a gain measured on the years that chose a method usually shrinks on new years.
+  - No prediction for heatwave days.
+- Outputs: `retrieval_study/results/step6.{md,json}`. Code: `retrieval_study/z500_direct.py` gains a `--fold test2021`
+  option for the same training and a step 6 report, with tests.
