@@ -1,4 +1,4 @@
-# Retrieval-augmented heatwave forecasting for Delhi
+#  heatwave forecasting for Delhi
 
 Five-day forecasts of daily maximum temperature (Tmax) and heat stress (WBGT, the wet-bulb globe temperature) for
 Delhi, from ERA5 reanalysis data, with a heat-advisory system built on top. This is a capstone project: a team of four
