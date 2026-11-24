@@ -1,4 +1,4 @@
-# v2 study protocol: physics-constrained forecasting of unsafe working hours (DRAFT, 23 Nov 2026)
+# v2 study protocol: physics-constrained forecasting of unsafe working hours (DRAFT, 23 Nov 2026; updated 24 Nov)
 
 Status: **draft for team review. Not frozen.** It is frozen by committing it on branch `experiments-v2`; the
 test-period tag `test-lock-v2` comes later (Section 8). All earlier [DECIDE] and [CHECK] items were resolved on
@@ -23,6 +23,10 @@ This study is not blind, and the paper must say so.
 3. **A first look at fixed windows was run on 2026-11-23**, on 1980-2018 only, from daily peak hours
    (`results/go_no_go_fixed_windows.md` in the project files). It motivated H-A. It is reported as the reason for
    H-A, not as evidence for it.
+4. **Code check on Ahmedabad development data, 2026-11-24:** while testing `v2/build_city_wbgt.py`, three months of
+   one Ahmedabad cell (cell 5: May 2010, June 2010, May 2016) were computed and their daily maximum WBGT and
+   hour of the WBGT peak were looked at. Most peaks were at 14:00-15:00 IST in those months. Nothing else of the
+   city data has been looked at. Ahmedabad is therefore not fully unseen for H-A; it is reported as such.
 
 The only fully unseen data available to this study is (a) any city added in Section 7, and (b) a prospective
 2027 season (Section 9, optional).
@@ -142,7 +146,9 @@ The only fully unseen data available to this study is (a) any city added in Sect
   caveat in the abstract.
 
 ### H-B. Can missed humid-heat days be forecast? (models)
-- **Event:** an unsafe day (Section 1.2: at least 2 consecutive unsafe hours) with no alert under S1, S2 or S3.
+- **Event:** an unsafe day (Section 1.2: at least 2 consecutive unsafe hours) with no alert under S1, S2 or S3,
+  and (added 24 Nov) no day counted toward any insurance trigger in Section 3 H-E. This merges the "missed days"
+  question for alerts and for insurance into one event.
 - **Forecasts:** existing out-of-fold forecasts from the v1 folds (`predictions_v2/`) converted to the event
   through the physics head (H-N) or the direct models with the climatological diurnal shape (baseline).
 - **Scores:** hit rate, false-alarm ratio, equitable threat score, leads 1-5, out of fold 2007-2018. Exploratory
@@ -169,11 +175,24 @@ The only fully unseen data available to this study is (a) any city added in Sect
 - **Known limit, stated in advance:** conformal guarantees assume exchangeability, which serial correlation
   breaks; Asch et al. (2026, arXiv:2606.19642) found conformal "improves, but [does] not perfect, coverage of
   extreme temperature". A failure is reported as a result.
+- **Secondary arm, added 24 Nov: trigger with a bounded miss rate (conformal risk control).** The decision "unsafe
+  day tomorrow" is issued when the forecast score exceeds a threshold λ. λ is chosen on each fold's inner block
+  with conformal risk control (Angelopoulos et al., ICLR 2024) so that the expected share of unsafe days with no
+  trigger is at most α = 0.20 (matching the 80% level used above; α = 0.10 reported as a sensitivity).
+  **Reported:** realised miss rate and false-trigger rate out of fold 2007-2018, leads 1-5. **Supported if** the
+  realised miss rate is at most α + 0.05 (the same ±0.05 tolerance as above). Not in the Holm family: it is a
+  secondary arm of H-C, and the same exchangeability caveat applies. Prior-art search (24 Nov): conformal risk
+  control found in robot-safety work, not in heat warnings or insurance triggers.
 
 ### H-N. Physics head v2 (engineering; models)
 - **Model:** C3-hop encoder + the physics head, moved into `v2/` (copy of `models/physics_head.py`), predicting the
-  7 ingredients for every hour 06:00-20:00 per cell, WBGT through `pipeline/wbgt_liljegren_torch.py`
-  (implicit-function gradients; tests in `tests/test_wbgt_liljegren_torch.py`).
+  6 learned ingredients (temperature, RH, pressure, 10 m wind, global irradiance, direct fraction) for every hour
+  06:00-20:00 per cell (`v2/physics_head_hourly.py`). The sun angle is not predicted: mean sunlit cos(zenith) is
+  computed from date, hour and location (`pipeline.wbgt_liljegren.mean_sunlit_cosz`) and passed in, because its
+  true value is known in advance. WBGT through `v2/wbgt_smooth.py` (E2: the stability-class wind exponent made
+  smooth; exact at zero width; at the default widths the bias against the frozen port is mean 0.0025 °C, 99th
+  percentile 0.048 °C, maximum 0.125 °C on 20,000 random hours, `tests/test_v2_wbgt_smooth.py`), which calls the
+  frozen implicit-gradient solvers of `pipeline/wbgt_liljegren_torch.py`.
 - **Keep rule (unchanged from v1, written 2026-10-07):** dropped if the all-days CI upper end is ≥ +0.05 °C for
   daily max WBGT or Tmax against the direct C3-hop, out of fold 2007-2018 (`evaluation_v2/late_rungs.md`).
 - **Second rule for the new target:** unsafe-hour count MAE against the direct C3-hop with the climatological
@@ -185,12 +204,58 @@ The only fully unseen data available to this study is (a) any city added in Sect
 - **Reported, not tested:** physical consistency (share of forecasts where WBGT, Tmax and unsafe hours
   contradict), and the ingredient error breakdown.
 
-### H-D. Value of the forecast (exploratory)
-- Relative economic value for the event "unsafe day" (Section 1.2), over cost/loss ratios 0.05-0.5 (Richardson 2000,
-  QJRMS 126). Exploratory only.
+### H-D. Value of the forecast: a pay-ahead heat payout (exploratory)
+- Replaces the generic cost-loss analysis (24 Nov) with a concrete user: a payout announced 1-5 days ahead
+  when the forecast triggers "unsafe day" (the H-C trigger), so a worker can rest without losing the day's wage.
+- **Compared with:** the observed-temperature insurance triggers of H-E, on the same days and cells.
+- **Reported:** unsafe days paid in advance, unsafe days missed, payouts on days that were not unsafe, payouts per
+  season, and relative economic value over cost/loss ratios 0.05-0.5 (Richardson 2000, QJRMS 126).
+- **Why:** current Indian heat payouts arrive 6-8 weeks after the heat (NPR, 16 Jul 2025), and workers "are
+  unlikely to forgo wages based on a forecast that might not trigger a payout" (Down To Earth, May 2026).
+  Closest existing practice: Start Network's Pakistan heatwave model releases funds to NGOs on a temperature
+  forecast (startnetwork.org; HPN, Mar 2025), with no published hit or miss record.
+- **Second design, added 24 Nov: advance plus top-up.** A fixed share of the payout is paid on the forecast
+  trigger; the rest is paid after the day only if it was observed unsafe; an unsafe day with no forecast trigger is
+  paid in full after the event. Shares 25%, 50% and 75% are reported; none is chosen as best in advance. Same
+  outcomes as above, plus the share of all payout money that reached workers before an unsafe day.
+- **Per-shift output (reported only):** unsafe hours forecast for 06-10, 10-14 and 14-18 h, the form a shift-based
+  user would need. No test.
+- Exploratory only.
+
+### H-E. How often do heat-insurance triggers miss unsafe working days? (exposure; no model; descriptive)
+- **Triggers audited**, applied to ERA5 daily maximum 2 m temperature per cell, as the schemes themselves use ERA5:
+  - VimoSEWA, Ahmedabad: at least 7 days (not necessarily consecutive) above 43.2 °C, 1 Apr-31 Jul (VimoSEWA x
+    SCF report, Dec 2025, pp. 4, 21-22).
+  - SEWA with ICICI Lombard and Swiss Re, Ahmedabad: 2 consecutive days above 43.6 °C and above 44.1 °C (NPR, 16 Jul
+    2025).
+  - Mahila Housing Trust, Delhi: 45.27, 46.53 and 47 °C, 1 May-31 Jul (Down To Earth, May 2026). The source gives
+    no day-count rule for Delhi; a single day above the threshold is assumed. **[CHECK]**
+  - For the two SEWA triggers the risk period is not stated in the source; VimoSEWA's 1 Apr-31 Jul is used. **[CHECK]**
+  - "Exceeding" is read as strictly greater than. Daily maximum = highest of the 24 hourly ERA5 values of the
+    local (IST) day; the schemes' own definition and grid point are not stated. **[CHECK]**
+  - **Unit:** each ERA5 cell separately, for both the trigger and the unsafe-day count, because a worker is
+    insured and exposed at one place. Results are pooled over the 9 cells and also given per cell.
+  **[CHECK]** these come from a programme report and news, not the contracts. Confirm with the schemes if possible;
+  the paper says where each value came from.
+- **Reported, per city, 1980-2018 (2019-2025 separately, via the lock):** share of unsafe days (Section 1.2) inside
+  each scheme's risk period that count toward no trigger; unsafe hours on those days; seasons with no payout but
+  above-median unsafe hours; and the same by decade.
+- **Why descriptive, not confirmatory:** a trigger built from WBGT unsafe hours would catch WBGT unsafe days by
+  construction, so "WBGT trigger beats temperature trigger" would be circular. The audit measures exposure basis
+  risk only.
+- **Limit:** no wage or health records. The paper says "exposure basis risk", never "income loss".
+- **Physiological sensitivity, added 24 Nov:** the same audit with "unsafe" defined by ISO 7933 Predicted Heat
+  Strain (predicted rectal temperature above 38 °C within the 06-20 h working day), computed from the same hourly
+  ingredients, globe temperature from the Liljegren solver, metabolic rate per ISO 7243 work class, acclimatised,
+  drinking freely. **[CHECK]** the ISO 7933 limit values and the implementation (e.g. pythermalcomfort's `phs`)
+  against the standard before running. Reported next to the WBGT result; it answers the question whether WBGT,
+  a screening index, changes the conclusion when a body-heat model is used.
+- **Closest prior work:** Risks (MDPI) 2026, 14(12), 271 optimises US insurance triggers on economic-loss indices,
+  with no heat variable and no forecasts.
 
 ### Multiple testing
-H-A, H-C and H-N are the primary family: Holm correction, family-wise alpha 0.05 (as v1). H-B and H-D are exploratory.
+H-A, H-C and H-N are the primary family: Holm correction, family-wise alpha 0.05 (as v1). H-B, H-D, H-E and the
+H-C trigger arm are exploratory or descriptive.
 
 ---
 
@@ -230,8 +295,15 @@ outdoor workforce. Cities are not chosen or swapped after seeing any WBGT result
 
 - **Chennai (humid):** the IMD-authored hazard analysis in the catalogue says heat-stress and heat-stroke risk
   are maximum in Chennai "due to high temperature along with higher RH" (HOT_WEATHER_HAZARD_ANALYSIS_2022 p.2).
-  Greater Chennai Corporation runs a city heat plan (news reports 2024-2026); **[DATA]** its alert thresholds
-  must be added to the catalogue with page and verbatim excerpt before Chennai's alert audit is run.
+  **Alert rule (checked 23 Nov):** no Chennai-specific threshold was found. Greater Chennai Corporation's plan
+  is reported in news, but no threshold table was found. Tamil Nadu's Heat Wave Action Plan 2019 (TNSDMA)
+  reproduces the IMD criteria, so Chennai's rule is IMD's coastal criterion: Tmax ≥ 37 °C and departure ≥ 4.5 °C
+  (IMD_HW_FAQ p.2, already VERIFIED in `sources/phase6_thresholds.json`).
+  **Window:** TN HAP 2019 advises "Avoid working outside between 12 noon and 3 p.m." (read from a transcription
+  of the plan; **[DATA]** confirm the page in the TNSDMA PDF before adding it to the catalogue). A reported
+  10:00-16:00 construction-work restriction (2024) could not be traced to a primary notification: the one 2024
+  Tamil Nadu gazette found (Extraordinary No. 336, 15 Oct 2024, G.O.Ms. No. 419) declares heat wave a
+  state-specific disaster and sets no work hours. It is excluded unless the notification itself is found.
 - **Ahmedabad (dry):** South Asia's first heat action plan (2013; Knowlton et al. 2014, IJERPH 11(4), 3473),
   with a published mortality evaluation (Hess et al. 2018, PMC6236972), and the only other city with a verified
   alert table in the catalogue (AHMEDABAD_HAP_2018 p.3: Yellow 41.1-43, Orange 43.1-44.9, Red ≥ 45 °C).
@@ -275,6 +347,15 @@ the forecast day starts, scored at season end with the same definitions.
 | Cities | Chennai, Ahmedabad | phase6_thresholds.json rows |
 | Diurnal check | NOAA hourly record, WMO 42182 | NOAA ISD / GHCN-hourly |
 
+**Added 24 Nov 2026, before any insurance trigger was computed on any data:** H-E (trigger audit), H-D re-scoped
+to a pay-ahead payout, H-B event widened to insurance triggers, and the conformal-risk-control arm of H-C. Dropped
+after review the same day: an urban-heat-island analysis (ERA5's ~25 km cells cannot resolve it, and working
+hours are daytime). Source notes: `research/sdg13_heat_insurance_gap.md` in the project files.
+Later on 24 Nov, from a teammate's list: added the advance-plus-top-up payout design and per-shift output (H-D) and
+the ISO 7933 sensitivity (H-E). Not adopted: wearable or phone telemetry, street-level downscaling and sensor
+crowdsourcing, smart-contract or e-Rupee payment rails, per-shift insurance pricing, and smart-meter cooling
+triggers. Each needs new data collection, hardware or commercial partners outside this study.
+
 Remaining **[DATA]**: `data/raw/era5_v2/`; Safdarjung GHCN-Daily CSVs; NOAA hourly record for 42182; ERA5 for
 Chennai and Ahmedabad.
 
@@ -294,3 +375,11 @@ Chennai and Ahmedabad.
 - MacKinnon, Nielsen & Webb (2023), J. Econometrics 232(2).
 - Asch et al. (2026), arXiv:2606.19642.
 - Richardson (2000), Q. J. R. Meteorol. Soc. 126.
+- Angelopoulos, A. N., Bates, S., Fisch, A., Lei, L., Schuster, T. (2024). Conformal risk control. ICLR 2024.
+- VimoSEWA and SEWA Cooperative Federation (Dec 2025). Parametric heat and rainfall insurance for informal women
+  workers. sewafederation.org.
+- NPR (16 Jul 2025). Heat insurance for India's informal workers. npr.org/sections/goats-and-soda.
+- Down To Earth (May 2026). Can parametric insurance shield India's informal women workers from extreme heat and
+  wage loss? downtoearth.org.in.
+- Start Network. Pakistan heatwave model (2022); Amad & Riaz (2025), Humanitarian Practice Network.
+- Parametric weather insurance design under extreme event risk (2026). Risks 14(12), 271.
