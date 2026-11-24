@@ -372,6 +372,43 @@ Chennai and Ahmedabad.
 
 ---
 
+## 11. Amendment A1 (24 Nov 2026, written AFTER the first H-A and H-E results; exploratory)
+**What was seen first.** H-A was run on 1980-2018 (commit 69dd9b3, before results) and was not supported:
+best past window 10-14 vs 12-4 pm, +0.003 [-0.000, +0.007], 12 clusters; S1, S3 and ERA5-proxy populations
+agree. The H-E audit for Delhi showed the binary "unsafe day" is saturated: at 28 C, 31,640 of 32,292 May-July
+cell-days qualify. H-A stays reported as pre-registered and not supported. Nothing below replaces it.
+
+**Why.** A yes/no "unsafe" label at the continuous-work limit cannot tell windows, triggers or forecasts apart in
+Delhi. A graded scale can.
+
+**A1.1 Rest-needed scale (`v2/work_rest.py`).** Required rest share per working hour from the ACGIH work-rest
+screening table (TLV = acclimatised, Action Limit = unacclimatised; 4 work classes; values checked 24 Nov in two
+copies that agree: Cal/DOSH copy of the ACGIH chapter, Table 2, and CCOHS OSH Answers Table 1 citing the 2026
+TLVs and BEIs p.242). WBGT at or below a row's value allows that row; rest share 0 / 0.25 / 0.50 / 0.75, or 1
+(stop) above the 0-25 % row; rows printed "-" are never allowed. Daily rest-hours = sum over stamps 06-20.
+The table is a screening tool "not intended to prescribe work and recovery periods"; it is used as an exposure
+scale only. Amendment primary row: moderate work, TLV, sun WBGT.
+
+**A1.2 Shade WBGT (`v2/shade_wbgt.py`).** Same frozen Liljegren functions; 2 m wind from the actual global
+radiation; globe and natural wet bulb with diffuse radiation only (no direct beam); WBGT = 0.7 Tnwb + 0.3 Tg
+(ACGIH/CCOHS shaded formula). Sun WBGT is the upper bracket, shade the lower. Approximation: the ground-reflected
+beam is dropped with the beam.
+
+**A1.3 H-A1 (exploratory).** On S2 alert days 1980-2018: share of required rest-hours outside W1, W2, W3
+(jackknife CI as H-A); the H-A best-past-window test with hours weighted by rest share; mean rest-hours per alert
+day. Reported for every class, TLV and AL, sun and shade.
+
+**A1.4 H-E1 (descriptive).** Per insurance trigger, per ERA5 cell, within the risk period: share of rest-hours
+on days that do not count toward a payout; share of seasons paid; share of top-quartile rest-hour seasons that
+were unpaid; Spearman correlation across cell-seasons of season rest-hours vs days counted toward a payout.
+
+**A1.5 Consequence for H-D (fixed now, before any forecast result).** The H-D event becomes "tomorrow's
+rest-hours (moderate, TLV, sun) >= R", with R the 75th percentile of in-season (Mar 15-Sep 30) daily rest-hours
+over 1980-2006 ERA5 9-cell-mean days, computed once and recorded here before H-D is run. The unsafe-day event
+is kept as a reported secondary.
+
+None of A1 enters the Holm family (H-A, H-C, H-N).
+
 ## References
 - IMD_HW_FAQ, DELHI_HAP_2025, HOT_WEATHER_HAZARD_ANALYSIS_2022: see `sources/phase6_thresholds.json` and
   `sources/phase6_candidate_actions.json` (page and verbatim excerpt per row).
