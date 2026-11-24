@@ -2,8 +2,9 @@
 
 Why our retrieval (RAG) did not help, and what could. It follows the mentor's feedback of 2026-11-09. Every step was
 pre-registered in [`context/decisions_retrieval.md`](../context/decisions_retrieval.md) before it ran. Plain-language
-summary: [`docs/PROJECT_GUIDE.md`](../docs/PROJECT_GUIDE.md) §9.2. Development years (2007-2018) only; nothing here
-reads the 2019-2026 test years or changes a frozen file.
+summary: [`docs/PROJECT_GUIDE.md`](../docs/PROJECT_GUIDE.md) §9.2. Steps 1-5 use the development years (2007-2018) only.
+Step 6 is the one exception: a post-test, descriptive look at 2019-2021, read through the test lock
+(`training.test_lock.require()`). Nothing here changes a frozen file.
 
 **What it found** (details in each step's report):
 - Retrieval helps only when it brings information the model's inputs lack. Our models already get the season and the
@@ -25,7 +26,7 @@ reads the 2019-2026 test years or changes a frozen file.
 | `hourly.py` | The positive control: RAFT on Delhi's hourly temperature with 12- and 96-hour windows. |
 | `screens.py` | Step 2: retrieval types that bring information C3-hop lacks (Rz, the 500 hPa pattern; LW, season-to-date) and retrieval for ranges (KR). |
 | `step1.py`, `step2.py` | The runners and reports of steps 1 and 2. |
-| `z500_direct.py` | Step 4 (not retrieval): C3-hop with the 500 hPa pattern as a direct input (10 principal-component scores per input day), its shuffled-year control (each year's scores taken from another training year), and the report. |
+| `z500_direct.py` | Step 4 (not retrieval): C3-hop with the 500 hPa pattern as a direct input (10 principal-component scores per input day), its shuffled-year control (each year's scores taken from another training year), and the report. Step 6: the same model on 2019-2021 (`--folds test2021`) and its report. |
 | `hres_anen.py` | Step 5: an analogue ensemble keyed on ECMWF's HRES forecast (Delle Monache et al. 2013), compared with C3-hop and with corrected HRES. |
 | `data/` | Step 5's extract: HRES 2 m temperature over the Delhi box, runs from 2016-2018 only (WeatherBench 2). |
 | `predictions/` | Step 4's forecasts, 10 seeds x 4 folds per run. Its checkpoints (`checkpoints/`) are not committed. |
@@ -95,6 +96,22 @@ python -m retrieval_study.z500_direct --report
 
 ```bash
 python -m retrieval_study.hres_anen
+```
+
+**Step 6** (post-test, descriptive) trains step 4's model once on the `test2021` fold (fit 1980-2016, early stopping
+2017-2018, forecasts for 2019-2021) and compares it with C3-hop's committed test forecasts on the same windows. It
+refuses to run unless the test lock is open (the locked folders are the frozen code).
+
+```bash
+python -m retrieval_study.z500_direct --family WBGT --folds test2021
+```
+
+```bash
+python -m retrieval_study.z500_direct --family Tmax --folds test2021
+```
+
+```bash
+python -m retrieval_study.z500_direct --step6-report
 ```
 
 **What a fresh clone can rerun.** Steps 4 and 5 rerun from committed files. Step 1's RAFT add-on and step 2's add-on

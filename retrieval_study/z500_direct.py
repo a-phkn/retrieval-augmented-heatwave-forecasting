@@ -5,13 +5,19 @@ not retrieval; it follows the information principle found in RS-1 and RS-2.
 C3-hop is trained exactly as frozen, by training.train_unified.train_one_seed_graph with the run's own config. The
 only change is 10 extra Delhi input channels on each of the 14 input days: that day's 500 hPa anomaly field (South
 Asia, from retrieval.fold_retrieval.synoptic_daily) scored on its first 10 principal components. The PCA and the
-scaling use the fold's training days only. Development folds only; nothing from 2019 on is read.
+scaling use the fold's training days only.
+
+RS-4 uses the development folds, which read nothing from 2019 on. RS-6 (post-test, descriptive) trains the same model
+on the "test2021" fold (fit 1980-2016, early stopping 2017-2018, forecasts for 2019-2021). Reading those years goes
+through training.test_lock.require(), which refuses unless the locked folders are the frozen code.
 
 Run from repo root:
     python -m retrieval_study.z500_direct --family WBGT
     python -m retrieval_study.z500_direct --family Tmax
     python -m retrieval_study.z500_direct --family Tmax --control   (the shuffled-year control, *_Z500shuf)
     python -m retrieval_study.z500_direct --report        -> retrieval_study/results/step4.{md,json}
+    python -m retrieval_study.z500_direct --family WBGT --folds test2021   (RS-6; likewise --family Tmax)
+    python -m retrieval_study.z500_direct --step6-report  -> retrieval_study/results/step6.{md,json}
 A fold whose predictions already exist is skipped, so an interrupted run can be resumed.
 """
 from __future__ import annotations
@@ -25,22 +31,26 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 
-from training.folds import FOLDS, INPUT_DAYS, SplitArrays
+from training.folds import FOLDS, INPUT_DAYS, TEST_FOLDS, SplitArrays
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
 PRED_DIR = REPO_ROOT / "retrieval_study" / "predictions"
 CKPT_DIR = REPO_ROOT / "retrieval_study" / "checkpoints"
 OUT_DIR = REPO_ROOT / "retrieval_study" / "results"
+PRED_TEST = REPO_ROOT / "predictions_test"
 N_PCS = 10
 BASE_RUNS = {"Tmax": "A1prime_hw5_C3hop", "WBGT": "A2Lr_hw5_C3hop"}
 SUFFIX = "_Z500d"
 CONTROL_SUFFIX = "_Z500shuf"  # the pre-registered control: the same dates' scores from another training year
 CONTROL_SEED = 20261111
+STEP6_FOLD = "test2021"  # RS-6: 2019-2021, the years with 500 hPa data after the test lock
+RS4_ALL_DAYS = {"WBGT": -0.083, "Tmax": -0.057}  # RS-4's all-day differences, for RS-6's prediction P14
 
 
 def daily_pcs(fold: str, d: pd.DataFrame, n_pcs: int = N_PCS) -> pd.DataFrame:
     """(dates, n_pcs) each day's weighted 500 hPa anomaly field scored on the first n_pcs principal components of the
-    fold's training days, divided by the scores' training-day SD. Pre-2019 dates only (those of d)."""
+    fold's training days, divided by the scores' training-day SD. The dates are those of d: pre-2019 for the
+    development folds, up to 2021-12-31 for "test2021" (whose training days are 1980-2018)."""
     from retrieval.fold_retrieval import synoptic_daily
     from training.folds import fold_bounds
 
@@ -84,7 +94,13 @@ def with_z500(split: SplitArrays, pcs: pd.DataFrame) -> SplitArrays:
 
 
 def run_family(short: str, folds: list[str], seeds: list[int] | None = None, control: bool = False) -> None:
-    """Train and save C3-hop + the 500 hPa input for one family (control=True: the shuffled-year control)."""
+    """Train and save C3-hop + the 500 hPa input for one family (control=True: the shuffled-year control). A test
+    fold ("test2021", RS-6) reads 2019+ rows, and only after training.test_lock.require()."""
+    test = [f for f in folds if f in TEST_FOLDS]
+    if control and test:
+        raise ValueError("the shuffled-year control runs on the development folds only (RS-6 does not repeat it)")
+    if any(f not in FOLDS and f not in TEST_FOLDS for f in folds):
+        raise ValueError(f"unknown fold in {folds}")
     import torch
 
     from evaluation.predict_v1 import long_frame
@@ -96,7 +112,7 @@ def run_family(short: str, folds: list[str], seeds: list[int] | None = None, con
     rid = cfg["run_id"] + (CONTROL_SUFFIX if control else SUFFIX)
     seeds = cfg["seeds"] if seeds is None else seeds
     torch.set_num_threads(int(cfg.get("threads", 8)))
-    up_table = load_upstream()  # pre-2019 rows only
+    up_table = load_upstream(include_test=bool(test))  # pre-2019 rows only, unless a test fold (lock checked inside)
     for fold in folds:
         out = PRED_DIR / rid / f"{fold}.parquet"
         if out.exists():
@@ -223,13 +239,140 @@ def write_report(res: dict) -> None:
     (OUT_DIR / "step4.md").write_text("\n".join(L) + "\n", encoding="utf-8")
 
 
+# ------------------------------------------------------------------ RS-6 report (post-test, descriptive)
+
+
+def same_windows(parent: pd.DataFrame, child: pd.DataFrame) -> pd.DataFrame:
+    """The parent's rows for exactly the child's (seed, query_date, lead) keys, in the child's order: C3-hop's
+    2019-2026 test forecasts cut to the test2021 windows. Raises if a key is missing or the truth differs."""
+    keys = ["seed", "query_date", "lead"]
+    m = child[keys + ["actual"]].merge(parent, on=keys, how="left", suffixes=("_child", ""), validate="one_to_one")
+    if m["pred"].isna().any():
+        raise ValueError("the parent lacks some of the child's windows or seeds")
+    if not np.allclose(m["actual_child"].to_numpy(), m["actual"].to_numpy(), atol=1e-6):
+        raise ValueError("parent and child disagree on the truth")
+    return m[list(parent.columns)]
+
+
+def step6_reading(short: str, all_days: dict, heatwave: dict) -> dict:
+    """RS-6's reading rule and predictions P13-P14 (fixed in context/decisions_retrieval.md), against C3-hop."""
+    from evaluation.stats import FEW_CLUSTERS, MIN_CLUSTERS
+
+    delta = float(all_days["delta"])
+    verdict = ("consistent with RS-4" if delta < 0 else "failure to replicate" if delta > 0 else "no difference")
+    if all_days["n_clusters"] < FEW_CLUSTERS:
+        verdict += f" (fragile: {all_days['n_clusters']} clusters)"
+    hw = "no conclusion (no prediction was made)"
+    if heatwave["n_clusters"] < MIN_CLUSTERS:
+        hw += f"; no CI with {heatwave['n_clusters']} clusters"
+    return {"all days": verdict, "heatwave days": hw, "P13 (all days below 0)": delta < 0,
+            "P14 (smaller than in development)": RS4_ALL_DAYS[short] < delta < 0}
+
+
+def report_step6() -> dict:
+    """RS-6: the test2021 forecasts against C3-hop's test forecasts on the same windows and seeds (and, for WBGT, the Rz
+    side-check). Post-test and descriptive; the test years are read only after training.test_lock.require()."""
+    from evaluation.compare_v2 import compare, rmse_by
+    from training import test_lock
+
+    test_lock.require()
+    keys = ("parent", "child", "delta", "ci_low", "ci_high", "p_value", "n_clusters")
+    res: dict = {}
+    for short, base in BASE_RUNS.items():
+        path = PRED_DIR / (base + SUFFIX) / f"{STEP6_FOLD}.parquet"
+        if not path.exists():
+            res[short] = {"status": "not run yet"}
+            continue
+        child = pd.read_parquet(path)
+        refs = {"C3-hop": PRED_TEST / base / "test.parquet"}
+        if short == "WBGT":
+            refs["C3-hop + Rz (retrieval)"] = PRED_TEST / (base + "_Rz") / f"{STEP6_FOLD}.parquet"
+        r = {"n_windows": int(child["query_date"].nunique()), "n_seeds": int(child["seed"].nunique()),
+             "rmse": {s: rmse_by(child if s == "all" else child[child["stratum"] == s]) for s in ("all", "extreme")},
+             "by_lead": [rmse_by(child[child["lead"] == L]) for L in range(1, 6)], "bias": bias(child), "tests": {}}
+        for name, p in refs.items():
+            parent = same_windows(pd.read_parquet(p), child)
+            r[f"by_lead {name}"] = [rmse_by(parent[parent["lead"] == L]) for L in range(1, 6)]
+            r[f"bias {name}"] = bias(parent)
+            for s in ("all", "extreme"):
+                t = compare(parent, child, s)
+                r["tests"][f"vs {name}|{s}"] = {k: t[k] for k in keys}
+        r["reading"] = step6_reading(short, r["tests"]["vs C3-hop|all"], r["tests"]["vs C3-hop|extreme"])
+        res[short] = r
+    return res
+
+
+def write_report_step6(res: dict) -> None:
+    def d(t: dict) -> str:
+        if not np.isfinite(t["ci_low"]):
+            return f"{t['delta']:+.3f} (no CI: {t['n_clusters']} clusters)"
+        frag = f", fragile: {t['n_clusters']} clusters" if t["n_clusters"] < 10 else ""
+        return f"{t['delta']:+.3f} [{t['ci_low']:+.3f}, {t['ci_high']:+.3f}]{frag}"
+
+    L = ["# Retrieval study, step 6: the 500 hPa input on 2019-2021 (RS-6, post-test, descriptive)", "",
+         "Pre-registered in `context/decisions_retrieval.md` (RS-6) before any run. RS-4's model trained once on the "
+         "`test2021` fold (fit 1980-2016, early stopping 2017-2018, forecasts for the windows from 2019-01-01 whose 5 "
+         "days end by 2021-12-31), compared with C3-hop's test forecasts on the same windows and seeds. These years were "
+         "used by the one-time test, so nothing here is confirmatory. RMSE in °C (mean of the seeds' RMSE); Δ = new minus "
+         "old (negative = the 500 hPa input helps); paired cluster jackknife (no CI below 5 clusters).", ""]
+    for short, r in res.items():
+        L += [f"## {short}", ""]
+        if r.get("status"):
+            L += ["Not run yet.", ""]
+            continue
+        L += [f"{r['n_windows']} windows x 5 leads, {r['n_seeds']} seeds.", "",
+              "| Compared with | Days | Its RMSE | RMSE with the 500 hPa input | Δ [95% CI] |", "|---|---|---|---|---|"]
+        for key, t in r["tests"].items():
+            name, s = key[3:].split("|")
+            L.append(f"| {name} | {'all days' if s == 'all' else 'heatwave days'} | {t['parent']:.3f} | {t['child']:.3f} | "
+                     f"{d(t)} |")
+        rd = r["reading"]
+        L += ["", f"Reading, against C3-hop: all days, {rd['all days']}; heatwave days, {rd['heatwave days']}. "
+              f"P13 (all days below 0) {'holds' if rd['P13 (all days below 0)'] else 'fails'}; P14 (between "
+              f"RS-4's {RS4_ALL_DAYS[short]:+.3f} and 0) {'holds' if rd['P14 (smaller than in development)'] else 'fails'}.",
+              "", "By lead (descriptive):", "", "| Lead | 1 | 2 | 3 | 4 | 5 |", "|---|---|---|---|---|---|"]
+        L += [f"| {key[len('by_lead '):]} | " + " | ".join(f"{x:.3f}" for x in vals) + " |"
+              for key, vals in r.items() if key.startswith("by_lead ")]
+        L += ["| C3-hop + 500 hPa input | " + " | ".join(f"{x:.3f}" for x in r["by_lead"]) + " |", "",
+              "Bias (mean error, forecast minus truth, °C; negative = too cold; descriptive):", "",
+              "| Model | All days | Heatwave days |", "|---|---|---|"]
+        L += [f"| {key[len('bias '):]} | {b['all']:+.2f} | {b['extreme']:+.2f} |"
+              for key, b in r.items() if key.startswith("bias ")]
+        L += [f"| C3-hop + 500 hPa input | {r['bias']['all']:+.2f} | {r['bias']['extreme']:+.2f} |", ""]
+    done = [r for r in res.values() if not r.get("status")]
+    if len(done) == len(BASE_RUNS):
+        p13 = all(r["reading"]["P13 (all days below 0)"] for r in done)
+        p14 = all(r["reading"]["P14 (smaller than in development)"] for r in done)
+        L += ["## Predictions", "", f"- P13 (all days below 0 in both families): {'held' if p13 else 'failed'}.",
+              f"- P14 (smaller than in development in both families): {'held' if p14 else 'failed'}.",
+              "- No prediction for heatwave days.", ""]
+    OUT_DIR.mkdir(parents=True, exist_ok=True)
+    (OUT_DIR / "step6.md").write_text("\n".join(L) + "\n", encoding="utf-8")
+
+
+def _json_safe(x):
+    """NaN -> None (no CI below 5 clusters) and numpy scalars -> Python, so the JSON is strict."""
+    if isinstance(x, dict):
+        return {k: _json_safe(v) for k, v in x.items()}
+    if isinstance(x, (list, tuple)):
+        return [_json_safe(v) for v in x]
+    if isinstance(x, (bool, np.bool_)):
+        return bool(x)
+    if isinstance(x, (int, np.integer)):
+        return int(x)
+    if isinstance(x, (float, np.floating)):
+        return float(x) if np.isfinite(x) else None
+    return x
+
+
 def main(argv: list[str] | None = None) -> None:
-    ap = argparse.ArgumentParser(description="RS-4: C3-hop with the 500 hPa pattern as a direct input.")
+    ap = argparse.ArgumentParser(description="RS-4: C3-hop with the 500 hPa pattern as a direct input (RS-6: on 2019-2021).")
     ap.add_argument("--family", choices=sorted(BASE_RUNS))
-    ap.add_argument("--folds", nargs="*", default=list(FOLDS))
+    ap.add_argument("--folds", nargs="*", default=list(FOLDS), help=f"development folds, or {STEP6_FOLD} for RS-6")
     ap.add_argument("--seeds", nargs="*", type=int, default=None)
     ap.add_argument("--control", action="store_true", help="the shuffled-year control run")
     ap.add_argument("--report", action="store_true")
+    ap.add_argument("--step6-report", action="store_true", help=f"RS-6: the {STEP6_FOLD} forecasts (post-test)")
     args = ap.parse_args(argv)
     if args.family:
         run_family(args.family, args.folds, args.seeds, control=args.control)
@@ -239,6 +382,12 @@ def main(argv: list[str] | None = None) -> None:
         (OUT_DIR / "step4.json").write_text(json.dumps(res, indent=2, default=float) + "\n", encoding="utf-8")
         write_report(res)
         print(f"wrote {OUT_DIR / 'step4.md'}")
+    if args.step6_report:
+        res = report_step6()
+        OUT_DIR.mkdir(parents=True, exist_ok=True)
+        (OUT_DIR / "step6.json").write_text(json.dumps(_json_safe(res), indent=2) + "\n", encoding="utf-8")
+        write_report_step6(res)
+        print(f"wrote {OUT_DIR / 'step6.md'}")
 
 
 if __name__ == "__main__":

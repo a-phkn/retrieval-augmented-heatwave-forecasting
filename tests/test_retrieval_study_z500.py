@@ -66,3 +66,62 @@ def test_the_report_lists_every_comparison_and_its_lead_row(tmp_path, monkeypatc
 def test_bias_is_the_mean_error_on_all_days_and_on_heatwave_days():
     df = pd.DataFrame({"seed": [0, 0, 1, 1], "stratum": ["normal", "extreme"] * 2, "error": [1.0, -2.0, 3.0, -4.0]})
     assert zd.bias(df) == {"all": -0.5, "extreme": -3.0}
+
+
+def long_frame(query_dates: pd.DatetimeIndex, seeds=(0, 1), offset: float = 0.0) -> pd.DataFrame:
+    """A prediction frame in the shape evaluation.predict_v1.long_frame writes (error = offset everywhere)."""
+    rows = [{"model": "m", "seed": seed, "query_date": q, "lead": lead, "target_date": q + pd.Timedelta(days=lead - 1),
+             "pred": 30.0 + offset, "actual": 30.0, "stratum": "normal", "cluster_id": 20191}
+            for seed in seeds for q in query_dates for lead in range(1, FORECAST_DAYS + 1)]
+    df = pd.DataFrame(rows)
+    return df.assign(error=df["pred"] - df["actual"])
+
+
+def test_same_windows_cuts_the_test_forecasts_to_the_test2021_windows():
+    child = long_frame(pd.date_range("2019-03-01", periods=3))
+    parent = long_frame(pd.date_range("2019-02-25", periods=12), offset=1.0)  # the longer 2019-2026 run
+    out = zd.same_windows(parent, child)
+    keys = ["seed", "query_date", "lead"]
+    assert list(out.columns) == list(parent.columns)
+    pd.testing.assert_frame_equal(out[keys].reset_index(drop=True), child[keys].reset_index(drop=True))
+    assert (out["error"] == 1.0).all()
+    with pytest.raises(ValueError, match="lacks"):
+        zd.same_windows(parent[parent["query_date"] != pd.Timestamp("2019-03-02")], child)  # a window is missing
+    with pytest.raises(ValueError, match="truth"):
+        zd.same_windows(parent.assign(actual=parent["actual"] + 0.5), child)  # another truth
+
+
+def test_the_control_and_unknown_folds_are_refused_before_any_training():
+    with pytest.raises(ValueError, match="development folds only"):
+        zd.run_family("WBGT", [zd.STEP6_FOLD], control=True)
+    with pytest.raises(ValueError, match="unknown fold"):
+        zd.run_family("WBGT", ["f9"])
+
+
+def test_the_step6_report_applies_the_fixed_reading_rule(tmp_path, monkeypatch):
+    monkeypatch.setattr(zd, "OUT_DIR", tmp_path)
+    nan = float("nan")
+    gain = {"parent": 2.30, "child": 2.25, "delta": -0.05, "ci_low": -0.09, "ci_high": -0.01, "p_value": 0.03,
+            "n_clusters": 9}
+    loss = {**gain, "child": 2.32, "delta": 0.02, "ci_low": -0.01, "ci_high": 0.05, "p_value": 0.2}
+    heat = {"parent": 3.1, "child": 3.0, "delta": -0.1, "ci_low": nan, "ci_high": nan, "p_value": nan, "n_clusters": 3}
+
+    def family(short: str, all_days: dict) -> dict:
+        return {"n_windows": 1092, "n_seeds": 10, "tests": {"vs C3-hop|all": all_days, "vs C3-hop|extreme": heat},
+                "by_lead": [1.0] * 5, "by_lead C3-hop": [1.1] * 5, "bias": {"all": 0.1, "extreme": -2.0},
+                "bias C3-hop": {"all": 0.2, "extreme": -2.5}, "reading": zd.step6_reading(short, all_days, heat)}
+
+    res = {"WBGT": family("WBGT", gain), "Tmax": family("Tmax", loss)}
+    assert res["WBGT"]["reading"]["P13 (all days below 0)"] and res["WBGT"]["reading"]["P14 (smaller than in development)"]
+    assert res["Tmax"]["reading"]["all days"] == "failure to replicate (fragile: 9 clusters)"
+    assert not res["Tmax"]["reading"]["P13 (all days below 0)"]
+    assert zd.step6_reading("Tmax", {**gain, "delta": -0.09}, heat)["P14 (smaller than in development)"] is False
+    zd.write_report_step6(res)
+    text = (tmp_path / "step6.md").read_text(encoding="utf-8")
+    for row in ("| C3-hop | all days | 2.300 | 2.250 | -0.050 [-0.090, -0.010], fragile: 9 clusters |",
+                "| C3-hop | heatwave days | 3.100 | 3.000 | -0.100 (no CI: 3 clusters) |",
+                "no conclusion (no prediction was made); no CI with 3 clusters",
+                "- P13 (all days below 0 in both families): failed.", "| C3-hop + 500 hPa input | +0.10 | -2.00 |"):
+        assert row in text
+    assert zd._json_safe({"a": nan, "b": [np.float64(1.5), np.int64(2), np.bool_(True)]}) == {"a": None,
+                                                                                            "b": [1.5, 2, True]}
