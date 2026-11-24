@@ -266,7 +266,7 @@ The only fully unseen data available to this study is (a) any city added in Sect
 
 ### Multiple testing
 H-A, H-C and H-N are the primary family: Holm correction, family-wise alpha 0.05 (as v1). H-B, H-D, H-E and the
-H-C trigger arm are exploratory or descriptive. **Amended by A2 (Section 12): the family is H-A, H-C, H-N and E5,
+H-C trigger arm are exploratory or descriptive. **Amended by A2 and A2.5 (Section 12): the family is H-A, H-C and E5 (H-N tested alone),
 with the p-value for each defined there.**
 
 ---
@@ -436,7 +436,7 @@ No forecast, calibration, trigger or physics-head result exists: Sudarshan's C3-
   share of event days with no trigger. H0: miss rate >= 0.25 (α + 0.05). One-sided p-value from the
   year x season cluster jackknife t statistic (t(G-1), as H-A). **Supported if** the Holm-adjusted p < 0.05.
   False-trigger rate and triggers per season are always reported next to it.
-- **Wording:** "calibrated miss rate" with the realised rate reported; never "guaranteed" or "certified".
+- **Wording:** superseded by A2.5 ("finite-sample miss-rate bound"); never "guaranteed" or "certified".
   Conformal risk control bounds the expected miss rate only under exchangeability; serial correlation and the
   warming trend can break it (H-C known limit).
 
@@ -449,7 +449,7 @@ use directly):
 - **H-N:** non-inferiority, one-sided jackknife p for each pre-set margin (WBGT and Tmax 0.05 C, unsafe-hour error
   2%); p = the largest.
 - **E5:** as A2.1.
-Holm over these four at family-wise 0.05.
+Holm over these four at family-wise 0.05. (Superseded by A2.5: the family is H-A, H-C, E5.)
 
 **A2.3 E4 is not load-bearing.** The paper's main claims rest on the audit (H-A, H-E/H-E1), the calibrated
 trigger (H-C, E5) and the pay-ahead design (H-D, exploratory). H-N/E4 is reported pass or fail; if it fails, the
@@ -460,6 +460,49 @@ already exist for heat decisions on air temperature (Berk, arXiv 2508.12886), fo
 (Communications Engineering 2025, doi 10.1038/s44172-025-00548-6) and for parametric-insurance payout obligations
 on rainfall (Kazlauskaite, arXiv 2606.06391). The claim is: "we found no conformal risk control applied to an
 hourly WBGT exposure trigger or to the timing of a heat payout."
+
+**A2.5 Final additions to A2 (24 Nov, evening; still before any model, calibration or trigger result).**
+- **E5 is two-part.** Supported only if (i) the Holm-adjusted p for "miss rate < 0.25" is < 0.05, and (ii) the
+  false-alarm rate (share of non-event in-season days on which the trigger fires) is <= 0.40. Reason for (ii): CRC
+  bounds misses only; a weak score can meet that bound by firing on most days. 0.40 is a pre-specified choice, not
+  sourced; it is base-rate free (lift is base-rate dependent) and means the trigger is right about at least 60% of
+  quiet days. Reported next to it: base rate, fire rate, precision, lift over base rate, Peirce skill score
+  (1 - miss - false alarm), triggers per season, number of event days.
+- **Severe subset (secondary, reported).** Miss rate on event days with rest-hours >= the 90th percentile of in-season
+  daily rest-hours over 1980-2006 (9-cell mean, moderate, TLV, sun), so the paper shows whether misses concentrate
+  on the worst days.
+- **No hot-day conditioning of E5's miss rate.** A suggestion was to report E5's miss rate "on forecast-hot days".
+  Rejected: the miss rate is already computed only on observed event days; conditioning on the forecast would
+  exclude exactly the days the forecast under-predicts and hide misses. The severe subset above answers the concern.
+  E5 keeps the raw C3-hop score: CRC needs only the ranking of the score, not its calibration, so E5 does not
+  depend on H-C.
+- **Rest-hours is not "unsafe hours" relabelled.** It is the sum over stamps 06-20 of the ACGIH required rest share
+  (0, 0.25, 0.5, 0.75, 1) per hour (A1.1), so an hour just over the continuous-work limit counts 0.25, not 1.
+  **R = 9.0** is the 75th percentile of in-season daily rest-hours over 1980-2006 (A1.5): a pre-specified
+  percentile, not an external standard. The event base rate over 1980-2018 and the number of event days in
+  2007-2018 and in the test years are reported and go into the power table.
+- **Holm family = H-A, H-C, E5.** H-N leaves the family (A2.3 makes it not load-bearing; keeping it would only raise
+  the bar for the tests that are). H-N is tested on its own at one-sided 0.05 with the non-inferiority p of A2.2,
+  and reported as the engineering result, pass or fail.
+- **Pass rules are p-values only.** Each hypothesis passes on its Holm-adjusted p (< 0.05) as defined in A2.2; CIs
+  are reported at 95% and labelled unadjusted. H-A additionally needs its point estimate > 0 (a significant negative
+  difference does not support it). H-C is the TOST equivalence test of A2.2, margin 0.05 around 0.80 (the v1
+  near-nominal range, H-C "Supported if"). H-N's "unsafe-hour error 2%" rule is its one-sided non-inferiority p.
+- **H-C's Holm test is pinned down** (the H-C text named neither model nor lead): the WBGT model A2Lr_hw5_C3hop,
+  lead 1, pooled over folds f1-f4 (each fold calibrated on its own inner block, which is also its early-stopping
+  block: `training/train_unified.py` `fit_and_stop_sets`, `early_stop: inner_2y`). Leads 2-5 and the Tmax model
+  A1prime_hw5_C3hop are reported, not tested. E5 likewise uses lead 1 for the test.
+- **Power table** is computed at the Holm thresholds for three tests (0.0167 for the smallest p, 0.025, 0.05) and
+  reports the number of event days, not just days.
+- **Wording.** E5 is "a trigger with a finite-sample miss-rate bound (under exchangeability)"; "calibrated" is kept
+  for H-C coverage only. The claim reads: "we found no conformal risk control applied to (a) an hourly WBGT exposure
+  trigger or (b) the timing of a heat-insurance payout."
+- **Prior-work search record.** Web searches on 24 Nov 2026 (general web search; Google Scholar/Scopus pending,
+  team plan task 5), strings: "adaptive conformal prediction heat action temperature threshold", "conformal deep
+  learning core body temperature heat stress", "conformal risk control drought index insurance trigger payout
+  error", "conformal" + "WBGT", "conformal" + "heat insurance". Neighbours found: Berk arXiv 2508.12886;
+  Communications Engineering 2025 doi 10.1038/s44172-025-00548-6; Kazlauskaite arXiv 2606.06391. Full notes:
+  `research/sdg13_heat_insurance_gap.md`. Repeated before submission.
 
 ## References
 - IMD_HW_FAQ, DELHI_HAP_2025, HOT_WEATHER_HAZARD_ANALYSIS_2022: see `sources/phase6_thresholds.json` and
