@@ -1,0 +1,112 @@
+[
+  {
+    "kind": "persistence",
+    "lead": 1,
+    "alpha": 0.2,
+    "miss_rate": 0.1578947368421053,
+    "false_alarm_rate": 0.2146341463414634,
+    "peirce_skill": 0.6274711168164313,
+    "fire_rate": 0.41333333333333333,
+    "passes_false_alarm_rule": true,
+    "event_days": 760
+  },
+  {
+    "kind": "persistence",
+    "lead": 2,
+    "alpha": 0.2,
+    "miss_rate": 0.17500000000000004,
+    "false_alarm_rate": 0.36341463414634145,
+    "peirce_skill": 0.4615853658536585,
+    "fire_rate": 0.5095833333333334,
+    "passes_false_alarm_rule": true,
+    "event_days": 760
+  },
+  {
+    "kind": "persistence",
+    "lead": 3,
+    "alpha": 0.2,
+    "miss_rate": 0.17368421052631577,
+    "false_alarm_rate": 0.4170731707317073,
+    "peirce_skill": 0.4092426187419769,
+    "fire_rate": 0.5466666666666666,
+    "passes_false_alarm_rule": false,
+    "event_days": 760
+  },
+  {
+    "kind": "persistence",
+    "lead": 4,
+    "alpha": 0.2,
+    "miss_rate": 0.18289473684210522,
+    "false_alarm_rate": 0.45,
+    "peirce_skill": 0.36710526315789477,
+    "fire_rate": 0.56625,
+    "passes_false_alarm_rule": false,
+    "event_days": 760
+  },
+  {
+    "kind": "persistence",
+    "lead": 5,
+    "alpha": 0.2,
+    "miss_rate": 0.17368421052631577,
+    "false_alarm_rate": 0.47073170731707314,
+    "peirce_skill": 0.3555840821566111,
+    "fire_rate": 0.5833333333333334,
+    "passes_false_alarm_rule": false,
+    "event_days": 760
+  },
+  {
+    "kind": "calendar",
+    "lead": 1,
+    "alpha": 0.2,
+    "miss_rate": 0.21973684210526312,
+    "false_alarm_rate": 0.3225609756097561,
+    "peirce_skill": 0.4577021822849808,
+    "fire_rate": 0.4675,
+    "passes_false_alarm_rule": true,
+    "event_days": 760
+  },
+  {
+    "kind": "calendar",
+    "lead": 2,
+    "alpha": 0.2,
+    "miss_rate": 0.21973684210526312,
+    "false_alarm_rate": 0.3225609756097561,
+    "peirce_skill": 0.4577021822849808,
+    "fire_rate": 0.4675,
+    "passes_false_alarm_rule": true,
+    "event_days": 760
+  },
+  {
+    "kind": "calendar",
+    "lead": 3,
+    "alpha": 0.2,
+    "miss_rate": 0.21973684210526312,
+    "false_alarm_rate": 0.3225609756097561,
+    "peirce_skill": 0.4577021822849808,
+    "fire_rate": 0.4675,
+    "passes_false_alarm_rule": true,
+    "event_days": 760
+  },
+  {
+    "kind": "calendar",
+    "lead": 4,
+    "alpha": 0.2,
+    "miss_rate": 0.21973684210526312,
+    "false_alarm_rate": 0.3225609756097561,
+    "peirce_skill": 0.4577021822849808,
+    "fire_rate": 0.4675,
+    "passes_false_alarm_rule": true,
+    "event_days": 760
+  },
+  {
+    "kind": "calendar",
+    "lead": 5,
+    "alpha": 0.2,
+    "miss_rate": 0.21973684210526312,
+    "false_alarm_rate": 0.3225609756097561,
+    "peirce_skill": 0.4577021822849808,
+    "fire_rate": 0.4675,
+    "passes_false_alarm_rule": true,
+    "event_days": 760
+  }
+]

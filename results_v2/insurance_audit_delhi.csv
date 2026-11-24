@@ -1,0 +1,25 @@
+work_class,status,limit,trigger,source,cell_days_in_period,unsafe_days,share_unsafe_days_not_counted,unsafe_hours_on_missed_days,share_counted_days_not_unsafe,cell_seasons,share_seasons_paid,share_seasons_unpaid_above_median_unsafe
+low,acclimatised,30.0,MHT 45.27/1d,"Down To Earth, May 2026 (day rule not stated: 1 day assumed, [CHECK])",32292,28472,0.9937482438887328,225072,0.0,351,0.19943019943019943,0.38461538461538464
+low,acclimatised,30.0,MHT 46.53/1d,"Down To Earth, May 2026 (day rule not stated: 1 day assumed, [CHECK])",32292,28472,0.9996838999719022,226672,0.0,351,0.02564102564102564,0.47863247863247865
+low,acclimatised,30.0,MHT 47/1d,"Down To Earth, May 2026 (day rule not stated: 1 day assumed, [CHECK])",32292,28472,1.0,226764,0.0,351,0.0,0.4928774928774929
+low,unacclimatised,29.0,MHT 45.27/1d,"Down To Earth, May 2026 (day rule not stated: 1 day assumed, [CHECK])",32292,30536,0.9941708147760021,285669,0.0,351,0.19943019943019943,0.38746438746438744
+low,unacclimatised,29.0,MHT 46.53/1d,"Down To Earth, May 2026 (day rule not stated: 1 day assumed, [CHECK])",32292,30536,0.9997052659156406,287478,0.0,351,0.02564102564102564,0.48717948717948717
+low,unacclimatised,29.0,MHT 47/1d,"Down To Earth, May 2026 (day rule not stated: 1 day assumed, [CHECK])",32292,30536,1.0,287580,0.0,351,0.0,0.4985754985754986
+moderate,acclimatised,28.0,MHT 45.27/1d,"Down To Earth, May 2026 (day rule not stated: 1 day assumed, [CHECK])",32292,31640,0.9943742098609355,343052,0.0,351,0.19943019943019943,0.37606837606837606
+moderate,acclimatised,28.0,MHT 46.53/1d,"Down To Earth, May 2026 (day rule not stated: 1 day assumed, [CHECK])",32292,31640,0.9997155499367889,345041,0.0,351,0.02564102564102564,0.4757834757834758
+moderate,acclimatised,28.0,MHT 47/1d,"Down To Earth, May 2026 (day rule not stated: 1 day assumed, [CHECK])",32292,31640,1.0,345149,0.0,351,0.0,0.49572649572649574
+moderate,unacclimatised,26.0,MHT 45.27/1d,"Down To Earth, May 2026 (day rule not stated: 1 day assumed, [CHECK])",32292,32205,0.9944729079335507,427438,0.0,351,0.19943019943019943,0.3646723646723647
+moderate,unacclimatised,26.0,MHT 46.53/1d,"Down To Earth, May 2026 (day rule not stated: 1 day assumed, [CHECK])",32292,32205,0.999720540288775,429719,0.0,351,0.02564102564102564,0.48717948717948717
+moderate,unacclimatised,26.0,MHT 47/1d,"Down To Earth, May 2026 (day rule not stated: 1 day assumed, [CHECK])",32292,32205,1.0,429850,0.0,351,0.0,0.4928774928774929
+high,acclimatised,26.0,MHT 45.27/1d,"Down To Earth, May 2026 (day rule not stated: 1 day assumed, [CHECK])",32292,32205,0.9944729079335507,427438,0.0,351,0.19943019943019943,0.3646723646723647
+high,acclimatised,26.0,MHT 46.53/1d,"Down To Earth, May 2026 (day rule not stated: 1 day assumed, [CHECK])",32292,32205,0.999720540288775,429719,0.0,351,0.02564102564102564,0.48717948717948717
+high,acclimatised,26.0,MHT 47/1d,"Down To Earth, May 2026 (day rule not stated: 1 day assumed, [CHECK])",32292,32205,1.0,429850,0.0,351,0.0,0.4928774928774929
+high,unacclimatised,23.0,MHT 45.27/1d,"Down To Earth, May 2026 (day rule not stated: 1 day assumed, [CHECK])",32292,32292,0.9944877988356249,470454,0.0,351,0.19943019943019943,0.39316239316239315
+high,unacclimatised,23.0,MHT 46.53/1d,"Down To Earth, May 2026 (day rule not stated: 1 day assumed, [CHECK])",32292,32292,0.999721293199554,472947,0.0,351,0.02564102564102564,0.49002849002849
+high,unacclimatised,23.0,MHT 47/1d,"Down To Earth, May 2026 (day rule not stated: 1 day assumed, [CHECK])",32292,32292,1.0,473082,0.0,351,0.0,0.4985754985754986
+very_high,acclimatised,25.0,MHT 45.27/1d,"Down To Earth, May 2026 (day rule not stated: 1 day assumed, [CHECK])",32292,32281,0.994485920510517,449313,0.0,351,0.19943019943019943,0.3475783475783476
+very_high,acclimatised,25.0,MHT 46.53/1d,"Down To Earth, May 2026 (day rule not stated: 1 day assumed, [CHECK])",32292,32281,0.9997211982280598,451685,0.0,351,0.02564102564102564,0.4757834757834758
+very_high,acclimatised,25.0,MHT 47/1d,"Down To Earth, May 2026 (day rule not stated: 1 day assumed, [CHECK])",32292,32281,1.0,451820,0.0,351,0.0,0.48148148148148145
+very_high,unacclimatised,20.0,MHT 45.27/1d,"Down To Earth, May 2026 (day rule not stated: 1 day assumed, [CHECK])",32292,32292,0.9944877988356249,480625,0.0,351,0.19943019943019943,0.3561253561253561
+very_high,unacclimatised,20.0,MHT 46.53/1d,"Down To Earth, May 2026 (day rule not stated: 1 day assumed, [CHECK])",32292,32292,0.999721293199554,483160,0.0,351,0.02564102564102564,0.45014245014245013
+very_high,unacclimatised,20.0,MHT 47/1d,"Down To Earth, May 2026 (day rule not stated: 1 day assumed, [CHECK])",32292,32292,1.0,483295,0.0,351,0.0,0.4586894586894587

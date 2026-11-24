@@ -1,0 +1,569 @@
+{
+  "delhi": {
+    "bias": {
+      "days": 7139,
+      "station_mean": 36.14022972405098,
+      "era5_9cell_mean": 35.43206020139764,
+      "mean_diff_era5_minus_station": -0.7081695226533439,
+      "q95_station": 42.6,
+      "q95_era5_9cell": 42.388888888888886,
+      "share_days_above_40.0": {
+        "station": 0.17873651771956856,
+        "era5_9cell": 0.16612971004342345,
+        "era5_single_cell_avg": 0.16433985463261275
+      },
+      "share_days_above_43.6": {
+        "station": 0.023392632021291496,
+        "era5_9cell": 0.01975066535929402,
+        "era5_single_cell_avg": 0.019237054676191807
+      },
+      "share_days_above_45.27": {
+        "station": 0.003922117943689593,
+        "era5_9cell": 0.0022412102535369098,
+        "era5_single_cell_avg": 0.0026614371760750807
+      },
+      "share_days_above_46.53": {
+        "station": 0.0002801512816921137,
+        "era5_9cell": 0.00014007564084605686,
+        "era5_single_cell_avg": 0.00014007564084605686
+      },
+      "share_days_above_47.0": {
+        "station": 0.0002801512816921137,
+        "era5_9cell": 0.0,
+        "era5_single_cell_avg": 0.0
+      }
+    },
+    "insurance_station": [
+      {
+        "trigger": "MHT 45.27/1d",
+        "station_years": 34,
+        "years": [
+          1980,
+          1981,
+          1982,
+          1983,
+          1984,
+          1985,
+          1986,
+          1987,
+          1988,
+          1989,
+          1990,
+          1991,
+          1993,
+          1995,
+          1996,
+          1997,
+          1998,
+          1999,
+          2000,
+          2001,
+          2002,
+          2003,
+          2004,
+          2005,
+          2006,
+          2007,
+          2008,
+          2009,
+          2010,
+          2011,
+          2012,
+          2013,
+          2014,
+          2015
+        ],
+        "station_trigger_9cell_rest": {
+          "trigger": "MHT 45.27/1d",
+          "cell_seasons": 34,
+          "rest_hours_per_season": 677.9044117647059,
+          "share_rest_hours_on_days_not_counted": 0.9898042193177504,
+          "share_seasons_paid": 0.38235294117647056,
+          "share_top_quartile_rest_seasons_unpaid": 0.5555555555555556,
+          "spearman_season_rest_vs_paid_days": 0.13296809812384472,
+          "spearman_ci95_year_jackknife": [
+            -0.21897401178184064,
+            0.4849102080295301
+          ]
+        },
+        "era5_per_cell_same_years": {
+          "trigger": "MHT 45.27/1d",
+          "cell_seasons": 306,
+          "rest_hours_per_season": 703.8374183006536,
+          "share_rest_hours_on_days_not_counted": 0.9922100715382642,
+          "share_seasons_paid": 0.21568627450980393,
+          "share_top_quartile_rest_seasons_unpaid": 0.6493506493506493,
+          "spearman_season_rest_vs_paid_days": 0.20632517327387334,
+          "spearman_ci95_year_jackknife": [
+            -0.09746854795778942,
+            0.5101188945055362
+          ]
+        }
+      },
+      {
+        "trigger": "MHT 46.53/1d",
+        "station_years": 34,
+        "years": [
+          1980,
+          1981,
+          1982,
+          1983,
+          1984,
+          1985,
+          1986,
+          1987,
+          1988,
+          1989,
+          1990,
+          1991,
+          1993,
+          1995,
+          1996,
+          1997,
+          1998,
+          1999,
+          2000,
+          2001,
+          2002,
+          2003,
+          2004,
+          2005,
+          2006,
+          2007,
+          2008,
+          2009,
+          2010,
+          2011,
+          2012,
+          2013,
+          2014,
+          2015
+        ],
+        "station_trigger_9cell_rest": {
+          "trigger": "MHT 46.53/1d",
+          "cell_seasons": 34,
+          "rest_hours_per_season": 677.9044117647059,
+          "share_rest_hours_on_days_not_counted": 0.9990997342589077,
+          "share_seasons_paid": 0.058823529411764705,
+          "share_top_quartile_rest_seasons_unpaid": 1.0,
+          "spearman_season_rest_vs_paid_days": -0.2293412361469315,
+          "spearman_ci95_year_jackknife": [
+            -0.6461900144243665,
+            0.1875075421305035
+          ]
+        },
+        "era5_per_cell_same_years": {
+          "trigger": "MHT 46.53/1d",
+          "cell_seasons": 306,
+          "rest_hours_per_season": 703.8374183006536,
+          "share_rest_hours_on_days_not_counted": 0.9995658719647311,
+          "share_seasons_paid": 0.029411764705882353,
+          "share_top_quartile_rest_seasons_unpaid": 0.974025974025974,
+          "spearman_season_rest_vs_paid_days": 0.04149380835812546,
+          "spearman_ci95_year_jackknife": [
+            -0.10118745179696323,
+            0.18417506851321416
+          ]
+        }
+      },
+      {
+        "trigger": "MHT 47/1d",
+        "station_years": 34,
+        "years": [
+          1980,
+          1981,
+          1982,
+          1983,
+          1984,
+          1985,
+          1986,
+          1987,
+          1988,
+          1989,
+          1990,
+          1991,
+          1993,
+          1995,
+          1996,
+          1997,
+          1998,
+          1999,
+          2000,
+          2001,
+          2002,
+          2003,
+          2004,
+          2005,
+          2006,
+          2007,
+          2008,
+          2009,
+          2010,
+          2011,
+          2012,
+          2013,
+          2014,
+          2015
+        ],
+        "station_trigger_9cell_rest": {
+          "trigger": "MHT 47/1d",
+          "cell_seasons": 34,
+          "rest_hours_per_season": 677.9044117647059,
+          "share_rest_hours_on_days_not_counted": 0.9990997342589077,
+          "share_seasons_paid": 0.058823529411764705,
+          "share_top_quartile_rest_seasons_unpaid": 1.0,
+          "spearman_season_rest_vs_paid_days": -0.2293412361469315,
+          "spearman_ci95_year_jackknife": [
+            -0.6461900144243665,
+            0.1875075421305035
+          ]
+        },
+        "era5_per_cell_same_years": {
+          "trigger": "MHT 47/1d",
+          "cell_seasons": 306,
+          "rest_hours_per_season": 703.8374183006536,
+          "share_rest_hours_on_days_not_counted": 1.0,
+          "share_seasons_paid": 0.0,
+          "share_top_quartile_rest_seasons_unpaid": 1.0,
+          "spearman_season_rest_vs_paid_days": NaN,
+          "spearman_ci95_year_jackknife": [
+            NaN,
+            NaN
+          ]
+        }
+      }
+    ]
+  },
+  "ahmedabad": {
+    "bias": {
+      "days": 5508,
+      "station_mean": 36.61822803195352,
+      "era5_9cell_mean": 35.34071249899136,
+      "mean_diff_era5_minus_station": -1.277515532962156,
+      "q95_station": 43.0,
+      "q95_era5_9cell": 41.42944444444444,
+      "share_days_above_41.1": {
+        "station": 0.18028322440087147,
+        "era5_9cell": 0.06790123456790123,
+        "era5_single_cell_avg": 0.0664488017429194
+      },
+      "share_days_above_43.2": {
+        "station": 0.04139433551198257,
+        "era5_9cell": 0.007443718228031954,
+        "era5_single_cell_avg": 0.007463890906156702
+      },
+      "share_days_above_43.6": {
+        "station": 0.02814088598402324,
+        "era5_9cell": 0.0030864197530864196,
+        "era5_single_cell_avg": 0.003974017590575325
+      },
+      "share_days_above_44.1": {
+        "station": 0.01670297748729121,
+        "era5_9cell": 0.0018155410312273058,
+        "era5_single_cell_avg": 0.001512950859356088
+      }
+    },
+    "insurance_station": [
+      {
+        "trigger": "VimoSEWA 43.2/7d",
+        "station_years": 10,
+        "years": [
+          1989,
+          1992,
+          1993,
+          1994,
+          1995,
+          1996,
+          2001,
+          2002,
+          2003,
+          2008
+        ],
+        "station_trigger_9cell_rest": {
+          "trigger": "VimoSEWA 43.2/7d",
+          "cell_seasons": 10,
+          "rest_hours_per_season": 713.1,
+          "share_rest_hours_on_days_not_counted": 0.8840625438227457,
+          "share_seasons_paid": 0.8,
+          "share_top_quartile_rest_seasons_unpaid": 0.0,
+          "spearman_season_rest_vs_paid_days": 0.17848266192003245,
+          "spearman_ci95_year_jackknife": [
+            -0.6632664788269682,
+            1.0202318026670332
+          ]
+        },
+        "era5_per_cell_same_years": {
+          "trigger": "VimoSEWA 43.2/7d",
+          "cell_seasons": 90,
+          "rest_hours_per_season": 757.2166666666667,
+          "share_rest_hours_on_days_not_counted": 0.9892552403172437,
+          "share_seasons_paid": 0.1111111111111111,
+          "share_top_quartile_rest_seasons_unpaid": 0.8260869565217391,
+          "spearman_season_rest_vs_paid_days": 0.06153234933011121,
+          "spearman_ci95_year_jackknife": [
+            -0.5753429750303812,
+            0.6984076736906036
+          ]
+        }
+      },
+      {
+        "trigger": "SEWA 43.6/2c",
+        "station_years": 10,
+        "years": [
+          1989,
+          1992,
+          1993,
+          1994,
+          1995,
+          1996,
+          2001,
+          2002,
+          2003,
+          2008
+        ],
+        "station_trigger_9cell_rest": {
+          "trigger": "SEWA 43.6/2c",
+          "cell_seasons": 10,
+          "rest_hours_per_season": 713.1,
+          "share_rest_hours_on_days_not_counted": 0.9389987379049222,
+          "share_seasons_paid": 0.9,
+          "share_top_quartile_rest_seasons_unpaid": 0.0,
+          "spearman_season_rest_vs_paid_days": -0.03669879217087869,
+          "spearman_ci95_year_jackknife": [
+            -0.9176924362122777,
+            0.8442948518705203
+          ]
+        },
+        "era5_per_cell_same_years": {
+          "trigger": "SEWA 43.6/2c",
+          "cell_seasons": 90,
+          "rest_hours_per_season": 757.2166666666667,
+          "share_rest_hours_on_days_not_counted": 0.9920762441397222,
+          "share_seasons_paid": 0.23333333333333334,
+          "share_top_quartile_rest_seasons_unpaid": 0.6521739130434783,
+          "spearman_season_rest_vs_paid_days": 0.09069577262141289,
+          "spearman_ci95_year_jackknife": [
+            -0.7540209935177359,
+            0.9354125387605617
+          ]
+        }
+      },
+      {
+        "trigger": "SEWA 44.1/2c",
+        "station_years": 10,
+        "years": [
+          1989,
+          1992,
+          1993,
+          1994,
+          1995,
+          1996,
+          2001,
+          2002,
+          2003,
+          2008
+        ],
+        "station_trigger_9cell_rest": {
+          "trigger": "SEWA 44.1/2c",
+          "cell_seasons": 10,
+          "rest_hours_per_season": 713.1,
+          "share_rest_hours_on_days_not_counted": 0.9644159304445379,
+          "share_seasons_paid": 0.6,
+          "share_top_quartile_rest_seasons_unpaid": 0.3333333333333333,
+          "spearman_season_rest_vs_paid_days": -0.1254664653349735,
+          "spearman_ci95_year_jackknife": [
+            -1.0472765923271736,
+            0.7963436616572267
+          ]
+        },
+        "era5_per_cell_same_years": {
+          "trigger": "SEWA 44.1/2c",
+          "cell_seasons": 90,
+          "rest_hours_per_season": 757.2166666666667,
+          "share_rest_hours_on_days_not_counted": 0.9986903792397597,
+          "share_seasons_paid": 0.06666666666666667,
+          "share_top_quartile_rest_seasons_unpaid": 0.782608695652174,
+          "spearman_season_rest_vs_paid_days": 0.33263134562509666,
+          "spearman_ci95_year_jackknife": [
+            NaN,
+            NaN
+          ]
+        }
+      }
+    ]
+  },
+  "chennai": {
+    "bias": {
+      "days": 6900,
+      "station_mean": 36.046289855072466,
+      "era5_9cell_mean": 34.50402093397745,
+      "mean_diff_era5_minus_station": -1.542268921095008,
+      "q95_station": 40.4,
+      "q95_era5_9cell": 38.05555555555555,
+      "share_days_above_37.0": {
+        "station": 0.31768115942028985,
+        "era5_9cell": 0.11739130434782609,
+        "era5_single_cell_avg": 0.1642673107890499
+      },
+      "share_days_above_40.0": {
+        "station": 0.0627536231884058,
+        "era5_9cell": 0.0026086956521739132,
+        "era5_single_cell_avg": 0.021561996779388082
+      }
+    },
+    "h_a_station": {
+      "primary: IMD coastal on Minambakkam (Tmax>=37 & dep>=4.5), 2 days": {
+        "alert_days": 27,
+        "unclassified_days": 228,
+        "alert_days_2007_2018": 7,
+        "comparator": "W3 12-3 pm (IMD public)",
+        "best_past_window": "7-10",
+        "primary_diff": {
+          "estimate": 0.0,
+          "se": NaN,
+          "ci_low": NaN,
+          "ci_high": NaN,
+          "n_clusters": 3,
+          "n_unsafe_hours": 94
+        },
+        "unsafe_hours_per_alert_day": 13.296296296296296,
+        "share_outside W1 12-4 pm (HAP p.155)": {
+          "estimate": 0.6991643454038997,
+          "se": 0.00616916700948445,
+          "ci_low": 0.6859327981264157,
+          "ci_high": 0.7123958926813837,
+          "n_clusters": 15,
+          "n_unsafe_hours": 359
+        },
+        "share_outside W2 1-5 pm (HAP p.81)": {
+          "estimate": 0.6991643454038997,
+          "se": 0.00616916700948445,
+          "ci_low": 0.6859327981264157,
+          "ci_high": 0.7123958926813837,
+          "n_clusters": 15,
+          "n_unsafe_hours": 359
+        },
+        "share_outside W3 12-3 pm (IMD public)": {
+          "estimate": 0.7743732590529248,
+          "se": 0.004626875257113386,
+          "ci_low": 0.7644495985948117,
+          "ci_high": 0.7842969195110379,
+          "n_clusters": 15,
+          "n_unsafe_hours": 359
+        },
+        "rest": {
+          "rest_hours_per_alert_day": 10.13888888888889,
+          "best_past_window": "10-13",
+          "diff_best_minus_comparator": {
+            "estimate": 0.0,
+            "se": NaN,
+            "ci_low": NaN,
+            "ci_high": NaN,
+            "n_clusters": 3,
+            "n_unsafe_hours": 94
+          },
+          "share_rest_outside W1 12-4 pm (HAP p.155)": {
+            "estimate": 0.6301369863013699,
+            "se": 0.007710579236865842,
+            "ci_low": 0.6135994385980047,
+            "ci_high": 0.6466745340047352,
+            "n_clusters": 15,
+            "n_unsafe_hours": 359
+          },
+          "share_rest_outside W2 1-5 pm (HAP p.81)": {
+            "estimate": 0.6648401826484018,
+            "se": 0.005416172191662189,
+            "ci_low": 0.6532236486322541,
+            "ci_high": 0.6764567166645495,
+            "n_clusters": 15,
+            "n_unsafe_hours": 359
+          },
+          "share_rest_outside W3 12-3 pm (IMD public)": {
+            "estimate": 0.7095890410958905,
+            "se": 0.007049374255843606,
+            "ci_low": 0.6944696370338066,
+            "ci_high": 0.7247084451579744,
+            "n_clusters": 15,
+            "n_unsafe_hours": 359
+          }
+        }
+      },
+      "departure only (dep>=4.5), 2 days": {
+        "alert_days": 27,
+        "unclassified_days": 228,
+        "alert_days_2007_2018": 7,
+        "comparator": "W3 12-3 pm (IMD public)",
+        "best_past_window": "7-10",
+        "primary_diff": {
+          "estimate": 0.0,
+          "se": NaN,
+          "ci_low": NaN,
+          "ci_high": NaN,
+          "n_clusters": 3,
+          "n_unsafe_hours": 94
+        },
+        "unsafe_hours_per_alert_day": 13.296296296296296,
+        "share_outside W1 12-4 pm (HAP p.155)": {
+          "estimate": 0.6991643454038997,
+          "se": 0.00616916700948445,
+          "ci_low": 0.6859327981264157,
+          "ci_high": 0.7123958926813837,
+          "n_clusters": 15,
+          "n_unsafe_hours": 359
+        },
+        "share_outside W2 1-5 pm (HAP p.81)": {
+          "estimate": 0.6991643454038997,
+          "se": 0.00616916700948445,
+          "ci_low": 0.6859327981264157,
+          "ci_high": 0.7123958926813837,
+          "n_clusters": 15,
+          "n_unsafe_hours": 359
+        },
+        "share_outside W3 12-3 pm (IMD public)": {
+          "estimate": 0.7743732590529248,
+          "se": 0.004626875257113386,
+          "ci_low": 0.7644495985948117,
+          "ci_high": 0.7842969195110379,
+          "n_clusters": 15,
+          "n_unsafe_hours": 359
+        },
+        "rest": {
+          "rest_hours_per_alert_day": 10.13888888888889,
+          "best_past_window": "10-13",
+          "diff_best_minus_comparator": {
+            "estimate": 0.0,
+            "se": NaN,
+            "ci_low": NaN,
+            "ci_high": NaN,
+            "n_clusters": 3,
+            "n_unsafe_hours": 94
+          },
+          "share_rest_outside W1 12-4 pm (HAP p.155)": {
+            "estimate": 0.6301369863013699,
+            "se": 0.007710579236865842,
+            "ci_low": 0.6135994385980047,
+            "ci_high": 0.6466745340047352,
+            "n_clusters": 15,
+            "n_unsafe_hours": 359
+          },
+          "share_rest_outside W2 1-5 pm (HAP p.81)": {
+            "estimate": 0.6648401826484018,
+            "se": 0.005416172191662189,
+            "ci_low": 0.6532236486322541,
+            "ci_high": 0.6764567166645495,
+            "n_clusters": 15,
+            "n_unsafe_hours": 359
+          },
+          "share_rest_outside W3 12-3 pm (IMD public)": {
+            "estimate": 0.7095890410958905,
+            "se": 0.007049374255843606,
+            "ci_low": 0.6944696370338066,
+            "ci_high": 0.7247084451579744,
+            "n_clusters": 15,
+            "n_unsafe_hours": 359
+          }
+        }
+      }
+    }
+  }
+}

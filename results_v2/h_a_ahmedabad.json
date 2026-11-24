@@ -1,0 +1,310 @@
+{
+  "city": "ahmedabad",
+  "limit": 28.0,
+  "alert_source": "9-cell ERA5 Tmax (A4.1)",
+  "era5_tmax_in_season_mean_1981_2010": 38.59182336182336,
+  "primary: Ahmedabad HAP Yellow (Tmax>=41.1)": {
+    "alert_days": 575,
+    "unclassified_days": 0,
+    "alert_days_2007_2018": 182,
+    "comparator": "W1 12-4 pm (HAP p.155)",
+    "best_past_window": "9-13",
+    "primary_diff": {
+      "estimate": -0.0008920606601248715,
+      "se": 0.0009129581594892627,
+      "ci_low": -0.002926258205520779,
+      "ci_high": 0.001142136885271036,
+      "n_clusters": 11,
+      "n_unsafe_hours": 2242
+    },
+    "unsafe_hours_per_alert_day": 11.638260869565217,
+    "share_outside W1 12-4 pm (HAP p.155)": {
+      "estimate": 0.6563060370591751,
+      "se": 0.004485453339915215,
+      "ci_low": 0.6472091160488154,
+      "ci_high": 0.6654029580695349,
+      "n_clusters": 37,
+      "n_unsafe_hours": 6692
+    },
+    "share_outside W2 1-5 pm (HAP p.81)": {
+      "estimate": 0.6573520621637776,
+      "se": 0.004310469567511676,
+      "ci_low": 0.6486100246924984,
+      "ci_high": 0.6660940996350568,
+      "n_clusters": 37,
+      "n_unsafe_hours": 6692
+    },
+    "share_outside W3 12-3 pm (IMD public)": {
+      "estimate": 0.7422295277943813,
+      "se": 0.0033640900049363744,
+      "ci_low": 0.7354068370366116,
+      "ci_high": 0.7490522185521511,
+      "n_clusters": 37,
+      "n_unsafe_hours": 6692
+    },
+    "rest": {
+      "rest_hours_per_alert_day": 8.998695652173913,
+      "best_past_window": "11-15",
+      "diff_best_minus_comparator": {
+        "estimate": 0.0034960145434205225,
+        "se": 0.0015959633036222729,
+        "ci_low": -6.0013299724629484e-05,
+        "ci_high": 0.007052042386565675,
+        "n_clusters": 11,
+        "n_unsafe_hours": 2242
+      },
+      "share_rest_outside W1 12-4 pm (HAP p.155)": {
+        "estimate": 0.5884910856645891,
+        "se": 0.004997540547195578,
+        "ci_low": 0.5783556036611651,
+        "ci_high": 0.598626567668013,
+        "n_clusters": 37,
+        "n_unsafe_hours": 6692
+      },
+      "share_rest_outside W2 1-5 pm (HAP p.81)": {
+        "estimate": 0.6117311687684206,
+        "se": 0.002985665950130922,
+        "ci_low": 0.6056759575660284,
+        "ci_high": 0.6177863799708128,
+        "n_clusters": 37,
+        "n_unsafe_hours": 6692
+      },
+      "share_rest_outside W3 12-3 pm (IMD public)": {
+        "estimate": 0.6858965067401073,
+        "se": 0.004413131931985246,
+        "ci_low": 0.6769462603433127,
+        "ci_high": 0.6948467531369018,
+        "n_clusters": 37,
+        "n_unsafe_hours": 6692
+      }
+    }
+  },
+  "IMD plains (Tmax>=40 & dep>=4.5 or Tmax>=45), 2 days": {
+    "alert_days": 22,
+    "unclassified_days": 0,
+    "alert_days_2007_2018": 11,
+    "comparator": "W1 12-4 pm (HAP p.155)",
+    "best_past_window": "9-13",
+    "primary_diff": {
+      "estimate": 0.0,
+      "se": NaN,
+      "ci_low": NaN,
+      "ci_high": NaN,
+      "n_clusters": 4,
+      "n_unsafe_hours": 129
+    },
+    "unsafe_hours_per_alert_day": 11.454545454545455,
+    "share_outside W1 12-4 pm (HAP p.155)": {
+      "estimate": 0.6507936507936508,
+      "se": 0.019005335759601113,
+      "ci_low": 0.6078005943736843,
+      "ci_high": 0.6937867072136173,
+      "n_clusters": 10,
+      "n_unsafe_hours": 252
+    },
+    "share_outside W2 1-5 pm (HAP p.81)": {
+      "estimate": 0.6507936507936508,
+      "se": 0.019005335759601113,
+      "ci_low": 0.6078005943736843,
+      "ci_high": 0.6937867072136173,
+      "n_clusters": 10,
+      "n_unsafe_hours": 252
+    },
+    "share_outside W3 12-3 pm (IMD public)": {
+      "estimate": 0.7380952380952381,
+      "se": 0.014254001819700714,
+      "ci_low": 0.7058504457802636,
+      "ci_high": 0.7703400304102127,
+      "n_clusters": 10,
+      "n_unsafe_hours": 252
+    },
+    "rest": {
+      "rest_hours_per_alert_day": 9.25,
+      "best_past_window": "11-15",
+      "diff_best_minus_comparator": {
+        "estimate": 0.004705882352941171,
+        "se": NaN,
+        "ci_low": NaN,
+        "ci_high": NaN,
+        "n_clusters": 4,
+        "n_unsafe_hours": 129
+      },
+      "share_rest_outside W1 12-4 pm (HAP p.155)": {
+        "estimate": 0.5847665847665848,
+        "se": 0.01510632935849257,
+        "ci_low": 0.550593693604682,
+        "ci_high": 0.6189394759284876,
+        "n_clusters": 10,
+        "n_unsafe_hours": 252
+      },
+      "share_rest_outside W2 1-5 pm (HAP p.81)": {
+        "estimate": 0.6019656019656019,
+        "se": 0.011392965018538172,
+        "ci_low": 0.5761929245434064,
+        "ci_high": 0.6277382793877974,
+        "n_clusters": 10,
+        "n_unsafe_hours": 252
+      },
+      "share_rest_outside W3 12-3 pm (IMD public)": {
+        "estimate": 0.683046683046683,
+        "se": 0.013270614472794495,
+        "ci_low": 0.6530264674623174,
+        "ci_high": 0.7130668986310487,
+        "n_clusters": 10,
+        "n_unsafe_hours": 252
+      }
+    }
+  },
+  "departure only (dep>=4.5), 2 days": {
+    "alert_days": 75,
+    "unclassified_days": 0,
+    "alert_days_2007_2018": 20,
+    "comparator": "W1 12-4 pm (HAP p.155)",
+    "best_past_window": "9-13",
+    "primary_diff": {
+      "estimate": 0.0,
+      "se": 0.0,
+      "ci_low": 0.0,
+      "ci_high": 0.0,
+      "n_clusters": 6,
+      "n_unsafe_hours": 239
+    },
+    "unsafe_hours_per_alert_day": 10.84,
+    "share_outside W1 12-4 pm (HAP p.155)": {
+      "estimate": 0.6309963099630996,
+      "se": 0.012704358693239708,
+      "ci_low": 0.6043054427773445,
+      "ci_high": 0.6576871771488547,
+      "n_clusters": 19,
+      "n_unsafe_hours": 813
+    },
+    "share_outside W2 1-5 pm (HAP p.81)": {
+      "estimate": 0.6334563345633457,
+      "se": 0.011732391486583211,
+      "ci_low": 0.6088074947044467,
+      "ci_high": 0.6581051744222447,
+      "n_clusters": 19,
+      "n_unsafe_hours": 813
+    },
+    "share_outside W3 12-3 pm (IMD public)": {
+      "estimate": 0.7232472324723247,
+      "se": 0.009528269019929758,
+      "ci_low": 0.7032290820830084,
+      "ci_high": 0.743265382861641,
+      "n_clusters": 19,
+      "n_unsafe_hours": 813
+    },
+    "rest": {
+      "rest_hours_per_alert_day": 7.92,
+      "best_past_window": "11-15",
+      "diff_best_minus_comparator": {
+        "estimate": 0.005242463958060328,
+        "se": 0.0074401358460186705,
+        "ci_low": -0.01388301410238189,
+        "ci_high": 0.024367942018502547,
+        "n_clusters": 6,
+        "n_unsafe_hours": 239
+      },
+      "share_rest_outside W1 12-4 pm (HAP p.155)": {
+        "estimate": 0.5622895622895623,
+        "se": 0.013264254084744145,
+        "ci_low": 0.5344223985355661,
+        "ci_high": 0.5901567260435585,
+        "n_clusters": 19,
+        "n_unsafe_hours": 813
+      },
+      "share_rest_outside W2 1-5 pm (HAP p.81)": {
+        "estimate": 0.5934343434343434,
+        "se": 0.010509460412745007,
+        "ci_low": 0.5713547864221667,
+        "ci_high": 0.6155139004465201,
+        "n_clusters": 19,
+        "n_unsafe_hours": 813
+      },
+      "share_rest_outside W3 12-3 pm (IMD public)": {
+        "estimate": 0.6624579124579124,
+        "se": 0.010849335613926269,
+        "ci_low": 0.6396643041446427,
+        "ci_high": 0.6852515207711821,
+        "n_clusters": 19,
+        "n_unsafe_hours": 813
+      }
+    }
+  },
+  "Delhi ERA5 proxy rule": {
+    "alert_days": 200,
+    "unclassified_days": 0,
+    "alert_days_2007_2018": 47,
+    "comparator": "W1 12-4 pm (HAP p.155)",
+    "best_past_window": "9-13",
+    "primary_diff": {
+      "estimate": -0.0017825311942959443,
+      "se": 0.001974219684985087,
+      "ci_low": -0.00633508995167302,
+      "ci_high": 0.0027700275630811316,
+      "n_clusters": 9,
+      "n_unsafe_hours": 561
+    },
+    "unsafe_hours_per_alert_day": 11.38,
+    "share_outside W1 12-4 pm (HAP p.155)": {
+      "estimate": 0.648506151142355,
+      "se": 0.007653519176060929,
+      "ci_low": 0.632896695870526,
+      "ci_high": 0.664115606414184,
+      "n_clusters": 32,
+      "n_unsafe_hours": 2276
+    },
+    "share_outside W2 1-5 pm (HAP p.81)": {
+      "estimate": 0.6489455184534271,
+      "se": 0.007507831396974235,
+      "ci_low": 0.633633195366021,
+      "ci_high": 0.6642578415408331,
+      "n_clusters": 32,
+      "n_unsafe_hours": 2276
+    },
+    "share_outside W3 12-3 pm (IMD public)": {
+      "estimate": 0.7363796133567663,
+      "se": 0.005740139382045662,
+      "ci_low": 0.7246725219028946,
+      "ci_high": 0.748086704810638,
+      "n_clusters": 32,
+      "n_unsafe_hours": 2276
+    },
+    "rest": {
+      "rest_hours_per_alert_day": 8.96125,
+      "best_past_window": "11-15",
+      "diff_best_minus_comparator": {
+        "estimate": 0.0022002200220022083,
+        "se": 0.004180199579118716,
+        "ci_low": -0.007439337493424266,
+        "ci_high": 0.011839777537428682,
+        "n_clusters": 9,
+        "n_unsafe_hours": 561
+      },
+      "share_rest_outside W1 12-4 pm (HAP p.155)": {
+        "estimate": 0.5869716836378853,
+        "se": 0.0075823266798265496,
+        "ci_low": 0.5715074264194089,
+        "ci_high": 0.6024359408563618,
+        "n_clusters": 32,
+        "n_unsafe_hours": 2276
+      },
+      "share_rest_outside W2 1-5 pm (HAP p.81)": {
+        "estimate": 0.6078951039196541,
+        "se": 0.005204081724141389,
+        "ci_low": 0.5972813092671219,
+        "ci_high": 0.6185088985721863,
+        "n_clusters": 32,
+        "n_unsafe_hours": 2276
+      },
+      "share_rest_outside W3 12-3 pm (IMD public)": {
+        "estimate": 0.6850327800251081,
+        "se": 0.006417142165041759,
+        "ci_low": 0.6719449322920681,
+        "ci_high": 0.6981206277581482,
+        "n_clusters": 32,
+        "n_unsafe_hours": 2276
+      }
+    }
+  }
+}

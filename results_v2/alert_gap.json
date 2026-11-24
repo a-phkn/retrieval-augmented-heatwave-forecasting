@@ -1,0 +1,50 @@
+{
+  "delhi": {
+    "season_days": 7800,
+    "alert_days": 146,
+    "any_unsafe_hour": {
+      "days": 6916,
+      "share_of_season": 0.8866666666666667,
+      "share_with_alert": 0.021110468478889532,
+      "unsafe_hours_on_unalerted_days_share": 0.9740405487219622
+    },
+    "rest_hours_ge_R": {
+      "days": 2126,
+      "share_of_season": 0.2725641025641026,
+      "share_with_alert": 0.051269990592662275,
+      "unsafe_hours_on_unalerted_days_share": 0.9493985449830729
+    }
+  },
+  "ahmedabad": {
+    "season_days": 7800,
+    "alert_days": 575,
+    "any_unsafe_hour": {
+      "days": 7403,
+      "share_of_season": 0.9491025641025641,
+      "share_with_alert": 0.07767121437255167,
+      "unsafe_hours_on_unalerted_days_share": 0.9033143583668044
+    },
+    "rest_hours_ge_R": {
+      "days": 1446,
+      "share_of_season": 0.1853846153846154,
+      "share_with_alert": 0.22268326417704012,
+      "unsafe_hours_on_unalerted_days_share": 0.7758413461538461
+    }
+  },
+  "chennai": {
+    "season_days": 7800,
+    "alert_days": 27,
+    "any_unsafe_hour": {
+      "days": 7726,
+      "share_of_season": 0.9905128205128205,
+      "share_with_alert": 0.0034946932435930625,
+      "unsafe_hours_on_unalerted_days_share": 0.9953158231233935
+    },
+    "rest_hours_ge_R": {
+      "days": 1452,
+      "share_of_season": 0.18615384615384614,
+      "share_with_alert": 0.01652892561983471,
+      "unsafe_hours_on_unalerted_days_share": 0.9828703947715174
+    }
+  }
+}

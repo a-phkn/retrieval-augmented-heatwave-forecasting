@@ -1,0 +1,13 @@
+decade,trigger,source,cell_days_in_period,unsafe_days,share_unsafe_days_not_counted,unsafe_hours_on_missed_days,share_counted_days_not_unsafe,cell_seasons,share_seasons_paid,share_seasons_unpaid_above_median_unsafe,work_class,status,limit
+1980,VimoSEWA 43.2/7d,"VimoSEWA x SCF report, Dec 2025, pp. 4, 21-22",10980,10454,1.0,104089,0.0,90,0.0,0.5,moderate,acclimatised,28.0
+1990,VimoSEWA 43.2/7d,"VimoSEWA x SCF report, Dec 2025, pp. 4, 21-22",10980,10475,0.99236276849642,102966,0.0,90,0.1,0.45555555555555555,moderate,acclimatised,28.0
+2000,VimoSEWA 43.2/7d,"VimoSEWA x SCF report, Dec 2025, pp. 4, 21-22",10980,10613,0.9993404315462169,108419,0.0,90,0.011111111111111112,0.4888888888888889,moderate,acclimatised,28.0
+2010,VimoSEWA 43.2/7d,"VimoSEWA x SCF report, Dec 2025, pp. 4, 21-22",9882,9634,0.9891011002698775,104574,0.0,81,0.14814814814814814,0.37037037037037035,moderate,acclimatised,28.0
+1980,SEWA 43.6/2c,"NPR, 16 Jul 2025 (risk period not stated; [CHECK], VimoSEWA's used)",10980,10454,0.9974172565525158,103792,0.0,90,0.1,0.4,moderate,acclimatised,28.0
+1990,SEWA 43.6/2c,"NPR, 16 Jul 2025 (risk period not stated; [CHECK], VimoSEWA's used)",10980,10475,0.9953221957040573,103251,0.0,90,0.2,0.4,moderate,acclimatised,28.0
+2000,SEWA 43.6/2c,"NPR, 16 Jul 2025 (risk period not stated; [CHECK], VimoSEWA's used)",10980,10613,0.9972675021200414,108218,0.0,90,0.1,0.4222222222222222,moderate,acclimatised,28.0
+2010,SEWA 43.6/2c,"NPR, 16 Jul 2025 (risk period not stated; [CHECK], VimoSEWA's used)",9882,9634,0.9901390907203653,104694,0.0,81,0.25925925925925924,0.2716049382716049,moderate,acclimatised,28.0
+1980,SEWA 44.1/2c,"NPR, 16 Jul 2025 (risk period not stated; [CHECK], VimoSEWA's used)",10980,10454,0.9981825138702889,103884,0.0,90,0.07777777777777778,0.4222222222222222,moderate,acclimatised,28.0
+1990,SEWA 44.1/2c,"NPR, 16 Jul 2025 (risk period not stated; [CHECK], VimoSEWA's used)",10980,10475,1.0,103844,0.0,90,0.0,0.5,moderate,acclimatised,28.0
+2000,SEWA 44.1/2c,"NPR, 16 Jul 2025 (risk period not stated; [CHECK], VimoSEWA's used)",10980,10613,0.9988693112220861,108377,0.0,90,0.06666666666666667,0.43333333333333335,moderate,acclimatised,28.0
+2010,SEWA 44.1/2c,"NPR, 16 Jul 2025 (risk period not stated; [CHECK], VimoSEWA's used)",9882,9634,0.9935644592069753,105131,0.0,81,0.2222222222222222,0.2962962962962963,moderate,acclimatised,28.0

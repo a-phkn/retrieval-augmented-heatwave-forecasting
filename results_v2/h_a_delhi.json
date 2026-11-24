@@ -1,0 +1,459 @@
+{
+  "low/acclimatised": {
+    "limit": 30.0,
+    "alert_days": 1342,
+    "unclassified_days": 661,
+    "best_past_window": "10-14",
+    "primary_diff": {
+      "estimate": 0.03579952267303105,
+      "se": 0.006850603916752124,
+      "ci_low": 0.02072144511459397,
+      "ci_high": 0.050877600231468124,
+      "n_clusters": 12,
+      "n_unsafe_hours": 3352
+    },
+    "supported": true,
+    "share_outside W1 12-4 pm (HAP p.155)": {
+      "estimate": 0.5679718875502008,
+      "se": 0.003737053870441235,
+      "ci_low": 0.5604190199404032,
+      "ci_high": 0.5755247551599983,
+      "n_clusters": 41,
+      "n_unsafe_hours": 9960
+    },
+    "share_outside W2 1-5 pm (HAP p.81)": {
+      "estimate": 0.6258032128514056,
+      "se": 0.004584759042298553,
+      "ci_low": 0.6165370691805319,
+      "ci_high": 0.6350693565222794,
+      "n_clusters": 41,
+      "n_unsafe_hours": 9960
+    },
+    "share_outside W3 12-3 pm (IMD public)": {
+      "estimate": 0.6556224899598393,
+      "se": 0.0031724336169563394,
+      "ci_low": 0.6492107624492285,
+      "ci_high": 0.6620342174704501,
+      "n_clusters": 41,
+      "n_unsafe_hours": 9960
+    }
+  },
+  "low/unacclimatised": {
+    "limit": 29.0,
+    "alert_days": 1342,
+    "unclassified_days": 661,
+    "best_past_window": "10-14",
+    "primary_diff": {
+      "estimate": 0.0136986301369863,
+      "se": 0.004847987166936725,
+      "ci_low": 0.0030282823262438655,
+      "ci_high": 0.024368977947728736,
+      "n_clusters": 12,
+      "n_unsafe_hours": 4088
+    },
+    "supported": true,
+    "share_outside W1 12-4 pm (HAP p.155)": {
+      "estimate": 0.6007736320412604,
+      "se": 0.0030814468630363844,
+      "ci_low": 0.5945457956198411,
+      "ci_high": 0.6070014684626798,
+      "n_clusters": 41,
+      "n_unsafe_hours": 12409
+    },
+    "share_outside W2 1-5 pm (HAP p.81)": {
+      "estimate": 0.6322830203884278,
+      "se": 0.00324375868973365,
+      "ci_low": 0.625727139528515,
+      "ci_high": 0.6388389012483405,
+      "n_clusters": 41,
+      "n_unsafe_hours": 12409
+    },
+    "share_outside W3 12-3 pm (IMD public)": {
+      "estimate": 0.6901442501410266,
+      "se": 0.0028441544940193014,
+      "ci_low": 0.6843959994869353,
+      "ci_high": 0.695892500795118,
+      "n_clusters": 41,
+      "n_unsafe_hours": 12409
+    }
+  },
+  "moderate/acclimatised": {
+    "limit": 28.0,
+    "alert_days": 1342,
+    "unclassified_days": 661,
+    "best_past_window": "10-14",
+    "primary_diff": {
+      "estimate": 0.0031826861871419587,
+      "se": 0.0016643858432076489,
+      "ci_low": -0.000480602354424685,
+      "ci_high": 0.0068459747287086025,
+      "n_clusters": 12,
+      "n_unsafe_hours": 4713
+    },
+    "supported": false,
+    "share_outside W1 12-4 pm (HAP p.155)": {
+      "estimate": 0.6339769412418391,
+      "se": 0.0031241311790847276,
+      "ci_low": 0.6276628365997025,
+      "ci_high": 0.6402910458839758,
+      "n_clusters": 41,
+      "n_unsafe_hours": 14398
+    },
+    "share_outside W2 1-5 pm (HAP p.81)": {
+      "estimate": 0.6482150298652591,
+      "se": 0.002475718274151259,
+      "ci_low": 0.6432114165880405,
+      "ci_high": 0.6532186431424778,
+      "n_clusters": 41,
+      "n_unsafe_hours": 14398
+    },
+    "share_outside W3 12-3 pm (IMD public)": {
+      "estimate": 0.7221836366161967,
+      "se": 0.0026974229705295032,
+      "ci_low": 0.7167319414332126,
+      "ci_high": 0.7276353317991807,
+      "n_clusters": 41,
+      "n_unsafe_hours": 14398
+    }
+  },
+  "moderate/unacclimatised": {
+    "limit": 26.0,
+    "alert_days": 1342,
+    "unclassified_days": 661,
+    "best_past_window": "9-13",
+    "primary_diff": {
+      "estimate": 0.00017866714311237653,
+      "se": 0.00017945475848055704,
+      "ci_low": -0.00021631011721115863,
+      "ci_high": 0.0005736444034359117,
+      "n_clusters": 12,
+      "n_unsafe_hours": 5597
+    },
+    "supported": false,
+    "share_outside W1 12-4 pm (HAP p.155)": {
+      "estimate": 0.6869128887332983,
+      "se": 0.0022925753342530044,
+      "ci_low": 0.6822794211448163,
+      "ci_high": 0.6915463563217802,
+      "n_clusters": 41,
+      "n_unsafe_hours": 17139
+    },
+    "share_outside W2 1-5 pm (HAP p.81)": {
+      "estimate": 0.6876130462687438,
+      "se": 0.0020987112967510184,
+      "ci_low": 0.6833713925155225,
+      "ci_high": 0.691854700021965,
+      "n_clusters": 41,
+      "n_unsafe_hours": 17139
+    },
+    "share_outside W3 12-3 pm (IMD public)": {
+      "estimate": 0.7650971468580431,
+      "se": 0.0017256057609629988,
+      "ci_low": 0.76160956752119,
+      "ci_high": 0.7685847261948962,
+      "n_clusters": 41,
+      "n_unsafe_hours": 17139
+    }
+  },
+  "high/acclimatised": {
+    "limit": 26.0,
+    "alert_days": 1342,
+    "unclassified_days": 661,
+    "best_past_window": "9-13",
+    "primary_diff": {
+      "estimate": 0.00017866714311237653,
+      "se": 0.00017945475848055704,
+      "ci_low": -0.00021631011721115863,
+      "ci_high": 0.0005736444034359117,
+      "n_clusters": 12,
+      "n_unsafe_hours": 5597
+    },
+    "supported": false,
+    "share_outside W1 12-4 pm (HAP p.155)": {
+      "estimate": 0.6869128887332983,
+      "se": 0.0022925753342530044,
+      "ci_low": 0.6822794211448163,
+      "ci_high": 0.6915463563217802,
+      "n_clusters": 41,
+      "n_unsafe_hours": 17139
+    },
+    "share_outside W2 1-5 pm (HAP p.81)": {
+      "estimate": 0.6876130462687438,
+      "se": 0.0020987112967510184,
+      "ci_low": 0.6833713925155225,
+      "ci_high": 0.691854700021965,
+      "n_clusters": 41,
+      "n_unsafe_hours": 17139
+    },
+    "share_outside W3 12-3 pm (IMD public)": {
+      "estimate": 0.7650971468580431,
+      "se": 0.0017256057609629988,
+      "ci_low": 0.76160956752119,
+      "ci_high": 0.7685847261948962,
+      "n_clusters": 41,
+      "n_unsafe_hours": 17139
+    }
+  },
+  "high/unacclimatised": {
+    "limit": 23.0,
+    "alert_days": 1342,
+    "unclassified_days": 661,
+    "best_past_window": "8-12",
+    "primary_diff": {
+      "estimate": 0.0,
+      "se": 0.0,
+      "ci_low": 0.0,
+      "ci_high": 0.0,
+      "n_clusters": 12,
+      "n_unsafe_hours": 6285
+    },
+    "supported": false,
+    "share_outside W1 12-4 pm (HAP p.155)": {
+      "estimate": 0.7222394701438477,
+      "se": 0.0011759666418706281,
+      "ci_low": 0.7198627529041419,
+      "ci_high": 0.7246161873835535,
+      "n_clusters": 41,
+      "n_unsafe_hours": 19326
+    },
+    "share_outside W2 1-5 pm (HAP p.81)": {
+      "estimate": 0.7222394701438477,
+      "se": 0.0011759666418706281,
+      "ci_low": 0.7198627529041419,
+      "ci_high": 0.7246161873835535,
+      "n_clusters": 41,
+      "n_unsafe_hours": 19326
+    },
+    "share_outside W3 12-3 pm (IMD public)": {
+      "estimate": 0.7916796026078857,
+      "se": 0.0008819749814030629,
+      "ci_low": 0.7898970646781062,
+      "ci_high": 0.7934621405376653,
+      "n_clusters": 41,
+      "n_unsafe_hours": 19326
+    }
+  },
+  "very_high/acclimatised": {
+    "limit": 25.0,
+    "alert_days": 1342,
+    "unclassified_days": 661,
+    "best_past_window": "9-13",
+    "primary_diff": {
+      "estimate": 0.0,
+      "se": 0.0,
+      "ci_low": 0.0,
+      "ci_high": 0.0,
+      "n_clusters": 12,
+      "n_unsafe_hours": 5876
+    },
+    "supported": false,
+    "share_outside W1 12-4 pm (HAP p.155)": {
+      "estimate": 0.7027850063673108,
+      "se": 0.002007680591689326,
+      "ci_low": 0.6987273325318519,
+      "ci_high": 0.7068426802027696,
+      "n_clusters": 41,
+      "n_unsafe_hours": 18061
+    },
+    "share_outside W2 1-5 pm (HAP p.81)": {
+      "estimate": 0.7027850063673108,
+      "se": 0.002007680591689326,
+      "ci_low": 0.6987273325318519,
+      "ci_high": 0.7068426802027696,
+      "n_clusters": 41,
+      "n_unsafe_hours": 18061
+    },
+    "share_outside W3 12-3 pm (IMD public)": {
+      "estimate": 0.7770887547754831,
+      "se": 0.0015057604437669308,
+      "ci_low": 0.7740454993988891,
+      "ci_high": 0.7801320101520771,
+      "n_clusters": 41,
+      "n_unsafe_hours": 18061
+    }
+  },
+  "very_high/unacclimatised": {
+    "limit": 20.0,
+    "alert_days": 1342,
+    "unclassified_days": 661,
+    "best_past_window": "7-11",
+    "primary_diff": {
+      "estimate": 0.0,
+      "se": 0.0,
+      "ci_low": 0.0,
+      "ci_high": 0.0,
+      "n_clusters": 12,
+      "n_unsafe_hours": 6439
+    },
+    "supported": false,
+    "share_outside W1 12-4 pm (HAP p.155)": {
+      "estimate": 0.7318279462456911,
+      "se": 0.0002384104509638977,
+      "ci_low": 0.7313461007504561,
+      "ci_high": 0.7323097917409261,
+      "n_clusters": 41,
+      "n_unsafe_hours": 20017
+    },
+    "share_outside W2 1-5 pm (HAP p.81)": {
+      "estimate": 0.7318279462456911,
+      "se": 0.0002384104509638977,
+      "ci_low": 0.7313461007504561,
+      "ci_high": 0.7323097917409261,
+      "n_clusters": 41,
+      "n_unsafe_hours": 20017
+    },
+    "share_outside W3 12-3 pm (IMD public)": {
+      "estimate": 0.7988709596842684,
+      "se": 0.00017880783822282937,
+      "ci_low": 0.7985095755628423,
+      "ci_high": 0.7992323438056944,
+      "n_clusters": 41,
+      "n_unsafe_hours": 20017
+    }
+  },
+  "sensitivity_alert_population": {
+    "S1 IMD (2 days, Safdarjung)": {
+      "limit": 28.0,
+      "alert_days": 146,
+      "unclassified_days": 238,
+      "best_past_window": "9-13",
+      "primary_diff": {
+        "estimate": 0.0026109660574412663,
+        "se": 0.002771267155443391,
+        "ci_low": -0.0039420394659627255,
+        "ci_high": 0.009163971580845257,
+        "n_clusters": 8,
+        "n_unsafe_hours": 766
+      },
+      "supported": false,
+      "share_outside W1 12-4 pm (HAP p.155)": {
+        "estimate": 0.6695108077360636,
+        "se": 0.007676390719588089,
+        "ci_low": 0.6537317606294254,
+        "ci_high": 0.6852898548427019,
+        "n_clusters": 27,
+        "n_unsafe_hours": 1758
+      },
+      "share_outside W2 1-5 pm (HAP p.81)": {
+        "estimate": 0.6723549488054608,
+        "se": 0.006810399241323015,
+        "ci_low": 0.6583559726760102,
+        "ci_high": 0.6863539249349113,
+        "n_clusters": 27,
+        "n_unsafe_hours": 1758
+      },
+      "share_outside W3 12-3 pm (IMD public)": {
+        "estimate": 0.7514220705346986,
+        "se": 0.005925216568618818,
+        "ci_low": 0.739242613447568,
+        "ci_high": 0.7636015276218291,
+        "n_clusters": 27,
+        "n_unsafe_hours": 1758
+      }
+    },
+    "S3 HAP departure >= +4": {
+      "limit": 28.0,
+      "alert_days": 502,
+      "unclassified_days": 661,
+      "best_past_window": "10-14",
+      "primary_diff": {
+        "estimate": 0.015207131620346093,
+        "se": 0.011741911992152755,
+        "ci_low": -0.010376296872979814,
+        "ci_high": 0.040790560113672,
+        "n_clusters": 13,
+        "n_unsafe_hours": 1907
+      },
+      "supported": false,
+      "share_outside W1 12-4 pm (HAP p.155)": {
+        "estimate": 0.6395123839009288,
+        "se": 0.00809159909982616,
+        "ci_low": 0.6232431335060574,
+        "ci_high": 0.6557816342958002,
+        "n_clusters": 49,
+        "n_unsafe_hours": 5168
+      },
+      "share_outside W2 1-5 pm (HAP p.81)": {
+        "estimate": 0.6578947368421053,
+        "se": 0.004376955610955356,
+        "ci_low": 0.6490942777581401,
+        "ci_high": 0.6666951959260705,
+        "n_clusters": 49,
+        "n_unsafe_hours": 5168
+      },
+      "share_outside W3 12-3 pm (IMD public)": {
+        "estimate": 0.7215557275541795,
+        "se": 0.008049040198398647,
+        "ci_low": 0.7053720475657645,
+        "ci_high": 0.7377394075425945,
+        "n_clusters": 49,
+        "n_unsafe_hours": 5168
+      }
+    },
+    "ERA5 9-cell Tmax proxy": {
+      "limit": 28.0,
+      "alert_days": 582,
+      "unclassified_days": 0,
+      "best_past_window": "10-14",
+      "primary_diff": {
+        "estimate": 0.006831318970047295,
+        "se": 0.004590888936950206,
+        "ci_low": -0.0032731594518089855,
+        "ci_high": 0.016935797391903575,
+        "n_clusters": 12,
+        "n_unsafe_hours": 1903
+      },
+      "supported": false,
+      "share_outside W1 12-4 pm (HAP p.155)": {
+        "estimate": 0.6408450704225352,
+        "se": 0.005629847918581501,
+        "ci_low": 0.629448039152447,
+        "ci_high": 0.6522421016926235,
+        "n_clusters": 39,
+        "n_unsafe_hours": 6390
+      },
+      "share_outside W2 1-5 pm (HAP p.81)": {
+        "estimate": 0.6510172143974962,
+        "se": 0.004260559826092596,
+        "ci_low": 0.6423921619505565,
+        "ci_high": 0.6596422668444358,
+        "n_clusters": 39,
+        "n_unsafe_hours": 6390
+      },
+      "share_outside W3 12-3 pm (IMD public)": {
+        "estimate": 0.7280125195618153,
+        "se": 0.00466680886825573,
+        "ci_low": 0.7185650589248258,
+        "ci_high": 0.7374599801988049,
+        "n_clusters": 39,
+        "n_unsafe_hours": 6390
+      }
+    }
+  },
+  "by_decade_share_outside": {
+    "1980s": {
+      "n_unsafe_hours": 3778,
+      "W1 12-4 pm (HAP p.155)": 0.6336686077289571,
+      "W2 1-5 pm (HAP p.81)": 0.6516675489677077,
+      "W3 12-3 pm (IMD public)": 0.7202223398623611
+    },
+    "1990s": {
+      "n_unsafe_hours": 3284,
+      "W1 12-4 pm (HAP p.155)": 0.6300243605359318,
+      "W2 1-5 pm (HAP p.81)": 0.6461632155907431,
+      "W3 12-3 pm (IMD public)": 0.7189403166869671
+    },
+    "2000s": {
+      "n_unsafe_hours": 3587,
+      "W1 12-4 pm (HAP p.155)": 0.6258712015611931,
+      "W2 1-5 pm (HAP p.81)": 0.641761918037357,
+      "W3 12-3 pm (IMD public)": 0.7161973794257039
+    },
+    "2010s": {
+      "n_unsafe_hours": 3749,
+      "W1 12-4 pm (HAP p.155)": 0.6455054681248333,
+      "W2 1-5 pm (HAP p.81)": 0.6527073886369699,
+      "W3 12-3 pm (IMD public)": 0.7327287276607095
+    }
+  }
+}

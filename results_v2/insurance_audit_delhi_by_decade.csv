@@ -1,0 +1,13 @@
+decade,trigger,source,cell_days_in_period,unsafe_days,share_unsafe_days_not_counted,unsafe_hours_on_missed_days,share_counted_days_not_unsafe,cell_seasons,share_seasons_paid,share_seasons_unpaid_above_median_unsafe,work_class,status,limit
+1980,MHT 45.27/1d,"Down To Earth, May 2026 (day rule not stated: 1 day assumed, [CHECK])",8280,8022,0.9958863126402393,82375,0.0,90,0.18888888888888888,0.3111111111111111,moderate,acclimatised,28.0
+1990,MHT 45.27/1d,"Down To Earth, May 2026 (day rule not stated: 1 day assumed, [CHECK])",8280,8127,0.9873261966285222,85130,0.0,90,0.23333333333333334,0.3333333333333333,moderate,acclimatised,28.0
+2000,MHT 45.27/1d,"Down To Earth, May 2026 (day rule not stated: 1 day assumed, [CHECK])",8280,8151,0.9959514170040485,90933,0.0,90,0.28888888888888886,0.3,moderate,acclimatised,28.0
+2010,MHT 45.27/1d,"Down To Earth, May 2026 (day rule not stated: 1 day assumed, [CHECK])",7452,7340,0.9987738419618528,84614,0.0,81,0.07407407407407407,0.4691358024691358,moderate,acclimatised,28.0
+1980,MHT 46.53/1d,"Down To Earth, May 2026 (day rule not stated: 1 day assumed, [CHECK])",8280,8022,1.0,82762,0.0,90,0.0,0.5,moderate,acclimatised,28.0
+1990,MHT 46.53/1d,"Down To Earth, May 2026 (day rule not stated: 1 day assumed, [CHECK])",8280,8127,0.9988925802879292,86234,0.0,90,0.1,0.4111111111111111,moderate,acclimatised,28.0
+2000,MHT 46.53/1d,"Down To Earth, May 2026 (day rule not stated: 1 day assumed, [CHECK])",8280,8151,1.0,91326,0.0,90,0.0,0.4888888888888889,moderate,acclimatised,28.0
+2010,MHT 46.53/1d,"Down To Earth, May 2026 (day rule not stated: 1 day assumed, [CHECK])",7452,7340,1.0,84719,0.0,81,0.0,0.49382716049382713,moderate,acclimatised,28.0
+1980,MHT 47/1d,"Down To Earth, May 2026 (day rule not stated: 1 day assumed, [CHECK])",8280,8022,1.0,82762,0.0,90,0.0,0.5,moderate,acclimatised,28.0
+1990,MHT 47/1d,"Down To Earth, May 2026 (day rule not stated: 1 day assumed, [CHECK])",8280,8127,1.0,86342,0.0,90,0.0,0.5,moderate,acclimatised,28.0
+2000,MHT 47/1d,"Down To Earth, May 2026 (day rule not stated: 1 day assumed, [CHECK])",8280,8151,1.0,91326,0.0,90,0.0,0.4888888888888889,moderate,acclimatised,28.0
+2010,MHT 47/1d,"Down To Earth, May 2026 (day rule not stated: 1 day assumed, [CHECK])",7452,7340,1.0,84719,0.0,81,0.0,0.49382716049382713,moderate,acclimatised,28.0
