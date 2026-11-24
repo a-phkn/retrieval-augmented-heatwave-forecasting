@@ -7,7 +7,7 @@ Short, frequently-updated. The sections below the current status are a dated his
 - **Papers (decided 2026-11-24):** the lead paper stays the retrieval study ("When does retrieval help a weather
   forecast?"). The second paper is on heat stress: humid-heat days that Delhi's alerts miss, and unsafe working hours
   (from the heat-stress proposal of 2026-11-22). Each new piece is pre-registered before it runs.
-- **Order of work:** step 6 (training) → the station rebuild → humid-heat alerts and unsafe-hour counts → more cities
+- **Order of work:** step 6 (done: the gain held) → the station rebuild (P3-7 drafted, waiting for approval) → humid-heat alerts and unsafe-hour counts → more cities
   (Jaipur, Ahmedabad, Nagpur) and the longer-lead prediction → conformal ranges with the cost-loss value →
   forecasting unsafe hours (ECMWF as a baseline) → the blend with ECMWF → at submission, the merge into `main`, the
   licence check and the code release. Details: `docs/PROJECT_GUIDE.md` §12 and the journal plan doc.
@@ -37,8 +37,12 @@ Short, frequently-updated. The sections below the current status are a dated his
     - Both families pass the shuffled-year control (WBGT -0.080 °C, Tmax -0.077 °C on all days), and the control is
       no better than plain C3-hop: the gain is the right day's upper air, not more inputs. RS-4 is complete.
   - One-page note for the mentor: Claude Docs "Retrieval study: one-page note".
-  - **Step 6** (a descriptive check of step 4 on 2019-2021) was pre-registered 2026-11-24 (commit 38e046c); its code
-    is in `z500_direct.py` (`--folds test2021`, `--step6-report`) and both families are training.
+  - **Step 6 done** (`results/step6.md`; pre-registered 2026-11-24, post-test, descriptive). The upper-air input
+    keeps its all-day gain on 2019-2021: WBGT -0.089 °C, Tmax -0.083 °C (about 4% each; 9 clusters, fragile).
+    - P13 held. P14 (a smaller gain than in development) failed, in the model's favour.
+    - Heatwave days are lower too (Tmax -0.39 °C, WBGT -0.16 °C), but on 3-5 clusters: no conclusion.
+    - Whether the upper-air model becomes the paper's main model (and so whether P3-6, the 2027 season, is kept) is
+      to be decided before 2027-02-28.
   - Next: the multi-city check (Jaipur, Ahmedabad, Nagpur) and a pre-registered longer-lead prediction (weekly-mean
     anomalies at 2-3 weeks; GNA, arXiv 2609.36281, already states the principle on benchmark data).
 - The Phase 3 extras are on `phase3-extras` (main merged into it 2026-11-12; decisions recorded 2026-11-21).

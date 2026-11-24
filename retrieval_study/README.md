@@ -15,6 +15,8 @@ Step 6 is the one exception: a post-test, descriptive look at 2019-2021, read th
 - Given directly, the same upper-air pattern helps more. C3-hop's all-days error falls by about 4% (WBGT) and 3%
   (Tmax), and the gain needs the right day's upper air, not just more inputs (the shuffled-year control). This is not
   retrieval (step 4).
+- On 2019-2021, the test years with 500 hPa data, the same model keeps that gain: about 4% in both families (WBGT
+  -0.089 °C, Tmax -0.083 °C). This is descriptive only, since the test already used those years (step 6).
 - Retrieval keyed on ECMWF's own forecast (an analogue ensemble, Tmax 2016-2018) beats C3-hop by 26%, but only ties
   ECMWF's corrected forecast: the forecast carries the information (step 5).
 
@@ -29,7 +31,7 @@ Step 6 is the one exception: a post-test, descriptive look at 2019-2021, read th
 | `z500_direct.py` | Step 4 (not retrieval): C3-hop with the 500 hPa pattern as a direct input (10 principal-component scores per input day), its shuffled-year control (each year's scores taken from another training year), and the report. Step 6: the same model on 2019-2021 (`--folds test2021`) and its report. |
 | `hres_anen.py` | Step 5: an analogue ensemble keyed on ECMWF's HRES forecast (Delle Monache et al. 2013), compared with C3-hop and with corrected HRES. |
 | `data/` | Step 5's extract: HRES 2 m temperature over the Delhi box, runs from 2016-2018 only (WeatherBench 2). |
-| `predictions/` | Step 4's forecasts, 10 seeds x 4 folds per run. Its checkpoints (`checkpoints/`) are not committed. |
+| `predictions/` | Step 4's forecasts, 10 seeds x 4 folds per run, and step 6's (`test2021.parquet`). Their checkpoints (`checkpoints/`) are not committed. |
 
 ## How to rerun it
 
@@ -118,6 +120,6 @@ python -m retrieval_study.z500_direct --step6-report
 screens and ranges also read the networks' saved inner-block forecasts (`predictions_v2/inner/`), which are not
 committed; they come from retraining the development models (see the main README's Data section).
 
-Results: `results/step1.md`, `results/step1e.md`, `results/step2.md`, `results/step4.md` and `results/step5.md` (and
-the matching `.json` files).
+Results: `results/step1.md`, `results/step1e.md`, `results/step2.md`, `results/step4.md`, `results/step5.md` and
+`results/step6.md` (and the matching `.json` files).
 Tests: `tests/test_retrieval_study_*.py` (offline, plus one check against fold f4's arrays).

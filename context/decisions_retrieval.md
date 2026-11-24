@@ -477,3 +477,25 @@ RS-2 and before any forecast value was downloaded (user approved).**
   - No prediction for heatwave days.
 - Outputs: `retrieval_study/results/step6.{md,json}`. Code: `retrieval_study/z500_direct.py` gains a `--fold test2021`
   option for the same training and a step 6 report, with tests.
+- **DEVIATION 2026-11-24 (a clarification of the command; no design change):** the option is the existing `--folds`
+  argument given `test2021` (`--fold test2021` works too, as an abbreviation), plus `--step6-report` (commit 34a0b6c).
+- **RESULT 2026-11-24** (`retrieval_study/results/step6.md`; post-test, descriptive). 10 seeds, 1092 windows x 5
+  leads per family.
+  - All days, against C3-hop on the same windows (9 clusters each, so fragile):
+    - WBGT -0.089 °C [-0.158, -0.020];
+    - Tmax -0.083 °C [-0.158, -0.008].
+    - Consistent with RS-4 in both families.
+  - P13 (all days below 0 in both families) held.
+  - P14 (smaller than in development) failed: the gain did not shrink. WBGT -0.089 vs RS-4's -0.083; Tmax -0.083 vs
+    -0.057.
+  - Heatwave days, no conclusion:
+    - Tmax -0.389 °C (3 clusters, no CI);
+    - WBGT -0.161 °C [-0.717, +0.395] (5 clusters).
+  - WBGT against the Rz side-check: -0.085 °C [-0.137, -0.032] on all days.
+  - Descriptive:
+    - lower error at every lead in both families;
+    - the heatwave-day cold bias is slightly smaller: Tmax -1.86 -> -1.50 °C, WBGT -2.67 -> -2.53 °C.
+  - **Reading.** On years not used to design it, the direct upper-air input keeps its all-day gain, about 4% in both
+    families.
+    - It stays descriptive: the one-time test used these years, and 9 clusters make the CIs fragile.
+    - Only new years could confirm it: the 2027 season, or 2022-2026 with fresh 500 hPa data.

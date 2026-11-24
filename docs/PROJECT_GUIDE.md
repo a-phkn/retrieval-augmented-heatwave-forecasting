@@ -1226,8 +1226,23 @@ against the saved documents; details in `sources/PHASE6_PART_D_RESULT.md`):
   - On Tmax heatwave days it beats the shuffled model by 0.22 °C too (same 11-cluster caveat), and the shuffled model
     stays as cold as C3-hop (bias −1.20 °C). So it is the right day's upper air that helps, not more inputs.
 - So the upper air is information C3-hop lacks, and given directly it is used far better than through retrieval.
-- Caveat: the 500 hPa data we have end in 2021, so this can't be run on the 2019–2026 test years as they stand.
+- Caveat: the 500 hPa data we have end in 2021, so of the test years only 2019–2021 can be checked (step 6).
 - Report: `retrieval_study/results/step4.md`.
+
+**Step 6: the same model on 2019–2021 (post-test, descriptive)**
+- **The test:** step 4's model trained once more, as the test models were (fit 1980–2016, early stopping on
+  2017–2018), and scored on the 2019–2021 windows. These are the test years with 500 hPa data. It is compared with
+  C3-hop's own test forecasts on the same windows and seeds.
+- **The gain holds, and did not shrink:**
+  - WBGT 2.276 → 2.187 °C on all days (−0.089);
+  - Tmax 2.239 → 2.156 °C (−0.083).
+  - Both are about 4%, at every lead.
+  - We had predicted a smaller gain than on the development years. That prediction failed, in the model's favour.
+- **Heatwave days:** lower error in both families (Tmax −0.39 °C, WBGT −0.16 °C), but on 3–5 year × season clusters.
+  That is too few to conclude anything.
+- **Still descriptive:** the one-time test already used these years, and 9 clusters make the CIs fragile. Only new
+  years could confirm it (the 2027 season, or 2022–2026 with fresh 500 hPa data).
+- Report: `retrieval_study/results/step6.md`.
 
 **Step 5: retrieval keyed on ECMWF's own forecast (Tmax, 2016–2018; descriptive, one fold)**
 - **The test:** the classic weather-forecasting use of retrieval, the analogue ensemble. For each day, find the 20
@@ -1250,7 +1265,8 @@ against the saved documents; details in `sources/PHASE6_PART_D_RESULT.md`):
   the region, is not such a case.
 - **What could help heatwave days:** information that tells a coming heatwave apart. The upper-air pattern is the
   only candidate that showed any. Given to C3-hop directly (step 4), it cuts the error in both families and, for
-  Tmax, on heatwave days too (fragile; to be confirmed). Through retrieval it did little.
+  Tmax, on heatwave days too (fragile; to be confirmed). It keeps its all-day gain on 2019–2021 (step 6,
+  descriptive). Through retrieval it did little.
 
 ---
 
@@ -1321,8 +1337,9 @@ critical reviews of 2026-10-22 were addressed: claims corrected, frozen-code iss
     "Retrieval study: one-page note").
   - Step 4 is not retrieval. The 500 hPa data we have end in 2021, so testing it on new years (the 2027 season)
     needs fresh upper-air data.
-  - Step 6, a descriptive check of step 4 on 2019–2021 (where 500 hPa data already exist), was pre-registered on
-    2026-11-24 and is training.
+  - Step 6 (2026-11-24, pre-registered, descriptive): on 2019–2021 the upper-air input keeps its all-day gain,
+    about 4% in both families (WBGT −0.089 °C, Tmax −0.083 °C; 9 clusters, fragile). Whether it becomes the paper's
+    main model, and so whether the 2027 season (P3-6) is kept, is to be decided before 2027-02-28.
   - Next, from the journal plan (Claude Docs, "Research Positioning and Journal Plan") and the heat-stress proposal
     (2026-11-22):
     - repeating the retrieval experiments for Jaipur, Ahmedabad and Nagpur. Their 2019–2026 years were never
@@ -1411,4 +1428,4 @@ critical reviews of 2026-10-22 were addressed: claims corrected, frozen-code iss
 | 2026-11-11 | Retrieval study (§9.2, branch `retrieval-improvements`), after the mentor's feedback: the information ladder shows retrieval helps only when it brings information the model lacks; RAFT as published adds nothing on our data, but the same code works in its own kind of setting (hourly, short window: −7%), the positive control; a similar past barely means a similar future (0.02–0.08 vs RAFT's 0.60); heatwave-day "cold analogues" are regression to the mean. The second reference paper's idea is what C3-hop already does (H1). Step 2: only upper-air retrieval helps C3-hop (WBGT ordinary days, ~1%); the same information given directly helps more; season-to-date retrieval adds nothing; retrieval-based ranges are worse on heatwave days. Step 5: an analogue ensemble keyed on ECMWF's forecast beats C3-hop by 26% (Tmax, 2016–2018) but only ties ECMWF's corrected forecast. |
 | 2026-11-12 | Retrieval study step 4: C3-hop given the 500 hPa pattern directly helps both families on all days (WBGT −0.083 °C, about 4%; Tmax −0.057 °C, about 3%) and Tmax heatwave days (−0.22 °C, about 12%; 11 clusters, to be confirmed). It beats the shuffled-year check in both families (WBGT −0.080 °C, Tmax −0.077 °C), which is no better than plain C3-hop: the gain is the right day's upper air, not more inputs. The README and the glossary now cover the retrieval study. Phase 3 extras: the station record will be rebuilt from NOAA's hourly reports (option a, pre-registration to come); main merged into `phase3-extras`; the other extras are to be discussed. |
 | 2026-11-21 | Next steps set from the journal plan (2026-11-20): step 6, a descriptive check of step 4 on 2019–2021 (drafted, awaiting approval), then more cities and a longer-lead prediction. Phase 3 decisions: Palam added to the station rebuild; corrector and blend kept without GraphCast 2020; conformal ranges kept with reliability tables; benchmark dropped; the 2027 season kept only if the upper-air model becomes the main model. |
-| 2026-11-24 | Step 6 pre-registered and training. From the heat-stress proposal (2026-11-22): the lead paper stays the retrieval study; the second paper is on heat stress (humid-heat days the alerts miss, unsafe working hours); more cities named (Jaipur, Ahmedabad, Nagpur) and the longer-lead test specified; the station rebuild extended to hourly temperature, dew point and daily minima; the cost-loss value added to conformal ranges. New order of work in §12. The journal plan doc was brought up to date. |
+| 2026-11-24 | Step 6 (pre-registered, descriptive): on 2019–2021 the upper-air input keeps its all-day gain (WBGT −0.089 °C, Tmax −0.083 °C, about 4%; 9 clusters), larger than predicted. From the heat-stress proposal (2026-11-22): the lead paper stays the retrieval study; the second paper is on heat stress (humid-heat days the alerts miss, unsafe working hours); more cities named (Jaipur, Ahmedabad, Nagpur) and the longer-lead test specified; the station rebuild extended to hourly temperature, dew point and daily minima; the cost-loss value added to conformal ranges. New order of work in §12. The journal plan doc was brought up to date. |

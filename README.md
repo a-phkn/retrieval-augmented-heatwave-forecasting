@@ -17,8 +17,8 @@ documented in detail when it helps and when it doesn't.
   (`advisory/eval/rating_results.md`).
 - A follow-up study on the development years (2007–2018) explains why retrieval did not help: it only helps when it
   brings information the model's inputs lack, and ours already get the season and the region. Given directly, the
-  one piece C3-hop lacked, the 500 hPa upper-air pattern, cuts its error by 3–4% on all days
-  (`retrieval_study/README.md`).
+  one piece C3-hop lacked, the 500 hPa upper-air pattern, cuts its error by 3–4% on all days. A later, descriptive
+  check on 2019–2021 found the same gain, about 4% in both families (`retrieval_study/README.md`).
 
 ## Main results
 
