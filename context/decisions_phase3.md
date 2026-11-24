@@ -340,6 +340,16 @@ Rules for this file:
   Database, under their own pre-registration, written and pushed before any ISD temperature is downloaded. Options
   (b) and (c) are not taken.
   - 2026-11-21 (user approved): Palam, the airport station, is rebuilt the same way, as a second station.
+- **DECISION 2026-11-24 (user approved; before the rebuild's pre-registration and before any ISD temperature is
+  downloaded):** the rebuild's scope is extended. For both stations it also produces hourly temperature and dew point,
+  and a daily minimum. Why:
+  - the dew point checks ERA5's humidity around 2000-01 (the caveat in `evaluation_v2/premise_report.md`);
+  - the station maxima let Delhi's alert schemes run on the readings they are defined on, for a planned heat-stress
+    analysis (humid-heat days the alerts miss);
+  - the minimum serves a possible hot-nights target.
+  - NOAA's station list (`isd-history.csv`, downloaded 2026-11-24 with the format document; no temperatures)
+    confirms 421820-99999 SAFDARJUNG and 421810-99999 INDIRA GANDHI INTL (Palam). Both records end 2025-08-24. The
+    rebuild's own pre-registration fixes every rule.
 
 **P3-4: Conformal forecast ranges. PRE-REGISTERED 2026-11-05 (user approved).**
 - Base: the test report's ranges: the recalibrated ensemble mean +/- a Gaussian width from the stop-block residual SD
@@ -369,6 +379,12 @@ Rules for this file:
   descriptive output: reliability tables for the test's recalibrated hot-day probability (observed hot-day
   frequency against the forecast probability in 10 equal-width bins, with counts), for the same models and targets.
   No pass rule. Why: the journal plan (2026-11-20) lists calibrated probabilities and range coverage among its fixes.
+- **DEVIATION 2026-11-24 (user approved; written before any P3-4 code):** P3-4 gains one more descriptive output: the
+  cost-loss value of acting on the test's recalibrated hot-day probability. This is the relative economic value
+  (Richardson 2000), with the user acting when the probability is at least the cost/loss ratio, over ratios 0.01 to
+  0.99 in steps of 0.01. It covers the same models and targets, and shows C3-hop's pre-chosen yes/no warning rules
+  as single points. No pass rule. Why: the heat-stress proposal (2026-11-22) asks for results stated in terms an
+  official can act on. The comparison with the official alert schemes waits for the planned alert analysis.
 
 **P3-5: Benchmark, leaderboard and error budget. PRE-REGISTERED 2026-11-05 (user approved).**
 - No new hypothesis. A package so others can score their own models the same way.
