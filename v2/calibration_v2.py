@@ -106,6 +106,9 @@ def h_c(folds: list[tuple[pd.DataFrame, pd.DataFrame]], lead: int = 1) -> dict:
         res[name] = {**asdict(e), "p_above_0.75": p_lo, "p_below_0.85": p_hi,
                      "mean_width": float(rows["width"].mean())}
     res["p_tost"] = float(max(ps)) if np.all(np.isfinite(ps)) else float("nan")
+    if "stratum" in iv:   # reported, not tested: coverage on OBSERVED extreme days (forecaster's dilemma caveat)
+        ext = iv[iv["stratum"] == "extreme"].groupby("target_date")["hit"].mean().rename("hit").reset_index()
+        res["observed_extreme"] = asdict(_jack(ext, "hit")) if len(ext) else None
     return res
 
 

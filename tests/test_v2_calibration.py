@@ -48,3 +48,13 @@ def test_e5_miss_rate_controlled_and_holm():
     h = holm({"a": 0.01, "b": 0.04, "c": 0.03})
     assert h["a"]["p_holm"] == 0.03 and h["c"]["p_holm"] == 0.06 and h["b"]["p_holm"] == 0.06
     assert h["a"]["reject"] and not h["b"]["reject"]
+
+
+def test_e5_baselines_scores():
+    from v2.e5_baselines import scores
+    idx = pd.date_range("1980-01-01", "2018-12-31")
+    rest = pd.Series(np.arange(len(idx), dtype=float), index=idx)
+    p = scores(rest, "persistence", 2)
+    assert p.iloc[5] == rest.iloc[3] and np.isnan(p.iloc[0])
+    c = scores(rest, "calendar", 1)
+    assert c.notna().all() and c.index.equals(rest.index)

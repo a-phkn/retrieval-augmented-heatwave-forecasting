@@ -504,6 +504,59 @@ hourly WBGT exposure trigger or to the timing of a heat payout."
   Communications Engineering 2025 doi 10.1038/s44172-025-00548-6; Kazlauskaite arXiv 2606.06391. Full notes:
   `research/sdg13_heat_insurance_gap.md`. Repeated before submission.
 
+## 13. Notes after the H-C/E5 development run (24 Nov 2026, commit 52b8e8b before the run)
+- Results: E5 supported (lead 1: miss 0.192, Holm p 0.015, false alarms 0.28); H-C not supported (coverage 0.789
+  all days, 0.828 forecast-hot, TOST p 0.18: inside the band but not shown with enough precision); H-A not
+  supported (two-sided p 0.082).
+- **Added after the result, descriptive only:** (i) coverage on observed-extreme days, which H-C promised to report
+  but the first run's code did not compute; (ii) E5 no-model comparators (`v2/e5_baselines.py`): persistence
+  (issue-day rest-hours) and calendar climatology, same CRC, folds and event. These answer whether the forecast
+  model adds anything over a trigger anyone could build without it. Not tests; not in the Holm family.
+
+## 14. Amendment A3 (24 Nov 2026, night; written AFTER the E5 result and the persistence comparison)
+
+**Why.** `v2/e5_baselines.py` and `v2/e5_vs_persistence.py` (both post-hoc, descriptive; Section 13) ran the
+same CRC trigger on persistence (issue-day observed rest-hours). Development 2007-2018, model minus persistence,
+year x season jackknife (24 clusters), two-sided 95% CI:
+
+| Lead | Miss model / pers. | False alarm model / pers. | Peirce diff [95% CI] |
+|---|---|---|---|
+| 1 | 0.192 / 0.158 | 0.283 / 0.215 | -0.103 [-0.136, -0.070] |
+| 2 | 0.178 / 0.175 | 0.367 / 0.363 | -0.006 [-0.051, +0.038] |
+| 3 | 0.173 / 0.174 | 0.407 / 0.417 | +0.010 [-0.044, +0.065] |
+| 4 | 0.188 / 0.183 | 0.405 / 0.450 | +0.040 [-0.018, +0.099] |
+| 5 | 0.201 / 0.174 | 0.389 / 0.471 | +0.054 [-0.011, +0.120] |
+
+Calendar climatology (no weather information) missed 0.220 (se 0.034); it would fail E5's part 1 (one-sided p
+0.19 for miss < 0.25). Persistence passes it (miss 0.158, se 0.015).
+Seed-ensemble trigger (mean forecast over the 10 seeds, same CRC): Peirce diff vs persistence -0.092 [-0.128,
+-0.057] at lead 1, +0.068 [-0.009, +0.144] at lead 5; the lead-1 gap is not a seed-averaging artefact.
+Forecast skill of the model's own target (in-season daily max WBGT, seed-ensemble, 2007-2018): RMSE 1.87 vs
+persistence 2.26 at lead 1, 2.24 vs 3.00 at lead 3, 2.35 vs 3.11 at lead 5 (17-25% lower).
+
+**A3.1 Claim wording.** E5 supports claim (a): the conformal procedure holds its miss rate on unseen years with
+the C3-hop forecast (a weather-free calendar score does not pass the same test). Claim (b), that the forecast adds
+value as the trigger score, is NOT supported at lead 1 and is undetermined at leads 2-5, for the score used here
+(daily max WBGT) against persistence of the event variable itself (rest-hours). This is not a statement about the
+model's forecast skill, which beats persistence on its own target at every lead. The paper reports both.
+
+**A3.2 Test-period comparison (2019+, secondary because seen; Section 5).** Scored once, with E5, after
+`test-lock-v2`: Peirce difference model minus persistence at leads 1-5, same CRC, same alpha 0.20, two-sided,
+Holm across the 5 leads. Persistence there uses the same ERA5 rest-hours as development. Reported, not used to
+overturn the development result.
+
+**A3.3 Power (computed now, before the tag).** Test clusters G = 16 (2019-2026, 2 per season). Scaling the
+development SEs by sqrt(24/16), the difference detectable with 80% power at the per-lead Bonferroni level 0.01 is
+0.074 (lead 1), 0.10 (2), 0.12 (3), 0.13 (4), 0.15 (5). The development lead-5 estimate (+0.054) is below that, so
+2019+ cannot confirm a model advantage at long leads; only the lead-1 deficit is detectable.
+
+**A3.4 Operational persistence.** Persistence here reads ERA5 rest-hours; the model's inputs are ERA5 too, so
+neither is real-time as run. If Safdarjung hourly observations (NOAA ISD 42182, team task) cover 2007-2018,
+persistence is rerun from station WBGT as a sensitivity.
+
+**A3.5 Not done.** No blended model-plus-persistence trigger is fitted on development years. If one is wanted it is
+specified in a further amendment and scored only on the 2027 prospective season (Section 9).
+
 ## References
 - IMD_HW_FAQ, DELHI_HAP_2025, HOT_WEATHER_HAZARD_ANALYSIS_2022: see `sources/phase6_thresholds.json` and
   `sources/phase6_candidate_actions.json` (page and verbatim excerpt per row).
