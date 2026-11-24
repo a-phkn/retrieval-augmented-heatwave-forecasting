@@ -191,9 +191,9 @@ The only fully unseen data available to this study is (a) any city added in Sect
   with conformal risk control (Angelopoulos et al., ICLR 2024) so that the expected share of unsafe days with no
   trigger is at most α = 0.20 (matching the 80% level used above; α = 0.10 reported as a sensitivity).
   **Reported:** realised miss rate and false-trigger rate out of fold 2007-2018, leads 1-5. **Supported if** the
-  realised miss rate is at most α + 0.05 (the same ±0.05 tolerance as above). Not in the Holm family: it is a
-  secondary arm of H-C, and the same exchangeability caveat applies. Prior-art search (24 Nov): conformal risk
-  control found in robot-safety work, not in heat warnings or insurance triggers.
+  realised miss rate is at most α + 0.05 (the same ±0.05 tolerance as above). **Superseded by amendment A2
+  (Section 12): E5 is now a primary hypothesis in the Holm family, with the event and test defined there.**
+  The same exchangeability caveat applies.
 
 ### H-N. Physics head v2 (engineering; models)
 - **Model:** C3-hop encoder + the physics head, moved into `v2/` (copy of `models/physics_head.py`), predicting the
@@ -266,7 +266,8 @@ The only fully unseen data available to this study is (a) any city added in Sect
 
 ### Multiple testing
 H-A, H-C and H-N are the primary family: Holm correction, family-wise alpha 0.05 (as v1). H-B, H-D, H-E and the
-H-C trigger arm are exploratory or descriptive.
+H-C trigger arm are exploratory or descriptive. **Amended by A2 (Section 12): the family is H-A, H-C, H-N and E5,
+with the p-value for each defined there.**
 
 ---
 
@@ -419,6 +420,46 @@ None of A1 enters the Holm family (H-A, H-C, H-N).
   the paper as superseded. Sun rows are unaffected.
 - **H-E1 Spearman CI added:** delete-one-season-year jackknife (the 9 cells of a year are not independent), t(G-1).
 
+
+## 12. Amendment A2 (24 Nov 2026, evening; before any model, calibration or trigger result)
+**Status at writing:** H-A has been run (not supported, commit 69dd9b3) and A1's exposure results exist (9df47dc).
+No forecast, calibration, trigger or physics-head result exists: Sudarshan's C3-hop model files and
+`predictions_v2/inner/` have not been received. A2 changes only hypotheses that have not been run.
+
+**A2.1 E5 becomes a primary hypothesis (Holm family).**
+- **Event:** tomorrow's rest-hours >= R = 9.0 (A1.5/A1.6; moderate, TLV, sun WBGT, 9-cell mean, stamps 06-20),
+  in season (Mar 15-Sep 30). Not the binary "unsafe day": in Delhi that holds on ~98% of May-July days (H-E run).
+- **Score:** the C3-hop daily maximum WBGT forecast at each lead 1-5 (exists without E4). If H-N passes, the
+  physics head's forecast rest-hours is reported as a second score; the test uses the C3-hop score only.
+- **Threshold:** conformal risk control on each fold's inner block, α = 0.20 (α = 0.10 as sensitivity), as in H-C.
+- **Test:** out of fold 2007-2018, pooled over folds, lead 1 primary (leads 2-5 reported). Realised miss rate =
+  share of event days with no trigger. H0: miss rate >= 0.25 (α + 0.05). One-sided p-value from the
+  year x season cluster jackknife t statistic (t(G-1), as H-A). **Supported if** the Holm-adjusted p < 0.05.
+  False-trigger rate and triggers per season are always reported next to it.
+- **Wording:** "calibrated miss rate" with the realised rate reported; never "guaranteed" or "certified".
+  Conformal risk control bounds the expected miss rate only under exchangeability; serial correlation and the
+  warming trend can break it (H-C known limit).
+
+**A2.2 p-values for the whole Holm family** (the earlier text gave pass rules as CIs or bands, which Holm cannot
+use directly):
+- **H-A:** two-sided jackknife t p-value of coverage(best) - coverage(W1), matching the original rule (95% CI above
+  0). Already run; it is not relaxed to a one-sided p after the result, and Holm can only make it stricter.
+- **H-C:** equivalence (two one-sided tests) of 80% coverage against 0.75 and 0.85, on forecast-hot days and on all
+  days; p = the largest of the four one-sided jackknife p-values.
+- **H-N:** non-inferiority, one-sided jackknife p for each pre-set margin (WBGT and Tmax 0.05 C, unsafe-hour error
+  2%); p = the largest.
+- **E5:** as A2.1.
+Holm over these four at family-wise 0.05.
+
+**A2.3 E4 is not load-bearing.** The paper's main claims rest on the audit (H-A, H-E/H-E1), the calibrated
+trigger (H-C, E5) and the pay-ahead design (H-D, exploratory). H-N/E4 is reported pass or fail; if it fails, the
+WBGT layer is reported as an enabling tool only.
+
+**A2.4 Novelty wording (prior-work checks of 24 Nov, `research/sdg13_heat_insurance_gap.md`).** Conformal methods
+already exist for heat decisions on air temperature (Berk, arXiv 2508.12886), for core-body temperature
+(Communications Engineering 2025, doi 10.1038/s44172-025-00548-6) and for parametric-insurance payout obligations
+on rainfall (Kazlauskaite, arXiv 2606.06391). The claim is: "we found no conformal risk control applied to an
+hourly WBGT exposure trigger or to the timing of a heat payout."
 
 ## References
 - IMD_HW_FAQ, DELHI_HAP_2025, HOT_WEATHER_HAZARD_ANALYSIS_2022: see `sources/phase6_thresholds.json` and
