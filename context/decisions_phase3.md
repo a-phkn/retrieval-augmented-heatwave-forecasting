@@ -350,6 +350,13 @@ Rules for this file:
   - NOAA's station list (`isd-history.csv`, downloaded 2026-11-24 with the format document; no temperatures)
     confirms 421820-99999 SAFDARJUNG and 421810-99999 INDIRA GANDHI INTL (Palam). Both records end 2025-08-24. The
     rebuild's own pre-registration fixes every rule.
+- **DECISION 2026-11-24, later (user approved):** the planned heat-stress analyses are retired. They are humid-heat
+  days the alerts miss, unsafe working hours against the fixed work windows, and forecasting unsafe hours. All three
+  are covered by the teammate's pre-registered study on the branch `experiments-v2` (`docs/PROTOCOL_V2.md`: H-A,
+  H-B, H-E and H-N; tag `test-lock-v2`; results in `results_v2/`). None of them was started here.
+  - The rebuild now also serves that study. Its station comparisons use GHCN files: Safdarjung's is misdated after
+    2010 (the RESULT above), and Ahmedabad's and Chennai's come from the same source. So the rebuild adds Ahmedabad
+    and Chennai airport, defined in its own pre-registration.
 
 **P3-4: Conformal forecast ranges. PRE-REGISTERED 2026-11-05 (user approved).**
 - Base: the test report's ranges: the recalibrated ensemble mean +/- a Gaussian width from the stop-block residual SD
@@ -385,6 +392,14 @@ Rules for this file:
   0.99 in steps of 0.01. It covers the same models and targets, and shows C3-hop's pre-chosen yes/no warning rules
   as single points. No pass rule. Why: the heat-stress proposal (2026-11-22) asks for results stated in terms an
   official can act on. The comparison with the official alert schemes waits for the planned alert analysis.
+- **DROPPED 2026-11-24 (user approved), before any P3-4 code:** P3-4 is not run, nor are its two later additions
+  (reliability tables, cost-loss value).
+  - The same question was pre-registered and already scored on the branch `experiments-v2`, as H-C in
+    `docs/PROTOCOL_V2.md`: conformal ranges conditioned on heat level, judged on forecast-hot days, with the same
+    forecaster's-dilemma caveat. Its result is in `results_v2/test_v2.json`.
+  - That study's H-D includes the cost-loss value (relative economic value, Richardson 2000).
+  - Running P3-4 as well would test one question twice, with two answers to reconcile.
+  - If reliability tables are wanted for the retrieval paper later, they come back as a new entry.
 
 **P3-5: Benchmark, leaderboard and error budget. PRE-REGISTERED 2026-11-05 (user approved).**
 - No new hypothesis. A package so others can score their own models the same way.
