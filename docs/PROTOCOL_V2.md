@@ -565,6 +565,29 @@ persistence is rerun from station WBGT as a sensitivity.
 **A3.5 Not done.** No blended model-plus-persistence trigger is fitted on development years. If one is wanted it is
 specified in a further amendment and scored only on the 2027 prospective season (Section 9).
 
+## 15. Amendment A4 (24 Nov 2026, night; BEFORE any Chennai or Ahmedabad H-A result)
+
+Section 7 says H-A is repeated in the extra cities "with the same definitions"; three details were not fixed. Code:
+`v2/run_city_window_test.py`. Exploratory, not in the Holm family. Only the code check of Section 0 item 4
+(3 months of one Ahmedabad cell) has looked at city data.
+
+**A4.1 Alert source.** The repo has no station series for Chennai or Ahmedabad, so alert days come from the
+9-cell ERA5 daily Tmax (mean over cells of each cell's daily maximum), as in Delhi's ERA5 sensitivity. ERA5 Tmax
+can run below station Tmax; absolute thresholds may then under-count alert days. The departure-only rule (A4.2)
+is the check on that, and the in-season 1981-2010 ERA5 Tmax mean is reported.
+
+**A4.2 Alert rules.** Normals: 1981-2010, 31-day circular day-of-year mean, as Delhi.
+- Chennai, primary: IMD coastal criterion, Tmax >= 37 and departure >= 4.5, met on the day and the day before.
+- Ahmedabad, primary: Ahmedabad HAP 2018 Yellow, Tmax >= 41.1 (single day; AHMEDABAD_HAP_2018 p.3).
+  Sensitivity: IMD plains criterion (as Delhi S1, 2 days).
+- Both, sensitivities: departure >= 4.5 on 2 consecutive days (no absolute threshold); Delhi's ERA5 proxy rule.
+
+**A4.3 Comparator window and search.** Chennai: 12-3 pm (TN HAP 2019; page still [DATA]). Ahmedabad: no verified
+city work window, so 12-4 pm (Delhi HAP) is used and labelled as borrowed. The best past window (1980-2006) is
+searched among windows of the comparator's length (3 h for Chennai, 4 h for Ahmedabad), so a longer window
+cannot win by length. Everything else as Delhi H-A and H-A1 (moderate, acclimatised, 28 C; rest-hours moderate
+TLV sun; hold-out 2007-2018; year x season jackknife).
+
 ## References
 - IMD_HW_FAQ, DELHI_HAP_2025, HOT_WEATHER_HAZARD_ANALYSIS_2022: see `sources/phase6_thresholds.json` and
   `sources/phase6_candidate_actions.json` (page and verbatim excerpt per row).
