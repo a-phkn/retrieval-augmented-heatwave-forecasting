@@ -438,3 +438,128 @@ Rules for this file:
     models, the P3-2 variants only if P3-2 has run, and the rebuilt ISD station record in place of GHCN. The upper-air
     model also needs 500 hPa data for 2027.
   - If not kept, a DROPPED line is added here.
+
+**P3-7: Station records rebuilt from NOAA ISD (Safdarjung, Palam), and a dating check of the experiments-v2 station
+files (Ahmedabad, Chennai). PRE-REGISTERED 2026-11-25 (user approved; drafted 2026-11-24, revised 2026-11-25):
+no ISD file downloaded.**
+- **Why.**
+  - P3-3 found the GHCN-Daily file for Safdarjung misdated after 2010 (RESULT 2026-11-11).
+  - On 2026-11-12 the user chose option (a): rebuild the station record from NOAA's Integrated Surface Database (ISD).
+  - Palam was added on 2026-11-21, and hourly temperature, dew point and daily minima on 2026-11-24.
+  - The teammate's study on `experiments-v2` uses GHCN files from the same source for Ahmedabad and Chennai.
+  - On 2026-11-25 the user chose a staged plan: check those two files first, and rebuild a city from ISD only if its
+    file shows the fault (part B).
+- **Seen so far.**
+  - The ISD station list and format document (downloaded 2026-11-24), and response headers for a few yearly files.
+    No ISD report, temperature or dew point has been opened.
+  - The Safdarjung GHCN file was seen in P3-3.
+  - The `experiments-v2` station results (`results_v2/station_checks.json`, read 2026-11-24) use GHCN files for the
+    three cities. ERA5 minus station is -0.71 °C for Delhi and -1.28 °C for Ahmedabad.
+  - The two GHCN files that study used were received from the teammate on 2026-11-25. Only their headers were
+    opened before this revision was written.
+- **Data.**
+  - ISD's yearly raw files, `https://www.ncei.noaa.gov/pub/data/noaa/<YEAR>/<USAF>-<WBAN>-<YEAR>.gz`, 1980-2025 (both
+    records end 2025-08-24). That is 92 files, about 20-30 MB:
+    - 421820-99999, Safdarjung;
+    - 421810-99999, Indira Gandhi International (Palam).
+  - Saved to `data/raw/noaa_isd/<USAF>-<WBAN>/` (gitignored). A committed manifest gives each file's URL, size and
+    SHA-256.
+  - The two GHCN-Daily files that `experiments-v2` used, as received from the teammate, are kept in
+    `data/raw/ghcn_experiments_v2/` (gitignored). The manifest records their SHA-256:
+    - IN005010600 (Ahmedabad): 0f09273e57ed7a74b9315309511eb6412605508e0e936115a60894498fbccdf8;
+    - IN020040900 (Chennai, Minambakkam): e2f6e651c8aca0332b99a6097a5b75e4a388b694b8cda994c6c133f878feb381.
+- **Reading the reports** (positions from the ISD format document):
+  - Fields read:
+    - the date and UTC time (16-27) and the report type (42-46);
+    - the air temperature (88-92, tenths of °C, +9999 missing) and its quality code (93);
+    - the dew point (94-98) and its quality code (99);
+    - the extreme-temperature groups KA1-KA4: period in tenths of hours; code M (maximum) or N (minimum);
+      temperature in tenths of °C; quality code.
+  - A value is used if its quality code is 0, 1, 4, 5, 9, A, C, I, M, P, R or U. Codes 2, 3, 6 and 7 (suspect or
+    erroneous) are dropped. Estimated extremes (codes O and P) are not used.
+  - Several reports at one UTC time: FM-12 (SYNOP) is taken first, then FM-15 (METAR), then FM-16 (SPECI), then any
+    other type. Within a type, the first in file order is taken.
+- **Days and hours.**
+  - A day is the IST calendar day (UTC + 5:30), as for the ERA5 target.
+  - The hourly series keeps only reports at minute 00 UTC, the same instants as ERA5's hours. In IST they fall at half
+    past the hour.
+- **Daily values, two kinds of each:**
+  - Reported values:
+    - Tmax: the code M group of that date's 12 UTC report (17:30 IST), whatever its period. This is the
+      maximum-thermometer reading behind IMD's and GHCN's values.
+    - Tmin: the code N group of that date's 03 UTC report (08:30 IST), IMD's reading time for the minimum.
+  - Hourly values:
+    - Tmax: the highest of the 24 hourly readings of the IST day. It needs at least 18 of them, including all six from
+      06 to 11 UTC (11:30-16:30 IST). This is like-for-like with ERA5's daily maximum.
+    - Tmin: the lowest reading from 21 UTC the day before to 03 UTC (02:30-08:30 IST). It needs at least 6 of those 7.
+  - Dew point: the hourly series, and the IST-day mean (at least 18 hours).
+  - No gap is filled. A day without a value is left out.
+- **Step 1, before any value is read: a census.**
+  - For each station, it counts the reports per year, report type, UTC hour and minute, and the KA groups per UTC
+    hour, code and period.
+  - If a station has no 12 UTC maximum groups or no 03 UTC minimum groups, its reported values are not available.
+    A DEVIATION is written before going on.
+- **Step 2, validation.**
+  - (a) Each station against itself.
+    - Its reported Tmax must match its own hourly Tmax best at lag 0: the mean absolute difference is smaller than with
+      the dates shifted one day either way.
+    - The reported Tmax may fall more than 0.5 °C below the hourly Tmax on at most 5% of days. A maximum thermometer
+      cannot read lower than the hourly readings; 0.5 °C allows for whole-degree METAR values.
+    - A station that fails is reported, and left out of the steps below.
+  - (b) Safdarjung against GHCN, 1980-2008 (the years P3-3 found correctly dated), on the days both records have.
+    The reported Tmax passes if all three hold:
+    - its mean absolute difference from GHCN TMAX is smaller at lag 0 than with the dates shifted one day either way;
+    - the mean difference is within ±0.3 °C;
+    - at least 80% of days agree within 0.5 °C.
+    - The reported Tmin is compared with GHCN TMIN the same way, descriptive only.
+    - If Safdarjung fails, the rebuild stops: the census and the comparisons are reported, and nothing below runs
+      without a new entry.
+- **Step 3, if Safdarjung passes: P3-3 rerun (Delhi).**
+  - P3-3's analyses (i), (ii) and (iv) are rerun exactly as registered, with the 2026-11-10 clarification. So is the
+    part of (iii) that is already run.
+  - Safdarjung's reported Tmax (1980 to 2025-08-24) replaces the GHCN file.
+  - The 2019-2025 forecast comparisons stay post-test and descriptive.
+  - The hourly Tmax is reported beside it, as the like-for-like comparison with ERA5.
+  - Palam gets the same tables, as a second station, descriptive.
+- **Part B: the `experiments-v2` station files (Ahmedabad, Chennai; exploratory).**
+  - **The check.** P3-3's dating check, on each file's usable TMAX values (quality-flagged values dropped), per block
+    (1980-2008, 2009-2010, 2011-2015, 2016-2025) and per year.
+    - It reports the coverage, and the share of consecutive reporting days with exactly the same value.
+    - If the teammate sends her ERA5 city files (`data/raw/cities/_wbgt/<city>_hourly_dev.parquet`), it also reports
+      how day D's station value matches ERA5 of D, of D - 1, and the larger of the two.
+  - **Flagging.** A block after 2008 is flagged if any of these holds:
+    - its share of identical consecutive values is at least twice the 1980-2008 share;
+    - its coverage is below 75%;
+    - with ERA5: the station matches ERA5 of D - 1, or the larger of D - 1 and D, more closely than ERA5 of D (a
+      smaller SD of ERA5 minus station).
+  - **What follows.**
+    - A city's safe years end before its first flagged block. They go to the teammate, who reruns her station
+      numbers on them under her own protocol.
+    - If a city has a flagged block, it is rebuilt from ISD like Delhi (its 46 yearly files), after a dated change to
+      this entry. If not, its file is used as it is.
+- **Step 4: Delhi's ERA5 humidity, 1980-2018 (descriptive).**
+  - For each heat season (15 Mar - 31 Jul): the mean over days of ERA5 minus the station's daily-mean dew point, for
+    Safdarjung and Palam. ERA5 is taken as the 9-cell mean and as the nearest cell. ERA5's dew point is computed from
+    its hourly temperature and relative humidity (Magnus formula, Alduchov and Eskridge 1996 constants).
+  - Reported:
+    - the difference per year;
+    - its change from 1990-1999 to 2002-2011, with a 95% CI by bootstrap over years;
+    - each record's 1980-2018 trend.
+  - No pass rule and no prediction.
+- **Expected (written now):**
+  - Every station passes its self-check, and Safdarjung passes the GHCN check.
+  - After 2010 Delhi's ERA5 - station Tmax gap returns to about its 1980-2008 size (-0.42 °C), not the misdated
+    file's -1.83 °C.
+  - ERA5 is colder than the station on station heatwave days, and the ranking of our models does not change (as P3-3
+    expected).
+  - Ahmedabad's and Chennai's GHCN files show the same fault after 2010 as Safdarjung's.
+  - No expectation for the humidity check.
+- **Code and outputs.**
+  - `followup/isd_rebuild.py` does the downloads with their manifest, the parsing, the census and the daily series.
+  - Committed: `followup/data/isd_manifest.json` (it also lists the two received GHCN files) and
+    `followup/data/isd_daily_{safdarjung,palam}.csv`. The hourly series are rebuilt from the raw files.
+  - `followup/station_check.py` gains the ISD source.
+  - Reports: `followup/results/station_rebuild.md` (census, validation, part B, humidity) and
+    `followup/results/station_check_isd.md` (the P3-3 rerun).
+  - Tests: `tests/test_followup_isd.py`, on synthetic report lines (positions, quality codes, KA groups, the IST day,
+    coverage rules, the self-check).
