@@ -1,0 +1,1418 @@
+{
+  "h_a1": [
+    {
+      "work": "light",
+      "level": "TLV",
+      "wbgt": "wbgt",
+      "alert_days": 1062,
+      "rest_hours_per_alert_day": 4.077919020715631,
+      "best_past_window": "10-14",
+      "diff_best_minus_W1": {
+        "estimate": 0.109230149133414,
+        "se": NaN,
+        "ci_low": NaN,
+        "ci_high": NaN,
+        "n_clusters": 4,
+        "n_unsafe_hours": 771
+      },
+      "share_rest_outside W1 12-4 pm (HAP p.155)": {
+        "estimate": 0.535934884257923,
+        "se": 0.006812455924101772,
+        "ci_low": 0.5220583656352679,
+        "ci_high": 0.5498114028805782,
+        "n_clusters": 33,
+        "n_unsafe_hours": 5529
+      },
+      "share_rest_outside W2 1-5 pm (HAP p.81)": {
+        "estimate": 0.655602378340934,
+        "se": 0.006474558325503617,
+        "ci_low": 0.6424141346035386,
+        "ci_high": 0.6687906220783295,
+        "n_clusters": 33,
+        "n_unsafe_hours": 5529
+      },
+      "share_rest_outside W3 12-3 pm (IMD public)": {
+        "estimate": 0.6048605899670958,
+        "se": 0.006103175610389808,
+        "ci_low": 0.5924288280653003,
+        "ci_high": 0.6172923518688913,
+        "n_clusters": 33,
+        "n_unsafe_hours": 5529
+      }
+    },
+    {
+      "work": "light",
+      "level": "TLV",
+      "wbgt": "wbgt_shade",
+      "alert_days": 1062,
+      "rest_hours_per_alert_day": 0.568502824858757,
+      "best_past_window": "11-15",
+      "diff_best_minus_W1": {
+        "estimate": 0.04444444444444451,
+        "se": NaN,
+        "ci_low": NaN,
+        "ci_high": NaN,
+        "n_clusters": 3,
+        "n_unsafe_hours": 185
+      },
+      "share_rest_outside W1 12-4 pm (HAP p.155)": {
+        "estimate": 0.3581780538302277,
+        "se": 0.02349130891843965,
+        "ci_low": 0.3102672134176182,
+        "ci_high": 0.40608889424283723,
+        "n_clusters": 32,
+        "n_unsafe_hours": 1030
+      },
+      "share_rest_outside W2 1-5 pm (HAP p.81)": {
+        "estimate": 0.5238095238095238,
+        "se": 0.015035042621646962,
+        "ci_low": 0.49314535221553174,
+        "ci_high": 0.5544736954035159,
+        "n_clusters": 32,
+        "n_unsafe_hours": 1030
+      },
+      "share_rest_outside W3 12-3 pm (IMD public)": {
+        "estimate": 0.4418219461697722,
+        "se": 0.023537569495626832,
+        "ci_low": 0.39381675668795135,
+        "ci_high": 0.4898271356515931,
+        "n_clusters": 32,
+        "n_unsafe_hours": 1030
+      }
+    },
+    {
+      "work": "moderate",
+      "level": "TLV",
+      "wbgt": "wbgt",
+      "alert_days": 1062,
+      "rest_hours_per_alert_day": 7.790254237288136,
+      "best_past_window": "10-14",
+      "diff_best_minus_W1": {
+        "estimate": 0.03921998247151626,
+        "se": NaN,
+        "ci_low": NaN,
+        "ci_high": NaN,
+        "n_clusters": 4,
+        "n_unsafe_hours": 1542
+      },
+      "share_rest_outside W1 12-4 pm (HAP p.155)": {
+        "estimate": 0.5935394192125223,
+        "se": 0.0029716209634338847,
+        "ci_low": 0.5874864253879788,
+        "ci_high": 0.5995924130370658,
+        "n_clusters": 33,
+        "n_unsafe_hours": 11227
+      },
+      "share_rest_outside W2 1-5 pm (HAP p.81)": {
+        "estimate": 0.6410116943160185,
+        "se": 0.0031508702785751097,
+        "ci_low": 0.6345935815846714,
+        "ci_high": 0.6474298070473655,
+        "n_clusters": 33,
+        "n_unsafe_hours": 11227
+      },
+      "share_rest_outside W3 12-3 pm (IMD public)": {
+        "estimate": 0.6785725077811018,
+        "se": 0.00261968702211532,
+        "ci_low": 0.6732363799363253,
+        "ci_high": 0.6839086356258782,
+        "n_clusters": 33,
+        "n_unsafe_hours": 11227
+      }
+    },
+    {
+      "work": "moderate",
+      "level": "TLV",
+      "wbgt": "wbgt_shade",
+      "alert_days": 1062,
+      "rest_hours_per_alert_day": 3.657015065913371,
+      "best_past_window": "11-15",
+      "diff_best_minus_W1": {
+        "estimate": 0.011054813450023016,
+        "se": NaN,
+        "ci_low": NaN,
+        "ci_high": NaN,
+        "n_clusters": 4,
+        "n_unsafe_hours": 1002
+      },
+      "share_rest_outside W1 12-4 pm (HAP p.155)": {
+        "estimate": 0.5454779530093338,
+        "se": 0.0053946318067337904,
+        "ci_low": 0.5344894476065073,
+        "ci_high": 0.5564664584121602,
+        "n_clusters": 33,
+        "n_unsafe_hours": 7374
+      },
+      "share_rest_outside W2 1-5 pm (HAP p.81)": {
+        "estimate": 0.5956227872545864,
+        "se": 0.004657062408912902,
+        "ci_low": 0.5861366615512971,
+        "ci_high": 0.6051089129578757,
+        "n_clusters": 33,
+        "n_unsafe_hours": 7374
+      },
+      "share_rest_outside W3 12-3 pm (IMD public)": {
+        "estimate": 0.6398455101383972,
+        "se": 0.004598929615163486,
+        "ci_low": 0.6304777970610446,
+        "ci_high": 0.6492132232157498,
+        "n_clusters": 33,
+        "n_unsafe_hours": 7374
+      }
+    },
+    {
+      "work": "heavy",
+      "level": "TLV",
+      "wbgt": "wbgt",
+      "alert_days": 1062,
+      "rest_hours_per_alert_day": 10.361581920903955,
+      "best_past_window": "10-14",
+      "diff_best_minus_W1": {
+        "estimate": 0.01971647384715658,
+        "se": NaN,
+        "ci_low": NaN,
+        "ci_high": NaN,
+        "n_clusters": 4,
+        "n_unsafe_hours": 2265
+      },
+      "share_rest_outside W1 12-4 pm (HAP p.155)": {
+        "estimate": 0.6532851690294439,
+        "se": 0.0014690535840970302,
+        "ci_low": 0.6502928048006671,
+        "ci_high": 0.6562775332582207,
+        "n_clusters": 33,
+        "n_unsafe_hours": 15930
+      },
+      "share_rest_outside W2 1-5 pm (HAP p.81)": {
+        "estimate": 0.675299890948746,
+        "se": 0.0017267064817959158,
+        "ci_low": 0.6717827049416072,
+        "ci_high": 0.6788170769558848,
+        "n_clusters": 33,
+        "n_unsafe_hours": 15930
+      },
+      "share_rest_outside W3 12-3 pm (IMD public)": {
+        "estimate": 0.7328698655034533,
+        "se": 0.0012069701991555164,
+        "ci_low": 0.7304113476602307,
+        "ci_high": 0.7353283833466759,
+        "n_clusters": 33,
+        "n_unsafe_hours": 15930
+      }
+    },
+    {
+      "work": "heavy",
+      "level": "TLV",
+      "wbgt": "wbgt_shade",
+      "alert_days": 1062,
+      "rest_hours_per_alert_day": 7.371233521657251,
+      "best_past_window": "11-15",
+      "diff_best_minus_W1": {
+        "estimate": 0.004582951420714965,
+        "se": NaN,
+        "ci_low": NaN,
+        "ci_high": NaN,
+        "n_clusters": 4,
+        "n_unsafe_hours": 2265
+      },
+      "share_rest_outside W1 12-4 pm (HAP p.155)": {
+        "estimate": 0.6518059591862805,
+        "se": 0.0018602621909250396,
+        "ci_low": 0.6480167291020071,
+        "ci_high": 0.6555951892705538,
+        "n_clusters": 33,
+        "n_unsafe_hours": 15930
+      },
+      "share_rest_outside W2 1-5 pm (HAP p.81)": {
+        "estimate": 0.6713824928943251,
+        "se": 0.0019657722400888817,
+        "ci_low": 0.6673783458728397,
+        "ci_high": 0.6753866399158104,
+        "n_clusters": 33,
+        "n_unsafe_hours": 15930
+      },
+      "share_rest_outside W3 12-3 pm (IMD public)": {
+        "estimate": 0.7311340337878836,
+        "se": 0.0014025572978974379,
+        "ci_low": 0.7282771180616829,
+        "ci_high": 0.7339909495140842,
+        "n_clusters": 33,
+        "n_unsafe_hours": 15930
+      }
+    },
+    {
+      "work": "very_heavy",
+      "level": "TLV",
+      "wbgt": "wbgt",
+      "alert_days": 1062,
+      "rest_hours_per_alert_day": 11.950564971751412,
+      "best_past_window": "10-14",
+      "diff_best_minus_W1": {
+        "estimate": 0.010079798404031892,
+        "se": NaN,
+        "ci_low": NaN,
+        "ci_high": NaN,
+        "n_clusters": 4,
+        "n_unsafe_hours": 2265
+      },
+      "share_rest_outside W1 12-4 pm (HAP p.155)": {
+        "estimate": 0.6855769609581216,
+        "se": 0.000914986839866563,
+        "ci_low": 0.6837131937551703,
+        "ci_high": 0.6874407281610729,
+        "n_clusters": 33,
+        "n_unsafe_hours": 15930
+      },
+      "share_rest_outside W2 1-5 pm (HAP p.81)": {
+        "estimate": 0.6987747705156995,
+        "se": 0.001229427608128235,
+        "ci_low": 0.6962705084273326,
+        "ci_high": 0.7012790326040663,
+        "n_clusters": 33,
+        "n_unsafe_hours": 15930
+      },
+      "share_rest_outside W3 12-3 pm (IMD public)": {
+        "estimate": 0.7599180553914037,
+        "se": 0.0006734100347104935,
+        "ci_low": 0.7585463640378812,
+        "ci_high": 0.7612897467449261,
+        "n_clusters": 33,
+        "n_unsafe_hours": 15930
+      }
+    },
+    {
+      "work": "very_heavy",
+      "level": "TLV",
+      "wbgt": "wbgt_shade",
+      "alert_days": 1062,
+      "rest_hours_per_alert_day": 9.867467043314502,
+      "best_past_window": "11-15",
+      "diff_best_minus_W1": {
+        "estimate": 0.002703616086515759,
+        "se": NaN,
+        "ci_low": NaN,
+        "ci_high": NaN,
+        "n_clusters": 4,
+        "n_unsafe_hours": 2265
+      },
+      "share_rest_outside W1 12-4 pm (HAP p.155)": {
+        "estimate": 0.6914855547868406,
+        "se": 0.001449744071001017,
+        "ci_low": 0.688532522749135,
+        "ci_high": 0.6944385868245462,
+        "n_clusters": 33,
+        "n_unsafe_hours": 15930
+      },
+      "share_rest_outside W2 1-5 pm (HAP p.81)": {
+        "estimate": 0.7020302025431209,
+        "se": 0.0014440684348471168,
+        "ci_low": 0.6990887313979426,
+        "ci_high": 0.7049716736882992,
+        "n_clusters": 33,
+        "n_unsafe_hours": 15930
+      },
+      "share_rest_outside W3 12-3 pm (IMD public)": {
+        "estimate": 0.7644392489920557,
+        "se": 0.0011803413006813556,
+        "ci_low": 0.7620349724400348,
+        "ci_high": 0.7668435255440766,
+        "n_clusters": 33,
+        "n_unsafe_hours": 15930
+      }
+    },
+    {
+      "work": "light",
+      "level": "AL",
+      "wbgt": "wbgt",
+      "alert_days": 1062,
+      "rest_hours_per_alert_day": 8.95786252354049,
+      "best_past_window": "10-14",
+      "diff_best_minus_W1": {
+        "estimate": 0.027862595419847314,
+        "se": NaN,
+        "ci_low": NaN,
+        "ci_high": NaN,
+        "n_clusters": 4,
+        "n_unsafe_hours": 1542
+      },
+      "share_rest_outside W1 12-4 pm (HAP p.155)": {
+        "estimate": 0.6028959608966442,
+        "se": 0.0029207089670320696,
+        "ci_low": 0.5969466714151537,
+        "ci_high": 0.6088452503781348,
+        "n_clusters": 33,
+        "n_unsafe_hours": 11227
+      },
+      "share_rest_outside W2 1-5 pm (HAP p.81)": {
+        "estimate": 0.6385304706593435,
+        "se": 0.003071918737452306,
+        "ci_low": 0.632273176954627,
+        "ci_high": 0.64478776436406,
+        "n_clusters": 33,
+        "n_unsafe_hours": 11227
+      },
+      "share_rest_outside W3 12-3 pm (IMD public)": {
+        "estimate": 0.6905106036317767,
+        "se": 0.002643555119734056,
+        "ci_low": 0.6851258580631158,
+        "ci_high": 0.6958953492004377,
+        "n_clusters": 33,
+        "n_unsafe_hours": 11227
+      }
+    },
+    {
+      "work": "light",
+      "level": "AL",
+      "wbgt": "wbgt_shade",
+      "alert_days": 1062,
+      "rest_hours_per_alert_day": 4.700564971751413,
+      "best_past_window": "11-15",
+      "diff_best_minus_W1": {
+        "estimate": 0.013043478260869601,
+        "se": NaN,
+        "ci_low": NaN,
+        "ci_high": NaN,
+        "n_clusters": 4,
+        "n_unsafe_hours": 1002
+      },
+      "share_rest_outside W1 12-4 pm (HAP p.155)": {
+        "estimate": 0.5528846153846154,
+        "se": 0.005872421314925381,
+        "ci_low": 0.5409228846013981,
+        "ci_high": 0.5648463461678327,
+        "n_clusters": 33,
+        "n_unsafe_hours": 7374
+      },
+      "share_rest_outside W2 1-5 pm (HAP p.81)": {
+        "estimate": 0.5972055288461539,
+        "se": 0.004771434211839627,
+        "ci_low": 0.5874864354039314,
+        "ci_high": 0.6069246222883763,
+        "n_clusters": 33,
+        "n_unsafe_hours": 7374
+      },
+      "share_rest_outside W3 12-3 pm (IMD public)": {
+        "estimate": 0.646484375,
+        "se": 0.005270581912448172,
+        "ci_low": 0.6357485509630966,
+        "ci_high": 0.6572201990369034,
+        "n_clusters": 33,
+        "n_unsafe_hours": 7374
+      }
+    },
+    {
+      "work": "moderate",
+      "level": "AL",
+      "wbgt": "wbgt",
+      "alert_days": 1062,
+      "rest_hours_per_alert_day": 11.693738229755178,
+      "best_past_window": "10-14",
+      "diff_best_minus_W1": {
+        "estimate": 0.006360219716681104,
+        "se": NaN,
+        "ci_low": NaN,
+        "ci_high": NaN,
+        "n_clusters": 4,
+        "n_unsafe_hours": 1988
+      },
+      "share_rest_outside W1 12-4 pm (HAP p.155)": {
+        "estimate": 0.665968797181681,
+        "se": 0.002168628700114732,
+        "ci_low": 0.6615514450728328,
+        "ci_high": 0.6703861492905292,
+        "n_clusters": 33,
+        "n_unsafe_hours": 14173
+      },
+      "share_rest_outside W2 1-5 pm (HAP p.81)": {
+        "estimate": 0.6740412682435832,
+        "se": 0.0015901432857508024,
+        "ci_low": 0.6708022523639582,
+        "ci_high": 0.6772802841232083,
+        "n_clusters": 33,
+        "n_unsafe_hours": 14173
+      },
+      "share_rest_outside W3 12-3 pm (IMD public)": {
+        "estimate": 0.7469350780070458,
+        "se": 0.0018982020417086826,
+        "ci_low": 0.7430685669756654,
+        "ci_high": 0.7508015890384263,
+        "n_clusters": 33,
+        "n_unsafe_hours": 14173
+      }
+    },
+    {
+      "work": "moderate",
+      "level": "AL",
+      "wbgt": "wbgt_shade",
+      "alert_days": 1062,
+      "rest_hours_per_alert_day": 9.353107344632768,
+      "best_past_window": "11-15",
+      "diff_best_minus_W1": {
+        "estimate": 0.0034945742137207914,
+        "se": NaN,
+        "ci_low": NaN,
+        "ci_high": NaN,
+        "n_clusters": 4,
+        "n_unsafe_hours": 1815
+      },
+      "share_rest_outside W1 12-4 pm (HAP p.155)": {
+        "estimate": 0.6403402798751636,
+        "se": 0.0028951114944783694,
+        "ci_low": 0.634443130739026,
+        "ci_high": 0.6462374290113012,
+        "n_clusters": 33,
+        "n_unsafe_hours": 13144
+      },
+      "share_rest_outside W2 1-5 pm (HAP p.81)": {
+        "estimate": 0.6516913319238901,
+        "se": 0.0024817573792491,
+        "ci_low": 0.6466361575677194,
+        "ci_high": 0.6567465062800607,
+        "n_clusters": 33,
+        "n_unsafe_hours": 13144
+      },
+      "share_rest_outside W3 12-3 pm (IMD public)": {
+        "estimate": 0.7262911507097554,
+        "se": 0.0024279660180237085,
+        "ci_low": 0.7213455457708549,
+        "ci_high": 0.7312367556486559,
+        "n_clusters": 33,
+        "n_unsafe_hours": 13144
+      }
+    },
+    {
+      "work": "heavy",
+      "level": "AL",
+      "wbgt": "wbgt",
+      "alert_days": 1062,
+      "rest_hours_per_alert_day": 13.109934086629002,
+      "best_past_window": "10-14",
+      "diff_best_minus_W1": {
+        "estimate": 0.0017868538608806772,
+        "se": NaN,
+        "ci_low": NaN,
+        "ci_high": NaN,
+        "n_clusters": 4,
+        "n_unsafe_hours": 2265
+      },
+      "share_rest_outside W1 12-4 pm (HAP p.155)": {
+        "estimate": 0.6965577921028532,
+        "se": 0.001446267618169022,
+        "ci_low": 0.693611841367838,
+        "ci_high": 0.6995037428378683,
+        "n_clusters": 33,
+        "n_unsafe_hours": 15930
+      },
+      "share_rest_outside W2 1-5 pm (HAP p.81)": {
+        "estimate": 0.7000053868668187,
+        "se": 0.0011066450175116526,
+        "ci_low": 0.6977512247312752,
+        "ci_high": 0.7022595490023622,
+        "n_clusters": 33,
+        "n_unsafe_hours": 15930
+      },
+      "share_rest_outside W3 12-3 pm (IMD public)": {
+        "estimate": 0.7716327593327468,
+        "se": 0.0011922183300508925,
+        "ci_low": 0.7692042900635818,
+        "ci_high": 0.7740612286019117,
+        "n_clusters": 33,
+        "n_unsafe_hours": 15930
+      }
+    },
+    {
+      "work": "heavy",
+      "level": "AL",
+      "wbgt": "wbgt_shade",
+      "alert_days": 1062,
+      "rest_hours_per_alert_day": 11.750706214689265,
+      "best_past_window": "11-15",
+      "diff_best_minus_W1": {
+        "estimate": 0.0020088965418280647,
+        "se": NaN,
+        "ci_low": NaN,
+        "ci_high": NaN,
+        "n_clusters": 4,
+        "n_unsafe_hours": 2265
+      },
+      "share_rest_outside W1 12-4 pm (HAP p.155)": {
+        "estimate": 0.68507722819881,
+        "se": 0.0013471428676343257,
+        "ci_low": 0.6823331879733212,
+        "ci_high": 0.6878212684242988,
+        "n_clusters": 33,
+        "n_unsafe_hours": 15930
+      },
+      "share_rest_outside W2 1-5 pm (HAP p.81)": {
+        "estimate": 0.6897650099164614,
+        "se": 0.001230716942410302,
+        "ci_low": 0.6872581215401046,
+        "ci_high": 0.6922718982928182,
+        "n_clusters": 33,
+        "n_unsafe_hours": 15930
+      },
+      "share_rest_outside W3 12-3 pm (IMD public)": {
+        "estimate": 0.7619648616703728,
+        "se": 0.0010760882803970537,
+        "ci_low": 0.7597729415715254,
+        "ci_high": 0.7641567817692202,
+        "n_clusters": 33,
+        "n_unsafe_hours": 15930
+      }
+    },
+    {
+      "work": "very_heavy",
+      "level": "AL",
+      "wbgt": "wbgt",
+      "alert_days": 1062,
+      "rest_hours_per_alert_day": 13.8265065913371,
+      "best_past_window": "11-15",
+      "diff_best_minus_W1": {
+        "estimate": 0.00024119633381569638,
+        "se": NaN,
+        "ci_low": NaN,
+        "ci_high": NaN,
+        "n_clusters": 4,
+        "n_unsafe_hours": 2265
+      },
+      "share_rest_outside W1 12-4 pm (HAP p.155)": {
+        "estimate": 0.710904911892398,
+        "se": 0.0010109162606945752,
+        "ci_low": 0.7088457428535432,
+        "ci_high": 0.7129640809312529,
+        "n_clusters": 33,
+        "n_unsafe_hours": 15930
+      },
+      "share_rest_outside W2 1-5 pm (HAP p.81)": {
+        "estimate": 0.7117051161998809,
+        "se": 0.0008880218736894938,
+        "ci_low": 0.7098962748356408,
+        "ci_high": 0.713513957564121,
+        "n_clusters": 33,
+        "n_unsafe_hours": 15930
+      },
+      "share_rest_outside W3 12-3 pm (IMD public)": {
+        "estimate": 0.7830424789307908,
+        "se": 0.0008023571911750274,
+        "ci_low": 0.7814081308147214,
+        "ci_high": 0.7846768270468603,
+        "n_clusters": 33,
+        "n_unsafe_hours": 15930
+      }
+    },
+    {
+      "work": "very_heavy",
+      "level": "AL",
+      "wbgt": "wbgt_shade",
+      "alert_days": 1062,
+      "rest_hours_per_alert_day": 13.01129943502825,
+      "best_past_window": "10-14",
+      "diff_best_minus_W1": {
+        "estimate": 0.0002587656876698041,
+        "se": NaN,
+        "ci_low": NaN,
+        "ci_high": NaN,
+        "n_clusters": 4,
+        "n_unsafe_hours": 2265
+      },
+      "share_rest_outside W1 12-4 pm (HAP p.155)": {
+        "estimate": 0.7028513533072804,
+        "se": 0.0009248493077903195,
+        "ci_low": 0.7009674969145664,
+        "ci_high": 0.7047352096999945,
+        "n_clusters": 33,
+        "n_unsafe_hours": 15930
+      },
+      "share_rest_outside W2 1-5 pm (HAP p.81)": {
+        "estimate": 0.7054928354320451,
+        "se": 0.0008369604907716902,
+        "ci_low": 0.7037880027012335,
+        "ci_high": 0.7071976681628567,
+        "n_clusters": 33,
+        "n_unsafe_hours": 15930
+      },
+      "share_rest_outside W3 12-3 pm (IMD public)": {
+        "estimate": 0.7761615284411637,
+        "se": 0.0007741412857138681,
+        "ci_low": 0.774584654243744,
+        "ci_high": 0.7777384026385834,
+        "n_clusters": 33,
+        "n_unsafe_hours": 15930
+      }
+    }
+  ],
+  "h_e1": [
+    {
+      "work": "light",
+      "level": "TLV",
+      "wbgt": "wbgt",
+      "trigger": "MHT 45.27/1d",
+      "cell_seasons": 351,
+      "rest_hours_per_season": 367.7321937321937,
+      "share_rest_hours_on_days_not_counted": 0.9920762508328556,
+      "share_seasons_paid": 0.19943019943019943,
+      "share_top_quartile_rest_seasons_unpaid": 0.7386363636363636,
+      "spearman_season_rest_vs_paid_days": 0.11160383922485913,
+      "spearman_ci95_year_jackknife": [
+        -0.16689671120328858,
+        0.3901043896530068
+      ]
+    },
+    {
+      "work": "light",
+      "level": "TLV",
+      "wbgt": "wbgt",
+      "trigger": "MHT 46.53/1d",
+      "cell_seasons": 351,
+      "rest_hours_per_season": 367.7321937321937,
+      "share_rest_hours_on_days_not_counted": 0.9994964129104235,
+      "share_seasons_paid": 0.02564102564102564,
+      "share_top_quartile_rest_seasons_unpaid": 0.9772727272727273,
+      "spearman_season_rest_vs_paid_days": 0.00738245290352425,
+      "spearman_ci95_year_jackknife": [
+        -0.1573002829011145,
+        0.17206518870816298
+      ]
+    },
+    {
+      "work": "light",
+      "level": "TLV",
+      "wbgt": "wbgt",
+      "trigger": "MHT 47/1d",
+      "cell_seasons": 351,
+      "rest_hours_per_season": 367.7321937321937,
+      "share_rest_hours_on_days_not_counted": 1.0,
+      "share_seasons_paid": 0.0,
+      "share_top_quartile_rest_seasons_unpaid": 1.0,
+      "spearman_season_rest_vs_paid_days": NaN,
+      "spearman_ci95_year_jackknife": [
+        NaN,
+        NaN
+      ]
+    },
+    {
+      "work": "light",
+      "level": "TLV",
+      "wbgt": "wbgt_shade",
+      "trigger": "MHT 45.27/1d",
+      "cell_seasons": 351,
+      "rest_hours_per_season": 80.55698005698005,
+      "share_rest_hours_on_days_not_counted": 0.9951371328535304,
+      "share_seasons_paid": 0.19943019943019943,
+      "share_top_quartile_rest_seasons_unpaid": 0.6363636363636364,
+      "spearman_season_rest_vs_paid_days": 0.13536838527586723,
+      "spearman_ci95_year_jackknife": [
+        -0.172098202238867,
+        0.44283497279060147
+      ]
+    },
+    {
+      "work": "light",
+      "level": "TLV",
+      "wbgt": "wbgt_shade",
+      "trigger": "MHT 46.53/1d",
+      "cell_seasons": 351,
+      "rest_hours_per_season": 80.55698005698005,
+      "share_rest_hours_on_days_not_counted": 0.9998408516206609,
+      "share_seasons_paid": 0.02564102564102564,
+      "share_top_quartile_rest_seasons_unpaid": 0.9772727272727273,
+      "spearman_season_rest_vs_paid_days": 0.0008894580192044743,
+      "spearman_ci95_year_jackknife": [
+        -0.15413056473430534,
+        0.1559094807727143
+      ]
+    },
+    {
+      "work": "light",
+      "level": "TLV",
+      "wbgt": "wbgt_shade",
+      "trigger": "MHT 47/1d",
+      "cell_seasons": 351,
+      "rest_hours_per_season": 80.55698005698005,
+      "share_rest_hours_on_days_not_counted": 1.0,
+      "share_seasons_paid": 0.0,
+      "share_top_quartile_rest_seasons_unpaid": 1.0,
+      "spearman_season_rest_vs_paid_days": NaN,
+      "spearman_ci95_year_jackknife": [
+        NaN,
+        NaN
+      ]
+    },
+    {
+      "work": "moderate",
+      "level": "TLV",
+      "wbgt": "wbgt",
+      "trigger": "MHT 45.27/1d",
+      "cell_seasons": 351,
+      "rest_hours_per_season": 710.0206552706553,
+      "share_rest_hours_on_days_not_counted": 0.9931405229774424,
+      "share_seasons_paid": 0.19943019943019943,
+      "share_top_quartile_rest_seasons_unpaid": 0.7159090909090909,
+      "spearman_season_rest_vs_paid_days": 0.13462843028355295,
+      "spearman_ci95_year_jackknife": [
+        -0.13751575432982102,
+        0.40677261489692695
+      ]
+    },
+    {
+      "work": "moderate",
+      "level": "TLV",
+      "wbgt": "wbgt",
+      "trigger": "MHT 46.53/1d",
+      "cell_seasons": 351,
+      "rest_hours_per_season": 710.0206552706553,
+      "share_rest_hours_on_days_not_counted": 0.9996248253281023,
+      "share_seasons_paid": 0.02564102564102564,
+      "share_top_quartile_rest_seasons_unpaid": 0.9772727272727273,
+      "spearman_season_rest_vs_paid_days": 0.02632777106318369,
+      "spearman_ci95_year_jackknife": [
+        -0.09700892874370319,
+        0.14966447087007057
+      ]
+    },
+    {
+      "work": "moderate",
+      "level": "TLV",
+      "wbgt": "wbgt",
+      "trigger": "MHT 47/1d",
+      "cell_seasons": 351,
+      "rest_hours_per_season": 710.0206552706553,
+      "share_rest_hours_on_days_not_counted": 1.0,
+      "share_seasons_paid": 0.0,
+      "share_top_quartile_rest_seasons_unpaid": 1.0,
+      "spearman_season_rest_vs_paid_days": NaN,
+      "spearman_ci95_year_jackknife": [
+        NaN,
+        NaN
+      ]
+    },
+    {
+      "work": "moderate",
+      "level": "TLV",
+      "wbgt": "wbgt_shade",
+      "trigger": "MHT 45.27/1d",
+      "cell_seasons": 351,
+      "rest_hours_per_season": 418.07336182336184,
+      "share_rest_hours_on_days_not_counted": 0.9932739895225521,
+      "share_seasons_paid": 0.19943019943019943,
+      "share_top_quartile_rest_seasons_unpaid": 0.7159090909090909,
+      "spearman_season_rest_vs_paid_days": 0.16127615648310556,
+      "spearman_ci95_year_jackknife": [
+        -0.09712802625945482,
+        0.41968033922566594
+      ]
+    },
+    {
+      "work": "moderate",
+      "level": "TLV",
+      "wbgt": "wbgt_shade",
+      "trigger": "MHT 46.53/1d",
+      "cell_seasons": 351,
+      "rest_hours_per_season": 418.07336182336184,
+      "share_rest_hours_on_days_not_counted": 0.9995877166829933,
+      "share_seasons_paid": 0.02564102564102564,
+      "share_top_quartile_rest_seasons_unpaid": 0.9772727272727273,
+      "spearman_season_rest_vs_paid_days": 0.020546340551637746,
+      "spearman_ci95_year_jackknife": [
+        -0.11773040141298764,
+        0.15882308251626315
+      ]
+    },
+    {
+      "work": "moderate",
+      "level": "TLV",
+      "wbgt": "wbgt_shade",
+      "trigger": "MHT 47/1d",
+      "cell_seasons": 351,
+      "rest_hours_per_season": 418.07336182336184,
+      "share_rest_hours_on_days_not_counted": 1.0,
+      "share_seasons_paid": 0.0,
+      "share_top_quartile_rest_seasons_unpaid": 1.0,
+      "spearman_season_rest_vs_paid_days": NaN,
+      "spearman_ci95_year_jackknife": [
+        NaN,
+        NaN
+      ]
+    },
+    {
+      "work": "heavy",
+      "level": "TLV",
+      "wbgt": "wbgt",
+      "trigger": "MHT 45.27/1d",
+      "cell_seasons": 351,
+      "rest_hours_per_season": 954.3632478632478,
+      "share_rest_hours_on_days_not_counted": 0.9938242858187691,
+      "share_seasons_paid": 0.19943019943019943,
+      "share_top_quartile_rest_seasons_unpaid": 0.7272727272727273,
+      "spearman_season_rest_vs_paid_days": 0.14249349277221754,
+      "spearman_ci95_year_jackknife": [
+        -0.12632440692656657,
+        0.4113113924710017
+      ]
+    },
+    {
+      "work": "heavy",
+      "level": "TLV",
+      "wbgt": "wbgt",
+      "trigger": "MHT 46.53/1d",
+      "cell_seasons": 351,
+      "rest_hours_per_season": 954.3632478632478,
+      "share_rest_hours_on_days_not_counted": 0.9996768478259247,
+      "share_seasons_paid": 0.02564102564102564,
+      "share_top_quartile_rest_seasons_unpaid": 0.9886363636363636,
+      "spearman_season_rest_vs_paid_days": 0.019212198580913,
+      "spearman_ci95_year_jackknife": [
+        -0.10245845860149283,
+        0.14088285576331883
+      ]
+    },
+    {
+      "work": "heavy",
+      "level": "TLV",
+      "wbgt": "wbgt",
+      "trigger": "MHT 47/1d",
+      "cell_seasons": 351,
+      "rest_hours_per_season": 954.3632478632478,
+      "share_rest_hours_on_days_not_counted": 1.0,
+      "share_seasons_paid": 0.0,
+      "share_top_quartile_rest_seasons_unpaid": 1.0,
+      "spearman_season_rest_vs_paid_days": NaN,
+      "spearman_ci95_year_jackknife": [
+        NaN,
+        NaN
+      ]
+    },
+    {
+      "work": "heavy",
+      "level": "TLV",
+      "wbgt": "wbgt_shade",
+      "trigger": "MHT 45.27/1d",
+      "cell_seasons": 351,
+      "rest_hours_per_season": 747.9978632478633,
+      "share_rest_hours_on_days_not_counted": 0.9939410906036913,
+      "share_seasons_paid": 0.19943019943019943,
+      "share_top_quartile_rest_seasons_unpaid": 0.7159090909090909,
+      "spearman_season_rest_vs_paid_days": 0.1771713703362384,
+      "spearman_ci95_year_jackknife": [
+        -0.07106712051397115,
+        0.42540986118644797
+      ]
+    },
+    {
+      "work": "heavy",
+      "level": "TLV",
+      "wbgt": "wbgt_shade",
+      "trigger": "MHT 46.53/1d",
+      "cell_seasons": 351,
+      "rest_hours_per_season": 747.9978632478633,
+      "share_rest_hours_on_days_not_counted": 0.9996714877036419,
+      "share_seasons_paid": 0.02564102564102564,
+      "share_top_quartile_rest_seasons_unpaid": 0.9772727272727273,
+      "spearman_season_rest_vs_paid_days": 0.03833551030833448,
+      "spearman_ci95_year_jackknife": [
+        -0.0803510087461839,
+        0.15702202936285284
+      ]
+    },
+    {
+      "work": "heavy",
+      "level": "TLV",
+      "wbgt": "wbgt_shade",
+      "trigger": "MHT 47/1d",
+      "cell_seasons": 351,
+      "rest_hours_per_season": 747.9978632478633,
+      "share_rest_hours_on_days_not_counted": 1.0,
+      "share_seasons_paid": 0.0,
+      "share_top_quartile_rest_seasons_unpaid": 1.0,
+      "spearman_season_rest_vs_paid_days": NaN,
+      "spearman_ci95_year_jackknife": [
+        NaN,
+        NaN
+      ]
+    },
+    {
+      "work": "very_heavy",
+      "level": "TLV",
+      "wbgt": "wbgt",
+      "trigger": "MHT 45.27/1d",
+      "cell_seasons": 351,
+      "rest_hours_per_season": 1098.261396011396,
+      "share_rest_hours_on_days_not_counted": 0.9940796091206057,
+      "share_seasons_paid": 0.19943019943019943,
+      "share_top_quartile_rest_seasons_unpaid": 0.7159090909090909,
+      "spearman_season_rest_vs_paid_days": 0.1439702574430446,
+      "spearman_ci95_year_jackknife": [
+        -0.12707503590207675,
+        0.41501555078816593
+      ]
+    },
+    {
+      "work": "very_heavy",
+      "level": "TLV",
+      "wbgt": "wbgt",
+      "trigger": "MHT 46.53/1d",
+      "cell_seasons": 351,
+      "rest_hours_per_season": 1098.261396011396,
+      "share_rest_hours_on_days_not_counted": 0.9996951929331455,
+      "share_seasons_paid": 0.02564102564102564,
+      "share_top_quartile_rest_seasons_unpaid": 0.9886363636363636,
+      "spearman_season_rest_vs_paid_days": 0.03397721383100061,
+      "spearman_ci95_year_jackknife": [
+        -0.0750574603823973,
+        0.14301188804439852
+      ]
+    },
+    {
+      "work": "very_heavy",
+      "level": "TLV",
+      "wbgt": "wbgt",
+      "trigger": "MHT 47/1d",
+      "cell_seasons": 351,
+      "rest_hours_per_season": 1098.261396011396,
+      "share_rest_hours_on_days_not_counted": 1.0,
+      "share_seasons_paid": 0.0,
+      "share_top_quartile_rest_seasons_unpaid": 1.0,
+      "spearman_season_rest_vs_paid_days": NaN,
+      "spearman_ci95_year_jackknife": [
+        NaN,
+        NaN
+      ]
+    },
+    {
+      "work": "very_heavy",
+      "level": "TLV",
+      "wbgt": "wbgt_shade",
+      "trigger": "MHT 45.27/1d",
+      "cell_seasons": 351,
+      "rest_hours_per_season": 957.1987179487179,
+      "share_rest_hours_on_days_not_counted": 0.9941945387590064,
+      "share_seasons_paid": 0.19943019943019943,
+      "share_top_quartile_rest_seasons_unpaid": 0.7159090909090909,
+      "spearman_season_rest_vs_paid_days": 0.16977075307382838,
+      "spearman_ci95_year_jackknife": [
+        -0.08341062102344665,
+        0.4229521271711034
+      ]
+    },
+    {
+      "work": "very_heavy",
+      "level": "TLV",
+      "wbgt": "wbgt_shade",
+      "trigger": "MHT 46.53/1d",
+      "cell_seasons": 351,
+      "rest_hours_per_season": 957.1987179487179,
+      "share_rest_hours_on_days_not_counted": 0.9996837578790795,
+      "share_seasons_paid": 0.02564102564102564,
+      "share_top_quartile_rest_seasons_unpaid": 0.9772727272727273,
+      "spearman_season_rest_vs_paid_days": 0.024726838583675994,
+      "spearman_ci95_year_jackknife": [
+        -0.11712228040844264,
+        0.16657595757579463
+      ]
+    },
+    {
+      "work": "very_heavy",
+      "level": "TLV",
+      "wbgt": "wbgt_shade",
+      "trigger": "MHT 47/1d",
+      "cell_seasons": 351,
+      "rest_hours_per_season": 957.1987179487179,
+      "share_rest_hours_on_days_not_counted": 1.0,
+      "share_seasons_paid": 0.0,
+      "share_top_quartile_rest_seasons_unpaid": 1.0,
+      "spearman_season_rest_vs_paid_days": NaN,
+      "spearman_ci95_year_jackknife": [
+        NaN,
+        NaN
+      ]
+    },
+    {
+      "work": "light",
+      "level": "AL",
+      "wbgt": "wbgt",
+      "trigger": "MHT 45.27/1d",
+      "cell_seasons": 351,
+      "rest_hours_per_season": 818.4522792022792,
+      "share_rest_hours_on_days_not_counted": 0.9933852983229586,
+      "share_seasons_paid": 0.19943019943019943,
+      "share_top_quartile_rest_seasons_unpaid": 0.7386363636363636,
+      "spearman_season_rest_vs_paid_days": 0.1361145933784404,
+      "spearman_ci95_year_jackknife": [
+        -0.13834497831283366,
+        0.41057416506971445
+      ]
+    },
+    {
+      "work": "light",
+      "level": "AL",
+      "wbgt": "wbgt",
+      "trigger": "MHT 46.53/1d",
+      "cell_seasons": 351,
+      "rest_hours_per_season": 818.4522792022792,
+      "share_rest_hours_on_days_not_counted": 0.9996484226447145,
+      "share_seasons_paid": 0.02564102564102564,
+      "share_top_quartile_rest_seasons_unpaid": 0.9886363636363636,
+      "spearman_season_rest_vs_paid_days": 0.027484100253779033,
+      "spearman_ci95_year_jackknife": [
+        -0.09135307302813152,
+        0.14632127353568958
+      ]
+    },
+    {
+      "work": "light",
+      "level": "AL",
+      "wbgt": "wbgt",
+      "trigger": "MHT 47/1d",
+      "cell_seasons": 351,
+      "rest_hours_per_season": 818.4522792022792,
+      "share_rest_hours_on_days_not_counted": 1.0,
+      "share_seasons_paid": 0.0,
+      "share_top_quartile_rest_seasons_unpaid": 1.0,
+      "spearman_season_rest_vs_paid_days": NaN,
+      "spearman_ci95_year_jackknife": [
+        NaN,
+        NaN
+      ]
+    },
+    {
+      "work": "light",
+      "level": "AL",
+      "wbgt": "wbgt_shade",
+      "trigger": "MHT 45.27/1d",
+      "cell_seasons": 351,
+      "rest_hours_per_season": 532.3917378917379,
+      "share_rest_hours_on_days_not_counted": 0.9931717053879847,
+      "share_seasons_paid": 0.19943019943019943,
+      "share_top_quartile_rest_seasons_unpaid": 0.7191011235955056,
+      "spearman_season_rest_vs_paid_days": 0.16161842029761406,
+      "spearman_ci95_year_jackknife": [
+        -0.092998159264127,
+        0.4162349998593551
+      ]
+    },
+    {
+      "work": "light",
+      "level": "AL",
+      "wbgt": "wbgt_shade",
+      "trigger": "MHT 46.53/1d",
+      "cell_seasons": 351,
+      "rest_hours_per_season": 532.3917378917379,
+      "share_rest_hours_on_days_not_counted": 0.9995705559227162,
+      "share_seasons_paid": 0.02564102564102564,
+      "share_top_quartile_rest_seasons_unpaid": 0.9775280898876404,
+      "spearman_season_rest_vs_paid_days": 0.02330363196441497,
+      "spearman_ci95_year_jackknife": [
+        -0.11204826968854821,
+        0.15865553361737816
+      ]
+    },
+    {
+      "work": "light",
+      "level": "AL",
+      "wbgt": "wbgt_shade",
+      "trigger": "MHT 47/1d",
+      "cell_seasons": 351,
+      "rest_hours_per_season": 532.3917378917379,
+      "share_rest_hours_on_days_not_counted": 1.0,
+      "share_seasons_paid": 0.0,
+      "share_top_quartile_rest_seasons_unpaid": 1.0,
+      "spearman_season_rest_vs_paid_days": NaN,
+      "spearman_ci95_year_jackknife": [
+        NaN,
+        NaN
+      ]
+    },
+    {
+      "work": "moderate",
+      "level": "AL",
+      "wbgt": "wbgt",
+      "trigger": "MHT 45.27/1d",
+      "cell_seasons": 351,
+      "rest_hours_per_season": 1113.4259259259259,
+      "share_rest_hours_on_days_not_counted": 0.9941755957140572,
+      "share_seasons_paid": 0.19943019943019943,
+      "share_top_quartile_rest_seasons_unpaid": 0.75,
+      "spearman_season_rest_vs_paid_days": 0.1517378532180963,
+      "spearman_ci95_year_jackknife": [
+        -0.11089171459646407,
+        0.41436742103265667
+      ]
+    },
+    {
+      "work": "moderate",
+      "level": "AL",
+      "wbgt": "wbgt",
+      "trigger": "MHT 46.53/1d",
+      "cell_seasons": 351,
+      "rest_hours_per_season": 1113.4259259259259,
+      "share_rest_hours_on_days_not_counted": 0.9996897489205182,
+      "share_seasons_paid": 0.02564102564102564,
+      "share_top_quartile_rest_seasons_unpaid": 1.0,
+      "spearman_season_rest_vs_paid_days": -0.005069886088357338,
+      "spearman_ci95_year_jackknife": [
+        -0.13899682539929661,
+        0.12885705322258192
+      ]
+    },
+    {
+      "work": "moderate",
+      "level": "AL",
+      "wbgt": "wbgt",
+      "trigger": "MHT 47/1d",
+      "cell_seasons": 351,
+      "rest_hours_per_season": 1113.4259259259259,
+      "share_rest_hours_on_days_not_counted": 1.0,
+      "share_seasons_paid": 0.0,
+      "share_top_quartile_rest_seasons_unpaid": 1.0,
+      "spearman_season_rest_vs_paid_days": NaN,
+      "spearman_ci95_year_jackknife": [
+        NaN,
+        NaN
+      ]
+    },
+    {
+      "work": "moderate",
+      "level": "AL",
+      "wbgt": "wbgt_shade",
+      "trigger": "MHT 45.27/1d",
+      "cell_seasons": 351,
+      "rest_hours_per_season": 961.6581196581196,
+      "share_rest_hours_on_days_not_counted": 0.9940111156537557,
+      "share_seasons_paid": 0.19943019943019943,
+      "share_top_quartile_rest_seasons_unpaid": 0.7386363636363636,
+      "spearman_season_rest_vs_paid_days": 0.16057150370313775,
+      "spearman_ci95_year_jackknife": [
+        -0.09368451208710418,
+        0.4148275194933797
+      ]
+    },
+    {
+      "work": "moderate",
+      "level": "AL",
+      "wbgt": "wbgt_shade",
+      "trigger": "MHT 46.53/1d",
+      "cell_seasons": 351,
+      "rest_hours_per_season": 961.6581196581196,
+      "share_rest_hours_on_days_not_counted": 0.9996667081429866,
+      "share_seasons_paid": 0.02564102564102564,
+      "share_top_quartile_rest_seasons_unpaid": 1.0,
+      "spearman_season_rest_vs_paid_days": -0.005158825016172747,
+      "spearman_ci95_year_jackknife": [
+        -0.1580890958750265,
+        0.14777144584268104
+      ]
+    },
+    {
+      "work": "moderate",
+      "level": "AL",
+      "wbgt": "wbgt_shade",
+      "trigger": "MHT 47/1d",
+      "cell_seasons": 351,
+      "rest_hours_per_season": 961.6581196581196,
+      "share_rest_hours_on_days_not_counted": 1.0,
+      "share_seasons_paid": 0.0,
+      "share_top_quartile_rest_seasons_unpaid": 1.0,
+      "spearman_season_rest_vs_paid_days": NaN,
+      "spearman_ci95_year_jackknife": [
+        NaN,
+        NaN
+      ]
+    },
+    {
+      "work": "heavy",
+      "level": "AL",
+      "wbgt": "wbgt",
+      "trigger": "MHT 45.27/1d",
+      "cell_seasons": 351,
+      "rest_hours_per_season": 1236.9565527065527,
+      "share_rest_hours_on_days_not_counted": 0.9943645573439543,
+      "share_seasons_paid": 0.19943019943019943,
+      "share_top_quartile_rest_seasons_unpaid": 0.7727272727272727,
+      "spearman_season_rest_vs_paid_days": 0.13163828946137734,
+      "spearman_ci95_year_jackknife": [
+        -0.14195128797534057,
+        0.40522786689809526
+      ]
+    },
+    {
+      "work": "heavy",
+      "level": "AL",
+      "wbgt": "wbgt",
+      "trigger": "MHT 46.53/1d",
+      "cell_seasons": 351,
+      "rest_hours_per_season": 1236.9565527065527,
+      "share_rest_hours_on_days_not_counted": 0.9997051857934101,
+      "share_seasons_paid": 0.02564102564102564,
+      "share_top_quartile_rest_seasons_unpaid": 1.0,
+      "spearman_season_rest_vs_paid_days": -0.015565508856796155,
+      "spearman_ci95_year_jackknife": [
+        -0.1841861604792364,
+        0.15305514276564405
+      ]
+    },
+    {
+      "work": "heavy",
+      "level": "AL",
+      "wbgt": "wbgt",
+      "trigger": "MHT 47/1d",
+      "cell_seasons": 351,
+      "rest_hours_per_season": 1236.9565527065527,
+      "share_rest_hours_on_days_not_counted": 1.0,
+      "share_seasons_paid": 0.0,
+      "share_top_quartile_rest_seasons_unpaid": 1.0,
+      "spearman_season_rest_vs_paid_days": NaN,
+      "spearman_ci95_year_jackknife": [
+        NaN,
+        NaN
+      ]
+    },
+    {
+      "work": "heavy",
+      "level": "AL",
+      "wbgt": "wbgt_shade",
+      "trigger": "MHT 45.27/1d",
+      "cell_seasons": 351,
+      "rest_hours_per_season": 1151.7001424501425,
+      "share_rest_hours_on_days_not_counted": 0.9942646415833893,
+      "share_seasons_paid": 0.19943019943019943,
+      "share_top_quartile_rest_seasons_unpaid": 0.75,
+      "spearman_season_rest_vs_paid_days": 0.15046035701089217,
+      "spearman_ci95_year_jackknife": [
+        -0.1096689417737074,
+        0.4105896557954917
+      ]
+    },
+    {
+      "work": "heavy",
+      "level": "AL",
+      "wbgt": "wbgt_shade",
+      "trigger": "MHT 46.53/1d",
+      "cell_seasons": 351,
+      "rest_hours_per_season": 1151.7001424501425,
+      "share_rest_hours_on_days_not_counted": 0.9996957303923902,
+      "share_seasons_paid": 0.02564102564102564,
+      "share_top_quartile_rest_seasons_unpaid": 0.9886363636363636,
+      "spearman_season_rest_vs_paid_days": -0.005781455866716882,
+      "spearman_ci95_year_jackknife": [
+        -0.1648404156263777,
+        0.15327750389294392
+      ]
+    },
+    {
+      "work": "heavy",
+      "level": "AL",
+      "wbgt": "wbgt_shade",
+      "trigger": "MHT 47/1d",
+      "cell_seasons": 351,
+      "rest_hours_per_season": 1151.7001424501425,
+      "share_rest_hours_on_days_not_counted": 1.0,
+      "share_seasons_paid": 0.0,
+      "share_top_quartile_rest_seasons_unpaid": 1.0,
+      "spearman_season_rest_vs_paid_days": NaN,
+      "spearman_ci95_year_jackknife": [
+        NaN,
+        NaN
+      ]
+    },
+    {
+      "work": "very_heavy",
+      "level": "AL",
+      "wbgt": "wbgt",
+      "trigger": "MHT 45.27/1d",
+      "cell_seasons": 351,
+      "rest_hours_per_season": 1296.8290598290598,
+      "share_rest_hours_on_days_not_counted": 0.9944242695859065,
+      "share_seasons_paid": 0.19943019943019943,
+      "share_top_quartile_rest_seasons_unpaid": 0.7727272727272727,
+      "spearman_season_rest_vs_paid_days": 0.15403879141339044,
+      "spearman_ci95_year_jackknife": [
+        -0.10795877214929145,
+        0.41603635497607233
+      ]
+    },
+    {
+      "work": "very_heavy",
+      "level": "AL",
+      "wbgt": "wbgt",
+      "trigger": "MHT 46.53/1d",
+      "cell_seasons": 351,
+      "rest_hours_per_season": 1296.8290598290598,
+      "share_rest_hours_on_days_not_counted": 0.9997133046418285,
+      "share_seasons_paid": 0.02564102564102564,
+      "share_top_quartile_rest_seasons_unpaid": 1.0,
+      "spearman_season_rest_vs_paid_days": -0.018767721752584596,
+      "spearman_ci95_year_jackknife": [
+        -0.15466389338053238,
+        0.1171284498753632
+      ]
+    },
+    {
+      "work": "very_heavy",
+      "level": "AL",
+      "wbgt": "wbgt",
+      "trigger": "MHT 47/1d",
+      "cell_seasons": 351,
+      "rest_hours_per_season": 1296.8290598290598,
+      "share_rest_hours_on_days_not_counted": 1.0,
+      "share_seasons_paid": 0.0,
+      "share_top_quartile_rest_seasons_unpaid": 1.0,
+      "spearman_season_rest_vs_paid_days": NaN,
+      "spearman_ci95_year_jackknife": [
+        NaN,
+        NaN
+      ]
+    },
+    {
+      "work": "very_heavy",
+      "level": "AL",
+      "wbgt": "wbgt_shade",
+      "trigger": "MHT 45.27/1d",
+      "cell_seasons": 351,
+      "rest_hours_per_season": 1246.218660968661,
+      "share_rest_hours_on_days_not_counted": 0.994373292198451,
+      "share_seasons_paid": 0.19943019943019943,
+      "share_top_quartile_rest_seasons_unpaid": 0.7613636363636364,
+      "spearman_season_rest_vs_paid_days": 0.17207495450733795,
+      "spearman_ci95_year_jackknife": [
+        -0.08816450256288538,
+        0.4323144115775613
+      ]
+    },
+    {
+      "work": "very_heavy",
+      "level": "AL",
+      "wbgt": "wbgt_shade",
+      "trigger": "MHT 46.53/1d",
+      "cell_seasons": 351,
+      "rest_hours_per_season": 1246.218660968661,
+      "share_rest_hours_on_days_not_counted": 0.9997079484320375,
+      "share_seasons_paid": 0.02564102564102564,
+      "share_top_quartile_rest_seasons_unpaid": 1.0,
+      "spearman_season_rest_vs_paid_days": -0.01547655772335826,
+      "spearman_ci95_year_jackknife": [
+        -0.17120646462208616,
+        0.14025334917536963
+      ]
+    },
+    {
+      "work": "very_heavy",
+      "level": "AL",
+      "wbgt": "wbgt_shade",
+      "trigger": "MHT 47/1d",
+      "cell_seasons": 351,
+      "rest_hours_per_season": 1246.218660968661,
+      "share_rest_hours_on_days_not_counted": 1.0,
+      "share_seasons_paid": 0.0,
+      "share_top_quartile_rest_seasons_unpaid": 1.0,
+      "spearman_season_rest_vs_paid_days": NaN,
+      "spearman_ci95_year_jackknife": [
+        NaN,
+        NaN
+      ]
+    }
+  ],
+  "h_d_threshold_R": {
+    "value": 9.0,
+    "n_days": 5400
+  }
+}

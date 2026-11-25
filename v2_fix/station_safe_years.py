@@ -151,13 +151,23 @@ def get(d, *path, default=None):
     return d
 
 
+def no_ci(t) -> bool:
+    lo, hi = (t.get("ci_low"), t.get("ci_high")) if isinstance(t, dict) else (None, None)
+    return lo is None or hi is None or lo != lo or hi != hi
+
+
 def ci(t) -> str:
     if not isinstance(t, dict) or t.get("estimate") is None:
         return "-"
-    lo, hi = t.get("ci_low"), t.get("ci_high")
-    if lo is None or hi is None or lo != lo or hi != hi:
-        return f"{t['estimate']:+.3f}"
-    return f"{t['estimate']:+.3f} [{lo:+.3f}, {hi:+.3f}]"
+    if no_ci(t):
+        return f"{t['estimate']:+.3f} (no CI, {t.get('n_clusters')} clusters)"
+    return f"{t['estimate']:+.3f} [{t['ci_low']:+.3f}, {t['ci_high']:+.3f}]"
+
+
+def decision(row: dict) -> str:
+    """'True'/'False' as registered, or 'no test' when the CI could not be computed (fewer than 5 clusters)."""
+    t = row.get("primary_diff")
+    return "no test" if isinstance(t, dict) and no_ci(t) else str(row.get("supported"))
 
 
 def num(x, fmt: str = "{:.3f}") -> str:
@@ -168,14 +178,20 @@ def comparison(orig: dict[str, dict], new: dict[str, dict], last_year: int, drop
     L = [f"# Station data cut at {last_year}: the registered numbers and the corrected ones", "",
          "Proposed amendment A7 (`docs/PROPOSED_A7_station_years.md`). The study's code ran unchanged, with station "
          f"Tmax files that stop at {last_year}-12-31 (rows dropped: " + ", ".join(f"{k} {v}" for k, v in dropped.items())
-         + "). Registered = `results_v2/`, corrected = this folder. Full detail is in the JSON files here.", ""]
+         + "). Registered = `results_v2/`, corrected = this folder. Full detail is in the JSON files here.", "",
+         "How to read it:",
+         "- \"No CI\" means fewer than 5 year clusters remain, so no decision is possible. It is not a rejection.",
+         "- H-A and A1 test on the alert days of 2007-2018. With station data only to the cut year, the test keeps "
+         f"only 2007-{last_year}.",
+         "- The shares of unsafe or rest hours outside a window are computed over all the development years' alert "
+         "days (for example 41 -> 33 clusters for light work), so they keep their CIs.", ""]
     w1 = "share_outside W1 12-4 pm (HAP p.155)"
     L += ["## H-A, Delhi window test (`h_a_delhi.json`)", "",
           "| Work / status | Alert days | Best window minus W1 | Supported | Unsafe hours outside 12-4 pm |", "|---|---|---|---|---|"]
     for key in (k for k in orig["h_a_delhi.json"] if "/" in k):
         o, n = orig["h_a_delhi.json"][key], new["h_a_delhi.json"].get(key, {})
         L.append(f"| {key} | {o.get('alert_days')} -> {n.get('alert_days')} | {ci(o.get('primary_diff'))} -> "
-                 f"{ci(n.get('primary_diff'))} | {o.get('supported')} -> {n.get('supported')} | "
+                 f"{ci(n.get('primary_diff'))} | {decision(o)} -> {decision(n)} | "
                  f"{num(get(o, w1, 'estimate'), '{:.2f}')} -> {num(get(n, w1, 'estimate'), '{:.2f}')} |")
     sens_o, sens_n = orig["h_a_delhi.json"].get("sensitivity_alert_population", {}), \
         new["h_a_delhi.json"].get("sensitivity_alert_population", {})
