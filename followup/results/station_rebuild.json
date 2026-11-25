@@ -1,0 +1,217 @@
+{
+ "safdarjung": {
+  "station": "421820-99999",
+  "coverage": {
+   "1980-2008": {
+    "tmax_reported": 10095,
+    "tmax_hourly": 0,
+    "tmin_reported": 9927,
+    "tmin_hourly": 0,
+    "td_mean": 0,
+    "days": 10593
+   },
+   "2009-2010": {
+    "tmax_reported": 717,
+    "tmax_hourly": 0,
+    "tmin_reported": 718,
+    "tmin_hourly": 0,
+    "td_mean": 0,
+    "days": 730
+   },
+   "2011-2015": {
+    "tmax_reported": 1776,
+    "tmax_hourly": 0,
+    "tmin_reported": 1786,
+    "tmin_hourly": 0,
+    "td_mean": 0,
+    "days": 1826
+   },
+   "2016-2025": {
+    "tmax_reported": 245,
+    "tmax_hourly": 1,
+    "tmin_reported": 3460,
+    "tmin_hourly": 0,
+    "td_mean": 1,
+    "days": 3524
+   }
+  },
+  "self_check": {
+   "days": 0,
+   "passes": null,
+   "note": "no day has both values"
+  },
+  "ghcn_check_tmax": {
+   "years": [
+    1980,
+    2008
+   ],
+   "days": 9971,
+   "mad_by_lag": {
+    "-1": 1.452002920926351,
+    "0": 0.0038210811352923464,
+    "1": 1.443864774624374
+   },
+   "mean_rebuilt_minus_ghcn": -0.0038210811352923464,
+   "share_within_0.5": 0.9985959281917561,
+   "passes": true
+  },
+  "ghcn_check_tmin": {
+   "years": [
+    1980,
+    2008
+   ],
+   "days": 8758,
+   "mad_by_lag": {
+    "-1": 1.2276447225899627,
+    "0": 0.0010733044073989492,
+    "1": 1.3658521906596053
+   },
+   "mean_rebuilt_minus_ghcn": 0.0010733044073989492,
+   "share_within_0.5": 0.9996574560401918
+  }
+ },
+ "palam": {
+  "station": "421810-99999",
+  "coverage": {
+   "1980-2008": {
+    "tmax_reported": 35,
+    "tmax_hourly": 1046,
+    "tmin_reported": 5,
+    "tmin_hourly": 1766,
+    "td_mean": 1995,
+    "days": 10593
+   },
+   "2009-2010": {
+    "tmax_reported": 1,
+    "tmax_hourly": 339,
+    "tmin_reported": 1,
+    "tmin_hourly": 619,
+    "td_mean": 709,
+    "days": 730
+   },
+   "2011-2015": {
+    "tmax_reported": 24,
+    "tmax_hourly": 806,
+    "tmin_reported": 23,
+    "tmin_hourly": 1501,
+    "td_mean": 1735,
+    "days": 1826
+   },
+   "2016-2025": {
+    "tmax_reported": 2493,
+    "tmax_hourly": 3283,
+    "tmin_reported": 3441,
+    "tmin_hourly": 3419,
+    "td_mean": 3439,
+    "days": 3524
+   }
+  },
+  "self_check": {
+   "days": 2371,
+   "mad_by_lag": {
+    "-1": 1.703565365025467,
+    "0": 0.6974694221847323,
+    "1": 1.6465480728504869
+   },
+   "share_below_hourly_by_0.5": 0.07169970476592155,
+   "mean_reported_minus_hourly": 0.49687895402783644,
+   "passes": false
+  }
+ },
+ "ahmedabad": {
+  "station": "426470-99999",
+  "coverage": {
+   "1980-2008": {
+    "tmax_reported": 9754,
+    "tmax_hourly": 7,
+    "tmin_reported": 9564,
+    "tmin_hourly": 31,
+    "td_mean": 29,
+    "days": 10593
+   },
+   "2009-2010": {
+    "tmax_reported": 720,
+    "tmax_hourly": 0,
+    "tmin_reported": 722,
+    "tmin_hourly": 0,
+    "td_mean": 0,
+    "days": 730
+   },
+   "2011-2015": {
+    "tmax_reported": 1806,
+    "tmax_hourly": 24,
+    "tmin_reported": 1377,
+    "tmin_hourly": 38,
+    "td_mean": 42,
+    "days": 1826
+   },
+   "2016-2025": {
+    "tmax_reported": 203,
+    "tmax_hourly": 3038,
+    "tmin_reported": 3490,
+    "tmin_hourly": 3402,
+    "td_mean": 3447,
+    "days": 3524
+   }
+  },
+  "self_check": {
+   "days": 210,
+   "mad_by_lag": {
+    "-1": 1.390654205607477,
+    "0": 0.642857142857143,
+    "1": 1.5050925925925926
+   },
+   "share_below_hourly_by_0.5": 0.38095238095238093,
+   "mean_reported_minus_hourly": -0.358095238095238,
+   "passes": false
+  }
+ },
+ "chennai": {
+  "station": "432790-99999",
+  "coverage": {
+   "1980-2008": {
+    "tmax_reported": 9999,
+    "tmax_hourly": 0,
+    "tmin_reported": 9839,
+    "tmin_hourly": 3,
+    "td_mean": 0,
+    "days": 10593
+   },
+   "2009-2010": {
+    "tmax_reported": 723,
+    "tmax_hourly": 0,
+    "tmin_reported": 723,
+    "tmin_hourly": 0,
+    "td_mean": 0,
+    "days": 730
+   },
+   "2011-2015": {
+    "tmax_reported": 1794,
+    "tmax_hourly": 47,
+    "tmin_reported": 1723,
+    "tmin_hourly": 43,
+    "td_mean": 47,
+    "days": 1826
+   },
+   "2016-2025": {
+    "tmax_reported": 231,
+    "tmax_hourly": 3388,
+    "tmin_reported": 3449,
+    "tmin_hourly": 3464,
+    "td_mean": 3493,
+    "days": 3524
+   }
+  },
+  "self_check": {
+   "days": 265,
+   "mad_by_lag": {
+    "-1": 1.3117424242424245,
+    "0": 0.5716981132075474,
+    "1": 1.2539622641509431
+   },
+   "share_below_hourly_by_0.5": 0.15849056603773584,
+   "mean_reported_minus_hourly": 0.14377358490566045,
+   "passes": false
+  }
+ }
+}

@@ -2,6 +2,8 @@
 import gzip
 import json
 
+import numpy as np
+import pandas as pd
 import pytest
 import requests
 
@@ -67,6 +69,67 @@ def test_an_html_page_is_rejected_and_server_errors_are_retried(tmp_path):
     assert waits == [10]
     with pytest.raises(requests.HTTPError):
         ir.fetch(Session({u: [Reply(503)] * 4}), u, sleep=lambda _: None)
+
+
+def isd_line(stamp: str, rtype: str = "FM-12", t: str = "+0300", tq: str = "1", td: str = "+0150", dq: str = "1",
+             ka: str = "", rem: str = "REMSYN004BBXX") -> str:
+    """A synthetic ISD report line with the format document's fixed positions (stamp = YYYYMMDDHHMM, UTC)."""
+    control = "0000" + "421820" + "99999" + stamp + "4" + "+28580" + "+077200" + rtype.ljust(5) + "+0216" + "VIDD " + "V020"
+    mandatory = "999" + "9" + "9" + "9999" + "9" + "99999" + "9" + "9" + "9" + "999999" + "9" + "9" + "9" + t + tq + td + dq \
+        + "99999" + "9"
+    assert len(control) == 60 and len(mandatory) == 45
+    return control + mandatory + "ADD" + "AA1999999999" + ka + rem + "\n"
+
+
+def write_gz(path, lines: list[str]):
+    path.parent.mkdir(parents=True, exist_ok=True)
+    with gzip.open(path, "wt", encoding="latin-1") as f:
+        f.writelines(lines)
+    return path
+
+
+def test_values_quality_codes_and_ka_groups_are_read_from_their_positions():
+    line = isd_line("201006151200", t="+0412", tq="1", td="-0015", dq="2", ka="KA1120M+04355KA2120N+02101")
+    assert ir.value(line[87:92], line[92]) == 41.2 and np.isnan(ir.value(line[93:98], line[98]))  # quality 2 dropped
+    assert ir.value("+9999", "9") != ir.value("+9999", "9")  # missing
+    assert [(p, c) for p, c, _, _ in ir.extremes(line)] == [(12.0, "M"), (12.0, "N")]
+    assert ir.extremes(isd_line("201006151200", rem="REMKA1120M+04355")) == []  # a group-like text in remarks is ignored
+
+
+def test_one_report_per_time_synop_first_then_file_order(tmp_path):
+    p = write_gz(tmp_path / "x.gz", [isd_line("201006151200", "FM-15", t="+0410"),
+                                     isd_line("201006151200", "FM-12", t="+0405"),
+                                     isd_line("201006151200", "FM-12", t="+0400"),
+                                     isd_line("201006151300", "SY-MT", t="+0399"),
+                                     isd_line("201006151300", "FM-16", t="+0398")])
+    rep = ir.read_reports([p])
+    assert list(rep["t"]) == [40.5, 39.8]  # the first FM-12 at 12:00; FM-16 beats another type at 13:00
+
+
+def test_daily_values_follow_the_ist_day_and_the_coverage_rules(tmp_path):
+    day = pd.Timestamp("2010-06-15")
+    hours = pd.date_range(day - pd.Timedelta(hours=5), day + pd.Timedelta(hours=18), freq="h")  # 19 UTC D-1 .. 18 UTC D
+    lines = []
+    for h in hours:
+        ka = "KA1120M+04210" if h.hour == 12 else ("KA1120N+02800" if h.hour == 3 else "")
+        lines.append(isd_line(h.strftime("%Y%m%d%H%M"), t=f"+0{300 + h.hour * 4:03d}", ka=ka))
+    rep = ir.read_reports([write_gz(tmp_path / "x.gz", lines)])
+    d = ir.daily(rep, day, day)
+    r = d.loc[day]
+    assert r["hours_t"] == 24 and r["tmax_reported"] == 42.1 and r["tmin_reported"] == 28.0
+    assert r["tmax_hourly"] == (300 + 23 * 4) / 10  # 23 UTC of D-1 is the warmest synthetic hour
+    assert r["tmin_hourly"] == 30.0  # 00 UTC of D in the 21-03 UTC window
+    no_afternoon = rep[~rep["time"].dt.hour.isin([9])]
+    assert np.isnan(ir.daily(no_afternoon, day, day).loc[day, "tmax_hourly"])  # one afternoon hour missing
+
+
+def test_a_shifted_series_is_caught_by_the_lag_check():
+    idx = pd.date_range("2000-01-01", periods=200, freq="D")
+    truth = pd.Series(np.sin(np.arange(200) / 3) * 5 + 35, index=idx)
+    mad = ir.lag_mad(truth.shift(1), truth)  # a file that carries the previous day's value
+    assert min(mad, key=mad.get) == -1
+    ok = ir.lag_mad(truth, truth)
+    assert min(ok, key=ok.get) == 0
 
 
 def test_the_manifest_is_written_even_when_the_run_stops(tmp_path):

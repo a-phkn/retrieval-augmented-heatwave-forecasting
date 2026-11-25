@@ -595,3 +595,31 @@ no ISD file downloaded.**
   - No design change: a missing year is simply absent from Palam's descriptive tables. Safdarjung's GHCN check is
     unaffected.
   - The two received GHCN files match their recorded SHA-256.
+- **RESULT 2026-11-25, steps 1 and 2.** Sources: `followup/results/station_rebuild.{md,json}`, the census in
+  `followup/results/station_rebuild_census.json`, and the daily files `followup/data/isd_daily_<station>.csv`.
+  - **Step 1, the census** (before any value was read):
+    - All four stations have 12 UTC maximum groups: in 79% of the selected 12 UTC reports (Palam 32%).
+    - All four have 03 UTC minimum groups: in 96-99% of the 03 UTC reports (Palam 46%).
+    - No report has two of either, and the periods are mostly 12 h (24 h at Palam).
+    - The 03 UTC reports also carry a 24-hour maximum (Safdarjung: 4,162 groups).
+    - Hourly reports on the median day: none at Safdarjung (3-hourly only); Palam from 2003; Ahmedabad and Chennai
+      from 2016.
+    - No DEVIATION was needed.
+  - **Step 2(b) passes.** Safdarjung's reported Tmax equals GHCN TMAX on 1980-2008:
+    - mean absolute difference at lags -1 / 0 / +1: 1.45 / 0.00 / 1.44 °C;
+    - 99.9% of 9,971 days agree within 0.5 °C.
+    - Tmin is equal as well (descriptive).
+  - **Step 2(a).**
+    - Safdarjung cannot be checked: no day has both a reported and an hourly value.
+    - Palam, Ahmedabad and Chennai fail.
+      - Lag 0 is clearly best everywhere: 0.70, 0.64 and 0.57 °C, against 1.25-1.70 °C one day off.
+      - But the reported value is more than 0.5 °C below the hourly one on 7.2%, 38.1% and 15.8% of days. The limit
+        is 5%.
+      - Almost all the days both values exist are from 2016 on, and carry 24-hour maximum groups. Ahmedabad's 2022
+        alone gives 141 of its 210 days.
+    - By the rule, these three stations are left out of the steps below until a decision is recorded here.
+  - **Descriptive, after the checks.**
+    - GHCN against the rebuilt Safdarjung series:
+      - 1980-2008: GHCN equals the rebuilt same-day value on 100% of days;
+      - 2011-2015: on 72% of days, and equals the higher of the previous and the same day on 84%.
+    - From 2016 the 12 UTC maximum is mostly absent from ISD for Safdarjung: 245 days in 2016-2025.
