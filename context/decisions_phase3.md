@@ -563,3 +563,28 @@ no ISD file downloaded.**
     `followup/results/station_check_isd.md` (the P3-3 rerun).
   - Tests: `tests/test_followup_isd.py`, on synthetic report lines (positions, quality codes, KA groups, the IST day,
     coverage rules, the self-check).
+- **RESULT 2026-11-25: part B, the station-only half (exploratory).**
+  - Timing, disclosed: it ran on 2026-11-25 after part B's rule was written into the draft, and before this entry was
+    committed. The rule's text has not changed since. The ERA5 half waits for the teammate's ERA5 city files.
+  - Usable TMAX per block (coverage, and the share of identical consecutive values):
+    - Ahmedabad (IN005010600):
+      - 1980-2008: 85%, 6.2%;
+      - 2009-2010: 82%, 4.1%;
+      - 2011-2015: 25%, 7.3%, flagged for coverage;
+      - 2016-2025: 2%, 6.7%, flagged for coverage.
+      - The file is nearly empty after 2010.
+    - Chennai (IN020040900):
+      - 1980-2008: 90%, 6.9%;
+      - 2009-2010: 84%, 7.1%;
+      - 2011-2015: 91%, 31.9%, flagged for repeats (Safdarjung's two-day signature);
+      - 2016-2025: 60%, 11.0%, flagged for coverage.
+  - Safe years for both: 1980-2010. Sent to the teammate.
+  - The expectation "the same fault after 2010 as Safdarjung's" holds for Chennai. Ahmedabad's fault is missing data,
+    not repeats.
+- **DEVIATION 2026-11-25 (by part B's rule; user approved; before any ISD file was downloaded):** Ahmedabad
+  (426470-99999, Sardar Vallabhbhai Patel International) and Chennai International (432790-99999) are rebuilt like
+  Delhi.
+  - Steps 1 and 2(a) apply to them. Steps 2(b), 3 and 4 stay Delhi-only.
+  - This adds 92 yearly files, so 184 in all, about 40-60 MB.
+  - Outputs: `followup/data/isd_daily_{ahmedabad,chennai}.csv`, handed to the `experiments-v2` study.
+  - Part B's ERA5 half still runs if the teammate's files arrive.
