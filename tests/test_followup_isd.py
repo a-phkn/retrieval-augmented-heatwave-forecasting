@@ -123,6 +123,40 @@ def test_daily_values_follow_the_ist_day_and_the_coverage_rules(tmp_path):
     assert np.isnan(ir.daily(no_afternoon, day, day).loc[day, "tmax_hourly"])  # one afternoon hour missing
 
 
+def test_the_next_mornings_24_hour_maximum_is_dated_to_the_day_before(tmp_path):
+    day = pd.Timestamp("2016-06-15")
+    lines = [isd_line("201606150300", ka="KA1120N+02800"), isd_line("201606160300", ka="KA1240M+04300KA2120N+02900")]
+    d = ir.daily(ir.read_reports([write_gz(tmp_path / "x.gz", lines)]), day, day + pd.Timedelta(days=1))
+    assert d.loc[day, "tmax_24h_next_morning"] == 43.0 and np.isnan(d.loc[day + pd.Timedelta(days=1), "tmax_24h_next_morning"])
+
+
+def frame(days: pd.DatetimeIndex, **cols) -> pd.DataFrame:
+    base = {c: np.nan for c in ("tmax_reported", "tmax_reported_period_h", "tmax_hourly", "tmax_24h_next_morning")}
+    return pd.DataFrame({**base, **cols}, index=days)
+
+
+def test_deviation_a_fills_safdarjungs_gaps_from_2016_only_when_the_check_passes():
+    days = pd.date_range("2014-01-01", "2016-12-31", freq="D")
+    wave = pd.Series(np.sin(np.arange(len(days)) / 3) * 5 + 35, index=days)
+    reported = wave.where(days < ir.FILL_FROM)  # the 12 UTC series stops at 2016
+    good = frame(days, tmax_reported=reported, tmax_24h_next_morning=wave + 0.1)
+    d, c = ir.deviation("safdarjung", good)
+    assert c["A_next_morning_vs_12utc"]["passes"] and c["A_days_filled"] == (days >= ir.FILL_FROM).sum()
+    assert (d.loc[days >= ir.FILL_FROM, "tmax_source"] == "03utc_24h_next_morning").all()
+    assert (d.loc[days < ir.FILL_FROM, "tmax"] == reported[days < ir.FILL_FROM]).all()
+    shifted = frame(days, tmax_reported=reported, tmax_24h_next_morning=wave.shift(1))  # a day off: no fill
+    d2, c2 = ir.deviation("safdarjung", shifted)
+    assert not c2["A_next_morning_vs_12utc"]["passes"] and d2.loc[days >= ir.FILL_FROM, "tmax"].isna().all()
+
+
+def test_deviation_b_keeps_12_hour_groups_only(tmp_path):
+    days = pd.date_range("2010-01-01", periods=4, freq="D")
+    d, c = ir.deviation("palam", frame(days, tmax_reported=[40.0, 41.0, 42.0, 43.0],
+                                       tmax_reported_period_h=[12.0, 24.0, np.nan, 12.0]))
+    assert list(d["tmax"].fillna(-1)) == [40.0, -1, -1, 43.0] and not c["left_out"]
+    assert list(d["tmax_source"]) == ["12utc_12h", "", "", "12utc_12h"]
+
+
 def test_a_shifted_series_is_caught_by_the_lag_check():
     idx = pd.date_range("2000-01-01", periods=200, freq="D")
     truth = pd.Series(np.sin(np.arange(200) / 3) * 5 + 35, index=idx)

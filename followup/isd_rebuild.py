@@ -278,6 +278,10 @@ def daily(rep: pd.DataFrame, first: pd.Timestamp = FIRST_DAY, last: pd.Timestamp
     out["tmin_hourly"] = gn.min().reindex(days).where(gn.count().reindex(days) >= 6)
     out["td_mean"] = g["td"].mean().reindex(days).where(n_td >= 18)
     out["hours_t"], out["hours_td"] = n_t.fillna(0).astype(int), n_td.fillna(0).astype(int)
+    # deviation of 2026-11-25 (A): the next morning's 24-hour maximum (08:30 IST of D to 08:30 IST of D + 1)
+    s24 = rep03["tmax_ka"].where(rep03["tmax_period"] == 24.0)
+    s24.index = s24.index - pd.Timedelta(days=1)
+    out["tmax_24h_next_morning"] = s24.reindex(days)
     return out
 
 
@@ -334,10 +338,57 @@ def paths_for(station: str, root: Path = RAW_DIR) -> list[Path]:
     return sorted((root / station).glob(f"{station}-*.gz"))
 
 
+# ------------------------------------------------------------------ the deviation of 2026-11-25 (A and B)
+
+FILL_FROM = pd.Timestamp("2016-01-01")
+RECEIVED_IDS = {"ahmedabad": "IN005010600", "chennai": "IN020040900"}
+
+
+def received_ghcn(sid: str, root: Path = GHCN_DIR) -> pd.Series:
+    """TMAX (°C) of a GHCN-Daily file received from the experiments-v2 study; quality-flagged values dropped."""
+    d = pd.read_csv(root / f"{sid}.csv", usecols=["DATE", "TMAX", "TMAX_ATTRIBUTES"], dtype=str).dropna(subset=["TMAX"])
+    q = d["TMAX_ATTRIBUTES"].fillna(",,").str.split(",").str[1].fillna("").str.strip()
+    t = pd.to_numeric(d["TMAX"], errors="coerce") / 10.0
+    return pd.Series(t.where(q == "").to_numpy(), index=pd.to_datetime(d["DATE"])).dropna().sort_index()
+
+
+def deviation(name: str, d: pd.DataFrame, ghcn_root: Path = GHCN_DIR) -> tuple[pd.DataFrame, dict]:
+    """Adds `tmax` (the series used from here on) and `tmax_source`, and returns the deviation's checks.
+    (A) Safdarjung: from 2016, days without a 12 UTC maximum take the next morning's 24-hour maximum, if that series
+    passes the 2(b) rule against the 12 UTC one on every day both exist. (B) Other stations: 12-hour 12 UTC groups
+    only; Ahmedabad and Chennai also take the 2(b) rule against their received GHCN files on 1980-2008. A station that
+    fails a check is left out: its `tmax` is empty."""
+    d = d.copy()
+    checks: dict = {}
+    if name == "safdarjung":
+        check = ghcn_check(d["tmax_24h_next_morning"], d["tmax_reported"], years=(1980, 2025))
+        checks["A_next_morning_vs_12utc"] = check
+        t = d["tmax_reported"].copy()
+        src = pd.Series(np.where(t.notna(), "12utc", ""), index=d.index, dtype=object)
+        gap = t.isna() & (d.index >= FILL_FROM) & d["tmax_24h_next_morning"].notna()
+        if check["passes"]:
+            t[gap] = d.loc[gap, "tmax_24h_next_morning"]
+            src[gap] = "03utc_24h_next_morning"
+        checks["A_days_filled"] = int(gap.sum()) if check["passes"] else 0
+        checks["left_out"] = False
+    else:
+        t = d["tmax_reported"].where(d["tmax_reported_period_h"] == 12.0)
+        checks["B_self_check"] = self_check(d.assign(tmax_reported=t))
+        if name in RECEIVED_IDS:
+            checks["B_ghcn_check"] = ghcn_check(t, received_ghcn(RECEIVED_IDS[name], ghcn_root))
+        checks["left_out"] = any(c.get("passes") is False for k, c in checks.items() if k.startswith("B_"))
+        if checks["left_out"]:
+            t = t.where(pd.Series(False, index=d.index))
+        src = pd.Series(np.where(t.notna(), "12utc_12h", ""), index=d.index, dtype=object)
+    d["tmax"], d["tmax_source"] = t, src
+    return d, checks
+
+
 def coverage(d: pd.DataFrame) -> dict:
     """Days with each daily value, per block of years."""
     blocks = {"1980-2008": (1980, 2008), "2009-2010": (2009, 2010), "2011-2015": (2011, 2015), "2016-2025": (2016, 2025)}
-    cols = ["tmax_reported", "tmax_hourly", "tmin_reported", "tmin_hourly", "td_mean"]
+    cols = [c for c in ("tmax_reported", "tmax_hourly", "tmin_reported", "tmin_hourly", "td_mean", "tmax")
+            if c in d.columns]
     return {k: {c: int(d.loc[(d.index.year >= a) & (d.index.year <= b), c].notna().sum()) for c in cols}
             | {"days": int(((d.index.year >= a) & (d.index.year <= b)).sum())} for k, (a, b) in blocks.items()}
 
@@ -347,9 +398,11 @@ def build() -> dict:
     res = {}
     for name, st in STATIONS.items():
         d = daily(read_reports(paths_for(st)))
+        res[name] = {"station": st, "self_check": self_check(d)}
+        d, res[name]["deviation"] = deviation(name, d)
+        res[name]["coverage"] = coverage(d)
         DAILY_DIR.mkdir(parents=True, exist_ok=True)
         d.round(2).to_csv(DAILY_DIR / f"isd_daily_{name}.csv", date_format="%Y-%m-%d")
-        res[name] = {"station": st, "coverage": coverage(d), "self_check": self_check(d)}
         if name == "safdarjung":
             g = ghcn_safdarjung()
             res[name]["ghcn_check_tmax"] = ghcn_check(d["tmax_reported"], g["tmax"])
@@ -367,12 +420,13 @@ def write_report(res: dict, cen: dict | None = None) -> None:
          "`followup/data/isd_daily_<station>.csv` (IST days). Step 1 (the census) is in "
          "`followup/results/station_rebuild_census.json`.", "",
          "## Days with each value", "",
-         "| Station | Years | Days | Tmax reported | Tmax hourly | Tmin reported | Tmin hourly | Dew point mean |",
-         "|---|---|---|---|---|---|---|---|"]
+         "`Tmax used` is the series used from here on, after the deviation of 2026-11-25 (section at the end).", "",
+         "| Station | Years | Days | Tmax reported | Tmax hourly | Tmin reported | Tmin hourly | Dew point mean | "
+         "Tmax used |", "|---|---|---|---|---|---|---|---|---|"]
     for name, r in res.items():
         for block, c in r["coverage"].items():
             L.append(f"| {name} | {block} | {c['days']} | {c['tmax_reported']} | {c['tmax_hourly']} | "
-                     f"{c['tmin_reported']} | {c['tmin_hourly']} | {c['td_mean']} |")
+                     f"{c['tmin_reported']} | {c['tmin_hourly']} | {c['td_mean']} | {c.get('tmax', '-')} |")
     L += ["", "## Step 2(a): each station against itself", "",
           "Reported Tmax against the station's own hourly Tmax, on days both exist. Passes if the lag-0 mean absolute "
           "difference is the smallest and the reported value is more than 0.5 °C below the hourly one on at most 5% "
@@ -400,6 +454,32 @@ def write_report(res: dict, cen: dict | None = None) -> None:
             L.append(f"| {label} | {t['days']} | {f(m[-1])} / {f(m[0])} / {f(m[1])} | "
                      f"{f(t['mean_rebuilt_minus_ghcn'], '{:+.2f}')} | {f(t['share_within_0.5'], '{:.1%}')} | "
                      f"{t.get('passes', 'descriptive')} |")
+
+    def row(label: str, t: dict) -> str:
+        if not t or not t.get("days"):
+            return f"| {label} | 0 | - | - | - | {t.get('note', 'not checkable') if t else '-'} |"
+        m = t["mad_by_lag"]
+        diff = t.get("mean_rebuilt_minus_ghcn", t.get("mean_reported_minus_hourly"))
+        within = t.get("share_within_0.5")
+        extra = f(within, "{:.1%}") if within is not None else f(t.get("share_below_hourly_by_0.5"), "{:.1%}") + " below"
+        return (f"| {label} | {t['days']} | {f(m[-1])} / {f(m[0])} / {f(m[1])} | {f(diff, '{:+.2f}')} | {extra} | "
+                f"{t.get('passes')} |")
+
+    L += ["", "## Deviation of 2026-11-25 (A and B; post hoc, see the decision log)", "",
+          "| Check | Days | MAD lag -1 / 0 / +1 (°C) | Mean difference (°C) | Within 0.5 °C | Passes |",
+          "|---|---|---|---|---|---|"]
+    for name, r in res.items():
+        dv = r.get("deviation", {})
+        if name == "safdarjung":
+            L.append(row("(A) Safdarjung: next morning's 24-hour max vs the 12 UTC max", dv.get("A_next_morning_vs_12utc")))
+        else:
+            L.append(row(f"(B) {name}: 12-hour groups vs own hourly Tmax", dv.get("B_self_check")))
+            if "B_ghcn_check" in dv:
+                L.append(row(f"(B) {name}: 12-hour groups vs GHCN, 1980-2008", dv["B_ghcn_check"]))
+    s = res.get("safdarjung", {}).get("deviation", {})
+    left = [n for n, r in res.items() if r.get("deviation", {}).get("left_out")]
+    L += ["", f"Safdarjung days filled from 2016 (A): {s.get('A_days_filled', 0)}. "
+          f"Stations left out under (B): {', '.join(left) if left else 'none'}."]
     RESULTS.mkdir(parents=True, exist_ok=True)
     (RESULTS / "station_rebuild.md").write_text("\n".join(L) + "\n", encoding="utf-8")
     (RESULTS / "station_rebuild.json").write_text(json.dumps(res, indent=1, default=float) + "\n", encoding="utf-8")

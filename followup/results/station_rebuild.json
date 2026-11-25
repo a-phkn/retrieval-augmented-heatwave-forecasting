@@ -1,6 +1,30 @@
 {
  "safdarjung": {
   "station": "421820-99999",
+  "self_check": {
+   "days": 0,
+   "passes": null,
+   "note": "no day has both values"
+  },
+  "deviation": {
+   "A_next_morning_vs_12utc": {
+    "years": [
+     1980,
+     2025
+    ],
+    "days": 940,
+    "mad_by_lag": {
+     "-1": 1.5151965993623804,
+     "0": 0.01957446808510639,
+     "1": 1.5130760986066456
+    },
+    "mean_rebuilt_minus_ghcn": -0.0125531914893617,
+    "share_within_0.5": 0.9946808510638298,
+    "passes": true
+   },
+   "A_days_filled": 3192,
+   "left_out": false
+  },
   "coverage": {
    "1980-2008": {
     "tmax_reported": 10095,
@@ -8,6 +32,7 @@
     "tmin_reported": 9927,
     "tmin_hourly": 0,
     "td_mean": 0,
+    "tmax": 10095,
     "days": 10593
    },
    "2009-2010": {
@@ -16,6 +41,7 @@
     "tmin_reported": 718,
     "tmin_hourly": 0,
     "td_mean": 0,
+    "tmax": 717,
     "days": 730
    },
    "2011-2015": {
@@ -24,6 +50,7 @@
     "tmin_reported": 1786,
     "tmin_hourly": 0,
     "td_mean": 0,
+    "tmax": 1776,
     "days": 1826
    },
    "2016-2025": {
@@ -32,13 +59,9 @@
     "tmin_reported": 3460,
     "tmin_hourly": 0,
     "td_mean": 1,
+    "tmax": 3437,
     "days": 3524
    }
-  },
-  "self_check": {
-   "days": 0,
-   "passes": null,
-   "note": "no day has both values"
   },
   "ghcn_check_tmax": {
    "years": [
@@ -72,40 +95,6 @@
  },
  "palam": {
   "station": "421810-99999",
-  "coverage": {
-   "1980-2008": {
-    "tmax_reported": 35,
-    "tmax_hourly": 1046,
-    "tmin_reported": 5,
-    "tmin_hourly": 1766,
-    "td_mean": 1995,
-    "days": 10593
-   },
-   "2009-2010": {
-    "tmax_reported": 1,
-    "tmax_hourly": 339,
-    "tmin_reported": 1,
-    "tmin_hourly": 619,
-    "td_mean": 709,
-    "days": 730
-   },
-   "2011-2015": {
-    "tmax_reported": 24,
-    "tmax_hourly": 806,
-    "tmin_reported": 23,
-    "tmin_hourly": 1501,
-    "td_mean": 1735,
-    "days": 1826
-   },
-   "2016-2025": {
-    "tmax_reported": 2493,
-    "tmax_hourly": 3283,
-    "tmin_reported": 3441,
-    "tmin_hourly": 3419,
-    "td_mean": 3439,
-    "days": 3524
-   }
-  },
   "self_check": {
    "days": 2371,
    "mad_by_lag": {
@@ -116,44 +105,56 @@
    "share_below_hourly_by_0.5": 0.07169970476592155,
    "mean_reported_minus_hourly": 0.49687895402783644,
    "passes": false
+  },
+  "deviation": {
+   "B_self_check": {
+    "days": 0,
+    "passes": null,
+    "note": "no day has both values"
+   },
+   "left_out": false
+  },
+  "coverage": {
+   "1980-2008": {
+    "tmax_reported": 35,
+    "tmax_hourly": 1046,
+    "tmin_reported": 5,
+    "tmin_hourly": 1766,
+    "td_mean": 1995,
+    "tmax": 31,
+    "days": 10593
+   },
+   "2009-2010": {
+    "tmax_reported": 1,
+    "tmax_hourly": 339,
+    "tmin_reported": 1,
+    "tmin_hourly": 619,
+    "td_mean": 709,
+    "tmax": 1,
+    "days": 730
+   },
+   "2011-2015": {
+    "tmax_reported": 24,
+    "tmax_hourly": 806,
+    "tmin_reported": 23,
+    "tmin_hourly": 1501,
+    "td_mean": 1735,
+    "tmax": 0,
+    "days": 1826
+   },
+   "2016-2025": {
+    "tmax_reported": 2493,
+    "tmax_hourly": 3283,
+    "tmin_reported": 3441,
+    "tmin_hourly": 3419,
+    "td_mean": 3439,
+    "tmax": 0,
+    "days": 3524
+   }
   }
  },
  "ahmedabad": {
   "station": "426470-99999",
-  "coverage": {
-   "1980-2008": {
-    "tmax_reported": 9754,
-    "tmax_hourly": 7,
-    "tmin_reported": 9564,
-    "tmin_hourly": 31,
-    "td_mean": 29,
-    "days": 10593
-   },
-   "2009-2010": {
-    "tmax_reported": 720,
-    "tmax_hourly": 0,
-    "tmin_reported": 722,
-    "tmin_hourly": 0,
-    "td_mean": 0,
-    "days": 730
-   },
-   "2011-2015": {
-    "tmax_reported": 1806,
-    "tmax_hourly": 24,
-    "tmin_reported": 1377,
-    "tmin_hourly": 38,
-    "td_mean": 42,
-    "days": 1826
-   },
-   "2016-2025": {
-    "tmax_reported": 203,
-    "tmax_hourly": 3038,
-    "tmin_reported": 3490,
-    "tmin_hourly": 3402,
-    "td_mean": 3447,
-    "days": 3524
-   }
-  },
   "self_check": {
    "days": 210,
    "mad_by_lag": {
@@ -164,44 +165,77 @@
    "share_below_hourly_by_0.5": 0.38095238095238093,
    "mean_reported_minus_hourly": -0.358095238095238,
    "passes": false
+  },
+  "deviation": {
+   "B_self_check": {
+    "days": 6,
+    "mad_by_lag": {
+     "-1": 0.971428571428571,
+     "0": 0.8666666666666666,
+     "1": 1.6571428571428584
+    },
+    "share_below_hourly_by_0.5": 0.0,
+    "mean_reported_minus_hourly": 0.8666666666666666,
+    "passes": true
+   },
+   "B_ghcn_check": {
+    "years": [
+     1980,
+     2008
+    ],
+    "days": 8343,
+    "mad_by_lag": {
+     "-1": 1.0784839499806624,
+     "0": 0.001426345439290423,
+     "1": 1.0760774193548388
+    },
+    "mean_rebuilt_minus_ghcn": -0.001426345439290423,
+    "share_within_0.5": 0.9994006951935754,
+    "passes": true
+   },
+   "left_out": false
+  },
+  "coverage": {
+   "1980-2008": {
+    "tmax_reported": 9754,
+    "tmax_hourly": 7,
+    "tmin_reported": 9564,
+    "tmin_hourly": 31,
+    "td_mean": 29,
+    "tmax": 9109,
+    "days": 10593
+   },
+   "2009-2010": {
+    "tmax_reported": 720,
+    "tmax_hourly": 0,
+    "tmin_reported": 722,
+    "tmin_hourly": 0,
+    "td_mean": 0,
+    "tmax": 720,
+    "days": 730
+   },
+   "2011-2015": {
+    "tmax_reported": 1806,
+    "tmax_hourly": 24,
+    "tmin_reported": 1377,
+    "tmin_hourly": 38,
+    "td_mean": 42,
+    "tmax": 840,
+    "days": 1826
+   },
+   "2016-2025": {
+    "tmax_reported": 203,
+    "tmax_hourly": 3038,
+    "tmin_reported": 3490,
+    "tmin_hourly": 3402,
+    "td_mean": 3447,
+    "tmax": 0,
+    "days": 3524
+   }
   }
  },
  "chennai": {
   "station": "432790-99999",
-  "coverage": {
-   "1980-2008": {
-    "tmax_reported": 9999,
-    "tmax_hourly": 0,
-    "tmin_reported": 9839,
-    "tmin_hourly": 3,
-    "td_mean": 0,
-    "days": 10593
-   },
-   "2009-2010": {
-    "tmax_reported": 723,
-    "tmax_hourly": 0,
-    "tmin_reported": 723,
-    "tmin_hourly": 0,
-    "td_mean": 0,
-    "days": 730
-   },
-   "2011-2015": {
-    "tmax_reported": 1794,
-    "tmax_hourly": 47,
-    "tmin_reported": 1723,
-    "tmin_hourly": 43,
-    "td_mean": 47,
-    "days": 1826
-   },
-   "2016-2025": {
-    "tmax_reported": 231,
-    "tmax_hourly": 3388,
-    "tmin_reported": 3449,
-    "tmin_hourly": 3464,
-    "td_mean": 3493,
-    "days": 3524
-   }
-  },
   "self_check": {
    "days": 265,
    "mad_by_lag": {
@@ -212,6 +246,67 @@
    "share_below_hourly_by_0.5": 0.15849056603773584,
    "mean_reported_minus_hourly": 0.14377358490566045,
    "passes": false
+  },
+  "deviation": {
+   "B_self_check": {
+    "days": 0,
+    "passes": null,
+    "note": "no day has both values"
+   },
+   "B_ghcn_check": {
+    "years": [
+     1980,
+     2008
+    ],
+    "days": 8805,
+    "mad_by_lag": {
+     "-1": 1.090550425710517,
+     "0": 0.0009653605905735374,
+     "1": 1.0884444976649503
+    },
+    "mean_rebuilt_minus_ghcn": -0.0009653605905735374,
+    "share_within_0.5": 0.9996592844974447,
+    "passes": true
+   },
+   "left_out": false
+  },
+  "coverage": {
+   "1980-2008": {
+    "tmax_reported": 9999,
+    "tmax_hourly": 0,
+    "tmin_reported": 9839,
+    "tmin_hourly": 3,
+    "td_mean": 0,
+    "tmax": 9313,
+    "days": 10593
+   },
+   "2009-2010": {
+    "tmax_reported": 723,
+    "tmax_hourly": 0,
+    "tmin_reported": 723,
+    "tmin_hourly": 0,
+    "td_mean": 0,
+    "tmax": 723,
+    "days": 730
+   },
+   "2011-2015": {
+    "tmax_reported": 1794,
+    "tmax_hourly": 47,
+    "tmin_reported": 1723,
+    "tmin_hourly": 43,
+    "td_mean": 47,
+    "tmax": 840,
+    "days": 1826
+   },
+   "2016-2025": {
+    "tmax_reported": 231,
+    "tmax_hourly": 3388,
+    "tmin_reported": 3449,
+    "tmin_hourly": 3464,
+    "td_mean": 3493,
+    "tmax": 0,
+    "days": 3524
+   }
   }
  }
 }

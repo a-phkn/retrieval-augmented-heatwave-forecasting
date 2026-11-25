@@ -646,3 +646,18 @@ no ISD file downloaded.**
       2003) stays, for the descriptive Palam tables of step 3.
   - The registered columns of the daily files are unchanged. The deviation adds three columns:
     `tmax_24h_next_morning`, `tmax` (the series used from here on) and `tmax_source`.
+- **RESULT 2026-11-25, the deviation** (`followup/results/station_rebuild.md`, last section).
+  - **(A) passes.** On the 940 days both exist, the next morning's 24-hour maximum matches the 12 UTC maximum:
+    - mean absolute difference at lags -1 / 0 / +1: 1.52 / 0.02 / 1.51 °C;
+    - mean difference -0.01 °C, with 99.5% of days within 0.5 °C.
+    - 3,192 days are filled, so Safdarjung now has a Tmax on 3,437 of the 3,524 days of 2016-2025.
+  - **(B).**
+    - Ahmedabad's and Chennai's 12-hour groups equal their GHCN files on 1980-2008: mean absolute difference 0.00 °C
+      at lag 0 against 1.08-1.09 °C a day off, on 8,343 and 8,805 days, with 99.9% and 100% within 0.5 °C. Both pass.
+    - The self-check could not run for Chennai or Palam (no day with both values). For Ahmedabad it passes, but on
+      only 6 days.
+    - No station is left out.
+    - Coverage of the series used:
+      - Ahmedabad and Chennai: 840 of 1,826 days in 2011-2015 (about half the 12 UTC groups then were 24-hour ones),
+        and none from 2016;
+      - Palam: 32 days in all, so only its hourly Tmax remains.
