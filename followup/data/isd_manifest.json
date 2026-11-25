@@ -1,0 +1,1112 @@
+{
+ "isd_files": {
+  "421810-99999-1980": {
+   "station": "palam",
+   "url": "https://www.ncei.noaa.gov/pub/data/noaa/1980/421810-99999-1980.gz",
+   "missing": true
+  },
+  "421810-99999-1981": {
+   "station": "palam",
+   "url": "https://www.ncei.noaa.gov/pub/data/noaa/1981/421810-99999-1981.gz",
+   "missing": true
+  },
+  "421810-99999-1982": {
+   "station": "palam",
+   "url": "https://www.ncei.noaa.gov/pub/data/noaa/1982/421810-99999-1982.gz",
+   "missing": true
+  },
+  "421810-99999-1983": {
+   "station": "palam",
+   "url": "https://www.ncei.noaa.gov/pub/data/noaa/1983/421810-99999-1983.gz",
+   "missing": true
+  },
+  "421810-99999-1984": {
+   "station": "palam",
+   "url": "https://www.ncei.noaa.gov/pub/data/noaa/1984/421810-99999-1984.gz",
+   "missing": true
+  },
+  "421810-99999-1985": {
+   "station": "palam",
+   "url": "https://www.ncei.noaa.gov/pub/data/noaa/1985/421810-99999-1985.gz",
+   "missing": true
+  },
+  "421810-99999-1986": {
+   "station": "palam",
+   "url": "https://www.ncei.noaa.gov/pub/data/noaa/1986/421810-99999-1986.gz",
+   "bytes": 1885,
+   "sha256": "701df56378233444df819c9dc26f79a040ed3242825ef2041f5d882c1afeb95e"
+  },
+  "421810-99999-1987": {
+   "station": "palam",
+   "url": "https://www.ncei.noaa.gov/pub/data/noaa/1987/421810-99999-1987.gz",
+   "bytes": 1530,
+   "sha256": "74174ab2a8feaf19311c4dd27686c8285f2022baee551640315485773ecfb6fb"
+  },
+  "421810-99999-1988": {
+   "station": "palam",
+   "url": "https://www.ncei.noaa.gov/pub/data/noaa/1988/421810-99999-1988.gz",
+   "bytes": 1831,
+   "sha256": "9feb80071bdc6f1cd88ba422f9909c55cc70daac188c848df018a6f483b4cc81"
+  },
+  "421810-99999-1989": {
+   "station": "palam",
+   "url": "https://www.ncei.noaa.gov/pub/data/noaa/1989/421810-99999-1989.gz",
+   "bytes": 1293,
+   "sha256": "3469c871d5a9df4bd1c088018abb11a7a8b54e21d6fbca6b0a96e5b9a8c47040"
+  },
+  "421810-99999-1990": {
+   "station": "palam",
+   "url": "https://www.ncei.noaa.gov/pub/data/noaa/1990/421810-99999-1990.gz",
+   "bytes": 515,
+   "sha256": "e917514efa87075bee8c99064c0caa6123cfdda51cabee7a87520cc69354706f"
+  },
+  "421810-99999-1991": {
+   "station": "palam",
+   "url": "https://www.ncei.noaa.gov/pub/data/noaa/1991/421810-99999-1991.gz",
+   "missing": true
+  },
+  "421810-99999-1992": {
+   "station": "palam",
+   "url": "https://www.ncei.noaa.gov/pub/data/noaa/1992/421810-99999-1992.gz",
+   "missing": true
+  },
+  "421810-99999-1993": {
+   "station": "palam",
+   "url": "https://www.ncei.noaa.gov/pub/data/noaa/1993/421810-99999-1993.gz",
+   "missing": true
+  },
+  "421810-99999-1994": {
+   "station": "palam",
+   "url": "https://www.ncei.noaa.gov/pub/data/noaa/1994/421810-99999-1994.gz",
+   "missing": true
+  },
+  "421810-99999-1995": {
+   "station": "palam",
+   "url": "https://www.ncei.noaa.gov/pub/data/noaa/1995/421810-99999-1995.gz",
+   "missing": true
+  },
+  "421810-99999-1996": {
+   "station": "palam",
+   "url": "https://www.ncei.noaa.gov/pub/data/noaa/1996/421810-99999-1996.gz",
+   "bytes": 85616,
+   "sha256": "8bcd5865c6e515d2c8f35ed06ca0fc2749f1a1470dfe45446c0bfa0db91e2552"
+  },
+  "421810-99999-1997": {
+   "station": "palam",
+   "url": "https://www.ncei.noaa.gov/pub/data/noaa/1997/421810-99999-1997.gz",
+   "bytes": 120233,
+   "sha256": "71bd909c6e424d822aac159e5304089ee5b77cce83d8fb2de5c3fef70261f353"
+  },
+  "421810-99999-1998": {
+   "station": "palam",
+   "url": "https://www.ncei.noaa.gov/pub/data/noaa/1998/421810-99999-1998.gz",
+   "bytes": 122271,
+   "sha256": "18f514b8914f5df4c9056c9e6728969556cb3719c1972dea304a9515fb98f10b"
+  },
+  "421810-99999-1999": {
+   "station": "palam",
+   "url": "https://www.ncei.noaa.gov/pub/data/noaa/1999/421810-99999-1999.gz",
+   "bytes": 135702,
+   "sha256": "6cad1286d872792642ccfc321de4b0a7eb2652bab54205cd51ff679ceb00a4a5"
+  },
+  "421810-99999-2000": {
+   "station": "palam",
+   "url": "https://www.ncei.noaa.gov/pub/data/noaa/2000/421810-99999-2000.gz",
+   "bytes": 215713,
+   "sha256": "d9bc329f19f2b8b5ced11f915afda1653e26656f9cc9a73ead7cdf11e137cd3d"
+  },
+  "421810-99999-2001": {
+   "station": "palam",
+   "url": "https://www.ncei.noaa.gov/pub/data/noaa/2001/421810-99999-2001.gz",
+   "bytes": 228115,
+   "sha256": "af58e1b870740a93852e16ffef20ebbed262982965c833362fe53800c38cc9a4"
+  },
+  "421810-99999-2002": {
+   "station": "palam",
+   "url": "https://www.ncei.noaa.gov/pub/data/noaa/2002/421810-99999-2002.gz",
+   "bytes": 170926,
+   "sha256": "897d20641ca27986d11081f7a49d8bce7146d25a58dca988ea7b645ea6936186"
+  },
+  "421810-99999-2003": {
+   "station": "palam",
+   "url": "https://www.ncei.noaa.gov/pub/data/noaa/2003/421810-99999-2003.gz",
+   "bytes": 275956,
+   "sha256": "dca71977faff4ab7fecce077ce452aaa39b7af4e74d35aca524c3a7cd2636ff5"
+  },
+  "421810-99999-2004": {
+   "station": "palam",
+   "url": "https://www.ncei.noaa.gov/pub/data/noaa/2004/421810-99999-2004.gz",
+   "bytes": 365397,
+   "sha256": "8fde526594acf4fad9a59aab7482db75df3cf14791d5dac7309e3328daafa500"
+  },
+  "421810-99999-2005": {
+   "station": "palam",
+   "url": "https://www.ncei.noaa.gov/pub/data/noaa/2005/421810-99999-2005.gz",
+   "bytes": 343596,
+   "sha256": "3d945961d3af7fa2dfd5de5a47d0e9bb5cd18b26f5f7a10f99eff126105b5d8e"
+  },
+  "421810-99999-2006": {
+   "station": "palam",
+   "url": "https://www.ncei.noaa.gov/pub/data/noaa/2006/421810-99999-2006.gz",
+   "bytes": 374535,
+   "sha256": "649c741610626a5a694e34a8d5f516e26706a0cb96eb2560f4b268cade07cb8a"
+  },
+  "421810-99999-2007": {
+   "station": "palam",
+   "url": "https://www.ncei.noaa.gov/pub/data/noaa/2007/421810-99999-2007.gz",
+   "bytes": 365492,
+   "sha256": "9ab4012c27e13bda76c06454cdefff79ba7985f757f61f5b67c6754ce5569c64"
+  },
+  "421810-99999-2008": {
+   "station": "palam",
+   "url": "https://www.ncei.noaa.gov/pub/data/noaa/2008/421810-99999-2008.gz",
+   "bytes": 353813,
+   "sha256": "9e7c5ad08b4726ff32b90dc96d75a1a8cf675809eda8dd0cd5b6fbf268e5512e"
+  },
+  "421810-99999-2009": {
+   "station": "palam",
+   "url": "https://www.ncei.noaa.gov/pub/data/noaa/2009/421810-99999-2009.gz",
+   "bytes": 334981,
+   "sha256": "438ba6254229cc4d2d178b2f48b81c8bd7e251d3c2e5e72bbbf5b4f9bb44ce9a"
+  },
+  "421810-99999-2010": {
+   "station": "palam",
+   "url": "https://www.ncei.noaa.gov/pub/data/noaa/2010/421810-99999-2010.gz",
+   "bytes": 339839,
+   "sha256": "3a03644db96546ae8d7ab32ba29db0d0056745460262e5756e4ca973064c5158"
+  },
+  "421810-99999-2011": {
+   "station": "palam",
+   "url": "https://www.ncei.noaa.gov/pub/data/noaa/2011/421810-99999-2011.gz",
+   "bytes": 324777,
+   "sha256": "aa00c9b64ee5fba01c2729b03c328108728e8868ede48cd68ba0970618da1acc"
+  },
+  "421810-99999-2012": {
+   "station": "palam",
+   "url": "https://www.ncei.noaa.gov/pub/data/noaa/2012/421810-99999-2012.gz",
+   "bytes": 317391,
+   "sha256": "030344d041d69ceab2d94103943b0396b65b6145f482787aff252eab2d1c0ce6"
+  },
+  "421810-99999-2013": {
+   "station": "palam",
+   "url": "https://www.ncei.noaa.gov/pub/data/noaa/2013/421810-99999-2013.gz",
+   "bytes": 321739,
+   "sha256": "5dc60800acea73a456317aff5b2d93c04665bce562ca7de296553f5151c6c5de"
+  },
+  "421810-99999-2014": {
+   "station": "palam",
+   "url": "https://www.ncei.noaa.gov/pub/data/noaa/2014/421810-99999-2014.gz",
+   "bytes": 331396,
+   "sha256": "9feeed5666fb40d6d089b50ebaf5955a944573a84e092426040b6fa27a915b06"
+  },
+  "421810-99999-2015": {
+   "station": "palam",
+   "url": "https://www.ncei.noaa.gov/pub/data/noaa/2015/421810-99999-2015.gz",
+   "bytes": 343907,
+   "sha256": "e950e4f1829be96899266cbd1590ab1f50a2d19aa2b6dc692d31cc5761bdc4e5"
+  },
+  "421810-99999-2016": {
+   "station": "palam",
+   "url": "https://www.ncei.noaa.gov/pub/data/noaa/2016/421810-99999-2016.gz",
+   "bytes": 480528,
+   "sha256": "c13e438a3eb3a99046d132d82a2cc510f82cd2e08f0feca95dbf45aa968e784b"
+  },
+  "421810-99999-2017": {
+   "station": "palam",
+   "url": "https://www.ncei.noaa.gov/pub/data/noaa/2017/421810-99999-2017.gz",
+   "bytes": 476026,
+   "sha256": "852f4f0c69edc0543e4ae3c872d0ed7ee55de93136b3dac10baf8f6d9a87d41f"
+  },
+  "421810-99999-2018": {
+   "station": "palam",
+   "url": "https://www.ncei.noaa.gov/pub/data/noaa/2018/421810-99999-2018.gz",
+   "bytes": 475682,
+   "sha256": "2479fb3ae62d29e0ea441a2c789abc3169c764c6ac5eaecfe0c3514975c59cc4"
+  },
+  "421810-99999-2019": {
+   "station": "palam",
+   "url": "https://www.ncei.noaa.gov/pub/data/noaa/2019/421810-99999-2019.gz",
+   "bytes": 498785,
+   "sha256": "f2de7caa6a19f34692b1e8712c433b7c8f07024035ad72e28c7bd1d7ca454daa"
+  },
+  "421810-99999-2020": {
+   "station": "palam",
+   "url": "https://www.ncei.noaa.gov/pub/data/noaa/2020/421810-99999-2020.gz",
+   "bytes": 482263,
+   "sha256": "ea930957f0cf69e2846e50e144c6f09476198ec71dc687b9da4b23c29b057984"
+  },
+  "421810-99999-2021": {
+   "station": "palam",
+   "url": "https://www.ncei.noaa.gov/pub/data/noaa/2021/421810-99999-2021.gz",
+   "bytes": 474891,
+   "sha256": "fce1d0f2584897876d656c8a122eaea5f6add20facc4e836fb9844d57755c9cd"
+  },
+  "421810-99999-2022": {
+   "station": "palam",
+   "url": "https://www.ncei.noaa.gov/pub/data/noaa/2022/421810-99999-2022.gz",
+   "bytes": 474618,
+   "sha256": "33c4fc381cb802d1678118bcfdcda8fbaa2f54d71dfde26855a4f6f13ce7b194"
+  },
+  "421810-99999-2023": {
+   "station": "palam",
+   "url": "https://www.ncei.noaa.gov/pub/data/noaa/2023/421810-99999-2023.gz",
+   "bytes": 495703,
+   "sha256": "1d162399291e90b22131084f1b465cb3fda40e7a0c13affca61accce3d19cfcb"
+  },
+  "421810-99999-2024": {
+   "station": "palam",
+   "url": "https://www.ncei.noaa.gov/pub/data/noaa/2024/421810-99999-2024.gz",
+   "bytes": 488361,
+   "sha256": "a7a1a53db3da5e333e99745f2ff6a1b7e0f1a346f23f5ad3e4f10d33ae268056"
+  },
+  "421810-99999-2025": {
+   "station": "palam",
+   "url": "https://www.ncei.noaa.gov/pub/data/noaa/2025/421810-99999-2025.gz",
+   "bytes": 333544,
+   "sha256": "b6a96f22d281f93cb0c4255008098d23c1fa7a25c0f13890803ea4cae0516e8e"
+  },
+  "421820-99999-1980": {
+   "station": "safdarjung",
+   "url": "https://www.ncei.noaa.gov/pub/data/noaa/1980/421820-99999-1980.gz",
+   "bytes": 71366,
+   "sha256": "1ee81aa4d2ee318a82627514362392dea2b753f1c06bb57d60a260591e0e5197"
+  },
+  "421820-99999-1981": {
+   "station": "safdarjung",
+   "url": "https://www.ncei.noaa.gov/pub/data/noaa/1981/421820-99999-1981.gz",
+   "bytes": 71260,
+   "sha256": "68bd56f191179eda5ae304bb31e4987b880c0b83a8df2dbd95e61a40cecb6ada"
+  },
+  "421820-99999-1982": {
+   "station": "safdarjung",
+   "url": "https://www.ncei.noaa.gov/pub/data/noaa/1982/421820-99999-1982.gz",
+   "bytes": 81678,
+   "sha256": "06eb74f6866e62fdf6deb8d872b9dbe9481923e3050566c4c744ee8a7cdca0bb"
+  },
+  "421820-99999-1983": {
+   "station": "safdarjung",
+   "url": "https://www.ncei.noaa.gov/pub/data/noaa/1983/421820-99999-1983.gz",
+   "bytes": 81521,
+   "sha256": "61284ff00ba8c85004e33abd950263a781c92dfdc688937bc091fe70458f794b"
+  },
+  "421820-99999-1984": {
+   "station": "safdarjung",
+   "url": "https://www.ncei.noaa.gov/pub/data/noaa/1984/421820-99999-1984.gz",
+   "bytes": 76329,
+   "sha256": "ebe22c7ec472ac00c688dfe6fe31ac81e22ac877199b4d84af7217889e8271e0"
+  },
+  "421820-99999-1985": {
+   "station": "safdarjung",
+   "url": "https://www.ncei.noaa.gov/pub/data/noaa/1985/421820-99999-1985.gz",
+   "bytes": 79350,
+   "sha256": "504cffd18acc11b4b9b7a50f26c9056b121d552afccc81d00446086ed5439a55"
+  },
+  "421820-99999-1986": {
+   "station": "safdarjung",
+   "url": "https://www.ncei.noaa.gov/pub/data/noaa/1986/421820-99999-1986.gz",
+   "bytes": 79174,
+   "sha256": "3d286bb35512c1c41db6edb8f534338bcd15c0f4f095cebc89b2d27ec87cffe9"
+  },
+  "421820-99999-1987": {
+   "station": "safdarjung",
+   "url": "https://www.ncei.noaa.gov/pub/data/noaa/1987/421820-99999-1987.gz",
+   "bytes": 74843,
+   "sha256": "e4131d04eed69c530459f4123e403848226c7390a8bb7c6e7b26780f56e791f4"
+  },
+  "421820-99999-1988": {
+   "station": "safdarjung",
+   "url": "https://www.ncei.noaa.gov/pub/data/noaa/1988/421820-99999-1988.gz",
+   "bytes": 73090,
+   "sha256": "2b9734aaddf759e4ca5332af01a74f3f18cd87e8a8ad63635a0c8d3fffaf619e"
+  },
+  "421820-99999-1989": {
+   "station": "safdarjung",
+   "url": "https://www.ncei.noaa.gov/pub/data/noaa/1989/421820-99999-1989.gz",
+   "bytes": 73571,
+   "sha256": "3d4ecf5d770f217ae3228f21bbc6a4ee93602e2bee0c93f0cf8ccbf64df8a4ea"
+  },
+  "421820-99999-1990": {
+   "station": "safdarjung",
+   "url": "https://www.ncei.noaa.gov/pub/data/noaa/1990/421820-99999-1990.gz",
+   "bytes": 71409,
+   "sha256": "87e1b23cf0ded67c008c13ba05b6b43eab1ee49278c378e4439baffa13d58cb4"
+  },
+  "421820-99999-1991": {
+   "station": "safdarjung",
+   "url": "https://www.ncei.noaa.gov/pub/data/noaa/1991/421820-99999-1991.gz",
+   "bytes": 66505,
+   "sha256": "e6f9eb950cbe124e44e1bbedb8cc8abfe098f2100223c3cab919a7bac3a34aeb"
+  },
+  "421820-99999-1992": {
+   "station": "safdarjung",
+   "url": "https://www.ncei.noaa.gov/pub/data/noaa/1992/421820-99999-1992.gz",
+   "bytes": 57693,
+   "sha256": "5a2849cd970c6d6468e43fcf00a5a541db85a41aa424305747e112c335ac974c"
+  },
+  "421820-99999-1993": {
+   "station": "safdarjung",
+   "url": "https://www.ncei.noaa.gov/pub/data/noaa/1993/421820-99999-1993.gz",
+   "bytes": 78539,
+   "sha256": "ab04eec9a9369db4d11db79c2208ecfe41cb09dbcd586af32d0e013267309ef7"
+  },
+  "421820-99999-1994": {
+   "station": "safdarjung",
+   "url": "https://www.ncei.noaa.gov/pub/data/noaa/1994/421820-99999-1994.gz",
+   "bytes": 77224,
+   "sha256": "9ce7afd894aa61a2b847cdef664c9f69f6c25fc8b030719f7e1fb8f8705148f9"
+  },
+  "421820-99999-1995": {
+   "station": "safdarjung",
+   "url": "https://www.ncei.noaa.gov/pub/data/noaa/1995/421820-99999-1995.gz",
+   "bytes": 78833,
+   "sha256": "7e07a152f70c0fd8fca528ad09252e958b51c00c4ab69f792e6d61dc88ec36b4"
+  },
+  "421820-99999-1996": {
+   "station": "safdarjung",
+   "url": "https://www.ncei.noaa.gov/pub/data/noaa/1996/421820-99999-1996.gz",
+   "bytes": 79482,
+   "sha256": "579fea53df089caff94b5bff9507ac75d3c6e810ac9fe6f512057632672bdd41"
+  },
+  "421820-99999-1997": {
+   "station": "safdarjung",
+   "url": "https://www.ncei.noaa.gov/pub/data/noaa/1997/421820-99999-1997.gz",
+   "bytes": 80316,
+   "sha256": "041a13b7868afcaa205a2c00a37555093fb3735c1091fe1150113ae88ff8c31b"
+  },
+  "421820-99999-1998": {
+   "station": "safdarjung",
+   "url": "https://www.ncei.noaa.gov/pub/data/noaa/1998/421820-99999-1998.gz",
+   "bytes": 71897,
+   "sha256": "1a40ee461f2ff81164bfed784536561d93110e2888db372e8946ad1609c71dd9"
+  },
+  "421820-99999-1999": {
+   "station": "safdarjung",
+   "url": "https://www.ncei.noaa.gov/pub/data/noaa/1999/421820-99999-1999.gz",
+   "bytes": 80599,
+   "sha256": "124a50bbeb1b5fbb4a88d5d471b7ddf3bfe577e8f21492095d384e2626f90ff9"
+  },
+  "421820-99999-2000": {
+   "station": "safdarjung",
+   "url": "https://www.ncei.noaa.gov/pub/data/noaa/2000/421820-99999-2000.gz",
+   "bytes": 114807,
+   "sha256": "ecbe63ad2684400e929361e770a2789d284e7f74da15cc8e081fbe2b66e00906"
+  },
+  "421820-99999-2001": {
+   "station": "safdarjung",
+   "url": "https://www.ncei.noaa.gov/pub/data/noaa/2001/421820-99999-2001.gz",
+   "bytes": 113361,
+   "sha256": "7ac21bae103fcdace87941fdeba127116a26e8bd1f263fccf6c99b672d4a22c0"
+  },
+  "421820-99999-2002": {
+   "station": "safdarjung",
+   "url": "https://www.ncei.noaa.gov/pub/data/noaa/2002/421820-99999-2002.gz",
+   "bytes": 112227,
+   "sha256": "6f81f4f3d28023e7168bb7a4da1b22470b8f2820f260d7a814f89b8cbe6c954d"
+  },
+  "421820-99999-2003": {
+   "station": "safdarjung",
+   "url": "https://www.ncei.noaa.gov/pub/data/noaa/2003/421820-99999-2003.gz",
+   "bytes": 114795,
+   "sha256": "ce57d4ff12c1c2d66da0ce78ea6ac2a478957b520de5484ff8067703cd79d6f5"
+  },
+  "421820-99999-2004": {
+   "station": "safdarjung",
+   "url": "https://www.ncei.noaa.gov/pub/data/noaa/2004/421820-99999-2004.gz",
+   "bytes": 113619,
+   "sha256": "c67b0888ee1b81bb5088670c4d34102b397f3efed9fe83d99c359e0ebb44ece5"
+  },
+  "421820-99999-2005": {
+   "station": "safdarjung",
+   "url": "https://www.ncei.noaa.gov/pub/data/noaa/2005/421820-99999-2005.gz",
+   "bytes": 114386,
+   "sha256": "ac182dbf6ce39b588ac907744b7d9fd953116a951bf160a779dc156fe35f0a54"
+  },
+  "421820-99999-2006": {
+   "station": "safdarjung",
+   "url": "https://www.ncei.noaa.gov/pub/data/noaa/2006/421820-99999-2006.gz",
+   "bytes": 115168,
+   "sha256": "d34baf4aeb4408978249f33c3880f5483c784b54dbc31094d2c344220c335a4b"
+  },
+  "421820-99999-2007": {
+   "station": "safdarjung",
+   "url": "https://www.ncei.noaa.gov/pub/data/noaa/2007/421820-99999-2007.gz",
+   "bytes": 112873,
+   "sha256": "16fbef86210cbacbc5a92fa5f418703520e099e8db36f54f5b0fa8da3ec4e3db"
+  },
+  "421820-99999-2008": {
+   "station": "safdarjung",
+   "url": "https://www.ncei.noaa.gov/pub/data/noaa/2008/421820-99999-2008.gz",
+   "bytes": 112820,
+   "sha256": "660dc7615cc94df602da1523d549225b1490be08c7b86affffdf00ba22073a67"
+  },
+  "421820-99999-2009": {
+   "station": "safdarjung",
+   "url": "https://www.ncei.noaa.gov/pub/data/noaa/2009/421820-99999-2009.gz",
+   "bytes": 111563,
+   "sha256": "6df916c0db8cd300fdeff375c137021cce8dc032ad42278a33d60e120e23abfb"
+  },
+  "421820-99999-2010": {
+   "station": "safdarjung",
+   "url": "https://www.ncei.noaa.gov/pub/data/noaa/2010/421820-99999-2010.gz",
+   "bytes": 109630,
+   "sha256": "759b3e61243790b7ae52ac343a01136a458c65c2059b38955460b04a9189cfb8"
+  },
+  "421820-99999-2011": {
+   "station": "safdarjung",
+   "url": "https://www.ncei.noaa.gov/pub/data/noaa/2011/421820-99999-2011.gz",
+   "bytes": 110058,
+   "sha256": "55ba53b2309f4cdde8f9cfde24b4c8236a851e94923ad5356752d9713eb79248"
+  },
+  "421820-99999-2012": {
+   "station": "safdarjung",
+   "url": "https://www.ncei.noaa.gov/pub/data/noaa/2012/421820-99999-2012.gz",
+   "bytes": 114296,
+   "sha256": "0973f9eae9205ca96d59977e021ca02e49a7e0dc4d9a5367f7ac1000e218749d"
+  },
+  "421820-99999-2013": {
+   "station": "safdarjung",
+   "url": "https://www.ncei.noaa.gov/pub/data/noaa/2013/421820-99999-2013.gz",
+   "bytes": 109093,
+   "sha256": "7f9f85d33d601291d5bd8113632431bf1b43345e0b94e6c109b0bf860273ca97"
+  },
+  "421820-99999-2014": {
+   "station": "safdarjung",
+   "url": "https://www.ncei.noaa.gov/pub/data/noaa/2014/421820-99999-2014.gz",
+   "bytes": 107062,
+   "sha256": "5e6cc9d2bbb95a4c4b23cabe3797aba55bc04e34ecb9070ec54534362c9c74fe"
+  },
+  "421820-99999-2015": {
+   "station": "safdarjung",
+   "url": "https://www.ncei.noaa.gov/pub/data/noaa/2015/421820-99999-2015.gz",
+   "bytes": 116530,
+   "sha256": "b0164867ef4b2073e3465f702998b7ec7f5952de755826527b58623e4f3fdad9"
+  },
+  "421820-99999-2016": {
+   "station": "safdarjung",
+   "url": "https://www.ncei.noaa.gov/pub/data/noaa/2016/421820-99999-2016.gz",
+   "bytes": 250907,
+   "sha256": "34f64eef502899fc28247b50f432835ae7bd4ef7844fbf1235b5a305e8f9fb85"
+  },
+  "421820-99999-2017": {
+   "station": "safdarjung",
+   "url": "https://www.ncei.noaa.gov/pub/data/noaa/2017/421820-99999-2017.gz",
+   "bytes": 260678,
+   "sha256": "f949ef6edc8b8de2941ded2901969b3f648fafa7abf76129337416b37880c05d"
+  },
+  "421820-99999-2018": {
+   "station": "safdarjung",
+   "url": "https://www.ncei.noaa.gov/pub/data/noaa/2018/421820-99999-2018.gz",
+   "bytes": 133137,
+   "sha256": "4ea07ead61d456d127d5150b0b27cd19e839ccbd1846e0d97822dc4e7c9ea022"
+  },
+  "421820-99999-2019": {
+   "station": "safdarjung",
+   "url": "https://www.ncei.noaa.gov/pub/data/noaa/2019/421820-99999-2019.gz",
+   "bytes": 255976,
+   "sha256": "f0e2e4dc2a11d9341af960252f2a6e0e8ba2029558d80184fdefae442600de06"
+  },
+  "421820-99999-2020": {
+   "station": "safdarjung",
+   "url": "https://www.ncei.noaa.gov/pub/data/noaa/2020/421820-99999-2020.gz",
+   "bytes": 170025,
+   "sha256": "417ba811b04a716a9efce349dd994e9853a002ff9f86d9d380aa20451183444f"
+  },
+  "421820-99999-2021": {
+   "station": "safdarjung",
+   "url": "https://www.ncei.noaa.gov/pub/data/noaa/2021/421820-99999-2021.gz",
+   "bytes": 140292,
+   "sha256": "e58c637e2423d92072d828434668fc267e087d7b0502cb2f890b93d438cf607f"
+  },
+  "421820-99999-2022": {
+   "station": "safdarjung",
+   "url": "https://www.ncei.noaa.gov/pub/data/noaa/2022/421820-99999-2022.gz",
+   "bytes": 136786,
+   "sha256": "2f09bec20f0bc68e12df857508e5ec28a53e43b8ae5538334d5b251f6d08c071"
+  },
+  "421820-99999-2023": {
+   "station": "safdarjung",
+   "url": "https://www.ncei.noaa.gov/pub/data/noaa/2023/421820-99999-2023.gz",
+   "bytes": 104766,
+   "sha256": "6b4d6e656d9bacc9c85d4e4271e6e4a218165efe9148b49d8c963e45e527607a"
+  },
+  "421820-99999-2024": {
+   "station": "safdarjung",
+   "url": "https://www.ncei.noaa.gov/pub/data/noaa/2024/421820-99999-2024.gz",
+   "bytes": 105126,
+   "sha256": "50ed1474e1353726e0a48fe71039b4b76ab24e7b808b88d577670021604db4d0"
+  },
+  "421820-99999-2025": {
+   "station": "safdarjung",
+   "url": "https://www.ncei.noaa.gov/pub/data/noaa/2025/421820-99999-2025.gz",
+   "bytes": 70832,
+   "sha256": "410b7c763a104f21738b1216d31806f3c4af5f57be980242f6a388cf8bf38116"
+  },
+  "426470-99999-1980": {
+   "station": "ahmedabad",
+   "url": "https://www.ncei.noaa.gov/pub/data/noaa/1980/426470-99999-1980.gz",
+   "bytes": 62125,
+   "sha256": "9d78cc2a8ed467522e26590824ac2041d56d428db0477bab355d9f3c40290fcd"
+  },
+  "426470-99999-1981": {
+   "station": "ahmedabad",
+   "url": "https://www.ncei.noaa.gov/pub/data/noaa/1981/426470-99999-1981.gz",
+   "bytes": 63605,
+   "sha256": "f8e4d78c57f9d3b42ff82bd08751746d805bcee4992abba4fd057646a68b32ba"
+  },
+  "426470-99999-1982": {
+   "station": "ahmedabad",
+   "url": "https://www.ncei.noaa.gov/pub/data/noaa/1982/426470-99999-1982.gz",
+   "bytes": 66414,
+   "sha256": "de5abbb8b5855c24482f91ebb944e46f60cffe0b4cbde79d7e33e400e820346d"
+  },
+  "426470-99999-1983": {
+   "station": "ahmedabad",
+   "url": "https://www.ncei.noaa.gov/pub/data/noaa/1983/426470-99999-1983.gz",
+   "bytes": 67629,
+   "sha256": "c34554669645e3181c728e3b298603f21881d839419aed63f80ce8c90bc54592"
+  },
+  "426470-99999-1984": {
+   "station": "ahmedabad",
+   "url": "https://www.ncei.noaa.gov/pub/data/noaa/1984/426470-99999-1984.gz",
+   "bytes": 60202,
+   "sha256": "f1b0dea98d41de5c6b4ad5178432c0b1998de701847a96d25ae5726b7f334122"
+  },
+  "426470-99999-1985": {
+   "station": "ahmedabad",
+   "url": "https://www.ncei.noaa.gov/pub/data/noaa/1985/426470-99999-1985.gz",
+   "bytes": 61380,
+   "sha256": "61f11f12c72b3d92ffc77716d5d933af7994736d9a72086d740ac561293b8d65"
+  },
+  "426470-99999-1986": {
+   "station": "ahmedabad",
+   "url": "https://www.ncei.noaa.gov/pub/data/noaa/1986/426470-99999-1986.gz",
+   "bytes": 58124,
+   "sha256": "ec91d14f490ddb478ea1f155d4db59e20421f3744faa5737271d037671d859b8"
+  },
+  "426470-99999-1987": {
+   "station": "ahmedabad",
+   "url": "https://www.ncei.noaa.gov/pub/data/noaa/1987/426470-99999-1987.gz",
+   "bytes": 63325,
+   "sha256": "a948217d317ce0b0ea31720f592b4a334e604f44839ce92c4f8d5fe388a6840f"
+  },
+  "426470-99999-1988": {
+   "station": "ahmedabad",
+   "url": "https://www.ncei.noaa.gov/pub/data/noaa/1988/426470-99999-1988.gz",
+   "bytes": 62165,
+   "sha256": "f73e905631ae119805aede3a6e4b5d10bcd71ceec52c5edbfe406db59e2fa1cf"
+  },
+  "426470-99999-1989": {
+   "station": "ahmedabad",
+   "url": "https://www.ncei.noaa.gov/pub/data/noaa/1989/426470-99999-1989.gz",
+   "bytes": 65688,
+   "sha256": "7f64460ea71d5edb33070aa715a9ed643329ecaa359ba5ecff25e7283bcb0c2a"
+  },
+  "426470-99999-1990": {
+   "station": "ahmedabad",
+   "url": "https://www.ncei.noaa.gov/pub/data/noaa/1990/426470-99999-1990.gz",
+   "bytes": 70191,
+   "sha256": "073f317e50c35d686e8561387642f954eac0f340caac2a8f0ed6f17ff6d1a8d7"
+  },
+  "426470-99999-1991": {
+   "station": "ahmedabad",
+   "url": "https://www.ncei.noaa.gov/pub/data/noaa/1991/426470-99999-1991.gz",
+   "bytes": 67087,
+   "sha256": "ab1a4dc9e0422b946830e0896c9c6716b3a98b136217d9132a7055c37c25a7b7"
+  },
+  "426470-99999-1992": {
+   "station": "ahmedabad",
+   "url": "https://www.ncei.noaa.gov/pub/data/noaa/1992/426470-99999-1992.gz",
+   "bytes": 68958,
+   "sha256": "599a29d6f9b0264893a75b24613a278fad84c8296601014fb40a01d5e9fd47e8"
+  },
+  "426470-99999-1993": {
+   "station": "ahmedabad",
+   "url": "https://www.ncei.noaa.gov/pub/data/noaa/1993/426470-99999-1993.gz",
+   "bytes": 67984,
+   "sha256": "303c40e071bb784e54e45b6ddfc3e3ad3026c6825ef771ba709ad12ba4e61ea3"
+  },
+  "426470-99999-1994": {
+   "station": "ahmedabad",
+   "url": "https://www.ncei.noaa.gov/pub/data/noaa/1994/426470-99999-1994.gz",
+   "bytes": 69282,
+   "sha256": "9cbf0dd0f389563bfa3e3334907c02321f3cfe1725bb0926a28ab978b6600a10"
+  },
+  "426470-99999-1995": {
+   "station": "ahmedabad",
+   "url": "https://www.ncei.noaa.gov/pub/data/noaa/1995/426470-99999-1995.gz",
+   "bytes": 70605,
+   "sha256": "ed4c8a62fa25dab7817eb8b92ec7ac20de4e5cd10e3b324d98582ac1c10a5dd8"
+  },
+  "426470-99999-1996": {
+   "station": "ahmedabad",
+   "url": "https://www.ncei.noaa.gov/pub/data/noaa/1996/426470-99999-1996.gz",
+   "bytes": 153280,
+   "sha256": "f602a20b28da47b1eaae8f7ab14008ca770c5c42f4bac44d8545cce1097fdddf"
+  },
+  "426470-99999-1997": {
+   "station": "ahmedabad",
+   "url": "https://www.ncei.noaa.gov/pub/data/noaa/1997/426470-99999-1997.gz",
+   "bytes": 165755,
+   "sha256": "216c674bb300bd9858c39e2e25b06c9dc699574328b20f5e4acb02aa1cf85f71"
+  },
+  "426470-99999-1998": {
+   "station": "ahmedabad",
+   "url": "https://www.ncei.noaa.gov/pub/data/noaa/1998/426470-99999-1998.gz",
+   "bytes": 157809,
+   "sha256": "2e809bfb3dcbb54be82f4440a56b86317815e5cce542360228f0577823b64222"
+  },
+  "426470-99999-1999": {
+   "station": "ahmedabad",
+   "url": "https://www.ncei.noaa.gov/pub/data/noaa/1999/426470-99999-1999.gz",
+   "bytes": 168569,
+   "sha256": "12c7b2c0e0387f05be673b42bc4d640ee2eabe7d20cb7f0e6e39b4dbe142fd72"
+  },
+  "426470-99999-2000": {
+   "station": "ahmedabad",
+   "url": "https://www.ncei.noaa.gov/pub/data/noaa/2000/426470-99999-2000.gz",
+   "bytes": 257892,
+   "sha256": "1da19cb74166248e0f90ececceb0e683206d557771231f064e8abb5de85a6f59"
+  },
+  "426470-99999-2001": {
+   "station": "ahmedabad",
+   "url": "https://www.ncei.noaa.gov/pub/data/noaa/2001/426470-99999-2001.gz",
+   "bytes": 265262,
+   "sha256": "cdc4dffaea1eff337fcedc894807f23b9734ca5c19eb61242712cee32f09286c"
+  },
+  "426470-99999-2002": {
+   "station": "ahmedabad",
+   "url": "https://www.ncei.noaa.gov/pub/data/noaa/2002/426470-99999-2002.gz",
+   "bytes": 253826,
+   "sha256": "231bc11336c12a266a7813680df5fea335913f8329ce03a600d607ba9cf4173e"
+  },
+  "426470-99999-2003": {
+   "station": "ahmedabad",
+   "url": "https://www.ncei.noaa.gov/pub/data/noaa/2003/426470-99999-2003.gz",
+   "bytes": 286775,
+   "sha256": "453c835f73c0c9a5fe5bffa9de809027a600369c9bfb44eac4edd8c81e4079cc"
+  },
+  "426470-99999-2004": {
+   "station": "ahmedabad",
+   "url": "https://www.ncei.noaa.gov/pub/data/noaa/2004/426470-99999-2004.gz",
+   "bytes": 321443,
+   "sha256": "ca8723f7be8625719e28f5480b1cdf3c3f03acf9fd7903cc65e6d6854f753d3d"
+  },
+  "426470-99999-2005": {
+   "station": "ahmedabad",
+   "url": "https://www.ncei.noaa.gov/pub/data/noaa/2005/426470-99999-2005.gz",
+   "bytes": 325999,
+   "sha256": "2549cbc05d0e9bd6f72263a3e40ba40ad8a0cbef12f14662558566161cd83d6e"
+  },
+  "426470-99999-2006": {
+   "station": "ahmedabad",
+   "url": "https://www.ncei.noaa.gov/pub/data/noaa/2006/426470-99999-2006.gz",
+   "bytes": 311604,
+   "sha256": "51c981f77f53e19d23c0d785067f79da4deaf272fa887c6885f870fb0ff0344c"
+  },
+  "426470-99999-2007": {
+   "station": "ahmedabad",
+   "url": "https://www.ncei.noaa.gov/pub/data/noaa/2007/426470-99999-2007.gz",
+   "bytes": 310246,
+   "sha256": "bdef6a732ea5c8bc62ea89618bed499bca27fd18f17d488db8c5b0db01aa5830"
+  },
+  "426470-99999-2008": {
+   "station": "ahmedabad",
+   "url": "https://www.ncei.noaa.gov/pub/data/noaa/2008/426470-99999-2008.gz",
+   "bytes": 306721,
+   "sha256": "8bf4b576040b94e4b9d3389a0e03dcd876ae8caebcd00abf0fe22e8c3626b9fd"
+  },
+  "426470-99999-2009": {
+   "station": "ahmedabad",
+   "url": "https://www.ncei.noaa.gov/pub/data/noaa/2009/426470-99999-2009.gz",
+   "bytes": 427296,
+   "sha256": "5a5607f2f7072869d8ebc58f2a4f237690fd0d4bf705ebd9db4e28608b66409d"
+  },
+  "426470-99999-2010": {
+   "station": "ahmedabad",
+   "url": "https://www.ncei.noaa.gov/pub/data/noaa/2010/426470-99999-2010.gz",
+   "bytes": 473382,
+   "sha256": "cb0aadd8ddcebfe2a7d6060475d6ca628cf8c308fda7cf7f0c5f4ef4580bc1f2"
+  },
+  "426470-99999-2011": {
+   "station": "ahmedabad",
+   "url": "https://www.ncei.noaa.gov/pub/data/noaa/2011/426470-99999-2011.gz",
+   "bytes": 442446,
+   "sha256": "841f8f831e8cacc8dfbe9b2990a597430062a1fca39d3431ee8c4d3bcc889f31"
+  },
+  "426470-99999-2012": {
+   "station": "ahmedabad",
+   "url": "https://www.ncei.noaa.gov/pub/data/noaa/2012/426470-99999-2012.gz",
+   "bytes": 419555,
+   "sha256": "42fccbbeb90e211870f98d8951d89b456dc6e29a3d7ca183fb04f6fca12fa8eb"
+  },
+  "426470-99999-2013": {
+   "station": "ahmedabad",
+   "url": "https://www.ncei.noaa.gov/pub/data/noaa/2013/426470-99999-2013.gz",
+   "bytes": 414349,
+   "sha256": "ab8518f31b9ff07018fec590606cdc91f45c08115c8b15864e47ee6c97fbf419"
+  },
+  "426470-99999-2014": {
+   "station": "ahmedabad",
+   "url": "https://www.ncei.noaa.gov/pub/data/noaa/2014/426470-99999-2014.gz",
+   "bytes": 404932,
+   "sha256": "6cb6ec5bb487ba460082ad643d07e0c0a608329da84977366345fa8180e4683f"
+  },
+  "426470-99999-2015": {
+   "station": "ahmedabad",
+   "url": "https://www.ncei.noaa.gov/pub/data/noaa/2015/426470-99999-2015.gz",
+   "bytes": 385104,
+   "sha256": "49bd423aeedb087735dffb790f760c436671a1f709406bbae16ee987714d5f8d"
+  },
+  "426470-99999-2016": {
+   "station": "ahmedabad",
+   "url": "https://www.ncei.noaa.gov/pub/data/noaa/2016/426470-99999-2016.gz",
+   "bytes": 437325,
+   "sha256": "c0d85e28c775817c03e68ec784f89d0c58485562b33045dc673bfc01d868e6da"
+  },
+  "426470-99999-2017": {
+   "station": "ahmedabad",
+   "url": "https://www.ncei.noaa.gov/pub/data/noaa/2017/426470-99999-2017.gz",
+   "bytes": 452084,
+   "sha256": "b8e029012e18e4cb45fb1fe27b8d3197bfce52cac6ed85235dc59264e0f81584"
+  },
+  "426470-99999-2018": {
+   "station": "ahmedabad",
+   "url": "https://www.ncei.noaa.gov/pub/data/noaa/2018/426470-99999-2018.gz",
+   "bytes": 446454,
+   "sha256": "83281d12b540ee7c5514c467a68c70a89f3a52394a89986aed07b57f933347f6"
+  },
+  "426470-99999-2019": {
+   "station": "ahmedabad",
+   "url": "https://www.ncei.noaa.gov/pub/data/noaa/2019/426470-99999-2019.gz",
+   "bytes": 461458,
+   "sha256": "eab170977fc10b3ed8f43c87c54dcb55a9e6d882b0ceaf1e4fac76a3c0bc0b83"
+  },
+  "426470-99999-2020": {
+   "station": "ahmedabad",
+   "url": "https://www.ncei.noaa.gov/pub/data/noaa/2020/426470-99999-2020.gz",
+   "bytes": 478117,
+   "sha256": "89a1fa8a10ed0e40f7053338e4cd466c81ef9c9e4604739791a47fa2d3011281"
+  },
+  "426470-99999-2021": {
+   "station": "ahmedabad",
+   "url": "https://www.ncei.noaa.gov/pub/data/noaa/2021/426470-99999-2021.gz",
+   "bytes": 475466,
+   "sha256": "5cb6ede136df4e4b90616f1f87ab652be5cadf102ad9108ed3aa9287a1037981"
+  },
+  "426470-99999-2022": {
+   "station": "ahmedabad",
+   "url": "https://www.ncei.noaa.gov/pub/data/noaa/2022/426470-99999-2022.gz",
+   "bytes": 466065,
+   "sha256": "35e094e1f95d6f91c0a7fb0134078154a9bfd85d6e146d086c8714ccf99af418"
+  },
+  "426470-99999-2023": {
+   "station": "ahmedabad",
+   "url": "https://www.ncei.noaa.gov/pub/data/noaa/2023/426470-99999-2023.gz",
+   "bytes": 479459,
+   "sha256": "f9219f88bae4a7d24568855a37ede9841e9534437323a6afa755053b8d215183"
+  },
+  "426470-99999-2024": {
+   "station": "ahmedabad",
+   "url": "https://www.ncei.noaa.gov/pub/data/noaa/2024/426470-99999-2024.gz",
+   "bytes": 465150,
+   "sha256": "fbea862c10ca7b12ff8ac1627ab84c279496aed54d4bdc338a18422665ddcdc3"
+  },
+  "426470-99999-2025": {
+   "station": "ahmedabad",
+   "url": "https://www.ncei.noaa.gov/pub/data/noaa/2025/426470-99999-2025.gz",
+   "bytes": 296007,
+   "sha256": "724c9c5e5e60ff02fd5caa99266a59176da4545d8d20adc41453cca0252bd6be"
+  },
+  "432790-99999-1980": {
+   "station": "chennai",
+   "url": "https://www.ncei.noaa.gov/pub/data/noaa/1980/432790-99999-1980.gz",
+   "bytes": 77121,
+   "sha256": "ea478277a68de51c26158d6bbfb0cb95ad5e205536abc7d64b37fac2b3562f91"
+  },
+  "432790-99999-1981": {
+   "station": "chennai",
+   "url": "https://www.ncei.noaa.gov/pub/data/noaa/1981/432790-99999-1981.gz",
+   "bytes": 79257,
+   "sha256": "4dd20c52f47ee7019a0ecff88abf3f825757cec2face49b74a99c3eda9b3abcb"
+  },
+  "432790-99999-1982": {
+   "station": "chennai",
+   "url": "https://www.ncei.noaa.gov/pub/data/noaa/1982/432790-99999-1982.gz",
+   "bytes": 79429,
+   "sha256": "a02c7d2bc7887643def52d16d7b471f9d070c180160f90de3d64e0d8c383afbe"
+  },
+  "432790-99999-1983": {
+   "station": "chennai",
+   "url": "https://www.ncei.noaa.gov/pub/data/noaa/1983/432790-99999-1983.gz",
+   "bytes": 86981,
+   "sha256": "547b80acb5845bf7b02b49e010d3a7c43d53b3a945b5511d909e74c3815e06d7"
+  },
+  "432790-99999-1984": {
+   "station": "chennai",
+   "url": "https://www.ncei.noaa.gov/pub/data/noaa/1984/432790-99999-1984.gz",
+   "bytes": 90637,
+   "sha256": "24523912021a0efce8da022f6a24d500dd239cb6f6b96d9ed54a09a6677e0c69"
+  },
+  "432790-99999-1985": {
+   "station": "chennai",
+   "url": "https://www.ncei.noaa.gov/pub/data/noaa/1985/432790-99999-1985.gz",
+   "bytes": 87722,
+   "sha256": "38e740f0bb7d12817aacdb6ebf58b2592a58581192c35f9ab2c6e4cd73d6b9c2"
+  },
+  "432790-99999-1986": {
+   "station": "chennai",
+   "url": "https://www.ncei.noaa.gov/pub/data/noaa/1986/432790-99999-1986.gz",
+   "bytes": 84923,
+   "sha256": "a038c6d82d7e311bf0dfc292cc5704773cfec29c194496d01d2c26cb7c5f254f"
+  },
+  "432790-99999-1987": {
+   "station": "chennai",
+   "url": "https://www.ncei.noaa.gov/pub/data/noaa/1987/432790-99999-1987.gz",
+   "bytes": 83375,
+   "sha256": "2da1e9220ad773e1845432bc7d3126ed5e14c6777f895ad29b66cc8eef3eadc7"
+  },
+  "432790-99999-1988": {
+   "station": "chennai",
+   "url": "https://www.ncei.noaa.gov/pub/data/noaa/1988/432790-99999-1988.gz",
+   "bytes": 78963,
+   "sha256": "ce5e005aa357320d514afd5e25594354cbb6688986423fb78da5c1c394916c00"
+  },
+  "432790-99999-1989": {
+   "station": "chennai",
+   "url": "https://www.ncei.noaa.gov/pub/data/noaa/1989/432790-99999-1989.gz",
+   "bytes": 81726,
+   "sha256": "8a294a4bf36ce9b9b64f93b3a567c65286f7cc9f39c62ca76305f98c682a042e"
+  },
+  "432790-99999-1990": {
+   "station": "chennai",
+   "url": "https://www.ncei.noaa.gov/pub/data/noaa/1990/432790-99999-1990.gz",
+   "bytes": 87274,
+   "sha256": "ab971a6af4d479b06d1a25caf6e56d2a1cdbaa8177676f01204221e6f6312ad5"
+  },
+  "432790-99999-1991": {
+   "station": "chennai",
+   "url": "https://www.ncei.noaa.gov/pub/data/noaa/1991/432790-99999-1991.gz",
+   "bytes": 81360,
+   "sha256": "46d64727b9c2119d601de8e4a42c0051a527e9941c3882ee62af3bbfc1c113e0"
+  },
+  "432790-99999-1992": {
+   "station": "chennai",
+   "url": "https://www.ncei.noaa.gov/pub/data/noaa/1992/432790-99999-1992.gz",
+   "bytes": 79388,
+   "sha256": "168b40dcf486afe3296e7a508332589bef9e438c70329473b8e5cbb27c2fef65"
+  },
+  "432790-99999-1993": {
+   "station": "chennai",
+   "url": "https://www.ncei.noaa.gov/pub/data/noaa/1993/432790-99999-1993.gz",
+   "bytes": 85570,
+   "sha256": "c358b7a5d178a68a8d61af3d5a7f52b9a5c08232711688ccfaf0b0f33fd5d523"
+  },
+  "432790-99999-1994": {
+   "station": "chennai",
+   "url": "https://www.ncei.noaa.gov/pub/data/noaa/1994/432790-99999-1994.gz",
+   "bytes": 81909,
+   "sha256": "078cd4aed692883940cfef9060b054c28858db330bbbc8f60f7117ffe0b9aefe"
+  },
+  "432790-99999-1995": {
+   "station": "chennai",
+   "url": "https://www.ncei.noaa.gov/pub/data/noaa/1995/432790-99999-1995.gz",
+   "bytes": 87668,
+   "sha256": "3f71c80fa752a7dd86381d503e9c0a3dd7252e1a90efb0bd85a3cbacc799e504"
+  },
+  "432790-99999-1996": {
+   "station": "chennai",
+   "url": "https://www.ncei.noaa.gov/pub/data/noaa/1996/432790-99999-1996.gz",
+   "bytes": 194727,
+   "sha256": "d90a64a30e8130e38948d88fc1dbc5613c2a95ca5bca160d92e1bda65b6d0db7"
+  },
+  "432790-99999-1997": {
+   "station": "chennai",
+   "url": "https://www.ncei.noaa.gov/pub/data/noaa/1997/432790-99999-1997.gz",
+   "bytes": 193801,
+   "sha256": "15421772a3a1fd6761e41770cb30c9e2a813148c2ed9e40cf1c113923a8c4307"
+  },
+  "432790-99999-1998": {
+   "station": "chennai",
+   "url": "https://www.ncei.noaa.gov/pub/data/noaa/1998/432790-99999-1998.gz",
+   "bytes": 183466,
+   "sha256": "99318a8de045272ebd8ddd1d1fed1e3e4f4b72ac3277ff2d753f4d7bea4b7435"
+  },
+  "432790-99999-1999": {
+   "station": "chennai",
+   "url": "https://www.ncei.noaa.gov/pub/data/noaa/1999/432790-99999-1999.gz",
+   "bytes": 190599,
+   "sha256": "68a906119edafa9606d6f4304c32a6f7e7eb8924cad3c4d097fc269e261e5f1d"
+  },
+  "432790-99999-2000": {
+   "station": "chennai",
+   "url": "https://www.ncei.noaa.gov/pub/data/noaa/2000/432790-99999-2000.gz",
+   "bytes": 268113,
+   "sha256": "1c6cf91e4a8523a38f0bd10458fdd405729f9fa0a9de47022b247c93ad764bc2"
+  },
+  "432790-99999-2001": {
+   "station": "chennai",
+   "url": "https://www.ncei.noaa.gov/pub/data/noaa/2001/432790-99999-2001.gz",
+   "bytes": 257304,
+   "sha256": "6fc5d10e7d5f36281e4bd2640765d75eddb04eb9e5a1d6f90d49613e09e71231"
+  },
+  "432790-99999-2002": {
+   "station": "chennai",
+   "url": "https://www.ncei.noaa.gov/pub/data/noaa/2002/432790-99999-2002.gz",
+   "bytes": 206910,
+   "sha256": "f5688965de2c44bb1d376e364870b7840d60c3f7783ee55c96e123200c4cd49f"
+  },
+  "432790-99999-2003": {
+   "station": "chennai",
+   "url": "https://www.ncei.noaa.gov/pub/data/noaa/2003/432790-99999-2003.gz",
+   "bytes": 275386,
+   "sha256": "ca6d09035dbcf230dd910a6b1f3bcd4788e7f310482525aba51e9564134c3cb7"
+  },
+  "432790-99999-2004": {
+   "station": "chennai",
+   "url": "https://www.ncei.noaa.gov/pub/data/noaa/2004/432790-99999-2004.gz",
+   "bytes": 351449,
+   "sha256": "f5a2298c0e3366f1c942a4d6889750e7ea5bf5c1346df6b8f015068f60c5e5d3"
+  },
+  "432790-99999-2005": {
+   "station": "chennai",
+   "url": "https://www.ncei.noaa.gov/pub/data/noaa/2005/432790-99999-2005.gz",
+   "bytes": 362293,
+   "sha256": "7654880829999d53aa15d8065f5b73c27a66be3d2ae6e2ef38d332df6ae55dbb"
+  },
+  "432790-99999-2006": {
+   "station": "chennai",
+   "url": "https://www.ncei.noaa.gov/pub/data/noaa/2006/432790-99999-2006.gz",
+   "bytes": 357762,
+   "sha256": "508bd2953e0932ff0aa8e0a8ed9ff5f315a5c86c14e0f43d0f4bfc09fe897368"
+  },
+  "432790-99999-2007": {
+   "station": "chennai",
+   "url": "https://www.ncei.noaa.gov/pub/data/noaa/2007/432790-99999-2007.gz",
+   "bytes": 347536,
+   "sha256": "720e86c98f38a34811c083b438b7684b7568e47949f907d201c0243160bc2b3a"
+  },
+  "432790-99999-2008": {
+   "station": "chennai",
+   "url": "https://www.ncei.noaa.gov/pub/data/noaa/2008/432790-99999-2008.gz",
+   "bytes": 345458,
+   "sha256": "deaae4e6a1739683bbb603e3bf575ab7e697d42888e84fb285ab8a98c4a3a470"
+  },
+  "432790-99999-2009": {
+   "station": "chennai",
+   "url": "https://www.ncei.noaa.gov/pub/data/noaa/2009/432790-99999-2009.gz",
+   "bytes": 446788,
+   "sha256": "f47af5d5e9bb2e82a8c81b8e27f1e5a26bf4b52c4a5ad5dfab8b43f8ffba09e5"
+  },
+  "432790-99999-2010": {
+   "station": "chennai",
+   "url": "https://www.ncei.noaa.gov/pub/data/noaa/2010/432790-99999-2010.gz",
+   "bytes": 494223,
+   "sha256": "8e2ef9761d4153434c88431c5afcc776c56327407a428894922541cef79d5bd6"
+  },
+  "432790-99999-2011": {
+   "station": "chennai",
+   "url": "https://www.ncei.noaa.gov/pub/data/noaa/2011/432790-99999-2011.gz",
+   "bytes": 488595,
+   "sha256": "d5ed9f01b855b1d3bbe143a6b279421c2c45d6085109cb371245defd155c7edf"
+  },
+  "432790-99999-2012": {
+   "station": "chennai",
+   "url": "https://www.ncei.noaa.gov/pub/data/noaa/2012/432790-99999-2012.gz",
+   "bytes": 495005,
+   "sha256": "71022060c8935df3c712ed426a2d0a2a62cce00e77375c9d879fff7cd7f110cc"
+  },
+  "432790-99999-2013": {
+   "station": "chennai",
+   "url": "https://www.ncei.noaa.gov/pub/data/noaa/2013/432790-99999-2013.gz",
+   "bytes": 491258,
+   "sha256": "63ec6b654b8437c04db450e3f760ff858251a0c77a3ed95bcb5edd4bf75fbde7"
+  },
+  "432790-99999-2014": {
+   "station": "chennai",
+   "url": "https://www.ncei.noaa.gov/pub/data/noaa/2014/432790-99999-2014.gz",
+   "bytes": 483984,
+   "sha256": "de4fbe939fabd56507939003de1193e03b15e9469b37050d062bba270ac2ec0d"
+  },
+  "432790-99999-2015": {
+   "station": "chennai",
+   "url": "https://www.ncei.noaa.gov/pub/data/noaa/2015/432790-99999-2015.gz",
+   "bytes": 494634,
+   "sha256": "b58e0a5da4e008eb77c8551dc562fe7c55b28b438c273a9135aa9d1a756d5503"
+  },
+  "432790-99999-2016": {
+   "station": "chennai",
+   "url": "https://www.ncei.noaa.gov/pub/data/noaa/2016/432790-99999-2016.gz",
+   "bytes": 489082,
+   "sha256": "259f4d4bdc453fa5f455e79889760d28fb7306a55f23463c0cfff5681e68635c"
+  },
+  "432790-99999-2017": {
+   "station": "chennai",
+   "url": "https://www.ncei.noaa.gov/pub/data/noaa/2017/432790-99999-2017.gz",
+   "bytes": 506449,
+   "sha256": "6b137b390912f16f9bfcc33ec1f6f51ea158467f5bf2a1ab534a14a833bd857c"
+  },
+  "432790-99999-2018": {
+   "station": "chennai",
+   "url": "https://www.ncei.noaa.gov/pub/data/noaa/2018/432790-99999-2018.gz",
+   "bytes": 502831,
+   "sha256": "b9fbf902d248a865016b47341dc705df9fcb75acea6e7cad33768c04435bbdde"
+  },
+  "432790-99999-2019": {
+   "station": "chennai",
+   "url": "https://www.ncei.noaa.gov/pub/data/noaa/2019/432790-99999-2019.gz",
+   "bytes": 506284,
+   "sha256": "7920758ba2911562f8f98cac5b1cf127e7fb528258f979549e43bf2ed6d0acc7"
+  },
+  "432790-99999-2020": {
+   "station": "chennai",
+   "url": "https://www.ncei.noaa.gov/pub/data/noaa/2020/432790-99999-2020.gz",
+   "bytes": 487207,
+   "sha256": "90335db5db35c9b8adf0a297ad5b803931129d20455b2ca56e77cce2f660392b"
+  },
+  "432790-99999-2021": {
+   "station": "chennai",
+   "url": "https://www.ncei.noaa.gov/pub/data/noaa/2021/432790-99999-2021.gz",
+   "bytes": 508477,
+   "sha256": "e3b728d5a2f66904961eb7dd72799e13d11ac1499724a3e612bda064e32489f0"
+  },
+  "432790-99999-2022": {
+   "station": "chennai",
+   "url": "https://www.ncei.noaa.gov/pub/data/noaa/2022/432790-99999-2022.gz",
+   "bytes": 497265,
+   "sha256": "03c71f69c1120956f9d106940c1edbcfd6a4eda3d8e538da759d640062917eea"
+  },
+  "432790-99999-2023": {
+   "station": "chennai",
+   "url": "https://www.ncei.noaa.gov/pub/data/noaa/2023/432790-99999-2023.gz",
+   "bytes": 504109,
+   "sha256": "7560fadabc273411be076558ee730c6378a903279a64e54757f912fd03f8688f"
+  },
+  "432790-99999-2024": {
+   "station": "chennai",
+   "url": "https://www.ncei.noaa.gov/pub/data/noaa/2024/432790-99999-2024.gz",
+   "bytes": 491290,
+   "sha256": "63de56657d60ffacd5c20f55bf4a3d6f73cce170cd06b7701fb76d7c39f5686b"
+  },
+  "432790-99999-2025": {
+   "station": "chennai",
+   "url": "https://www.ncei.noaa.gov/pub/data/noaa/2025/432790-99999-2025.gz",
+   "bytes": 323185,
+   "sha256": "e4ba2dfed99169e89e22ce12cfcca65501ef612e299e9737bf3771da968399c2"
+  }
+ },
+ "source": "https://www.ncei.noaa.gov/pub/data/noaa/<YEAR>/<USAF>-<WBAN>-<YEAR>.gz",
+ "ghcn_received": {
+  "IN005010600": {
+   "name": "Ahmedabad",
+   "sha256": "0f09273e57ed7a74b9315309511eb6412605508e0e936115a60894498fbccdf8",
+   "received": "2026-11-25, from the experiments-v2 study",
+   "on_disk_matches": true
+  },
+  "IN020040900": {
+   "name": "Chennai, Minambakkam",
+   "sha256": "e2f6e651c8aca0332b99a6097a5b75e4a388b694b8cda994c6c133f878feb381",
+   "received": "2026-11-25, from the experiments-v2 study",
+   "on_disk_matches": true
+  }
+ }
+}

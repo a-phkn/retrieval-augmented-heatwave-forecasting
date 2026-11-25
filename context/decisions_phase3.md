@@ -588,3 +588,10 @@ no ISD file downloaded.**
   - This adds 92 yearly files, so 184 in all, about 40-60 MB.
   - Outputs: `followup/data/isd_daily_{ahmedabad,chennai}.csv`, handed to the `experiments-v2` study.
   - Part B's ERA5 half still runs if the teammate's files arrive.
+- **Download, 2026-11-25** (`followup/isd_rebuild.py --download`; manifest `followup/data/isd_manifest.json`):
+  - 173 of the 184 station-years exist, 39.9 MB in all.
+  - Palam's 1980-1985 and 1991-1995 are not in the archive (404, rechecked).
+  - Safdarjung, Ahmedabad and Chennai are complete.
+  - No design change: a missing year is simply absent from Palam's descriptive tables. Safdarjung's GHCN check is
+    unaffected.
+  - The two received GHCN files match their recorded SHA-256.
