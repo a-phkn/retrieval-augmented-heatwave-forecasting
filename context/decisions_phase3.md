@@ -623,3 +623,26 @@ no ISD file downloaded.**
       - 1980-2008: GHCN equals the rebuilt same-day value on 100% of days;
       - 2011-2015: on 72% of days, and equals the higher of the previous and the same day on 84%.
     - From 2016 the 12 UTC maximum is mostly absent from ISD for Safdarjung: 245 days in 2016-2025.
+- **DEVIATION 2026-11-25, after the step 1-2 results (user approved).** It is post hoc: written after the step 2
+  results were seen, and before the checks below were run.
+  - **(A) Safdarjung, 2016-2025.**
+    - The fill: days without a 12 UTC maximum, from 2016-01-01, take the code-M group with a 24-hour period from the
+      next day's 03 UTC report (08:30 IST). Those 24 hours run from 08:30 IST of the day to 08:30 IST of the next, so
+      they hold that day's afternoon.
+    - Validation first. Against the 12 UTC series, on every day both exist (1980-2025), the 2(b) rule must hold:
+      - the lag-0 mean absolute difference is the smallest;
+      - the mean difference is within ±0.3 °C;
+      - at least 80% of days agree within 0.5 °C.
+    - If the validation fails, nothing is filled.
+  - **(B) Palam, Ahmedabad and Chennai.**
+    - Their reported Tmax keeps only 12 UTC groups with a 12-hour period. 24-hour and unknown-period groups are
+      dropped, because the failing days of step 2(a) were 24-hour groups.
+    - Validation:
+      - step 2(a) is rerun on the kept values;
+      - Ahmedabad and Chennai also take the 2(b) rule against their GHCN files on 1980-2008. These are the files
+        received from the `experiments-v2` study, which part B found correctly dated to 2010.
+    - A station that fails is left out, as before.
+    - Palam's reported values are almost all 24-hour groups, so under (B) it keeps almost none. Its hourly Tmax (from
+      2003) stays, for the descriptive Palam tables of step 3.
+  - The registered columns of the daily files are unchanged. The deviation adds three columns:
+    `tmax_24h_next_morning`, `tmax` (the series used from here on) and `tmax_source`.
