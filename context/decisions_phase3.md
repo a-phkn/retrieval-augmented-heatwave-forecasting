@@ -748,3 +748,23 @@ no ISD file downloaded.**
     - Results: `followup/results/station_humidity.{md,json}`, instead of a section of `station_rebuild.md`, so the
       committed build report is not rewritten.
     - Tests on synthetic report lines and hourly series.
+- **RESULT 2026-11-27, step 4** (`followup/results/station_humidity.{md,json}`, from `python -m
+  followup.station_humidity`). Descriptive, as registered, with the deviation above. Only station and ERA5 values of
+  1980-2018 were read.
+  - **Safdarjung.** 38 of the 39 heat seasons count (1992 has 15 days).
+    - ERA5 - station: +0.01 °C in 1990-1999 and -0.49 °C in 2002-2011 (9 cells). The change is -0.50 °C
+      [-0.83, -0.20]; at the nearest cell, -0.52 °C [-0.86, -0.20].
+    - Trends over 1980-2018: the station's dew point +0.97 °C per decade, ERA5's +0.71 (9 cells and nearest cell
+      alike).
+    - The largest gaps are in 2000 and 2001 (-1.04 and -1.20 °C), the years of the step the premise report found.
+    - Reading (exploratory): around 2000-01 the station's dew point rises too, and by more than ERA5's. So, against
+      this station, ERA5's humidity step is not an artefact of the reanalysis; if anything ERA5 rises less. A
+      station's record can change too (instruments, its surroundings), so this does not show which record is right.
+  - **Palam (descriptive).** 15 seasons count, 2004-2018 (2002 and 2003 have 20 and 47 days).
+    - ERA5 - station is between +0.9 and +2.8 °C in 2004-2015, except 2007 (-0.63 °C), and +0.95, +0.06 and -0.42 °C
+      in 2016-2018.
+    - The station's dew point rises 4.29 °C from 2015 to 2016, ERA5's (9 cells) 2.64 °C.
+    - At the synoptic hours, Palam's selected reports are METAR (FM-15) to 2015 and SYNOP (FM-12) from 2016, checked
+      by counting report types per year after the results were seen. Its jump falls at that change, so its trend
+      (+2.40 °C per decade) reflects its record more than the air.
+  - The 1990s-to-2000s change cannot be computed for Palam (no 1990s), as the deviation expected.

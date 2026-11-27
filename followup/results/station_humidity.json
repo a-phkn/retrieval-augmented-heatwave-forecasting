@@ -1,0 +1,684 @@
+{
+  "years": [
+    1980,
+    2018
+  ],
+  "synoptic_utc": [
+    21,
+    0,
+    3,
+    6,
+    9,
+    12,
+    15,
+    18
+  ],
+  "min_instants": 7,
+  "min_season_days": 70,
+  "decades": {
+    "1990-1999": [
+      1990,
+      1999
+    ],
+    "2002-2011": [
+      2002,
+      2011
+    ]
+  },
+  "n_boot": 10000,
+  "seed": 0,
+  "stations": {
+    "safdarjung": {
+      "files": 39,
+      "nearest_cell": 5,
+      "nearest_centre": [
+        28.5,
+        77.25
+      ],
+      "days": 12997,
+      "in_season_days": 4922,
+      "seasons": [
+        {
+          "year": 1980,
+          "days": 137,
+          "station": 15.79366527632951,
+          "era5_cells": 16.38567373421388,
+          "era5_nearest": 16.237793274244005,
+          "diff_cells": 0.5920084578843701,
+          "diff_nearest": 0.4441279979144943,
+          "counts": true
+        },
+        {
+          "year": 1981,
+          "days": 132,
+          "station": 16.687905844155846,
+          "era5_cells": 16.744355008417507,
+          "era5_nearest": 16.645907738095236,
+          "diff_cells": 0.05644916426166421,
+          "diff_nearest": -0.04199810606060597,
+          "counts": true
+        },
+        {
+          "year": 1982,
+          "days": 133,
+          "station": 16.638775510204084,
+          "era5_cells": 17.176904314357323,
+          "era5_nearest": 17.176329215896885,
+          "diff_cells": 0.5381288041532402,
+          "diff_nearest": 0.5375537056928033,
+          "counts": true
+        },
+        {
+          "year": 1983,
+          "days": 134,
+          "station": 17.25197228144989,
+          "era5_cells": 17.716337212745795,
+          "era5_nearest": 17.696441897654584,
+          "diff_cells": 0.46436493129590145,
+          "diff_nearest": 0.44446961620469083,
+          "counts": true
+        },
+        {
+          "year": 1984,
+          "days": 138,
+          "station": 17.237577639751553,
+          "era5_cells": 17.091041235334714,
+          "era5_nearest": 17.016207298136646,
+          "diff_cells": -0.14653640441683902,
+          "diff_nearest": -0.2213703416149068,
+          "counts": true
+        },
+        {
+          "year": 1985,
+          "days": 129,
+          "station": 16.42392026578073,
+          "era5_cells": 16.62434631475329,
+          "era5_nearest": 16.569248338870434,
+          "diff_cells": 0.20042604897256067,
+          "diff_nearest": 0.14532807308970097,
+          "counts": true
+        },
+        {
+          "year": 1986,
+          "days": 137,
+          "station": 17.420320646506777,
+          "era5_cells": 16.99995003475843,
+          "era5_nearest": 16.99547705943691,
+          "diff_cells": -0.42037061174834917,
+          "diff_nearest": -0.4248435870698643,
+          "counts": true
+        },
+        {
+          "year": 1987,
+          "days": 130,
+          "station": 16.572994505494506,
+          "era5_cells": 16.303073870573872,
+          "era5_nearest": 16.32082417582418,
+          "diff_cells": -0.26992063492063484,
+          "diff_nearest": -0.2521703296703297,
+          "counts": true
+        },
+        {
+          "year": 1988,
+          "days": 125,
+          "station": 16.92235714285714,
+          "era5_cells": 16.42518253968254,
+          "era5_nearest": 16.301671428571428,
+          "diff_cells": -0.49717460317460327,
+          "diff_nearest": -0.6206857142857144,
+          "counts": true
+        },
+        {
+          "year": 1989,
+          "days": 113,
+          "station": 15.2352402022756,
+          "era5_cells": 14.99051481949712,
+          "era5_nearest": 14.973957016434893,
+          "diff_cells": -0.24472538277848022,
+          "diff_nearest": -0.2612831858407082,
+          "counts": true
+        },
+        {
+          "year": 1990,
+          "days": 102,
+          "station": 18.075227591036413,
+          "era5_cells": 18.083710706504824,
+          "era5_nearest": 18.104928221288514,
+          "diff_cells": 0.008483115468409424,
+          "diff_nearest": 0.029700630252100728,
+          "counts": true
+        },
+        {
+          "year": 1991,
+          "days": 101,
+          "station": 16.643988684582744,
+          "era5_cells": 16.363429200062864,
+          "era5_nearest": 16.35785891089109,
+          "diff_cells": -0.2805594845198806,
+          "diff_nearest": -0.286129773691655,
+          "counts": true
+        },
+        {
+          "year": 1992,
+          "days": 15,
+          "station": 12.10547619047619,
+          "era5_cells": 11.761084656084655,
+          "era5_nearest": 11.796904761904761,
+          "diff_cells": -0.3443915343915342,
+          "diff_nearest": -0.30857142857142894,
+          "counts": false
+        },
+        {
+          "year": 1993,
+          "days": 123,
+          "station": 16.428237514518003,
+          "era5_cells": 16.676905084527036,
+          "era5_nearest": 16.69616724738676,
+          "diff_cells": 0.24866757000903356,
+          "diff_nearest": 0.2679297328687573,
+          "counts": true
+        },
+        {
+          "year": 1994,
+          "days": 118,
+          "station": 16.734473365617433,
+          "era5_cells": 16.960064400053806,
+          "era5_nearest": 17.009200968523,
+          "diff_cells": 0.22559103443637363,
+          "diff_nearest": 0.27472760290556897,
+          "counts": true
+        },
+        {
+          "year": 1995,
+          "days": 131,
+          "station": 16.041057797164665,
+          "era5_cells": 15.9910381073549,
+          "era5_nearest": 15.87951199563795,
+          "diff_cells": -0.05001968980976594,
+          "diff_nearest": -0.16154580152671752,
+          "counts": true
+        },
+        {
+          "year": 1996,
+          "days": 121,
+          "station": 16.85944510035419,
+          "era5_cells": 17.629901285583102,
+          "era5_nearest": 17.58003984651712,
+          "diff_cells": 0.7704561852289126,
+          "diff_nearest": 0.7205947461629281,
+          "counts": true
+        },
+        {
+          "year": 1997,
+          "days": 119,
+          "station": 18.542226890756304,
+          "era5_cells": 18.65840669601174,
+          "era5_nearest": 18.761224489795918,
+          "diff_cells": 0.11617980525543552,
+          "diff_nearest": 0.21899759903961594,
+          "counts": true
+        },
+        {
+          "year": 1998,
+          "days": 119,
+          "station": 18.474909963985592,
+          "era5_cells": 18.165400326797386,
+          "era5_nearest": 18.11535114045618,
+          "diff_cells": -0.3095096371882083,
+          "diff_nearest": -0.3595588235294118,
+          "counts": true
+        },
+        {
+          "year": 1999,
+          "days": 125,
+          "station": 17.40172857142857,
+          "era5_cells": 16.758904761904763,
+          "era5_nearest": 16.737092857142855,
+          "diff_cells": -0.6428238095238095,
+          "diff_nearest": -0.6646357142857143,
+          "counts": true
+        },
+        {
+          "year": 2000,
+          "days": 125,
+          "station": 19.699057142857143,
+          "era5_cells": 18.659055555555554,
+          "era5_nearest": 18.64732857142857,
+          "diff_cells": -1.0400015873015873,
+          "diff_nearest": -1.0517285714285716,
+          "counts": true
+        },
+        {
+          "year": 2001,
+          "days": 134,
+          "station": 20.68025053304904,
+          "era5_cells": 19.477266939113957,
+          "era5_nearest": 19.471928304904054,
+          "diff_cells": -1.2029835939350861,
+          "diff_nearest": -1.2083222281449895,
+          "counts": true
+        },
+        {
+          "year": 2002,
+          "days": 118,
+          "station": 17.594370460048424,
+          "era5_cells": 16.877860169491527,
+          "era5_nearest": 16.83486682808717,
+          "diff_cells": -0.716510290556901,
+          "diff_nearest": -0.759503631961259,
+          "counts": true
+        },
+        {
+          "year": 2003,
+          "days": 128,
+          "station": 17.795675223214285,
+          "era5_cells": 17.470718625992063,
+          "era5_nearest": 17.502783203125,
+          "diff_cells": -0.3249565972222224,
+          "diff_nearest": -0.2928920200892857,
+          "counts": true
+        },
+        {
+          "year": 2004,
+          "days": 134,
+          "station": 18.58254264392324,
+          "era5_cells": 18.447741204690832,
+          "era5_nearest": 18.354477611940297,
+          "diff_cells": -0.13480143923240942,
+          "diff_nearest": -0.2280650319829423,
+          "counts": true
+        },
+        {
+          "year": 2005,
+          "days": 138,
+          "station": 16.151617494824016,
+          "era5_cells": 16.00337445364619,
+          "era5_nearest": 16.080273033126293,
+          "diff_cells": -0.14824304117782397,
+          "diff_nearest": -0.0713444616977227,
+          "counts": true
+        },
+        {
+          "year": 2006,
+          "days": 139,
+          "station": 18.651554470709147,
+          "era5_cells": 18.51825182710974,
+          "era5_nearest": 18.542144141829397,
+          "diff_cells": -0.13330264359940625,
+          "diff_nearest": -0.1094103288797531,
+          "counts": true
+        },
+        {
+          "year": 2007,
+          "days": 136,
+          "station": 19.589128151260503,
+          "era5_cells": 18.97363153594771,
+          "era5_nearest": 18.963064600840337,
+          "diff_cells": -0.6154966153127918,
+          "diff_nearest": -0.626063550420168,
+          "counts": true
+        },
+        {
+          "year": 2008,
+          "days": 139,
+          "station": 19.526130524152105,
+          "era5_cells": 18.972002398081532,
+          "era5_nearest": 18.98329265159301,
+          "diff_cells": -0.5541281260705723,
+          "diff_nearest": -0.5428378725590955,
+          "counts": true
+        },
+        {
+          "year": 2009,
+          "days": 133,
+          "station": 17.992843716433942,
+          "era5_cells": 17.235401002506265,
+          "era5_nearest": 17.221945488721804,
+          "diff_cells": -0.7574427139276766,
+          "diff_nearest": -0.7708982277121375,
+          "counts": true
+        },
+        {
+          "year": 2010,
+          "days": 129,
+          "station": 18.30267165005537,
+          "era5_cells": 17.122105327919282,
+          "era5_nearest": 17.04044158361019,
+          "diff_cells": -1.1805663221360896,
+          "diff_nearest": -1.2622300664451829,
+          "counts": true
+        },
+        {
+          "year": 2011,
+          "days": 128,
+          "station": 19.792661830357144,
+          "era5_cells": 19.417745535714285,
+          "era5_nearest": 19.332101004464285,
+          "diff_cells": -0.3749162946428573,
+          "diff_nearest": -0.4605608258928573,
+          "counts": true
+        },
+        {
+          "year": 2012,
+          "days": 136,
+          "station": 17.560241596638654,
+          "era5_cells": 16.861533467553688,
+          "era5_nearest": 16.84784007352941,
+          "diff_cells": -0.6987081290849674,
+          "diff_nearest": -0.7124015231092439,
+          "counts": true
+        },
+        {
+          "year": 2013,
+          "days": 136,
+          "station": 19.81281512605042,
+          "era5_cells": 18.978284751400558,
+          "era5_nearest": 19.01595325630252,
+          "diff_cells": -0.83453037464986,
+          "diff_nearest": -0.7968618697478991,
+          "counts": true
+        },
+        {
+          "year": 2014,
+          "days": 136,
+          "station": 19.84406512605042,
+          "era5_cells": 18.412209675536882,
+          "era5_nearest": 18.480744485294117,
+          "diff_cells": -1.4318554505135388,
+          "diff_nearest": -1.3633206407563025,
+          "counts": true
+        },
+        {
+          "year": 2015,
+          "days": 137,
+          "station": 20.298057872784153,
+          "era5_cells": 19.319597960838838,
+          "era5_nearest": 19.36148331595412,
+          "diff_cells": -0.9784599119453133,
+          "diff_nearest": -0.9365745568300312,
+          "counts": true
+        },
+        {
+          "year": 2016,
+          "days": 138,
+          "station": 20.480577122153207,
+          "era5_cells": 20.266353232114103,
+          "era5_nearest": 20.170108695652175,
+          "diff_cells": -0.21422389003910738,
+          "diff_nearest": -0.310468426501035,
+          "counts": true
+        },
+        {
+          "year": 2017,
+          "days": 139,
+          "station": 19.648394141829392,
+          "era5_cells": 19.382763788968823,
+          "era5_nearest": 19.193460945529292,
+          "diff_cells": -0.2656303528605687,
+          "diff_nearest": -0.4549331963001026,
+          "counts": true
+        },
+        {
+          "year": 2018,
+          "days": 137,
+          "station": 19.680982794577684,
+          "era5_cells": 19.6046243193141,
+          "era5_nearest": 19.363490615224194,
+          "diff_cells": -0.07635847526358476,
+          "diff_nearest": -0.31749217935349316,
+          "counts": true
+        }
+      ],
+      "change": {
+        "diff_cells": {
+          "first": "1990-1999",
+          "second": "2002-2011",
+          "seasons_first": 9,
+          "seasons_second": 10,
+          "mean_first": 0.00960723215072227,
+          "mean_second": -0.4940364083878751,
+          "change": -0.5036436405385973,
+          "ci_low": -0.8254603862654789,
+          "ci_high": -0.20074233519648957
+        },
+        "diff_nearest": {
+          "first": "1990-1999",
+          "second": "2002-2011",
+          "seasons_first": 9,
+          "seasons_second": 10,
+          "mean_first": 0.004453355355052486,
+          "mean_second": -0.5123806017640404,
+          "change": -0.516833957119093,
+          "ci_low": -0.8554308613193526,
+          "ci_high": -0.20076688654025282
+        }
+      },
+      "trend": {
+        "station": {
+          "per_decade": 0.9706253565457628,
+          "seasons": 38,
+          "first": 1980,
+          "last": 2018
+        },
+        "era5_cells": {
+          "per_decade": 0.7142367676413899,
+          "seasons": 38,
+          "first": 1980,
+          "last": 2018
+        },
+        "era5_nearest": {
+          "per_decade": 0.7118599480780081,
+          "seasons": 38,
+          "first": 1980,
+          "last": 2018
+        }
+      }
+    },
+    "palam": {
+      "files": 28,
+      "nearest_cell": 4,
+      "nearest_centre": [
+        28.5,
+        77.0
+      ],
+      "days": 4619,
+      "in_season_days": 1768,
+      "seasons": [
+        {
+          "year": 2002,
+          "days": 20,
+          "station": 21.7125,
+          "era5_cells": 22.362271825396824,
+          "era5_nearest": 22.212544642857143,
+          "diff_cells": 0.6497718253968248,
+          "diff_nearest": 0.5000446428571428,
+          "counts": false
+        },
+        {
+          "year": 2003,
+          "days": 47,
+          "station": 22.345364741641337,
+          "era5_cells": 22.90597559945964,
+          "era5_nearest": 22.709251519756837,
+          "diff_cells": 0.5606108578183042,
+          "diff_nearest": 0.36388677811550146,
+          "counts": false
+        },
+        {
+          "year": 2004,
+          "days": 120,
+          "station": 16.939285714285713,
+          "era5_cells": 18.32327380952381,
+          "era5_nearest": 17.83127976190476,
+          "diff_cells": 1.3839880952380952,
+          "diff_nearest": 0.8919940476190477,
+          "counts": true
+        },
+        {
+          "year": 2005,
+          "days": 117,
+          "station": 15.512820512820513,
+          "era5_cells": 16.421026658526657,
+          "era5_nearest": 16.454479548229546,
+          "diff_cells": 0.9082061457061456,
+          "diff_nearest": 0.9416590354090355,
+          "counts": true
+        },
+        {
+          "year": 2006,
+          "days": 115,
+          "station": 17.456211180124225,
+          "era5_cells": 19.275790200138026,
+          "era5_nearest": 18.938920807453414,
+          "diff_cells": 1.8195790200138025,
+          "diff_nearest": 1.4827096273291926,
+          "counts": true
+        },
+        {
+          "year": 2007,
+          "days": 113,
+          "station": 19.923514538558784,
+          "era5_cells": 19.289024090462142,
+          "era5_nearest": 18.84122155499368,
+          "diff_cells": -0.6344904480966428,
+          "diff_nearest": -1.0822929835651074,
+          "counts": true
+        },
+        {
+          "year": 2008,
+          "days": 125,
+          "station": 16.21257142857143,
+          "era5_cells": 19.005296825396826,
+          "era5_nearest": 18.939628571428575,
+          "diff_cells": 2.792725396825397,
+          "diff_nearest": 2.727057142857143,
+          "counts": true
+        },
+        {
+          "year": 2009,
+          "days": 104,
+          "station": 16.711710164835164,
+          "era5_cells": 17.912588713369964,
+          "era5_nearest": 17.58148179945055,
+          "diff_cells": 1.2008785485347986,
+          "diff_nearest": 0.8697716346153844,
+          "counts": true
+        },
+        {
+          "year": 2010,
+          "days": 113,
+          "station": 15.416877370417193,
+          "era5_cells": 17.73130882146369,
+          "era5_nearest": 17.45180941845765,
+          "diff_cells": 2.314431451046495,
+          "diff_nearest": 2.034932048040455,
+          "counts": true
+        },
+        {
+          "year": 2011,
+          "days": 119,
+          "station": 18.057472989195677,
+          "era5_cells": 19.818966753368016,
+          "era5_nearest": 19.60874099639856,
+          "diff_cells": 1.7614937641723356,
+          "diff_nearest": 1.551268007202881,
+          "counts": true
+        },
+        {
+          "year": 2012,
+          "days": 110,
+          "station": 15.397564935064935,
+          "era5_cells": 17.56006764069264,
+          "era5_nearest": 17.489310064935065,
+          "diff_cells": 2.1625027056277055,
+          "diff_nearest": 2.0917451298701297,
+          "counts": true
+        },
+        {
+          "year": 2013,
+          "days": 113,
+          "station": 16.95606826801517,
+          "era5_cells": 19.310474610198064,
+          "era5_nearest": 19.219034450063212,
+          "diff_cells": 2.3544063421828914,
+          "diff_nearest": 2.2629661820480402,
+          "counts": true
+        },
+        {
+          "year": 2014,
+          "days": 108,
+          "station": 16.164847883597883,
+          "era5_cells": 18.862838036449148,
+          "era5_nearest": 18.754456018518518,
+          "diff_cells": 2.697990152851264,
+          "diff_nearest": 2.5896081349206352,
+          "counts": true
+        },
+        {
+          "year": 2015,
+          "days": 111,
+          "station": 16.951093951093952,
+          "era5_cells": 19.552148577148575,
+          "era5_nearest": 19.346557271557273,
+          "diff_cells": 2.601054626054626,
+          "diff_nearest": 2.3954633204633207,
+          "counts": true
+        },
+        {
+          "year": 2016,
+          "days": 106,
+          "station": 21.24445754716981,
+          "era5_cells": 22.193339135968852,
+          "era5_nearest": 21.913173854447443,
+          "diff_cells": 0.9488815887990414,
+          "diff_nearest": 0.6687163072776281,
+          "counts": true
+        },
+        {
+          "year": 2017,
+          "days": 120,
+          "station": 20.393080357142857,
+          "era5_cells": 20.451422784391532,
+          "era5_nearest": 19.997299107142858,
+          "diff_cells": 0.05834242724867719,
+          "diff_nearest": -0.3957812499999999,
+          "counts": true
+        },
+        {
+          "year": 2018,
+          "days": 107,
+          "station": 21.288901869158877,
+          "era5_cells": 20.864334853879246,
+          "era5_nearest": 20.471111481975967,
+          "diff_cells": -0.4245670152796321,
+          "diff_nearest": -0.8177903871829106,
+          "counts": true
+        }
+      ],
+      "change": {
+        "diff_cells": null,
+        "diff_nearest": null
+      },
+      "trend": {
+        "station": {
+          "per_decade": 2.396666241839418,
+          "seasons": 15,
+          "first": 2004,
+          "last": 2018
+        },
+        "era5_cells": {
+          "per_decade": 2.13597146205788,
+          "seasons": 15,
+          "first": 2004,
+          "last": 2018
+        },
+        "era5_nearest": {
+          "per_decade": 2.1209084208634454,
+          "seasons": 15,
+          "first": 2004,
+          "last": 2018
+        }
+      }
+    }
+  }
+}
