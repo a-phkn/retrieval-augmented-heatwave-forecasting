@@ -712,3 +712,39 @@ no ISD file downloaded.**
       because of the step in 2011.
   - Step 4 (humidity) waits for the user's decision. As registered it needs a daily dew point from at least 18 hourly
     readings, which Safdarjung never has and Palam has only from 2002.
+- **DEVIATION 2026-11-27, step 4 (user approved).** It is post hoc: written after the dew-point readings per day were
+  counted, and before any dew-point value, of the stations or of ERA5, was read.
+  - **Why.** Step 4 needs a daily-mean dew point from at least 18 hourly readings. Safdarjung sends 3-hourly reports
+    only, so it never has one, and Palam's hourly readings start in 2002. So the registered change from 1990-1999 to
+    2002-2011 cannot be computed at either station.
+  - **Seen before this was written.** The number of dew-point readings per IST day (`hours_td` in the daily files),
+    by decade, 1980-2018, counted on 2026-11-26:
+    - Safdarjung: a median of 8 a day in every decade, with at least 7 of the 8 on 79-99% of days;
+    - Palam: none before 2002, then a median of 21-22.
+  - **The change.**
+    - The station's daily dew point is the mean of its readings at the 8 synoptic times of the IST day: 21 UTC of the
+      day before, and 00, 03, 06, 09, 12, 15 and 18 UTC (02:30 to 23:30 IST, every 3 hours). The readings follow
+      step 2's rules: minute-00 reports, one report per time, usable quality codes only. The same rule applies at
+      both stations.
+    - ERA5 is taken at the same instants. Its files are on the hour IST and the readings are at half past, so each
+      ERA5 value is the mean of the two hourly values around it, as in `evaluation/graphcast_yardstick.py`.
+    - A day needs at least 7 of its 8 instants with both a station reading and an ERA5 value. Both means use exactly
+      those instants.
+    - ERA5's dew point is its own 2 m dew point (`dew_point_2m` in `data/raw/era5_v2/cell_<n>/`), not recomputed from
+      temperature and relative humidity with the Magnus formula.
+    - As registered, ERA5 is taken as the mean of the 9 cells and as the cell nearest the station: 28.50N 77.25E for
+      Safdarjung and 28.50N 77.00E for Palam, from the coordinates in NOAA's station list.
+    - A heat season (15 Mar - 31 Jul, 139 days) counts if at least 70 of its days have a value.
+  - **Reported, as registered.**
+    - Per season: the station's mean dew point, ERA5's (9 cells and nearest cell), and the mean of ERA5 - station.
+    - The change of ERA5 - station from 1990-1999 to 2002-2011, for Safdarjung only (Palam has no 1990s). Its 95% CI
+      is by bootstrap over seasons: 10,000 resamples of the seasons within each decade, seed 0, percentile interval.
+    - Each record's trend: the least-squares slope of its seasonal means, per decade, over 1980-2018 (Palam from
+      2002).
+    - No pass rule and no prediction.
+  - Only ERA5 files of 1980-2018 are read.
+  - **Code and outputs.**
+    - `followup/station_humidity.py`, which reads the raw reports with `followup/isd_rebuild.py`.
+    - Results: `followup/results/station_humidity.{md,json}`, instead of a section of `station_rebuild.md`, so the
+      committed build report is not rewritten.
+    - Tests on synthetic report lines and hourly series.
