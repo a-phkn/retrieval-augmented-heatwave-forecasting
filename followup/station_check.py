@@ -21,8 +21,13 @@ confirmatory result.
   behaves like the larger of the maxima of D - 1 and D, and from 2016 values are missing mostly on days warmer than
   the day before. The 2019-2025 station comparisons are therefore kept as registered but not interpreted.
 
-Run from repo root, after python -m followup.global_models:  python -m followup.station_check
-  -> followup/results/station_check.{md,json}
+P3-7 step 3 (pre-registered 2026-11-25, with the deviation of 2026-11-25) reruns the same analyses on the station
+records rebuilt from NOAA ISD (followup/isd_rebuild.py): Safdarjung's `tmax` in place of the GHCN file, and Palam's
+hourly maximum as a second station (descriptive). The GHCN run is kept as registered.
+
+Run from repo root, after python -m followup.global_models:
+  python -m followup.station_check         -> followup/results/station_check.{md,json}      (the GHCN file)
+  python -m followup.station_check --isd   -> followup/results/station_check_isd.{md,json}  (P3-7 step 3)
 """
 from __future__ import annotations
 
@@ -58,6 +63,10 @@ PENDING = ["GraphCast 2020 (P3-2a)", "the P3-2 corrector variants"]
 # For the exploratory dating check only; the break years were read off that check's own per-year table.
 DATING_BLOCKS = {"1980-2008": (1980, 2008), "2009-2010": (2009, 2010), "2011-2015": (2011, 2015),
                  "2016-2018": (2016, 2018), "2019-2025": (2019, 2025)}
+# P3-7 step 3, with the deviation of 2026-11-25: each rebuilt record and the series it uses.
+ISD_DIR = REPO_ROOT / "followup" / "data"  # isd_daily_<station>.csv, from python -m followup.isd_rebuild --build
+ISD_SERIES = {"safdarjung": "tmax", "palam": "tmax_hourly"}
+ISD_TITLES = {"safdarjung": "Safdarjung, rebuilt", "palam": "Palam, hourly maximum"}
 
 
 # ------------------------------------------------------------------ the station
@@ -75,6 +84,19 @@ def load_station(path: Path = STATION_CSV, sha256: str | None = STATION_SHA256) 
     s = df.loc[ok].set_index("date")["tmax_c"].astype("float64").rename("station").sort_index()
     if s.index.has_duplicates:
         raise ValueError("the station file has duplicate dates")
+    return s
+
+
+def load_isd(station: str, column: str, folder: Path = ISD_DIR) -> pd.Series:
+    """Daily Tmax (°C) by IST date from a record rebuilt in P3-7 (`isd_daily_<station>.csv`): the days with a value
+    in `column`. No gap is filled."""
+    path = folder / f"isd_daily_{station}.csv"
+    if not path.exists():
+        raise FileNotFoundError(f"{path} is missing: build it with python -m followup.isd_rebuild --build")
+    df = pd.read_csv(path, parse_dates=["date"])
+    s = df.dropna(subset=[column]).set_index("date")[column].astype("float64").rename("station").sort_index()
+    if s.index.has_duplicates:
+        raise ValueError(f"{path.name} has duplicate dates")
     return s
 
 
@@ -439,6 +461,61 @@ def graphcast_2018(st: pd.DataFrame, coef: dict[int, dict]) -> dict | None:
     return versus_c3hop("GraphCast 2018", by_lead, ensemble(c3), st, thr, coef)
 
 
+# ------------------------------------------------------------------ one station record, and what it answers
+
+
+def check_station(station: pd.Series, era5: pd.DataFrame) -> dict:
+    """P3-3's analyses on one station record, as main() runs them on the GHCN file: the coverage, the mapping (iv),
+    the exploratory dating check, (i), (ii) and the part of (iii) that is run."""
+    st = station_frame(station)
+    coef = fit_mapping(era5["era5"], st["station"])
+    return {"coverage": _coverage(st), "mapping": coef, "dating": dating_check(era5["era5"], st["station"]),
+            "era5_vs_station": era5_vs_station(era5, st, coef), "test_forecasts": frozen_forecasts(st, era5, coef),
+            "global_models": global_models(st, era5, coef), "graphcast_2018": graphcast_2018(st, coef)}
+
+
+def whole_degree_share(station: pd.Series) -> dict[str, float]:
+    """Exploratory, for the dating check: per block of DATING_BLOCKS, the share of values in whole degrees. Coarse
+    readings make identical consecutive values more common without any dating fault."""
+    out = {}
+    for name, (first, last) in DATING_BLOCKS.items():
+        v = station[(station.index.year >= first) & (station.index.year <= last)].to_numpy(dtype=np.float64)
+        out[name] = float(np.isclose(v % 1, 0).mean()) if len(v) else float("nan")
+    return out
+
+
+def _outside(res: dict) -> dict:
+    """The outside forecasts of (iii): the P3-1 models, and GraphCast 2018 if it was scored."""
+    outside = dict(res["global_models"])
+    if res["graphcast_2018"]:
+        outside["GraphCast 2018"] = res["graphcast_2018"]
+    return outside
+
+
+def comparisons(res: dict) -> list[tuple[str, str, dict, dict]]:
+    """Every paired test of (ii) and (iii) for one station record: (comparison, stratum, test against ERA5, test
+    against the station)."""
+    tests = dict(res["test_forecasts"]["tests"])
+    tests.update({f"{_label(name)} minus C3-hop": r["test"] for name, r in _outside(res).items()})
+    return [(name, s, t["era5"][s], t["station"][s]) for name, t in tests.items() for s in TEST_STRATA]
+
+
+def key_numbers(res: dict) -> dict:
+    """P3-3's two questions for one station record: does the order of two models change clearly when the station is
+    the truth (the registered reading rule), and how much of C3-hop's cold bias on station heatwave days is ERA5's
+    own? With ERA5's offset from the station and the models' RMSE (ensemble means) beside them."""
+    ev, models = res["era5_vs_station"], res["test_forecasts"]["models"]
+    comp = comparisons(res)
+    return {"days": {p: ev[p]["days"] for p in PERIODS},
+            "offset_all": {p: ev[p]["strata"]["all"]["bias"] for p in PERIODS},
+            "offset_hot": {p: ev[p]["strata"]["st_label"]["bias"] for p in PERIODS},
+            "rmse": {name: {view: m["ensemble"][view]["all"]["rmse"] for view in ("era5", "station")}
+                     for name, m in models.items()},
+            "comparisons": len(comp),
+            "clear_changes": [f"{name}, {STRATA[s]}" for name, s, e, st in comp if clear_change(e, st)],
+            "era5_share": models["C3-hop"]["cold_bias"]["label"]["all_leads"].get("era5_share")}
+
+
 # ------------------------------------------------------------------ report
 
 
@@ -544,29 +621,12 @@ def write_report(res: dict) -> None:
          f"- The {abs(recent['same']['offset']):.1f} °C gap between ERA5 and the station in 2019-2025 is partly this "
          f"dating effect. Matched to the larger of the two days, the gap is {abs(recent['both']['offset']):.1f} °C. It "
          f"was {abs(early['same']['offset']):.1f} °C in 1980-2008, matched to the same day.",
-         "- The station normal and the mapping are fitted on 1980-2018, which includes the affected years 2011-2018.", "",
-         "## Station data", "",
-         "| Period | Usable days | In the heat season | Heatwave days, label rule | Heatwave days, IMD rule | Last day |",
-         "|---|---|---|---|---|---|"]
-    for name, c in cov.items():
-        L.append(f"| {name} | {c['days']} | {c['in_season_days']} | {c['heatwave_days_label']} | "
-                 f"{c['heatwave_days_imd']} | {c['last_day']} |")
-    L += ["", "A usable day has a value and no quality flag. Gaps are not filled; a day without a station value is left "
-          "out of every comparison. A station heatwave day is a single in-season day at or above min(45, max(40, "
-          "normal + 3)) (label rule) or min(45, max(40, normal + 4.5)) (IMD rule), with the station's own 1980-2018 "
-          "normal.", "",
-          "## Exploratory: are the station's dates right? (added after the results were seen)", "",
+         "- The station normal and the mapping are fitted on 1980-2018, which includes the affected years 2011-2018.", ""]
+    _coverage_section(L, cov, "##", "A usable day has a value and no quality flag. " + COVERAGE_RULES)
+    L += ["## Exploratory: are the station's dates right? (added after the results were seen)", "",
           "Not registered. It uses the station and ERA5 only, no forecast; the blocks of years were read off its own "
-          "per-year table (in the JSON). For the station value dated D: the mean and SD of ERA5 - station when ERA5 "
-          "is taken on the same day D, on the day before, or as the larger of the two. The smallest SD shows which "
-          "day the station value belongs to.", "",
-          "| Years | Days with a value | Same day: mean / SD | Day before: mean / SD | Larger of the two: mean / SD | "
-          "Reporting days cooler than the day before (all days) | Consecutive values that are identical |",
-          "|---|---|---|---|---|---|---|"]
-    for name, b in res["dating"]["blocks"].items():
-        L.append(f"| {name} | {_pct(b['coverage'])} | "
-                 + " | ".join(f"{_num(b[k]['offset'], '+.2f')} / {_num(b[k]['sd'], '.2f')}" for k in ("same", "prev", "both"))
-                 + f" | {_pct(b['cooler_share_reporting'])} ({_pct(b['cooler_share_all'])}) | {_pct(b['identical_share'])} |")
+          "per-year table (in the JSON). " + DATING_HOW, ""]
+    _dating_rows(L, res["dating"]["blocks"])
     L += ["", "How to read it:", "",
           "- If the dates are right, the same day has the smallest SD, about as many reporting days are cooler than "
           "the day before as in the calendar as a whole, and identical consecutive values are rare. That is the "
@@ -577,11 +637,33 @@ def write_report(res: dict) -> None:
           "better than the same day.",
           "- GHCN-Daily marks all of this station's values with source flag S (Global Summary of the Day). Its "
           "documentation warns that S values are derived from synoptic reports and may differ from true daily data.", ""]
-    L += ["## (i) ERA5 against the station", "",
+    _era5_section(L, res["era5_vs_station"], "##")
+    _mapping_section(L, res["mapping"], "##")
+    _test_section(L, res["test_forecasts"], "##")
+    _outside_section(L, res, "##", "The global models are scored on the test period (to 2025-08-23, where the "
+                     "station file ends); GraphCast 2018 on fold f4's 2018 windows with C3-hop's development forecasts "
+                     "(2018 lies inside the mapping's fitting years).")
+    L += ["## Notes", "",
+          f"- Station file: `{STATION_CSV.relative_to(REPO_ROOT).as_posix()}` (not in the repository), SHA-256 "
+          f"{res['station']['sha256']}.",
+          f"- Global-model values: `{EXTRACT.relative_to(REPO_ROOT).as_posix()}`, SHA-256 {res['extract_sha256']}.",
+          "- GraphCast 2018: " + ("included." if res["graphcast_2018"] else "not included (its extract or the raw "
+                                  "hourly ERA5 for the 6-hourly correction is not on disk)."),
+          "- Still to add, after P3-2 has run: " + "; ".join(res["pending"]) + ".",
+          "- WBGT is not part of this check: the station record has no humidity.",
+          "- A single station is not the truth for a 75 km box either: its own siting and the city around it shape "
+          "its readings. The check asks whether conclusions depend on which record is used."]
+    OUT_DIR.mkdir(parents=True, exist_ok=True)
+    (OUT_DIR / "station_check.md").write_text("\n".join(L) + "\n", encoding="utf-8")
+
+
+def _era5_section(L: list[str], ev: dict, h: str) -> None:
+    """(i): ERA5 - station per period and stratum, and how often the two heatwave labels agree."""
+    L += [f"{h} (i) ERA5 against the station", "",
           "| Period | Days | ERA5 - station | RMSE | After the mapping: bias | RMSE |", "|---|---|---|---|---|---|"]
     names = {"all": "all days", "season": "heat season", "st_label": "station heatwave days, label rule",
              "st_imd": "station heatwave days, IMD rule", "era5_hot": "ERA5 heatwave days (mirror view)"}
-    for period, r in res["era5_vs_station"].items():
+    for period, r in ev.items():
         for k, title in names.items():
             s = r["strata"][k]
             L.append(f"| {period}, {title} | {s['n']} | {_num(s['bias'], '+.2f')} | {_num(s['rmse'])} | "
@@ -593,19 +675,25 @@ def write_report(res: dict) -> None:
           "'warnings' = ERA5 heatwave days.", "",
           "| Period | Station rule | ERA5 side | Both | Station only | ERA5 only | Station days ERA5 also has | "
           "ERA5 days the station lacks | ETS | ERA5 days / station days |", "|---|---|---|---|---|---|---|---|---|---|"]
-    for period, r in res["era5_vs_station"].items():
+    for period, r in ev.items():
         for rule in RULES:
             for side, title in (("era5_label", "ERA5 label"), ("mapped_era5", "mapped ERA5 vs the station threshold")):
                 L.append(f"| {period} ({r['in_season_days']} days) | {RULE_NAMES[rule]} | {title} | "
                          f"{_score_row(r['labels'][rule][side])} |")
-    L += ["", "## (iv) The station mapping", "", "station = a + b x ERA5, least squares per calendar month on the "
+
+
+def _mapping_section(L: list[str], mapping: dict, h: str) -> None:
+    """(iv): the per-month mapping."""
+    L += ["", f"{h} (iv) The station mapping", "", "station = a + b x ERA5, least squares per calendar month on the "
           "usable station days of 1980-2018.", "", "| Month | a | b | Days |", "|---|---|---|---|"]
-    for m, c in res["mapping"].items():
+    for m, c in mapping.items():
         L.append(f"| {m} | {c['a']:+.2f} | {c['b']:.3f} | {c['n']} |")
 
-    tf = res["test_forecasts"]
+
+def _test_section(L: list[str], tf: dict, h: str) -> None:
+    """(ii): the frozen test forecasts against both truths."""
     first = next(iter(tf["models"].values()))
-    L += ["", "## (ii) Our test forecasts against the station", "",
+    L += ["", f"{h} (ii) Our test forecasts against the station", "",
           f"Target days {first['first_target']} to {first['last_target']} with a station value: {first['rows']} rows "
           f"(query date x lead), {first['clusters']} year x season clusters. The networks are shown as the 10-seed "
           "ensemble mean and as the mean of the 10 seeds' RMSE (the test's primary score).", ""]
@@ -629,14 +717,13 @@ def write_report(res: dict) -> None:
           "ERA5) + (ERA5 - station), means over the rows; ensemble means.", ""]
     _cold_table(L, [(name, m["cold_bias"]) for name, m in tf["models"].items()])
 
-    L += ["## (iii) Global models and GraphCast 2018 against the station", "",
+
+def _outside_section(L: list[str], res: dict, h: str, scored: str) -> None:
+    """(iii): each outside forecast against C3-hop's ensemble mean. `scored` says which days each is scored on."""
+    L += [f"{h} (iii) Global models and GraphCast 2018 against the station", "",
           "Each outside forecast is paired with C3-hop's ensemble mean on the rows both have and the station "
-          "observed. The global models are scored on the test period (to 2025-08-23, where the station file ends); "
-          "GraphCast 2018 on fold f4's 2018 windows with C3-hop's development forecasts (2018 lies inside the "
-          "mapping's fitting years).", ""]
-    outside = dict(res["global_models"])
-    if res["graphcast_2018"]:
-        outside["GraphCast 2018"] = res["graphcast_2018"]
+          f"observed. {scored}", ""]
+    outside = _outside(res)
     for stratum, title in STRATA.items():
         L += [f"**{title}**", "", "| Forecast | Target days | Rows | Clusters | RMSE vs ERA5: it / C3-hop | "
               "RMSE vs station: it / C3-hop | Station-mapped: it / C3-hop | Bias vs station: it / C3-hop |",
@@ -666,18 +753,137 @@ def write_report(res: dict) -> None:
     for name, r in outside.items():
         cl += [(_label(name), r["cold_bias"]["model"]), (f"C3-hop on {name}'s rows", r["cold_bias"]["c3hop"])]
     _cold_table(L, cl)
-    L += ["## Notes", "",
-          f"- Station file: `{STATION_CSV.relative_to(REPO_ROOT).as_posix()}` (not in the repository), SHA-256 "
-          f"{res['station']['sha256']}.",
-          f"- Global-model values: `{EXTRACT.relative_to(REPO_ROOT).as_posix()}`, SHA-256 {res['extract_sha256']}.",
-          "- GraphCast 2018: " + ("included." if res["graphcast_2018"] else "not included (its extract or the raw "
-                                  "hourly ERA5 for the 6-hourly correction is not on disk)."),
+
+
+COVERAGE_RULES = ("Gaps are not filled; a day without a station value is left out of every comparison. A station "
+                  "heatwave day is a single in-season day at or above min(45, max(40, normal + 3)) (label rule) or "
+                  "min(45, max(40, normal + 4.5)) (IMD rule), with the station's own 1980-2018 normal.")
+DATING_HOW = ("For the station value dated D: the mean and SD of ERA5 - station when ERA5 is taken on the same day D, "
+              "on the day before, or as the larger of the two. The smallest SD shows which day the station value "
+              "belongs to.")
+
+
+def _coverage_section(L: list[str], cov: dict, h: str, note: str) -> None:
+    """Usable days and station heatwave days per period, then `note`."""
+    L += [f"{h} Station data", "",
+          "| Period | Usable days | In the heat season | Heatwave days, label rule | Heatwave days, IMD rule | Last day |",
+          "|---|---|---|---|---|---|"]
+    for name, c in cov.items():
+        L.append(f"| {name} | {c['days']} | {c['in_season_days']} | {c['heatwave_days_label']} | "
+                 f"{c['heatwave_days_imd']} | {c['last_day']} |")
+    L += ["", note, ""]
+
+
+def _dating_rows(L: list[str], blocks: dict) -> None:
+    """The dating check's table, one row per block of years."""
+    L += ["| Years | Days with a value | Same day: mean / SD | Day before: mean / SD | Larger of the two: mean / SD | "
+          "Reporting days cooler than the day before (all days) | Consecutive values that are identical |",
+          "|---|---|---|---|---|---|---|"]
+    for name, b in blocks.items():
+        L.append(f"| {name} | {_pct(b['coverage'])} | "
+                 + " | ".join(f"{_num(b[k]['offset'], '+.2f')} / {_num(b[k]['sd'], '.2f')}" for k in ("same", "prev", "both"))
+                 + f" | {_pct(b['cooler_share_reporting'])} ({_pct(b['cooler_share_all'])}) | {_pct(b['identical_share'])} |")
+
+
+def _isd_intro(name: str, series: dict) -> str:
+    """What the record of one rebuilt station is (P3-7 step 3 and the deviation of 2026-11-25)."""
+    if name == "safdarjung":
+        return ("The record used is `tmax`: the maximum-thermometer reading of the 12 UTC (17:30 IST) report, which "
+                "matches the GHCN file on 1980-2008 (P3-7 step 2(b)). From 2016, on days without it, it is the 24-hour "
+                "maximum of the next morning's 03 UTC (08:30 IST) report, which passed its check against the 12 UTC "
+                "reading (part (A) of the deviation; `followup/results/station_rebuild.md`). Safdarjung sends "
+                "3-hourly reports only, so the hourly maximum that step 3 shows beside the reported one does not "
+                "exist for it.")
+    return (f"The record used is `tmax_hourly`, from {series['first_day']}: the highest of the IST day's hourly "
+            "readings (at least 18 of the 24, including all six from 11:30 to 16:30 IST). Palam's maximum-thermometer "
+            "readings are almost all 24-hour ones, which part (B) of the deviation dropped, so only the hourly "
+            "maximum is left. It is like-for-like with ERA5's daily maximum, but it can miss a peak between two "
+            "readings, so it reads a little below a thermometer maximum. The station's normal and thresholds come from "
+            "the same series. Descriptive, as registered.")
+
+
+def summary_columns(res: dict, ghcn: dict | None) -> list[tuple[str, dict]]:
+    """The summary's columns: the registered GHCN run (when its results are given), then each rebuilt record."""
+    first = [("GHCN file (registered run)", ghcn)] if ghcn else []
+    return first + [(ISD_TITLES[name], r) for name, r in res["stations"].items()]
+
+
+def write_report_isd(res: dict, ghcn: dict | None = None) -> None:
+    """P3-7 step 3's report: a summary beside the registered GHCN run, then P3-3's tables for each rebuilt record."""
+    keys = [(title, key_numbers(r)) for title, r in summary_columns(res, ghcn)]
+    L = ["# The station check on the rebuilt station records (P3-7 step 3, post-test)", "",
+         "Pre-registered: P3-3 on 2026-11-05 (details fixed 2026-11-10) and P3-7 step 3 on 2026-11-25, in "
+         "`context/decisions_phase3.md`; the records used follow the deviation of 2026-11-25. Descriptive: the test "
+         "years were already used, so nothing here is confirmatory. The analyses and their reading rules are P3-3's, "
+         "unchanged; only the station record differs. ERA5: the 9-cell mean the models were trained and tested on. "
+         "Bias = forecast - truth; 'ERA5 - station' is ERA5's own offset. Station-mapped = the forecast put through "
+         "a per-month straight line fitted on 1980-2018 (station = a + b x ERA5). The registered run on the GHCN "
+         "file is kept as it was (`followup/results/station_check.md`).", "",
+         "## Summary", "",
+         "| | " + " | ".join(title for title, _ in keys) + " |", "|---|" + "---|" * len(keys)]
+
+    def row(label: str, cells: list[str]) -> None:
+        L.append(f"| {label} | " + " | ".join(cells) + " |")
+
+    for p in PERIODS:
+        row(f"Days with a station value, {p}", [str(k["days"][p]) for _, k in keys])
+    for p in PERIODS:
+        row(f"ERA5 - station, all days, {p} (°C)", [_num(k["offset_all"][p], "+.2f") for _, k in keys])
+    for p in PERIODS:
+        row(f"ERA5 - station, station heatwave days (label rule), {p} (°C)",
+            [_num(k["offset_hot"][p], "+.2f") for _, k in keys])
+    for name in TEST_RUNS:
+        row(f"{name}: RMSE vs ERA5 / vs station, test rows (°C)",
+            [f"{_num(k['rmse'][name]['era5'])} / {_num(k['rmse'][name]['station'])}" for _, k in keys])
+    row("Clear changes of model order", [f"{len(k['clear_changes'])} of {k['comparisons']}" for _, k in keys])
+    row("ERA5's share of C3-hop's cold bias on station heatwave days (label rule)",
+        [_pct(k["era5_share"]) for _, k in keys])
+    L += ["", "- Each column uses its own rows: the days that record has a value.",
+          "- The RMSEs are of the ensemble means, on the test rows whose target day has a station value.",
+          "- A clear change of order is P3-3's reading rule: the paired CIs of two models exclude 0 with opposite signs "
+          "under the two truths. The comparisons are the paired tests of (ii) and (iii), each on three strata.",
+          "- ERA5's share = (ERA5 - station) / (forecast - station) on station heatwave days, all leads together.",
+          "- The GHCN column is the registered run. Its values from 2011 on are misdated (its report explains how), "
+          "which affects 2011-2018 in the first period and all of 2019-2025. It is shown only to see what the rebuild "
+          "changes."]
+    for title, k in keys:
+        if k["clear_changes"]:
+            L.append(f"- Clear changes of order, {title}: " + "; ".join(k["clear_changes"]) + ".")
+    L.append("")
+    for name, r in res["stations"].items():
+        s = res["series"][name]
+        L += [f"## {ISD_TITLES[name]}", "", _isd_intro(name, s), ""]
+        _coverage_section(L, r["coverage"], "###", "A usable day has a value in the record used. " + COVERAGE_RULES)
+        L += ["### Exploratory: are the rebuilt dates right? (not registered)", "",
+              "The check that found the GHCN file's fault, run on this record. It uses the station and ERA5 only, no "
+              "forecast. " + DATING_HOW, ""]
+        _dating_rows(L, r["dating"]["blocks"])
+        note = ("If the dates are right, the same day has the smallest SD in every block with values. Identical "
+                "consecutive values stay rare too, unless the readings are in whole degrees")
+        wd = s.get("whole_degrees")
+        note += (" (values in whole degrees: " + "; ".join(f"{k} {_pct(v)}" for k, v in wd.items()) + ")."
+                 if wd else ".")
+        L += ["", note, ""]
+        _era5_section(L, r["era5_vs_station"], "###")
+        _mapping_section(L, r["mapping"], "###")
+        _test_section(L, r["test_forecasts"], "###")
+        _outside_section(L, r, "###", f"The global models are scored on the test period (to {s['last_day']}, where "
+                         "the station record ends); GraphCast 2018 on fold f4's 2018 windows with C3-hop's development "
+                         "forecasts (2018 lies inside the mapping's fitting years).")
+    every_gc = all(r["graphcast_2018"] for r in res["stations"].values())
+    L += ["## Notes", ""]
+    for name, s in res["series"].items():
+        L.append(f"- {ISD_TITLES[name]}: `{s['file']}`, column `{s['column']}`, {s['first_day']} to {s['last_day']}, "
+                 f"SHA-256 {s['sha256']} (of the file as read).")
+    L += [f"- Global-model values: `{EXTRACT.relative_to(REPO_ROOT).as_posix()}`, SHA-256 {res['extract_sha256']}.",
+          "- GraphCast 2018: " + ("included." if every_gc else "not included for every station (its extract or the "
+                                  "raw hourly ERA5 for the 6-hourly correction is not on disk)."),
           "- Still to add, after P3-2 has run: " + "; ".join(res["pending"]) + ".",
-          "- WBGT is not part of this check: the station record has no humidity.",
+          "- WBGT is not part of this check (P3-3 is about Tmax). The humidity check is step 4 of P3-7.",
           "- A single station is not the truth for a 75 km box either: its own siting and the city around it shape "
           "its readings. The check asks whether conclusions depend on which record is used."]
     OUT_DIR.mkdir(parents=True, exist_ok=True)
-    (OUT_DIR / "station_check.md").write_text("\n".join(L) + "\n", encoding="utf-8")
+    (OUT_DIR / "station_check_isd.md").write_text("\n".join(L) + "\n", encoding="utf-8")
 
 
 def main() -> None:
@@ -702,5 +908,35 @@ def main() -> None:
     print(f"wrote {OUT_DIR / 'station_check.md'}")
 
 
+def main_isd() -> None:
+    """P3-7 step 3: P3-3's analyses on the rebuilt records (ISD_SERIES), beside the registered GHCN run."""
+    from training import test_lock
+
+    test_lock.require()
+    era5 = era5_daily()
+    res = {"series": {}, "stations": {}, "pending": PENDING,
+           "extract_sha256": hashlib.sha256(EXTRACT.read_bytes()).hexdigest()}
+    for name, column in ISD_SERIES.items():
+        path = ISD_DIR / f"isd_daily_{name}.csv"
+        station = load_isd(name, column)
+        res["series"][name] = {"file": path.relative_to(REPO_ROOT).as_posix(), "column": column,
+                               "sha256": hashlib.sha256(path.read_bytes()).hexdigest(),
+                               "first_day": str(station.index.min().date()), "last_day": str(station.index.max().date()),
+                               "whole_degrees": whole_degree_share(station)}
+        res["stations"][name] = check_station(station, era5)
+        print(f"{name}: done")
+    ghcn_json = OUT_DIR / "station_check.json"
+    ghcn = json.loads(ghcn_json.read_text(encoding="utf-8")) if ghcn_json.exists() else None
+    res["summary"] = {title: key_numbers(r) for title, r in summary_columns(res, ghcn)}
+    OUT_DIR.mkdir(parents=True, exist_ok=True)
+    (OUT_DIR / "station_check_isd.json").write_text(json.dumps(res, indent=2, default=float) + "\n", encoding="utf-8")
+    write_report_isd(res, ghcn)
+    print(f"wrote {OUT_DIR / 'station_check_isd.md'}")
+
+
 if __name__ == "__main__":
-    main()
+    import argparse
+
+    ap = argparse.ArgumentParser(description="P3-3 station check (GHCN file), or its P3-7 rerun on the ISD records")
+    ap.add_argument("--isd", action="store_true", help="P3-7 step 3: the rebuilt Safdarjung and Palam records")
+    main_isd() if ap.parse_args().isd else main()

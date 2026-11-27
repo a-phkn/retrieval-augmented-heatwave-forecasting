@@ -292,3 +292,113 @@ def test_an_outside_forecast_is_paired_with_c3hop_on_shared_station_days():
     assert r["model"]["station_mapped"]["all"]["bias"] == pytest.approx(0.0, abs=0.1)  # +1 °C closes the station gap
     assert r["warnings"]["model"]["rows"] == r["warnings"]["c3hop"]["rows"]
     assert sc.versus_c3hop("none", {1: pd.Series(dtype=float)}, c3e, st, thr, flat_mapping()) is None
+
+
+# ------------------------------------------------------------------ P3-7 step 3: the rebuilt records
+
+
+def test_a_rebuilt_record_is_read_from_its_column(tmp_path):
+    (tmp_path / "isd_daily_x.csv").write_text(
+        "date,tmax,tmax_hourly,tmax_source\n2020-05-02,41.0,40.2,12utc\n2020-05-01,,39.5,\n"
+        "2020-05-03,42.5,,03utc_24h_next_morning\n", encoding="utf-8")
+    s = sc.load_isd("x", "tmax", tmp_path)
+    assert list(s.index) == list(pd.to_datetime(["2020-05-02", "2020-05-03"])) and list(s) == [41.0, 42.5]
+    assert s.name == "station" and s.index.name == "date"
+    assert list(sc.load_isd("x", "tmax_hourly", tmp_path)) == [39.5, 40.2]  # in date order, gaps left out
+    (tmp_path / "isd_daily_y.csv").write_text("date,tmax\n2020-05-01,40.0\n2020-05-01,41.0\n", encoding="utf-8")
+    with pytest.raises(ValueError, match="duplicate"):
+        sc.load_isd("y", "tmax", tmp_path)
+    with pytest.raises(FileNotFoundError, match="isd_rebuild"):
+        sc.load_isd("z", "tmax", tmp_path)
+    assert sc.ISD_SERIES == {"safdarjung": "tmax", "palam": "tmax_hourly"}  # P3-7 step 3, with its deviation
+
+
+def test_the_registered_ghcn_report_is_rebuilt_exactly_from_its_results(tmp_path, monkeypatch):
+    """The report code was split into sections for the rerun; the committed GHCN report must not change."""
+    import json
+
+    results = sc.REPO_ROOT / "followup" / "results"
+    monkeypatch.setattr(sc, "OUT_DIR", tmp_path)
+    sc.write_report(json.loads((results / "station_check.json").read_text(encoding="utf-8")))
+    committed = (results / "station_check.md").read_text(encoding="utf-8")
+    assert (tmp_path / "station_check.md").read_text(encoding="utf-8") == committed
+
+
+def test_key_numbers_apply_the_reading_rule_to_every_comparison():
+    def ci(lo: float, hi: float) -> dict:
+        return {"delta": (lo + hi) / 2, "ci_low": lo, "ci_high": hi}
+
+    flip = {"era5": {s: ci(0.1, 0.3) for s in sc.TEST_STRATA}, "station": {s: ci(-0.4, -0.2) for s in sc.TEST_STRATA},
+            "station_mapped": {s: ci(-0.1, 0.1) for s in sc.TEST_STRATA}}
+    flip["station"]["season"] = ci(-0.1, 0.2)  # the CI includes 0: not a clear change on this stratum
+    same = {v: {s: ci(0.1, 0.3) for s in sc.TEST_STRATA} for v in sc.VIEWS}
+    ev = {p: {"days": 10, "strata": {"all": {"bias": -0.4}, "st_label": {"bias": -1.2}}} for p in sc.PERIODS}
+    models = {name: {"ensemble": {v: {"all": {"rmse": 1.0}} for v in sc.VIEWS},
+                     "cold_bias": {"label": {"all_leads": {"n": 3, "era5_share": 0.5}}}} for name in sc.TEST_RUNS}
+    r = {"era5_vs_station": ev, "test_forecasts": {"models": models, "tests": {"A minus B": flip}},
+         "global_models": {"IFS": {"test": same}}, "graphcast_2018": {"test": same}}
+    k = sc.key_numbers(r)
+    assert k["comparisons"] == 3 * len(sc.TEST_STRATA)  # (ii)'s test, IFS and GraphCast 2018
+    assert k["clear_changes"] == ["A minus B, All days", "A minus B, Station heatwave days, label rule"]
+    assert k["era5_share"] == 0.5 and k["offset_hot"]["2019-2025"] == -1.2 and k["rmse"]["C3-hop"]["station"] == 1.0
+    r["graphcast_2018"] = None
+    assert sc.key_numbers(r)["comparisons"] == 2 * len(sc.TEST_STRATA)
+
+
+def toy_station(rng, offset: float = 0.0) -> dict:
+    """What check_station returns, on hand-made data: toy forecasts in place of the frozen ones and the P3-1 models."""
+    from evaluation.compare_v2 import ensemble
+
+    fit = pd.date_range("1980-01-01", "2018-12-31", freq="D")
+    dates = pd.date_range("2019-01-01", "2024-12-31", freq="D")
+    every = fit.append(dates)
+    era5_all = seasonal(every) + rng.normal(0, 2.5, len(every))
+    station = pd.Series(1.5 + offset + 1.02 * era5_all + rng.normal(0, 0.8, len(every)), index=every).drop(every[::6])
+    st = sc.station_frame(station)
+    era5 = pd.DataFrame({"era5": era5_all, "era5_normal": seasonal(every)}, index=every)
+    era5["thr_era5"] = sc.threshold(era5["era5_normal"], every, 3.0)
+    era5["era5_hot"] = era5["era5"].to_numpy() >= era5["thr_era5"].to_numpy()
+    coef = sc.fit_mapping(era5["era5"], st["station"])
+    truth = era5.loc[dates, "era5"].to_numpy()
+
+    def model(noise: float, n_seeds: int) -> pd.DataFrame:
+        return pd.concat([forecast_frame(dates, truth - 0.5 + rng.normal(0, noise, len(dates)), truth, seed=s, lead=L)
+                          for s in range(n_seeds) for L in (1, 2)], ignore_index=True)
+
+    seeds = {"C3-hop": model(1.0, 3), "Delhi-only LSTM": model(1.6, 3), "ridge_hw5": model(2.0, 1)}
+    in_seas = seeds["C3-hop"][(seeds["C3-hop"]["seed"] == 0) & in_season(seeds["C3-hop"]["target_date"])]
+    probs = {name: (in_seas[sc.KEY].assign(p=rng.uniform(0, 1, len(in_seas))), 0.37) for name in sc.PROB_RULES}
+    outside = {L: pd.Series(truth + rng.normal(0, 0.7, len(dates)), index=dates) for L in (1, 2)}
+    return {"coverage": sc._coverage(st), "mapping": coef, "dating": sc.dating_check(era5["era5"], st["station"]),
+            "era5_vs_station": sc.era5_vs_station(era5, st, coef),
+            "test_forecasts": sc.score_forecasts(seeds, probs, st, era5["thr_era5"], coef),
+            "global_models": {"AIFS Single": sc.versus_c3hop("AIFS Single", outside, ensemble(seeds["C3-hop"]), st,
+                                                            era5["thr_era5"], coef)},
+            "graphcast_2018": None}
+
+
+def test_the_isd_report_has_a_summary_and_both_stations(tmp_path, monkeypatch):
+    rng = np.random.default_rng(8)
+    ghcn, saf, pal = toy_station(rng, 1.0), toy_station(rng), toy_station(rng, 0.5)
+    series = {name: {"file": f"followup/data/isd_daily_{name}.csv", "column": col, "sha256": "abc",
+                     "first_day": "1980-01-01", "last_day": "2024-12-31"} for name, col in sc.ISD_SERIES.items()}
+    series["palam"]["whole_degrees"] = sc.whole_degree_share(pd.Series(
+        [40.0, 41.0, 40.5, 39.0], index=pd.to_datetime(["2005-05-01", "2005-05-02", "2017-05-01", "2017-05-02"])))
+    res = {"series": series, "stations": {"safdarjung": saf, "palam": pal}, "pending": sc.PENDING,
+           "extract_sha256": "def"}
+    monkeypatch.setattr(sc, "OUT_DIR", tmp_path)
+    sc.write_report_isd(res, ghcn)
+    text = (tmp_path / "station_check_isd.md").read_text(encoding="utf-8")
+    headings = [line for line in text.splitlines() if line.startswith("## ")]
+    assert headings == ["## Summary", "## Safdarjung, rebuilt", "## Palam, hourly maximum", "## Notes"]
+    for part in ("### Station data", "### Exploratory: are the rebuilt dates right?", "### (i) ERA5 against the station",
+                 "### (iv) The station mapping", "### (ii) Our test forecasts against the station",
+                 "### (iii) Global models and GraphCast 2018 against the station"):
+        assert text.count(part) == 2, part
+    assert "| | GHCN file (registered run) | Safdarjung, rebuilt | Palam, hourly maximum |" in text
+    assert "to 2024-12-31, where the station record ends" in text and "`tmax_hourly`, from 1980-01-01" in text
+    assert "(values in whole degrees: 1980-2008 100%; 2009-2010 n/a; 2011-2015 n/a; 2016-2018 50%;" in text
+    assert "nan" not in text.lower().replace("n/a", "")
+    sc.write_report_isd(res)  # without the GHCN run: the rebuilt records only
+    assert "| | Safdarjung, rebuilt | Palam, hourly maximum |" in (tmp_path / "station_check_isd.md").read_text(
+        encoding="utf-8")

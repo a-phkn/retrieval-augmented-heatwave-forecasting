@@ -661,3 +661,54 @@ no ISD file downloaded.**
       - Ahmedabad and Chennai: 840 of 1,826 days in 2011-2015 (about half the 12 UTC groups then were 24-hour ones),
         and none from 2016;
       - Palam: 32 days in all, so only its hourly Tmax remains.
+- **RESULT 2026-11-27, step 3** (`followup/results/station_check_isd.{md,json}`, from `python -m followup.station_check
+  --isd`, which reads the test years through the test lock). Post-test and descriptive, as registered. The analyses
+  are P3-3's, unchanged, and the GHCN run stays as registered.
+  - **Records used.**
+    - Safdarjung's `tmax`, 1980-01-02 to 2025-08-22: 13,664 usable days in 1980-2018 and 2,361 in 2019-2025 (the
+      GHCN file: 13,093 and 1,544). It has no hourly maximum to show beside the reported one (3-hourly reports only).
+    - Palam's hourly maximum, 2002-06-24 to 2025-08-24: 3,213 and 2,261 days.
+  - **Exploratory, not registered: the dating check on the rebuilt records.**
+    - Both are dated right in every block: the same day fits best. Safdarjung's SD is 0.98-1.11 °C, against
+      1.92-2.03 °C for the day before; Palam's 1.07-1.27 against 2.03-2.16 °C.
+    - Safdarjung's identical consecutive values are 3-5% in every block (the GHCN file: 22% in 2011-2015).
+    - Palam's are 12-28%, but 99-100% of its values to 2015 are whole degrees.
+  - **(i) ERA5 against Safdarjung.**
+    - ERA5 - station: -0.50 °C on all days of 1980-2018 and -0.88 °C in 2019-2025 (the GHCN file: -0.63 and -1.83).
+    - On station heatwave days (label rule): -0.40 and -0.49 °C. In the mirror view (ERA5 heatwave days): -0.04 and
+      -0.20 °C.
+    - The heatwave labels agree as well in 2019-2025 as before: ETS 0.64 against 0.65 (label rule, in season).
+    - Exploratory, from the per-year table: the offset steps down in 2011.
+      - Every year from 2011 lies between -1.15 and -0.66 °C (mean -0.86); the years 1980-2010 lie between -0.79 and
+        0.00 °C (mean -0.41).
+      - The reading does not change in 2011: the 12 UTC maximum keeps its 12-hour period until 2013-04-30, and has
+        a 24-hour period from 2013-05-01.
+      - So the cause is not in these data. It could be a change at the station, around it, or in ERA5.
+  - **Palam (descriptive).**
+    - ERA5 - station: -0.41 °C in 2002-2018 and +0.08 °C in 2019-2025; on station heatwave days -1.58 and -0.85 °C.
+    - Its offset moves by more than 1 °C between blocks (+0.49 °C in 2009-2010, -0.66 °C in 2016-2018), along with
+      changes in its resolution and coverage. So it is a weak reference for changes over time.
+  - **(ii) Our test forecasts against Safdarjung** (2019-01-01 to 2025-08-22: 11,795 rows, 21 clusters).
+    - RMSE of the ensemble means, against ERA5 / the station: C3-hop 2.164 / 2.446 °C, the Delhi-only LSTM
+      2.308 / 2.573, ridge_hw5 2.292 / 2.471.
+    - C3-hop minus the LSTM (10 seeds each), all days: -0.136 [-0.229, -0.043] against ERA5, -0.121 [-0.215, -0.026]
+      against the station.
+    - C3-hop minus ridge_hw5, all days: -0.128 [-0.174, -0.082] against ERA5, -0.025 [-0.097, +0.047] against the
+      station, -0.092 [-0.146, -0.038] station-mapped.
+    - Against Palam, C3-hop is ahead of both: -0.125 [-0.215, -0.036] and -0.132 [-0.190, -0.074].
+  - **The ranking does not change.**
+    - No clear change of order in any of the 27 comparisons of (ii) and (iii), at either station.
+    - The GHCN run had one, ridge_hw5 ahead of C3-hop on all days. It came from the dating fault: it is gone with
+      the rebuilt record.
+  - **The cold bias on station heatwave days** (label rule, all leads, ensemble means).
+    - C3-hop is 2.22 °C below Safdarjung: -1.73 °C (forecast - ERA5) plus -0.49 °C (ERA5 - station). ERA5's share
+      is 22% (the GHCN run: 76%).
+    - At Palam: -2.48 = -1.63 + -0.85 °C, a 34% share.
+  - **Against the expectations.**
+    - Held: ERA5 is colder than the station on station heatwave days; it explains part, not most, of the forecasts'
+      cold bias; and the ranking of our models does not change.
+    - Not held: after 2010 the ERA5 - station gap does not return to its 1980-2008 size (-0.42 °C in the entry,
+      -0.41 °C here). It is -0.88 °C in 2019-2025: half the misdated file's -1.83 °C, but twice the earlier gap,
+      because of the step in 2011.
+  - Step 4 (humidity) waits for the user's decision. As registered it needs a daily dew point from at least 18 hourly
+    readings, which Safdarjung never has and Palam has only from 2002.
