@@ -6,7 +6,8 @@
 > log at the end. Short forms are explained in [`GLOSSARY.md`](GLOSSARY.md); the original
 > plan is in [`PLAN_REVIEW_v5.md`](PLAN_REVIEW_v5.md) (historical).
 >
-> **Last updated:** 2026-11-24 (retrieval study on the branch `retrieval-improvements`, §9.2; next steps in §12)
+> **Last updated:** 2026-11-27 (the rebuilt station records and the station check rerun, §12; retrieval study on the
+> branch `retrieval-improvements`, §9.2)
 
 ## Final state at a glance (2026-10-25)
 
@@ -1363,7 +1364,8 @@ critical reviews of 2026-10-22 were addressed: claims corrected, frozen-code iss
   - What we add to her paper: correct station data (P3-7) and, if she agrees, a trigger built on ECMWF's forecasts.
 - **Order of work** (2026-11-24):
   1. Step 6 (done).
-  2. The station rebuild for Safdarjung, Palam, Ahmedabad and Chennai (P3-7, drafted).
+  2. The station rebuild for Safdarjung, Palam, Ahmedabad and Chennai (P3-7): rebuilt and checked, and the
+     Safdarjung station check rerun (2026-11-27). Left: the humidity check, which needs a decision.
   3. More cities (ones `experiments-v2` has not analysed) and longer leads.
   4. The ECMWF-based trigger, if agreed.
   5. The blend with ECMWF's forecasts.
@@ -1376,16 +1378,36 @@ critical reviews of 2026-10-22 were addressed: claims corrected, frozen-code iss
   mentor's feedback; main was merged into the branch on 2026-11-12.
   - Done: the comparison with the IFS, AIFS and GFS forecasts.
   - The Safdarjung station check found the public station file misdated after 2010. Decided 2026-11-12: rebuild its
-    daily maxima from NOAA's hourly station reports (ISD), under its own pre-registration (not written yet). On
-    2026-11-21 Palam (the airport station) was added as a second station.
+    daily maxima from NOAA's hourly station reports (ISD), under its own pre-registration. On 2026-11-21 Palam (the
+    airport station) was added as a second station.
+  - **The station rebuild (P3-7, pre-registered 2026-11-25)**, in `followup/results/station_rebuild.md`:
+    - Built from NOAA's ISD reports for Safdarjung, Palam, Ahmedabad and Chennai (173 of 184 station-years exist).
+      Ahmedabad and Chennai were added because the public files `experiments-v2` uses for them have the same fault
+      (Chennai) or are nearly empty after 2010 (Ahmedabad).
+    - Safdarjung's maximum-thermometer reading matches the public file on 1980–2008, when that file was right.
+      From 2016 the reading is mostly missing, so those days are filled from the next morning's 24-hour maximum,
+      which matched it to 0.02 °C on the days both exist. This fill was decided after the first results and is
+      labelled as such.
+    - Ahmedabad and Chennai are correct through 2015, but have only about half the days of 2011–2015 and none
+      after. Palam has only its hourly readings, from 2002.
+  - **The Safdarjung station check rerun on the rebuilt record (2026-11-27; post-test, descriptive)**, in
+    `followup/results/station_check_isd.md`:
+    - The ranking of our models does not change when the station is the truth: no clear change in 27 comparisons.
+      C3-hop stays ahead of the Delhi-only LSTM (−0.121 °C [−0.215, −0.026]) and level with ridge_hw5 (−0.025
+      [−0.097, +0.047]). The misdated file had seemed to put ridge_hw5 ahead.
+    - On the station's heatwave days C3-hop is 2.22 °C too cold. ERA5's own coldness explains 22% of that, not the
+      76% the misdated file suggested; the rest is the model's.
+    - ERA5 is 0.88 °C colder than the station in 2019–2025, against 0.41 °C before 2011. The gap steps in 2011, and
+      these data cannot show why (a change at the station, around it, or in ERA5).
+    - Left: the humidity check. As registered it needs hourly dew point, which Safdarjung never had, so it waits for
+      a decision.
   - Decided 2026-11-21: the corrector and blend on top of global forecasts is kept without its GraphCast 2020 part;
     conformal ranges are kept, with reliability tables added; the benchmark is dropped. The prospective 2027 season
     is kept only if the upper-air model becomes the paper's main model, decided before its freeze (due 2027-02-28).
   - Decided 2026-11-24: the station rebuild also covers hourly temperature and dew point (which checks ERA5's
     humidity around 2000–01) and daily minima. NOAA's station list confirms both stations; both records end on
     2025-08-24, so ISD has no 2026.
-  - Later on 2026-11-24, P3-4 was dropped (covered by `experiments-v2`). The rebuild (P3-7, drafted, awaiting
-    approval) was extended to Ahmedabad and Chennai, whose GHCN files that study uses.
+  - Later on 2026-11-24, P3-4 was dropped (covered by `experiments-v2`).
 - **The papers.** The README has the results, run instructions and data notes. Target journals, the fixes before
   submitting and where each item stands: the journal plan (Claude Docs, "Research Positioning and Journal Plan",
   updated 2026-11-24). The code release (Zenodo DOI) needs the retrieval study merged into `main` and a check of the
@@ -1440,3 +1462,5 @@ critical reviews of 2026-10-22 were addressed: claims corrected, frozen-code iss
 | 2026-11-12 | Retrieval study step 4: C3-hop given the 500 hPa pattern directly helps both families on all days (WBGT −0.083 °C, about 4%; Tmax −0.057 °C, about 3%) and Tmax heatwave days (−0.22 °C, about 12%; 11 clusters, to be confirmed). It beats the shuffled-year check in both families (WBGT −0.080 °C, Tmax −0.077 °C), which is no better than plain C3-hop: the gain is the right day's upper air, not more inputs. The README and the glossary now cover the retrieval study. Phase 3 extras: the station record will be rebuilt from NOAA's hourly reports (option a, pre-registration to come); main merged into `phase3-extras`; the other extras are to be discussed. |
 | 2026-11-21 | Next steps set from the journal plan (2026-11-20): step 6, a descriptive check of step 4 on 2019–2021 (drafted, awaiting approval), then more cities and a longer-lead prediction. Phase 3 decisions: Palam added to the station rebuild; corrector and blend kept without GraphCast 2020; conformal ranges kept with reliability tables; benchmark dropped; the 2027 season kept only if the upper-air model becomes the main model. |
 | 2026-11-24 | Step 6 (pre-registered, descriptive): on 2019–2021 the upper-air input keeps its all-day gain (WBGT −0.089 °C, Tmax −0.083 °C, about 4%; 9 clusters), larger than predicted. From the heat-stress proposal (2026-11-22): the lead paper stays the retrieval study; the second paper is on heat stress (humid-heat days the alerts miss, unsafe working hours); more cities named (Jaipur, Ahmedabad, Nagpur) and the longer-lead test specified; the station rebuild extended to hourly temperature, dew point and daily minima; the cost-loss value added to conformal ranges. New order of work in §12. The journal plan doc was brought up to date. Later: Anushka's `experiments-v2` study (three cities, its own test lock) already covers the heat-stress items and P3-4. So those were retired, and her study is now the second paper. The station rebuild (P3-7) was extended to Ahmedabad and Chennai. |
+| 2026-11-25 | Station rebuild (P3-7) pre-registered and built from NOAA's ISD reports for Safdarjung, Palam, Ahmedabad and Chennai. Safdarjung matches the public file on 1980–2008; its missing values from 2016 are filled from the next morning's 24-hour maximum (decided after the first results, and labelled so). Ahmedabad and Chennai are correct through 2015, with about half the days of 2011–2015 and none after; Palam has only hourly readings, from 2002. |
+| 2026-11-27 | The Safdarjung station check rerun on the rebuilt record (post-test, descriptive): the ranking of our models does not change when the station is the truth; ERA5 explains 22% of C3-hop's 2.22 °C cold bias on the station's heatwave days, not 76%; ERA5 is 0.88 °C colder than the station in 2019–2025, after a step in 2011 whose cause is unknown. The humidity check waits for a decision. |
